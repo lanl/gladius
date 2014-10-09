@@ -21,7 +21,9 @@ buildTypeSetup()
 getCXXFlags(GLADIUS_BASE_CXX_FLAGS)
 # Append to CMAKE_CXX_FLAGS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_BASE_CXX_FLAGS}")
-findLLDB(LLDB_CXX_FLAGS LLDB_LD_FLAGS)
+findLLDB(LLDB_INCLUDE_DIRS LLDB_LIB_DIRS LLDB_LIBS)
+include_directories(${LLDB_INCLUDE_DIRS})
+link_directories(${LLDB_LIB_DIRS})
 # add top-level source directory
 add_subdirectory(source)
 # show final configuration
