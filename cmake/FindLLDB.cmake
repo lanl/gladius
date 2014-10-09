@@ -6,7 +6,6 @@
 # top-level directory of this distribution.
 #
 
-add_executable(
-    gladius
-    gladius-main.cpp
-)
+function(findLLDB outCXXFlags outLDFlags)
+    message(STATUS "Looking for LLDB")
+endfunction()

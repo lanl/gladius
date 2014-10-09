@@ -9,7 +9,7 @@
 ################################################################################
 # Top-level call that call all CXX flag configury
 ################################################################################
-function(setCXXFlags result)
+function(getCXXFlags result)
     getBaseGladiusCXXFlags(cxxFlags)
     getCXX11Flags(cxx11Flags)
     set(${result} "${cxxFlags} ${cxx11Flags}" PARENT_SCOPE)

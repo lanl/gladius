@@ -13,13 +13,15 @@ cmake_minimum_required(VERSION 2.8.11)
 # Project configury includes
 include(cmake/BuildType.cmake)
 include(cmake/CXXOptions.cmake)
+include(cmake/FindLLDB.cmake)
 include(cmake/EchoFinalSetup.cmake)
 # Setup build type stuff
 buildTypeSetup()
 # Get the necessary base CXX flags
-setCXXFlags(GLADIUS_BASE_CXX_FLAGS)
+getCXXFlags(GLADIUS_BASE_CXX_FLAGS)
 # Append to CMAKE_CXX_FLAGS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_BASE_CXX_FLAGS}")
+findLLDB(LLDB_CXX_FLAGS LLDB_LD_FLAGS)
 # add top-level source directory
 add_subdirectory(source)
 # show final configuration
