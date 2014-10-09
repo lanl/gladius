@@ -10,4 +10,4 @@ add_executable(
     gladius
     gladius-main.cpp
 )
-target_link_libraries(gladius lldb)
+target_link_libraries(gladius ${GLADIUS_LLDB_LIBS})
