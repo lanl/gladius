@@ -24,20 +24,36 @@ function(findLLDB outIncludeDirs outLinkDirs outLinkLibs)
         message(FATAL_ERROR "${prefix} does not exist. Cannot continue")
     endif()
     message(STATUS "Making sure ${prefix} has some files we need...")
-    # FIXME add proper, os-specific extensions for libraries
-    set(fileWeNeed
-        "include/lldb/API/LLDB.h"
-        "lib/liblldb.dylib"
+    file(GLOB headersWeNeed
+        "${prefix}/include/lldb/API/LLDB.h"
     )
-    foreach (file ${fileWeNeed})
-        message(STATUS "Looking for ${file} in ${prefix}")
-        if(NOT EXISTS "${prefix}/${file}")
-            message(FATAL_ERROR "Cannot find ${file} in ${prefix}."
-                                "Cannot continue.")
+    foreach(file ${headersWeNeed})
+        message(STATUS "Looking for ${file}")
+        if(NOT EXISTS "${file}")
+            message(FATAL_ERROR "Cannot find ${file}. Cannot continue.")
+        endif()
+    endforeach()
+    # Add any needed libraries here
+    set(libNames
+        "lldb"
+        "lldbAPI"
+    )
+    set(libsWeNeed)
+    foreach (libName ${libNames})
+        message(STATUS "Looking for lib${libName}")
+        file(GLOB libWeNeed
+            "${prefix}/lib/lib${libName}.*"
+        )
+        list(APPEND libsWeNeed ${libWeNeed})
+        list(LENGTH libWeNeed numFound)
+        if(numFound EQUAL 0)
+            message(FATAL_ERROR "Cannot find necessary library: lib${libName}. "
+                                "Cannot continue."
+            )
         endif()
     endforeach()
     # If we are here, then all is well. Return the outs.
     set(${outIncludeDirs} "${prefix}/include" PARENT_SCOPE)
     set(${outLinkDirs} "${prefix}/lib" PARENT_SCOPE)
-    set(${outLinkLibs} "lldb" PARENT_SCOPE)
+    set(${outLinkLibs} ${libNames} PARENT_SCOPE)
 endfunction()
