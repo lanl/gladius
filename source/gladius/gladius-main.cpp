@@ -6,6 +6,9 @@
  * top-level directory of this distribution.
  */
 
+#include "core/gladius-exception.h"
+#include "gladius.h"
+
 #include <cstdlib>
 
 #include <lldb/API/LLDB.h>
@@ -13,8 +16,12 @@
 int
 main(int argc, char **argv, char **envp)
 {
-    (void)argc;
-    (void)argv;
-    (void)envp;
+    using namespace gladius;
+    try {
+        Gladius gladius(argc, argv, envp);
+        gladius.mainLoop();
+    } catch (...) {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

@@ -6,4 +6,5 @@
 # top-level directory of this distribution.
 #
 
+add_subdirectory(core)
 add_subdirectory(gladius)

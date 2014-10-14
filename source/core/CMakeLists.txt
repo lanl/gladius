@@ -6,11 +6,7 @@
 # top-level directory of this distribution.
 #
 
-add_executable(
-    gladius
-    gladius-main.cpp
-    gladius.h gladius.cpp
+add_library(
+    GladiusUtils
+    gladius-exception.cpp
 )
-include_directories(..)
-target_link_libraries(gladius GladiusUtils)
-target_link_libraries(gladius ${GLADIUS_LLDB_LIBS})

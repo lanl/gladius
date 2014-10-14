@@ -15,17 +15,33 @@ include(cmake/BuildType.cmake)
 include(cmake/CXXOptions.cmake)
 include(cmake/FindLLDB.cmake)
 include(cmake/EchoFinalSetup.cmake)
+
+################################################################################
 # Setup build type stuff
+################################################################################
 buildTypeSetup()
+
+################################################################################
 # Get the necessary base CXX flags
+################################################################################
 getCXXFlags(GLADIUS_BASE_CXX_FLAGS)
 # Append to CMAKE_CXX_FLAGS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_BASE_CXX_FLAGS}")
+
+################################################################################
+# LLDB setup
+################################################################################
 findLLDB(GLADIUS_LLDB_INCLUDE_DIRS GLADIUS_LLDB_LIB_DIRS GLADIUS_LLDB_LIBS)
 include_directories(${GLADIUS_LLDB_INCLUDE_DIRS})
 link_directories(${GLADIUS_LLDB_LIB_DIRS})
 #target_link_libraries used here needed with ${GLADIUS_LLDB_LIBS}
+
+################################################################################
 # add top-level source directory
+################################################################################
 add_subdirectory(source)
+
+################################################################################
 # show final configuration
+################################################################################
 echoFinalSetup()

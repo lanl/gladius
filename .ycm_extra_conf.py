@@ -64,7 +64,7 @@ flags = [
 '-I',
 './ClangCompleter',
 '-isystem',
-'./tests/gmock/gtest',
+'/usr/include/c++/4.2.1',
 '-isystem',
 './tests/gmock/gtest/include',
 '-isystem',
@@ -79,6 +79,9 @@ flags = [
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1',
 '-isystem',
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+'-I/Users/samuel/local/lldb/include'
+'-I',
+'./source'
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

@@ -17,3 +17,10 @@ cd .. && mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=$LLVM_PREFIX ../
 make && make install
 ```
+
+## Building Gladius
+```bash
+mkdir build && cd build
+cmake ../ -DGLADIUS_LLDB_HOME=$LLVM_PREFIX
+make
+```
