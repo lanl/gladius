@@ -7,11 +7,18 @@
  */
 
 /**
- * Implements the debugger backend interface.
+ * Implements the Debugger BackEnd interface.
  */
 
-#ifndef GLADIUS_LLDB_H_INCLUDED
-#define GLADIUS_LLDB_H_INCLUDED
+#ifndef GLADIUS_DEBUGGER_DBE_H_INCLUDED
+#define GLADIUS_DEBUGGER_DBE_H_INCLUDED
+
+#include "lldb/Utility/PseudoTerminal.h"
+
+#include "lldb/API/SBDefines.h"
+#include "lldb/API/SBBroadcaster.h"
+#include "lldb/API/SBDebugger.h"
+#include "lldb/API/SBError.h"
 
 #include <lldb/API/LLDB.h>
 
@@ -23,6 +30,8 @@ private:
     GladiusDBE(void);
 
 public:
+    ~GladiusDBE(void);
+
     GladiusDBE(
         int argc,
         char **argv,
@@ -36,4 +45,4 @@ public:
 } // end dbe namespace
 } // end gladius namespace
 
-#endif // GLADIUS_H_INCLUDED
+#endif

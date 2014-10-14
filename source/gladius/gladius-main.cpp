@@ -6,7 +6,8 @@
  * top-level directory of this distribution.
  */
 
-#include "core/gladius-core-includes.h"
+#include "core/core-includes.h"
+
 #include "gladius.h"
 
 #include <cstdio>

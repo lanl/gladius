@@ -9,15 +9,18 @@
 #ifndef GLADIUS_H_INCLUDED
 #define GLADIUS_H_INCLUDED
 
-#include "debugger/gladius-dbe.h"
+#include "debugger/dbe.h"
 
 namespace gladius {
 
 class Gladius {
 private:
     Gladius(void);
+    dbe::GladiusDBE *dbe;
 
 public:
+    ~Gladius(void);
+
     Gladius(
         int argc,
         char **argv,
@@ -30,4 +33,4 @@ public:
 
 } // end gladius namespace
 
-#endif // GLADIUS_H_INCLUDED
+#endif

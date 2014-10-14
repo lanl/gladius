@@ -6,10 +6,10 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_CORE_INCLUDES_H_INCLUDED
-#define GLADIUS_CORE_INCLUDES_H_INCLUDED
+#ifndef GLADIUS_CORE_CORE_INCLUDES_H_INCLUDED
+#define GLADIUS_CORE_CORE_INCLUDES_H_INCLUDED
 
 #include "gladius-package-info.h"
 #include "gladius-exception.h"
 
-#endif // GLADIUS_EXCEPTION_H_INCLUDE
+#endif

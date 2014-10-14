@@ -15,6 +15,14 @@ using namespace gladius;
 /**
  *
  */
+Gladius::~Gladius(void)
+{
+    if (dbe) delete dbe;
+}
+
+/**
+ *
+ */
 Gladius::Gladius(
     int argc,
     char **argv,
@@ -23,6 +31,8 @@ Gladius::Gladius(
     (void)argc;
     (void)argv;
     (void)envp;
+
+    dbe = new dbe::GladiusDBE(argc, argv, envp);
 }
 
 /**

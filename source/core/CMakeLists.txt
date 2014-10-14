@@ -9,4 +9,5 @@
 add_library(
     GladiusUtils
     gladius-exception.cpp
+    core-includes.h
 )

@@ -6,8 +6,8 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_EXCEPTION_H_INCLUDED
-#define GLADIUS_EXCEPTION_H_INCLUDED
+#ifndef GLADIUS_CORE_GLADIUS_EXCEPTION_H_INCLUDED
+#define GLADIUS_CORE_GLADIUS_EXCEPTION_H_INCLUDED
 
 #include <string>
 #include <exception>
@@ -38,4 +38,4 @@ public:
 } // end core namespace
 } // end gladius namespace
 
-#endif // GLADIUS_EXCEPTION_H_INCLUDE
+#endif
