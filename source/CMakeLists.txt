@@ -7,4 +7,5 @@
 #
 
 add_subdirectory(core)
+add_subdirectory(debugger)
 add_subdirectory(gladius)

@@ -7,6 +7,7 @@
  */
 
 #include "gladius-exception.h"
+#include "gladius-package-info.h"
 
 using namespace std;
 using namespace gladius::core;
@@ -14,14 +15,16 @@ using namespace gladius::core;
 /**
  *
  */
-GladiusException::GladiusException(string fileName,
-                                   int lineNo,
-                                   const string &errMsg,
-                                   bool where)
-{
+GladiusException::GladiusException(
+    string fileName,
+    int lineNo,
+    const string &errMsg,
+    bool where
+) {
     if (where) {
         string lineNoStr = to_string(lineNo);
-        whatString = "[" + fileName + " " + lineNoStr + "] " + errMsg;
+        whatString = "xxx " PACKAGE_NAME " exception xxx[" +
+                     fileName + " " + lineNoStr + "] " + errMsg;
     }
     else whatString = errMsg;
 }
@@ -30,7 +33,8 @@ GladiusException::GladiusException(string fileName,
  *
  */
 const char *
-GladiusException::what(void) const throw()
-{
+GladiusException::what(
+    void
+) const throw() {
     return this->whatString.c_str();
 }

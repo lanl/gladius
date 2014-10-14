@@ -6,19 +6,24 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_H_INCLUDED
-#define GLADIUS_H_INCLUDED
+/**
+ * Implements the debugger backend interface.
+ */
 
-#include "debugger/gladius-dbe.h"
+#ifndef GLADIUS_LLDB_H_INCLUDED
+#define GLADIUS_LLDB_H_INCLUDED
+
+#include <lldb/API/LLDB.h>
 
 namespace gladius {
+namespace dbe {
 
-class Gladius {
+class GladiusDBE {
 private:
-    Gladius(void);
+    GladiusDBE(void);
 
 public:
-    Gladius(
+    GladiusDBE(
         int argc,
         char **argv,
         char **envp
@@ -28,6 +33,7 @@ public:
     mainLoop(void);
 };
 
+} // end dbe namespace
 } // end gladius namespace
 
 #endif // GLADIUS_H_INCLUDED

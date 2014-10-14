@@ -6,29 +6,10 @@
  * top-level directory of this distribution.
  */
 
-#include "gladius.h"
+#ifndef GLADIUS_CORE_INCLUDES_H_INCLUDED
+#define GLADIUS_CORE_INCLUDES_H_INCLUDED
 
-#include <string>
+#include "gladius-package-info.h"
+#include "gladius-exception.h"
 
-using namespace gladius;
-
-/**
- *
- */
-Gladius::Gladius(
-    int argc,
-    char **argv,
-    char **envp
-) {
-    (void)argc;
-    (void)argv;
-    (void)envp;
-}
-
-/**
- *
- */
-void
-Gladius::mainLoop(void)
-{
-}
+#endif // GLADIUS_EXCEPTION_H_INCLUDE

@@ -6,14 +6,8 @@
 # top-level directory of this distribution.
 #
 
-add_executable(
-    gladius
-    gladius-main.cpp
-    gladius.h gladius.cpp
-)
-include_directories(..)
-target_link_libraries(gladius
-    GladiusUtils
+# The Gladius Debugger BackEnd library
+add_library(
     GladiusDBE
-    ${GLADIUS_LLDB_LIBS}
+    gladius-dbe.h gladius-dbe.cpp
 )

@@ -31,6 +31,8 @@ public:
                      bool where = true);
 
     virtual const char *what(void) const throw();
+
+    void fooBar(void);
 };
 
 } // end core namespace

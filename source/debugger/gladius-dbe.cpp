@@ -6,16 +6,16 @@
  * top-level directory of this distribution.
  */
 
-#include "gladius.h"
+#include "gladius-dbe.h"
 
 #include <string>
 
-using namespace gladius;
+using namespace gladius::dbe;
 
 /**
  *
  */
-Gladius::Gladius(
+GladiusDBE::GladiusDBE(
     int argc,
     char **argv,
     char **envp
@@ -23,12 +23,14 @@ Gladius::Gladius(
     (void)argc;
     (void)argv;
     (void)envp;
+    lldb::SBDebugger::Initialize();
 }
 
 /**
  *
  */
 void
-Gladius::mainLoop(void)
-{
+GladiusDBE::mainLoop(
+    void
+) {
 }

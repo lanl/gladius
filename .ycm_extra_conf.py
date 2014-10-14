@@ -79,9 +79,8 @@ flags = [
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1',
 '-isystem',
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-'-I/Users/samuel/local/lldb/include'
-'-I',
-'./source'
+'-I/Users/samuel/local/lldb/include',
+'-I./source',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
