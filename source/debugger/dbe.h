@@ -25,13 +25,15 @@
 #include "lldb/API/SBError.h"
 
 #include <set>
-#include <bitset>
 #include <string>
 #include <vector>
 
 namespace gladius {
 namespace dbe {
 
+/**
+ * GladiusDBE
+ */
 class GladiusDBE {
 private:
     int argC;
@@ -52,99 +54,111 @@ public:
     mainLoop(void);
 };
 
-
-class IOChannel;
-
-class Driver : public lldb::SBBroadcaster {
+/**
+ * LLDBDriver
+ */
+class LLDBDriver : public lldb::SBBroadcaster {
 public:
-    Driver ();
+    LLDBDriver(void);
 
     virtual
-    ~Driver ();
+    ~LLDBDriver(void);
 
     void
-    MainLoop ();
+    mainLoop(void);
 
     lldb::SBError
-    ParseArgs (int argc, const char *argv[], FILE *out_fh, bool &do_exit);
+    ParseArgs(
+        int argc,
+        const char **argv,
+        FILE *out_fh,
+        bool &do_exit
+    );
 
     const char *
-    GetFilename() const;
+    GetFilename(void) const;
 
     const char *
-    GetCrashLogFilename() const;
+    GetCrashLogFilename(void) const;
 
     const char *
-    GetArchName() const;
+    GetArchName(void) const;
 
     lldb::ScriptLanguage
-    GetScriptLanguage() const;
+    GetScriptLanguage(void) const;
 
     void
-    WriteInitialCommands (bool before_file, lldb::SBStream &strm);
+    WriteInitialCommands(
+        bool before_file,
+        lldb::SBStream &strm
+    );
 
     bool
-    GetDebugMode() const;
+    GetDebugMode(void) const;
 
-
-    class OptionData
-    {
+    /**
+     * OptionData
+     */
+    class OptionData {
     public:
-        OptionData ();
-       ~OptionData ();
-
-        void
-        Clear();
-
-        void
-        AddInitialCommand (const char *command, bool before_file, bool is_file, lldb::SBError &error);
-
-        //static OptionDefinition m_cmd_option_table[];
-
-        std::vector<std::string> m_args;
-        lldb::ScriptLanguage m_script_lang;
-        std::string m_core_file;
-        std::string m_crash_log;
-        std::vector<std::pair<bool,std::string> > m_initial_commands;
-        std::vector<std::pair<bool,std::string> > m_after_file_commands;
-        bool m_debug_mode;
-        bool m_source_quietly;
-        bool m_print_version;
-        bool m_print_python_path;
-        bool m_print_help;
-        bool m_wait_for;
-        std::string m_process_name;
-        lldb::pid_t m_process_pid;
-        bool m_use_external_editor;  // FIXME: When we have set/show variables we can remove this from here.
+        std::vector<std::string> mArgs;
+        lldb::ScriptLanguage mScriptLang;
+        std::string mCoreFile;
+        std::string mCrashLog;
+        std::vector<std::pair<bool,std::string> > mInitialCommands;
+        std::vector<std::pair<bool,std::string> > mAfterFileCommands;
+        bool mDebugMode;
+        bool mSourceQuietly;
+        bool mPrintVersion;
+        bool mPrintPythonPath;
+        bool mPrintHelp;
+        bool mWaitFor;
+        std::string mProcessName;
+        lldb::pid_t mProcessPID;
+        bool mUseExternalEditor;
         typedef std::set<char> OptionSet;
-        OptionSet m_seen_options;
+        OptionSet mSeenOptions;
+
+        OptionData(void);
+
+       ~OptionData(void);
+
+        void
+        clear(void);
+
+        void
+        AddInitialCommand(
+            const char *command,
+            bool before_file,
+            bool is_file,
+            lldb::SBError &error
+        );
     };
 
-
     static lldb::SBError
-    SetOptionValue (int option_idx,
-                    const char *option_arg,
-                    Driver::OptionData &data);
-
+    SetOptionValue(
+        int option_idx,
+        const char *option_arg,
+        LLDBDriver::OptionData &data
+    );
 
     lldb::SBDebugger &
-    GetDebugger()
-    {
-        return m_debugger;
+    getDebugger(void) {
+        return mDebugger;
     }
 
     void
-    ResizeWindow (unsigned short col);
+    resizeWindow(unsigned short col);
 
 private:
-    lldb::SBDebugger m_debugger;
-    OptionData m_option_data;
+    lldb::SBDebugger mDebugger;
+    OptionData mOptionData;
 
     void
-    ResetOptionValues ();
+    ResetOptionValues(void);
 
     void
-    ReadyForCommand ();
+    ReadyForCommand(void);
 };
 
 } // end dbe namespace
