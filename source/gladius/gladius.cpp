@@ -7,6 +7,7 @@
  */
 
 #include "gladius.h"
+#include "core/core-includes.h"
 
 #include <string>
 
@@ -25,14 +26,20 @@ Gladius::~Gladius(void)
  */
 Gladius::Gladius(
     int argc,
-    char **argv,
-    char **envp
+    const char **argv,
+    const char **envp
 ) {
+    using namespace gladius;
     (void)argc;
     (void)argv;
     (void)envp;
 
-    dbe = new dbe::GladiusDBE(argc, argv, envp);
+    try {
+        dbe = new dbe::GladiusDBE(argc, argv, envp);
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }
 
 /**
@@ -41,4 +48,10 @@ Gladius::Gladius(
 void
 Gladius::mainLoop(void)
 {
+    try {
+        dbe->mainLoop();
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }

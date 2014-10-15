@@ -16,15 +16,15 @@ namespace gladius {
 class Gladius {
 private:
     Gladius(void);
-    dbe::GladiusDBE *dbe;
+    dbe::GladiusDBE *dbe = nullptr;
 
 public:
     ~Gladius(void);
 
     Gladius(
         int argc,
-        char **argv,
-        char **envp
+        const char **argv,
+        const char **envp
     );
 
     void

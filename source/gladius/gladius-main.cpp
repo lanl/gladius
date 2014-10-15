@@ -33,7 +33,8 @@ main(
     using namespace gladius::core;
     try {
         disableBuffering();
-        Gladius gladius(argc, argv, envp);
+        Gladius gladius(argc, const_cast<const char **>(argv),
+                        const_cast<const char **>(envp));
         gladius.mainLoop();
     } catch (GladiusException &e) {
         std::cerr << e.what() << std::endl;

@@ -23,8 +23,9 @@ GladiusException::GladiusException(
 ) {
     if (where) {
         string lineNoStr = to_string(lineNo);
-        whatString = "xxx " PACKAGE_NAME " exception xxx[" +
-                     fileName + " " + lineNoStr + "] " + errMsg;
+        whatString = "GLADIUS EXCEPTION [" +
+                     fileName + " " + lineNoStr + "]\n" +
+                     errMsg;
     }
     else whatString = errMsg;
 }

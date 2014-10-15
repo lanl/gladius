@@ -11,3 +11,4 @@ add_library(
     GladiusDBE
     dbe.h dbe.cpp
 )
+include_directories(..)
