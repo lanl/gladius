@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <vector>
 #include <bitset>
+#include <cstring>
 
 #include <getopt.h>
 
