@@ -11,10 +11,11 @@ add_executable(
     gladius-main.cpp
     gladius.h gladius.cpp
 )
+
 include_directories(..)
+
 target_link_libraries(gladius
     GladiusUtils
     GladiusMRNet
     GladiusDBE
-    ${GLADIUS_LLDB_LIBS}
 )

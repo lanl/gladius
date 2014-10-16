@@ -10,4 +10,10 @@ add_library(
     GladiusMRNet
     gladius-fe.cpp gladius-fe.h
 )
+
 include_directories(..)
+
+target_link_libraries(
+    GladiusMRNet
+    ${GLADIUS_MRNET_LIBS}
+)

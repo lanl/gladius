@@ -52,9 +52,9 @@ function(findMRNet outIncludeDirs outLinkDirs outLinkLibs)
         endif()
     endforeach()
     # If we are here, then all is well. Return the outs.
-    # FIXME add a find for xplat_config.h. Why it's in lib/xplat... is beyond
-    #       me...
     set(${outIncludeDirs}
+        # FIXME add a find for xplat_config.h. Why it's in
+        # lib/xplat-4.0.0/include is beyond me...
         "${prefix}/lib/xplat-4.0.0/include"
         "${prefix}/include"
         PARENT_SCOPE)
