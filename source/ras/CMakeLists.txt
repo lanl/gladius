@@ -6,8 +6,9 @@
 # top-level directory of this distribution.
 #
 
-add_subdirectory(core)
-add_subdirectory(ras)
-add_subdirectory(mrnet)
-add_subdirectory(debugger)
-add_subdirectory(gladius)
+add_library(
+    GladiusRAS
+    ras.cpp
+)
+
+include_directories(..)
