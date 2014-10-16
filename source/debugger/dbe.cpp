@@ -251,7 +251,7 @@ LLDBDriver::ParseArgs(
     std::vector<struct option> longOptionsVec;
     uint32_t numOptions;
 
-    for (numOptions = 0; gOptions[numOptions].long_option; ++numOptions) {
+    for (numOptions = 0; gOptions[numOptions].longOpt; ++numOptions) {
         /* Do Nothing. */;
     }
     if (0 == numOptions) {
@@ -333,7 +333,7 @@ LLDBDriver::ParseArgs(
                 }
             }
             if (longOptions_index >= 0) {
-                const int shortOpt = gOptions[longOptions_index].short_option;
+                const int shortOpt = gOptions[longOptions_index].shortOpt;
                 switch (shortOpt) {
                     case 'h':
                         mOptionData.mPrintHelp = true;
@@ -574,9 +574,8 @@ LLDBDriver::mainLoop(void)
     mDebugger.SetUseExternalEditor(mOptionData.mUseExternalEditor);
 
     struct winsize window_size;
-    if (isatty (STDIN_FILENO)
-        && ::ioctl (STDIN_FILENO, TIOCGWINSZ, &window_size) == 0)
-    {
+    if (isatty(STDIN_FILENO)
+        && ::ioctl (STDIN_FILENO, TIOCGWINSZ, &window_size) == 0) {
         if (window_size.ws_col > 0)
             mDebugger.SetTerminalWidth (window_size.ws_col);
     }
