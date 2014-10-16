@@ -11,5 +11,7 @@
  * For more details, please see LICENSE.TXT in the LLDB distirubtion.
  */
 
-#include "mrnet.h"
+#include "gladius-fe.h"
 #include "core/core-includes.h"
+
+#include "mrnet/MRNet.h"

@@ -14,6 +14,7 @@ cmake_minimum_required(VERSION 2.8.11)
 include(cmake/BuildType.cmake)
 include(cmake/CXXOptions.cmake)
 include(cmake/FindLLDB.cmake)
+include(cmake/FindMRNet.cmake)
 include(cmake/EchoFinalSetup.cmake)
 
 ################################################################################
@@ -34,7 +35,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_BASE_CXX_FLAGS}")
 findLLDB(GLADIUS_LLDB_INCLUDE_DIRS GLADIUS_LLDB_LIB_DIRS GLADIUS_LLDB_LIBS)
 include_directories(${GLADIUS_LLDB_INCLUDE_DIRS})
 link_directories(${GLADIUS_LLDB_LIB_DIRS})
-#target_link_libraries used here needed with ${GLADIUS_LLDB_LIBS}
+#target_link_libraries use where needed with ${GLADIUS_LLDB_LIBS}
+
+################################################################################
+# MRNet setup
+################################################################################
+findMRNet(GLADIUS_MRNET_INCLUDE_DIRS GLADIUS_MRNET_LIB_DIRS GLADIUS_MRNET_LIBS)
+include_directories(${GLADIUS_MRNET_INCLUDE_DIRS})
+link_directories(${GLADIUS_MRNET_LIB_DIRS})
+#target_link_libraries use where needed with ${GLADIUS_MRNET_LIBS}
 
 ################################################################################
 # add top-level source directory
