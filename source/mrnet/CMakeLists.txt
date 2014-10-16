@@ -6,7 +6,8 @@
 # top-level directory of this distribution.
 #
 
-add_subdirectory(core)
-add_subdirectory(mrnet)
-add_subdirectory(debugger)
-add_subdirectory(gladius)
+add_library(
+    GladiusMRNet
+    mrnet.cpp mrnet.h
+)
+include_directories(..)

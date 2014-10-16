@@ -14,6 +14,7 @@ add_executable(
 include_directories(..)
 target_link_libraries(gladius
     GladiusUtils
+    GladiusMRNet
     GladiusDBE
     ${GLADIUS_LLDB_LIBS}
 )

@@ -295,7 +295,6 @@ LLDBDriver::ParseArgs(
     // constructor, then set the flags back to "read them in" here, and then if
     // we see the "-n" flag, we'll turn it off again.  Finally we have to read
     // them in by hand later in the main loop.
-
     mDebugger.SkipLLDBInitFiles (false);
     mDebugger.SkipAppInitFiles (false);
 
