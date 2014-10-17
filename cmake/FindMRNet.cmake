@@ -54,15 +54,18 @@ function(findMRNet outIncludeDirs outLinkDirs outLinkLibs)
     endforeach()
     # Okay, now append dl libs to the list of libName. Since this won't be in
     # the search path, we can't add it initially. So, add it now.
+    message(STATUS "Adding needed DL link libs")
     list(APPEND libNames "${CMAKE_DL_LIBS}")
     # Same goes for pthread
+    message(STATUS "Adding needed thread link libs")
     find_package(Threads REQUIRED)
     list(APPEND libNames "${CMAKE_THREAD_LIBS_INIT}")
     # ... and same with boost
     find_package(Boost 1.54.0 COMPONENTS system timer)
     if(NOT Boost_FOUND)
         message(FATAL_ERROR "Cannot find necessary library: Boost "
-                            "Cannot continue.")
+                            "Cannot continue."
+        )
     endif()
     list(APPEND libNames "${Boost_LIBRARIES}")
     # If we are here, then all is well. Return the outs.
