@@ -19,6 +19,7 @@ using namespace gladius;
 Gladius::~Gladius(void)
 {
     if (dbe) delete dbe;
+    if (mrnetFE) delete mrnetFE;
 }
 
 /**
@@ -36,6 +37,7 @@ Gladius::Gladius(
 
     try {
         dbe = new dbe::GladiusDBE(argc, argv, envp);
+        mrnetFE = new mrnet::MRNetFE();
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

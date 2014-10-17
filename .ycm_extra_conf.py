@@ -80,6 +80,9 @@ flags = [
 '-isystem',
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
 '-I/Users/samuel/local/lldb/include',
+'-I/home/samuel/local/lldb/include',
+'-I/Users/samuel/local/mrnet/include',
+'-I/home/samuel/local/mrnet/include',
 '-I./source',
 ]
 

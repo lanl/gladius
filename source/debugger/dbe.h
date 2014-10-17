@@ -7,7 +7,6 @@
  *
  * University of Illinois/NCSA Open Source License
  * Copyright (c) 2010 Apple Inc. All rights reserved.
- *
  * For more details, please see LICENSE.TXT in the LLDB distirubtion.
  */
 

@@ -9,6 +9,7 @@
 #ifndef GLADIUS_H_INCLUDED
 #define GLADIUS_H_INCLUDED
 
+#include "mrnet/mrnet-fe.h"
 #include "debugger/dbe.h"
 
 namespace gladius {
@@ -17,6 +18,7 @@ class Gladius {
 private:
     Gladius(void);
     dbe::GladiusDBE *dbe = nullptr;
+    mrnet::MRNetFE *mrnetFE = nullptr;
 
 public:
     ~Gladius(void);

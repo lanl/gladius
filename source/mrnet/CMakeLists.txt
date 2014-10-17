@@ -8,7 +8,7 @@
 
 add_library(
     GladiusMRNet
-    gladius-fe.cpp gladius-fe.h
+    mrnet-fe.cpp mrnet-fe.h
 )
 
 include_directories(..)
