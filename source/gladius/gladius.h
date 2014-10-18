@@ -17,12 +17,12 @@ namespace gladius {
 
 class Gladius {
 private:
-    int argc;
-    char **argv = nullptr;
-    char **envp = nullptr;
-    term::Terminal *term = nullptr;
-    dbe::GladiusDBE *dbe = nullptr;
-    mrnet::MRNetFE *mrnetFE = nullptr;
+    int mArgc;
+    char **mArgV = nullptr;
+    char **mEnvp = nullptr;
+    term::Terminal *mTerm = nullptr;
+    dbe::GladiusDBE *mDBE = nullptr;
+    mrnet::MRNetFE *mMRNetFE = nullptr;
 
     Gladius(void);
 

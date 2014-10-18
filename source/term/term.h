@@ -8,11 +8,20 @@
  * Copyright (c) 1992,1993 The Regents of the University of California.
  *                         All rights reserved.
  * See tc1.c in the libedit distribution for more details.
+ *
+ * University of Illinois/NCSA Open Source License
+ * Copyright (c) 2010 Apple Inc. All rights reserved.
+ * For more details, please see LICENSE.TXT in the LLDB distirubtion.
  */
 
 /**
  * Implements the (pseudo) terminal functionality for the tool front-end. The
  * heavy lifting is performed by editline (libedit).
+ */
+
+/**
+ * TODO
+ * History - See source/Host/common/Editline.cpp in LLDB for an example.
  */
 
 #ifndef GLADIUS_TERM_TERM_H_INCLUDED
@@ -27,10 +36,12 @@ namespace term {
 
 class Terminal {
 private:
-    static constexpr int histSize = 100;
-    EditLine *editLine = nullptr;
-    Tokenizer *tokenizer = nullptr;
-    History *hist = nullptr;
+    static constexpr int sHistSize = 100;
+    EditLine *mEditLine = nullptr;
+    Tokenizer *mTokenizer = nullptr;
+    History *mHist = nullptr;
+    HistEvent mHistEvent;
+
     Terminal(void);
 
 public:
@@ -41,6 +52,8 @@ public:
         const char **argv
     );
 
+    void
+    enterREPL(void);
 };
 
 } // end term namespace

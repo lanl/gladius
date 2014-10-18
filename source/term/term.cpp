@@ -8,6 +8,10 @@
  * Copyright (c) 1992,1993 The Regents of the University of California.
  *                         All rights reserved.
  * See tc1.c in the libedit distribution for more details.
+ *
+ * University of Illinois/NCSA Open Source License
+ * Copyright (c) 2010 Apple Inc. All rights reserved.
+ * For more details, please see LICENSE.TXT in the LLDB distirubtion.
  */
 
 #include "term.h"
@@ -31,50 +35,13 @@ volatile sig_atomic_t gotsig = 0;
  *
  */
 char *
-prompt(EditLine *el)
+getPromptCallback(EditLine *el)
 {
     GLADIUS_UNUSED(el);
-    static char a[] = "\1\033[7m\1Edit$\1\033[0m\1 ";
-    static char b[] = "Edit> ";
-    return continuation ? b : a;
+    static char p[] = "(" PACKAGE_NAME ") ";
+    return p;
 }
 
-unsigned char
-complete(
-    EditLine *el,
-    int ch
-) {
-    GLADIUS_UNUSED(ch);
-    DIR *dd = opendir(".");
-    struct dirent *dp;
-    const char* ptr;
-    const LineInfo *lf = el_line(el);
-    size_t len;
-    int res = CC_ERROR;
-
-    /*
-     * Find the last word
-     */
-    for (ptr = lf->cursor - 1;
-        !isspace((unsigned char)*ptr) && ptr > lf->buffer; ptr--)
-        continue;
-    len = lf->cursor - ++ptr;
-
-    for (dp = readdir(dd); dp != NULL; dp = readdir(dd)) {
-        if (len > strlen(dp->d_name))
-            continue;
-        if (strncmp(dp->d_name, ptr, len) == 0) {
-            if (el_insertstr(el, &dp->d_name[len]) == -1)
-                res = CC_ERROR;
-            else
-                res = CC_REFRESH;
-            break;
-        }
-    }
-
-    closedir(dd);
-    return res;
-}
 }
 
 using namespace gladius::term;
@@ -87,105 +54,78 @@ Terminal:: Terminal(
     const char **argv
 ) {
     GLADIUS_UNUSED(argc);
-    HistEvent ev;
 
     (void)setlocale(LC_CTYPE, "");
 
-    if (NULL == (hist = history_init())) {
+    if (NULL == (mHist = history_init())) {
         GLADIUS_THROW_CALL_FAILED("history_init");
     }
     // Remember events
-    if (history(hist, &ev, H_SETSIZE, histSize) < 0) {
+    if (history(mHist, &mHistEvent, H_SETSIZE, sHistSize) < 0) {
         GLADIUS_THROW_CALL_FAILED("history");
     }
-    tokenizer = tok_init(NULL);
-    if (NULL == (editLine = el_init(*argv, stdin, stdout, stderr))) {
+    if (NULL == (mEditLine = el_init(*argv, stdin, stdout, stderr))) {
         GLADIUS_THROW_CALL_FAILED("el_init");
     }
-    // Set default editor : vi, folks
-    if (el_set(editLine, EL_EDITOR, "vi") < 0) {
+    // Set default editor : emacs (for now)
+    if (el_set(mEditLine, EL_EDITOR, "emacs") < 0) {
         GLADIUS_THROW_CALL_FAILED("el_set EL_EDITOR");
     }
     // Handle signals gracefully
-    if (el_set(editLine, EL_SIGNAL, 1) < 0) {
+    if (el_set(mEditLine, EL_SIGNAL, 1) < 0) {
         GLADIUS_THROW_CALL_FAILED("el_set EL_SIGNAL");
     }
+    // Tell editline to use this history interface
+    if (el_set(mEditLine, EL_HIST, history, mHist) < 0) {
+        GLADIUS_THROW_CALL_FAILED("el_set EL_HIST");
+    }
     // Set the prompt function
-    if (el_set(editLine, EL_PROMPT_ESC, prompt, '\1') < 0) {
+    if (el_set(mEditLine, EL_PROMPT, getPromptCallback) < 0) {
         GLADIUS_THROW_CALL_FAILED("el_set EL_PROMPT_ESC");
     }
-    // Tell editline to use this history interface
-    el_set(editLine, EL_HIST, history, hist);
-    // Add a user-defined function
-    el_set(editLine, EL_ADDFN, "ed-complete", "Complete argument", complete);
-    // Bind tab to it
-    el_set(editLine, EL_BIND, "^I", "ed-complete", NULL);
-    // Bind j, k in vi command mode to previous and next line, instead of
-    // previous and next history.
-    el_set(editLine, EL_BIND, "-a", "k", "ed-prev-line", NULL);
-    el_set(editLine, EL_BIND, "-a", "j", "ed-next-line", NULL);
-    /*
-     * Source the user's defaults file.
-     */
-    el_source(editLine, NULL);
+    // Bind C-R: Cycle through backwards search, entering string
+    if (el_set(mEditLine, EL_BIND, "^r", "em-inc-search-prev", NULL) < 0) {
+        GLADIUS_THROW_CALL_FAILED("el_set EL_BIND");
+    }
+    // Source $PWD/.editrc then $HOME/.editrc
+    el_source(mEditLine, NULL);
+}
 
-    const char *buf;
-    int num;
+/**
+ * Top-level routine to start the read–eval–print loop (REPL).
+ */
+void
+Terminal::enterREPL(void)
+{
+    // Points to current line
+    const char *cLineBufp;
+    int nCharsRead;
     int ncontinuation;
-    while ((buf = el_gets(editLine, &num)) != NULL && num != 0)  {
+    mTokenizer = tok_init(NULL);
+
+    while (NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead)) &&
+           0 != nCharsRead)  {
         int ac, cc, co;
-#ifdef DEBUG
-        int i;
-#endif
         const char **av;
         const LineInfo *li;
-        li = el_line(editLine);
-#ifdef DEBUG
-        (void) fprintf(stderr, "==> got %d %s", num, buf);
-        (void) fprintf(stderr, "  > li `%.*s_%.*s'\n",
-            (li->cursor - li->buffer), li->buffer,
-            (li->lastchar - 1 - li->cursor),
-            (li->cursor >= li->lastchar) ? "" : li->cursor);
-
-#endif
+        li = el_line(mEditLine);
         if (gotsig) {
             (void) fprintf(stderr, "Got signal %d.\n", gotsig);
             gotsig = 0;
-            el_reset(editLine);
+            el_reset(mEditLine);
         }
 
-        if (!continuation && num == 1)
+        if (!continuation && nCharsRead == 1)
             continue;
 
         ac = cc = co = 0;
-        ncontinuation = tok_line(tokenizer, li, &ac, &av, &cc, &co);
+        ncontinuation = tok_line(mTokenizer, li, &ac, &av, &cc, &co);
         if (ncontinuation < 0) {
             (void) fprintf(stderr, "Internal error\n");
             continuation = 0;
             continue;
         }
-#ifdef DEBUG
-        (void) fprintf(stderr, "  > nc %d ac %d cc %d co %d\n",
-            ncontinuation, ac, cc, co);
-#endif
-#if 0
-        if (continuation) {
-            /*
-             * Append to the right event in case the user
-             * moved around in history.
-             */
-            if (history(hist, &ev, H_SET, lastevent) == -1)
-                err(1, "%d: %s", lastevent, ev.str);
-            history(hist, &ev, H_ADD , buf);
-        } else {
-            history(hist, &ev, H_ENTER, buf);
-            lastevent = ev.num;
-        }
-#else
-                /* Simpler */
-        history(hist, &ev, continuation ? H_APPEND : H_ENTER, buf);
-#endif
-
+        history(mHist, &mHistEvent, continuation ? H_APPEND : H_ENTER, cLineBufp);
         continuation = ncontinuation;
         ncontinuation = 0;
         if (continuation)
@@ -200,30 +140,32 @@ Terminal:: Terminal(
                     co, av[i], av[i] + co);
         }
 #endif
-
-        if (strcmp(av[0], "history") == 0) {
+        if (strcmp(av[0], "quit") == 0) {
+            break;
+        }
+        else if (strcmp(av[0], "history") == 0) {
             int rv;
 
             switch (ac) {
             case 1:
-                for (rv = history(hist, &ev, H_LAST); rv != -1;
-                    rv = history(hist, &ev, H_PREV))
+                for (rv = history(mHist, &mHistEvent, H_LAST); rv != -1;
+                    rv = history(mHist, &mHistEvent, H_PREV))
                     (void) fprintf(stdout, "%4d %s",
-                        ev.num, ev.str);
+                        mHistEvent.num, mHistEvent.str);
                 break;
 
             case 2:
                 if (strcmp(av[1], "clear") == 0)
-                     history(hist, &ev, H_CLEAR);
+                     history(mHist, &mHistEvent, H_CLEAR);
                 else
                      goto badhist;
                 break;
 
             case 3:
                 if (strcmp(av[1], "load") == 0)
-                     history(hist, &ev, H_LOAD, av[2]);
+                     history(mHist, &mHistEvent, H_LOAD, av[2]);
                 else if (strcmp(av[1], "save") == 0)
-                     history(hist, &ev, H_SAVE, av[2]);
+                     history(mHist, &mHistEvent, H_SAVE, av[2]);
                 break;
 
             badhist:
@@ -232,7 +174,7 @@ Terminal:: Terminal(
                     "Bad history arguments\n");
                 break;
             }
-        } else if (el_parse(editLine, ac, av) == -1) {
+        } else if (el_parse(mEditLine, ac, av) == -1) {
             switch (fork()) {
             case 0:
                 execvp(av[0], (char *const *)(av));
@@ -246,19 +188,14 @@ Terminal:: Terminal(
                 break;
 
             default:
-                if (wait(&num) == -1)
+                if (wait(&nCharsRead) == -1)
                     perror("wait");
-                (void) fprintf(stderr, "Exit %x\n", num);
+                (void) fprintf(stderr, "Exit %x\n", nCharsRead);
                 break;
             }
         }
-
-        tok_reset(tokenizer);
+        tok_reset(mTokenizer);
     }
-
-    el_end(editLine);
-    tok_end(tokenizer);
-    history_end(hist);
 }
 
 /**
@@ -266,4 +203,7 @@ Terminal:: Terminal(
  */
 Terminal::~Terminal(void)
 {
+    if (mEditLine) el_end(mEditLine);
+    if (mTokenizer) tok_end(mTokenizer);
+    if (mHist) history_end(mHist);
 }

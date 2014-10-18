@@ -20,10 +20,10 @@ using namespace gladius;
 Gladius::~Gladius(void)
 {
     using namespace gladius;
-    if (argv) core::Utils::freeDupArgv(argv);
-    if (dbe) delete dbe;
-    if (mrnetFE) delete mrnetFE;
-    if (term) delete term;
+    if (mArgV) core::Utils::freeDupArgv(mArgV);
+    if (mDBE) delete mDBE;
+    if (mMRNetFE) delete mMRNetFE;
+    if (mTerm) delete mTerm;
 }
 
 /**
@@ -33,7 +33,8 @@ void
 Gladius::localBody(void)
 {
     try {
-        term = new term::Terminal(argc, (const char **)argv);
+        mTerm = new term::Terminal(mArgc, (const char **)mArgV);
+        mTerm->enterREPL();
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -51,13 +52,12 @@ Gladius::Gladius(
     using namespace gladius;
 
     try {
-        this->argc = argc;
-        this->argv = core::Utils::dupArgv(argc, (char **)argv);
-        this->envp = (char **)envp;
-        localBody();
+        this->mArgc = argc;
+        this->mArgV = core::Utils::dupArgv(mArgc, (char **)argv);
+        this->mEnvp = (char **)envp;
 #if 0
-        dbe = new dbe::GladiusDBE(argc, argv, envp);
-        mrnetFE = new mrnet::MRNetFE();
+        mDBE = new dbe::GladiusDBE(mArgc, mArgV, mEnvp);
+        mMRNetFE = new mrnet::MRNetFE();
 #endif
 
     }
@@ -72,12 +72,10 @@ Gladius::Gladius(
 void
 Gladius::run(void)
 {
-#if 0
     try {
-        dbe->mainLoop();
+        localBody();
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
-#endif
 }
