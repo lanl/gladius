@@ -2,8 +2,8 @@
 
 ## Prerequisites
 - C++11-capable C++ compiler
-- swig (http://www.swig.org/)
 - LLDB (http://lldb.llvm.org/)
+    - swig (http://www.swig.org/)
     - libedit (http://thrysoee.dk/editline/)
 - MRNet (http://www.paradyn.org/mrnet/)
     - boost (http://www.boost.org/)

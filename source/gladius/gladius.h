@@ -9,6 +9,7 @@
 #ifndef GLADIUS_H_INCLUDED
 #define GLADIUS_H_INCLUDED
 
+#include "term/term.h"
 #include "mrnet/mrnet-fe.h"
 #include "debugger/dbe.h"
 
@@ -16,9 +17,14 @@ namespace gladius {
 
 class Gladius {
 private:
-    Gladius(void);
+    int argc;
+    char **argv = nullptr;
+    char **envp = nullptr;
+    term::Terminal *term = nullptr;
     dbe::GladiusDBE *dbe = nullptr;
     mrnet::MRNetFE *mrnetFE = nullptr;
+
+    Gladius(void);
 
 public:
     ~Gladius(void);
@@ -30,7 +36,13 @@ public:
     );
 
     void
-    mainLoop(void);
+    localBody(void);
+
+    void
+    remoteBody(void);
+
+    void
+    run(void);
 };
 
 } // end gladius namespace

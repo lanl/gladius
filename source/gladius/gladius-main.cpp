@@ -6,15 +6,22 @@
  * top-level directory of this distribution.
  */
 
-#include "core/core-includes.h"
+/**
+ * This is the main driver for gladius.
+ */
 
 #include "gladius.h"
+
+#include "core/core-includes.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 
 namespace {
+/**
+ * Disables buffering for stdio and stderr.
+ */
 void
 disableBuffering(void)
 {
@@ -23,6 +30,9 @@ disableBuffering(void)
 }
 } // end private routines namespace
 
+/**
+ * main
+ */
 int
 main(
     int argc,
@@ -35,7 +45,7 @@ main(
         disableBuffering();
         Gladius gladius(argc, const_cast<const char **>(argv),
                         const_cast<const char **>(envp));
-        gladius.mainLoop();
+        gladius.run();
     } catch (GladiusException &e) {
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;

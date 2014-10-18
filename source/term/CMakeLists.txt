@@ -6,9 +6,16 @@
 # top-level directory of this distribution.
 #
 
-add_subdirectory(core)
-add_subdirectory(ras)
-add_subdirectory(mrnet)
-add_subdirectory(term)
-add_subdirectory(debugger)
-add_subdirectory(gladius)
+# The Gladius Debugger BackEnd library
+add_library(
+    GladiusTerm
+    term.h term.cpp
+)
+
+include_directories(..)
+
+# TODO Add proper FindLibEdit configury.
+target_link_libraries(
+    GladiusTerm
+    edit
+)

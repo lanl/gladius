@@ -16,6 +16,7 @@ include_directories(..)
 
 target_link_libraries(gladius
     GladiusUtils
+    GladiusTerm
     GladiusMRNet
     GladiusDBE
 )
