@@ -9,6 +9,7 @@
 # The Gladius Debugger BackEnd library
 add_library(
     GladiusTerm
+    term-cmds.h
     term.h term.cpp
 )
 

@@ -18,18 +18,6 @@
 #include <cstdlib>
 #include <iostream>
 
-namespace {
-/**
- * Disables buffering for stdio and stderr.
- */
-void
-disableBuffering(void)
-{
-    setbuf(stdout, NULL);
-    setbuf(stderr, NULL);
-}
-} // end private routines namespace
-
 /**
  * main
  */
@@ -42,7 +30,6 @@ main(
     using namespace gladius;
     using namespace gladius::core;
     try {
-        disableBuffering();
         Gladius gladius(argc, const_cast<const char **>(argv),
                         const_cast<const char **>(envp));
         gladius.run();

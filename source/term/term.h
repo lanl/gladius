@@ -29,6 +29,9 @@
 
 #include "core/core-includes.h"
 
+#include <string>
+#include <map>
+
 #include "histedit.h"
 
 namespace gladius {
@@ -44,6 +47,16 @@ private:
 
     Terminal(void);
 
+    void
+    setSignalHandlers(void);
+
+    void
+    evaluateInput(
+        int ac,
+        const char **argv,
+        bool *continueREPL
+    );
+
 public:
     ~Terminal(void);
 
@@ -54,6 +67,33 @@ public:
 
     void
     enterREPL(void);
+
+    EditLine *
+    getEditLine(void) const {
+        return mEditLine;
+    }
+
+    struct EvalInputCmdCallBackArgs {
+        Terminal *terminal;
+        int argc;
+        char **argv;
+
+        EvalInputCmdCallBackArgs(
+            Terminal *t,
+            int argc,
+            const char **argv)
+            : terminal(t)
+            , argc(argc)
+            , argv((char **)argv) { ; }
+
+    };
+    struct EvalInputCmdCallBack {
+        void (*callBackFun)(const EvalInputCmdCallBackArgs &args);
+    };
+
+private:
+    static std::map<std::string,
+                    void (*)(const EvalInputCmdCallBackArgs &)> sEvalCMDMap;
 };
 
 } // end term namespace
