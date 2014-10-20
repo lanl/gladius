@@ -8,10 +8,6 @@
  * Copyright (c) 1992,1993 The Regents of the University of California.
  *                         All rights reserved.
  * See tc1.c in the libedit distribution for more details.
- *
- * University of Illinois/NCSA Open Source License
- * Copyright (c) 2010 Apple Inc. All rights reserved.
- * For more details, please see LICENSE.TXT in the LLDB distirubtion.
  */
 
 #include "term.h"
@@ -71,8 +67,7 @@ disableBuffering(void)
     setbuf(stderr, NULL);
 }
 
-
-}
+} // end namespace for private things
 
 using namespace gladius::term;
 
@@ -136,8 +131,8 @@ Terminal::enterREPL(void)
     int nCharsRead = 0, nContinuation = 0;
 
     while (continueREPL &&
-          NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead)) &&
-          0 != nCharsRead)  {
+           NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead)) &&
+           0 != nCharsRead)  {
         if (gotsig) {
             (void)fprintf(stderr, "Got signal %d.\n", gotsig);
             gotsig = 0;
@@ -149,12 +144,11 @@ Terminal::enterREPL(void)
         int tokArgc = 0, cc = 0, co = 0;
         const char **tokArgv = NULL;
         if ((nContinuation = tok_line(mTokenizer, el_line(mEditLine),
-                                 &tokArgc, &tokArgv, &cc, &co)) < 0) {
+                                      &tokArgc, &tokArgv, &cc, &co)) < 0) {
             GLADIUS_THROW_CALL_FAILED("tok_line");
         }
         // Update our history
         history(mHist, &mHistEvent, continuation ? H_APPEND : H_ENTER, cLineBufp);
-
         continuation = nContinuation;
         nContinuation = 0;
         if (continuation) continue;
@@ -191,7 +185,7 @@ Terminal::evaluateInput(
         auto iter = sEvalCMDMap.find(argv[0]);
         if (iter == sEvalCMDMap.end()) {
             std::cout << "error: \'" << argv[0] << "\' "
-                      << "is not a valid command." << std::endl;
+                      << "is not a valid command. Try \'help\'." << std::endl;
         }
         else {
             // Found, so call the registered callback.
@@ -201,30 +195,6 @@ Terminal::evaluateInput(
     tok_reset(mTokenizer);
     // continue REPL
     *continueREPL = true;
-#if 0
-    if (el_parse(mEditLine, argc, argv) == -1) {
-        switch (fork()) {
-            case 0:
-                execvp(argv[0], (char *const *)(argv));
-                perror(argv[0]);
-                _exit(1);
-                /*NOTREACHED*/
-                break;
-
-            case -1:
-                perror("fork");
-                break;
-
-            default: {
-                int status;
-                if (-1 == wait(&status)) {
-                    GLADIUS_THROW_CALL_FAILED("wait");
-                }
-                break;
-            }
-        }
-    }
-#endif
 }
 
 /**

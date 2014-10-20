@@ -13,3 +13,14 @@
 
 #include "apa.h"
 #include "core/core-includes.h"
+
+namespace gladius {
+namespace apa {
+
+AutomaticProcessAcquisition::AutomaticProcessAcquisition(void)
+{
+    ;
+}
+
+} // end term namespace
+} // end gladius namespace

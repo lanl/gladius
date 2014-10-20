@@ -9,6 +9,7 @@
 add_library(
     GladiusAPA
     apa.h apa.cpp
+    apa-mpir.h
 )
 
 include_directories(..)

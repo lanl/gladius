@@ -14,15 +14,20 @@
 #define GLADIUS_APA_APA_H_INCLUDED
 
 #include "core/core-includes.h"
+#include "apa-mpir.h"
 
 namespace gladius {
 namespace apa {
 
 class AutomaticProcessAcquisition {
 private:
-    AutomaticProcessAcquisition(void);
+    // Number of processes that are being debugged.
+    int64_t mNProcs = -1;
+    MPIR_PROCDESC *mProcTable = nullptr;
 
 public:
+    AutomaticProcessAcquisition(void);
+
     ~AutomaticProcessAcquisition(void);
 };
 

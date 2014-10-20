@@ -56,11 +56,13 @@ namespace core {
 class Utils {
 private:
     Utils(void) { ; }
+
     ~Utils(void) { ; }
+
 public:
     /**
      * Takes an argv-like structure and returns a duplicate that needs to be
-     * freed by the caller by calling
+     * freed by the caller by calling freeDupArgv.
      */
     static char **
     dupArgv(int argc,

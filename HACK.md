@@ -7,7 +7,6 @@
 - Static field names start with s.
 - Other fields start with a lower case letter.
 
-
 ## Valgrid
 ```bash
 valgrind --leak-check=full --trace-children=yes --track-origins=yes \

@@ -8,10 +8,6 @@
  * Copyright (c) 1992,1993 The Regents of the University of California.
  *                         All rights reserved.
  * See tc1.c in the libedit distribution for more details.
- *
- * University of Illinois/NCSA Open Source License
- * Copyright (c) 2010 Apple Inc. All rights reserved.
- * For more details, please see LICENSE.TXT in the LLDB distirubtion.
  */
 
 /**
