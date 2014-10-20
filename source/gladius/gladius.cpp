@@ -52,9 +52,9 @@ Gladius::Gladius(
     using namespace gladius;
 
     try {
-        this->mArgc = argc;
-        this->mArgV = core::Utils::dupArgv(mArgc, (char **)argv);
-        this->mEnvp = (char **)envp;
+        mArgc = argc;
+        mArgV = core::Utils::dupArgv(mArgc, (char **)argv);
+        mEnvp = (char **)envp;
 #if 0
         mDBE = new dbe::GladiusDBE(mArgc, mArgV, mEnvp);
         mMRNetFE = new mrnet::MRNetFE();

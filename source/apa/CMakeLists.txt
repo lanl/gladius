@@ -6,10 +6,9 @@
 # top-level directory of this distribution.
 #
 
-add_subdirectory(core)
-add_subdirectory(ras)
-add_subdirectory(apa)
-add_subdirectory(mrnet)
-add_subdirectory(term)
-add_subdirectory(debugger)
-add_subdirectory(gladius)
+add_library(
+    GladiusAPA
+    apa.h apa.cpp
+)
+
+include_directories(..)

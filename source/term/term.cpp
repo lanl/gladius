@@ -15,9 +15,8 @@
  */
 
 #include "term.h"
-
-#include "core/utils.h"
 #include "term-cmds.h"
+#include "core/utils.h"
 
 #include <string>
 #include <iostream>
@@ -163,6 +162,17 @@ Terminal::enterREPL(void)
         evaluateInput(tokArgc, tokArgv, &continueREPL);
     }
 }
+
+/**
+ * Map between command name and callback function.
+ */
+std::map<std::string, void (*)(const Terminal::EvalInputCmdCallBackArgs &)>
+Terminal::sEvalCMDMap = {
+    {"help", helpCMDCallback},
+    {"?", helpCMDCallback},
+    {"history", historyCMDCallback},
+    {"launch", launchCMDCallback}
+};
 
 /**
  *

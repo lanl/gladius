@@ -69,8 +69,18 @@ public:
     enterREPL(void);
 
     EditLine *
-    getEditLine(void) const {
+    getEditLine(void) {
         return mEditLine;
+    }
+
+    History *
+    getHistory(void) {
+        return mHist;;
+    }
+
+    HistEvent &
+    getHistEvent(void) {
+        return mHistEvent;
     }
 
     struct EvalInputCmdCallBackArgs {

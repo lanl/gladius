@@ -14,8 +14,10 @@ add_executable(
 
 include_directories(..)
 
-target_link_libraries(gladius
+target_link_libraries(
+    gladius
     GladiusUtils
+    GladiusAPA
     GladiusTerm
     GladiusMRNet
     GladiusDBE
