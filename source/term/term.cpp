@@ -24,6 +24,15 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+// TODO RM from here
+volatile int MPIR_being_debugged = 0;
+#ifdef __cplusplus
+}
+#endif
+
 namespace {
 int continuation = 0;
 volatile sig_atomic_t gotsig = 0;
@@ -158,13 +167,15 @@ Terminal::enterREPL(void)
 }
 
 /**
- * Map between command name and callback function.
+ * Map between command name and callback function. This table is what is
+ * searched when parsing user input.
  */
 std::map<std::string, void (*)(const Terminal::EvalInputCmdCallBackArgs &)>
 Terminal::sEvalCMDMap = {
     {"help", helpCMDCallback},
     {"?", helpCMDCallback},
     {"history", historyCMDCallback},
+    {"hist", historyCMDCallback},
     {"launch", launchCMDCallback}
 };
 
@@ -177,10 +188,12 @@ Terminal::evaluateInput(
     const char **argv,
     bool *continueREPL
 ) {
+    // This command is special, so check for it outside of the lookup table.
     if (strcmp(argv[0], "quit") == 0) {
         *continueREPL = false;
         return;
     }
+    // Else see if the command is in our command lookup table.
     else {
         auto iter = sEvalCMDMap.find(argv[0]);
         if (iter == sEvalCMDMap.end()) {
@@ -188,7 +201,8 @@ Terminal::evaluateInput(
                       << "is not a valid command. Try \'help\'." << std::endl;
         }
         else {
-            // Found, so call the registered callback.
+            // Found it, so call the registered callback associated with the
+            // string.
             iter->second(EvalInputCmdCallBackArgs(this, argc, argv));
         }
     }

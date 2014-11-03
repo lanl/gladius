@@ -19,7 +19,6 @@ using namespace gladius;
  */
 Gladius::~Gladius(void)
 {
-    using namespace gladius;
     if (mArgV) core::Utils::freeDupArgv(mArgV);
     if (mDBE) delete mDBE;
     if (mMRNetFE) delete mMRNetFE;
@@ -27,7 +26,7 @@ Gladius::~Gladius(void)
 }
 
 /**
- *
+ * Local body for the tool front end.
  */
 void
 Gladius::localBody(void)
@@ -49,8 +48,6 @@ Gladius::Gladius(
     const char **argv,
     const char **envp
 ) {
-    using namespace gladius;
-
     try {
         mArgc = argc;
         mArgV = core::Utils::dupArgv(mArgc, (char **)argv);
@@ -59,7 +56,6 @@ Gladius::Gladius(
         mDBE = new dbe::GladiusDBE(mArgc, mArgV, mEnvp);
         mMRNetFE = new mrnet::MRNetFE();
 #endif
-
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

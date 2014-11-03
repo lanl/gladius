@@ -15,6 +15,8 @@
 #include <cstring>
 #include <string>
 
+#include <errno.h>
+
 #define GLADIUS_UNUSED(x)                                                      \
 do {                                                                           \
     (void)(x);                                                                 \
@@ -27,7 +29,8 @@ do {                                                                           \
 do {                                                                           \
     throw gladius::core::GladiusException(                                     \
               GLADIUS_WHERE,                                                   \
-              "Out of Resources");                                             \
+              "Out of Resources"                                               \
+          );                                                                   \
 } while (0)
 
 /**
@@ -37,7 +40,8 @@ do {                                                                           \
 do {                                                                           \
     throw gladius::core::GladiusException(                                     \
               GLADIUS_WHERE,                                                   \
-              "Invalid argument detected");                                    \
+              "Invalid argument detected"                                      \
+          );                                                                   \
 } while (0)
 
 /**
@@ -47,7 +51,8 @@ do {                                                                           \
 do {                                                                           \
     throw gladius::core::GladiusException(                                     \
               GLADIUS_WHERE,                                                   \
-              "The following call failed: " + std::string(msg));               \
+              "The following call failed: " + std::string(msg)                 \
+          );                                                                   \
 } while (0)
 
 namespace gladius {
@@ -105,6 +110,15 @@ public:
             *str = NULL;
         }
         free(dup);
+    }
+
+    /**
+     * Returns the strerror error string that corresponds to the provided errno.
+     */
+    static std::string
+    getStrError(int errNum)
+    {
+        return std::string(strerror(errNum));
     }
 };
 

@@ -18,6 +18,7 @@
 /**
  * TODO
  * History - See source/Host/common/Editline.cpp in LLDB for an example.
+ * Auto complete
  */
 
 #ifndef GLADIUS_TERM_TERM_H_INCLUDED
@@ -71,7 +72,7 @@ public:
 
     History *
     getHistory(void) {
-        return mHist;;
+        return mHist;
     }
 
     HistEvent &
@@ -90,11 +91,8 @@ public:
             const char **argv)
             : terminal(t)
             , argc(argc)
-            , argv((char **)argv) { ; }
-
-    };
-    struct EvalInputCmdCallBack {
-        void (*callBackFun)(const EvalInputCmdCallBackArgs &args);
+            , argv((char **)argv
+        ) { ; }
     };
 
 private:

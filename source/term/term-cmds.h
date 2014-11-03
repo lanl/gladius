@@ -12,6 +12,9 @@
 #include "term.h"
 #include "core/utils.h"
 
+// TMP
+#include "apa/apa.h"
+
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -20,7 +23,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
 namespace gladius {
 namespace term {
 
@@ -28,7 +30,8 @@ namespace term {
  * Displays help message.
  */
 inline void
-helpCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args) {
+helpCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+{
     GLADIUS_UNUSED(args);
     std::cout << PACKAGE_NAME << " help" << std::endl;
 }
@@ -37,7 +40,8 @@ helpCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args) {
  * Displays history.
  */
 inline void
-historyCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args) {
+historyCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+{
     Terminal *t = args.terminal;
     HistEvent &histEvent = t->getHistEvent();
     for (int rv = history(t->getHistory(), &histEvent, H_LAST);
@@ -50,27 +54,32 @@ historyCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args) {
  * Launches target application.
  */
 inline void
-launchCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args) {
+launchCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+{
+    std::cout << "starting application launch..." << std::endl;
     int argc = args.argc;
     const char **argv = const_cast<const char **>(args.argv);
     Terminal *t = args.terminal;
     EditLine *editLine = t->getEditLine();
+    // The return value is -1 if the command is unknown.
     if (-1 == el_parse(editLine, argc, argv)) {
-        // argv[0] will be "launch", so eat that.
-        char **appArgv = const_cast<char **>(argv);
-        appArgv++;
+        // argv[0] will be "launch", so eat that before dealing with the line
+        char **appArgv = const_cast<char **>(&argv[1]);
         switch (fork()) {
+            // Child (spawned process)
             case 0:
                 execvp(argv[1], (char *const *)(appArgv));
+                MPIR_being_debugged = 1;
+                // Print out any errors that may have occurred during the execvp
                 perror(argv[0]);
-                _exit(1);
-                /*NOTREACHED*/
+                _exit(EXIT_FAILURE);
+                // Not reached
                 break;
-
+            // Fork error
             case -1:
                 perror("fork");
                 break;
-
+            // Parent
             default: {
                 int status;
                 if (-1 == wait(&status)) {
