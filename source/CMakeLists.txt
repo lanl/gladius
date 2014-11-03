@@ -8,7 +8,6 @@
 
 add_subdirectory(core)
 add_subdirectory(ras)
-add_subdirectory(apa)
 add_subdirectory(mrnet)
 add_subdirectory(term)
 add_subdirectory(debugger)

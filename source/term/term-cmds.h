@@ -12,9 +12,6 @@
 #include "term.h"
 #include "core/utils.h"
 
-// TMP
-#include "apa/apa.h"
-
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -69,7 +66,6 @@ launchCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
             // Child (spawned process)
             case 0:
                 execvp(argv[1], (char *const *)(appArgv));
-                MPIR_being_debugged = 1;
                 // Print out any errors that may have occurred during the execvp
                 perror(argv[0]);
                 _exit(EXIT_FAILURE);

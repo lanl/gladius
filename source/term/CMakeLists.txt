@@ -20,5 +20,4 @@ include_directories(..)
 target_link_libraries(
     GladiusTerm
     edit
-    GladiusAPA
 )
