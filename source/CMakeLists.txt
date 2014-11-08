@@ -7,8 +7,6 @@
 #
 
 add_subdirectory(core)
-add_subdirectory(ras)
-add_subdirectory(mrnet)
+add_subdirectory(ui)
 add_subdirectory(term)
-add_subdirectory(debugger)
 add_subdirectory(gladius)

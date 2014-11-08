@@ -10,7 +10,7 @@
 #define GLADIUS_TERM_TERM_CMDS_H_INCLUDED
 
 #include "term.h"
-#include "core/utils.h"
+#include "core/core.h"
 
 #include <string>
 #include <iostream>

@@ -6,11 +6,18 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_CORE_CORE_INCLUDES_H_INCLUDED
-#define GLADIUS_CORE_CORE_INCLUDES_H_INCLUDED
+#include "ui.h"
 
-#include "gladius-package-info.h"
-#include "gladius-exception.h"
-#include "utils.h"
+using namespace gladius::ui;
 
-#endif
+/**
+ *
+ */
+UI::~UI(void) { ; }
+
+/**
+ *
+ */
+UI::UI(void)
+    : mArgC(0),
+      mArgV(nullptr) { ; }

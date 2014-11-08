@@ -11,8 +11,8 @@
  */
 
 /**
- * Implements the (pseudo) terminal functionality for the tool front-end. The
- * heavy lifting is performed by editline (libedit).
+ * Implements the (pseudo) terminal functionality for the tool front-end UI. The
+ * heavy lifting for the CLI is performed by editline (libedit).
  */
 
 /**
@@ -24,7 +24,7 @@
 #ifndef GLADIUS_TERM_TERM_H_INCLUDED
 #define GLADIUS_TERM_TERM_H_INCLUDED
 
-#include "core/core-includes.h"
+#include "ui/ui.h"
 
 #include <string>
 #include <map>
@@ -34,7 +34,7 @@
 namespace gladius {
 namespace term {
 
-class Terminal {
+class Terminal : public ui::UI {
 private:
     static constexpr int sHistSize = 100;
     EditLine *mEditLine = nullptr;
@@ -54,6 +54,10 @@ private:
         bool *continueREPL
     );
 
+    void
+    mEnterREPL(void);
+
+
 public:
     ~Terminal(void);
 
@@ -61,9 +65,6 @@ public:
         int argc,
         const char **argv
     );
-
-    void
-    enterREPL(void);
 
     EditLine *
     getEditLine(void) {
@@ -94,6 +95,9 @@ public:
             , argv((char **)argv
         ) { ; }
     };
+
+    void
+    interact(void);
 
 private:
     static std::map<std::string,

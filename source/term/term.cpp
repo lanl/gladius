@@ -12,7 +12,7 @@
 
 #include "term.h"
 #include "term-cmds.h"
-#include "core/utils.h"
+#include "core/core.h"
 
 #include <string>
 #include <iostream>
@@ -127,11 +127,17 @@ Terminal:: Terminal(
     mTokenizer = tok_init(NULL);
 }
 
+void
+Terminal::interact(void)
+{
+    mEnterREPL();
+}
+
 /**
  * Top-level routine to start the read–eval–print loop (REPL).
  */
 void
-Terminal::enterREPL(void)
+Terminal::mEnterREPL(void)
 {
     // Flag indicating whether or not the REPL should continue.
     bool continueREPL = true;

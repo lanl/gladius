@@ -6,12 +6,10 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_H_INCLUDED
-#define GLADIUS_H_INCLUDED
+#ifndef GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
+#define GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
 
-#include "term/term.h"
-#include "mrnet/mrnet-fe.h"
-#include "debugger/dbe.h"
+#include "ui/ui.h"
 
 namespace gladius {
 
@@ -20,9 +18,7 @@ private:
     int mArgc;
     char **mArgV = nullptr;
     char **mEnvp = nullptr;
-    term::Terminal *mTerm = nullptr;
-    dbe::GladiusDBE *mDBE = nullptr;
-    mrnet::MRNetFE *mMRNetFE = nullptr;
+    ui::UI *mUI = nullptr;
 
     Gladius(void);
 
@@ -34,12 +30,6 @@ public:
         const char **argv,
         const char **envp
     );
-
-    void
-    localBody(void);
-
-    void
-    remoteBody(void);
 
     void
     run(void);

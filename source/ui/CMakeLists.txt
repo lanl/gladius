@@ -7,9 +7,8 @@
 #
 
 add_library(
-    GladiusCore
-    core.h
-    gladius-package-info.h
-    utils.h
-    gladius-exception.h gladius-exception.cpp
+    GladiusUI
+    ui.h ui.cpp
 )
+
+include_directories(..)
