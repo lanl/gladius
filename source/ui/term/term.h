@@ -21,9 +21,10 @@
  * Auto complete
  */
 
-#ifndef GLADIUS_TERM_TERM_H_INCLUDED
-#define GLADIUS_TERM_TERM_H_INCLUDED
+#ifndef GLADIUS_UI_TERM_TERM_H_INCLUDED
+#define GLADIUS_UI_TERM_TERM_H_INCLUDED
 
+#include "core/core.h"
 #include "ui/ui.h"
 
 #include <string>
@@ -32,9 +33,10 @@
 #include "histedit.h"
 
 namespace gladius {
+namespace ui {
 namespace term {
 
-class Terminal : public ui::UI {
+class Terminal : public UI {
 private:
     static constexpr int sHistSize = 100;
     EditLine *mEditLine = nullptr;
@@ -42,11 +44,20 @@ private:
     History *mHist = nullptr;
     HistEvent mHistEvent;
 
+    /**
+     *
+     */
     Terminal(void);
 
+    /**
+     *
+     */
     void
     setSignalHandlers(void);
 
+    /**
+     *
+     */
     void
     evaluateInput(
         int ac,
@@ -54,28 +65,43 @@ private:
         bool *continueREPL
     );
 
+    /**
+     *
+     */
     void
     mEnterREPL(void);
 
 
 public:
+    /**
+     *
+     */
     ~Terminal(void);
 
-    Terminal(
-        int argc,
-        const char **argv
-    );
+    /**
+     *
+     */
+    Terminal(const core::Args &args);
 
+    /**
+     *
+     */
     EditLine *
     getEditLine(void) {
         return mEditLine;
     }
 
+    /**
+     *
+     */
     History *
     getHistory(void) {
         return mHist;
     }
 
+    /**
+     *
+     */
     HistEvent &
     getHistEvent(void) {
         return mHistEvent;
@@ -105,6 +131,7 @@ private:
 };
 
 } // end term namespace
+} // end ui namespace
 } // end gladius namespace
 
 #endif

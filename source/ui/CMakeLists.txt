@@ -6,9 +6,17 @@
 # top-level directory of this distribution.
 #
 
+add_subdirectory(term)
+
 add_library(
     GladiusUI
     ui.h ui.cpp
+    ui-factory.h
 )
 
 include_directories(..)
+
+target_link_libraries(
+    GladiusUI
+    GladiusUITerm
+)

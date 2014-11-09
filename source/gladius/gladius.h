@@ -19,13 +19,25 @@ private:
     core::Args mArgs;
     ui::UI *mUI = nullptr;
 
+    /**
+     *
+     */
     Gladius(void);
 
 public:
+    /**
+     *
+     */
     ~Gladius(void);
 
+    /**
+     *
+     */
     Gladius(const core::Args &args);
 
+    /**
+     *
+     */
     void
     run(void);
 };

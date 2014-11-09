@@ -8,5 +8,4 @@
 
 add_subdirectory(core)
 add_subdirectory(ui)
-add_subdirectory(term)
 add_subdirectory(gladius)

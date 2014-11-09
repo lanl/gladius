@@ -24,15 +24,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-// TODO RM from here
-volatile int MPIR_being_debugged = 0;
-#ifdef __cplusplus
-}
-#endif
-
 namespace {
 int continuation = 0;
 volatile sig_atomic_t gotsig = 0;
@@ -78,16 +69,14 @@ disableBuffering(void)
 
 } // end namespace for private things
 
-using namespace gladius::term;
+using namespace gladius::ui::term;
 
 /**
  *
  */
-Terminal:: Terminal(
-    int argc,
-    const char **argv
-) {
-    GLADIUS_UNUSED(argc);
+Terminal::Terminal(const core::Args &args)
+    : UI(args)
+{
     setLocale();
     disableBuffering();
     setSignalHandlers();
@@ -98,7 +87,7 @@ Terminal:: Terminal(
     if (history(mHist, &mHistEvent, H_SETSIZE, sHistSize) < 0) {
         GLADIUS_THROW_CALL_FAILED("history");
     }
-    if (NULL == (mEditLine = el_init(*argv, stdin, stdout, stderr))) {
+    if (NULL == (mEditLine = el_init(*(mArgs.argv()), stdin, stdout, stderr))) {
         GLADIUS_THROW_CALL_FAILED("el_init");
     }
     // Set default editor : emacs (for now)

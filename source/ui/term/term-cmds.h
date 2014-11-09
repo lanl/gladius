@@ -21,6 +21,7 @@
 #include <sys/wait.h>
 
 namespace gladius {
+namespace ui {
 namespace term {
 
 /**
@@ -88,6 +89,7 @@ launchCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
 }
 
 } // end term namespace
+} // end ui namespace
 } // end gladius namespace
 
 #endif

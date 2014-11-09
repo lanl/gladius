@@ -8,16 +8,16 @@
 
 # The Gladius Debugger BackEnd library
 add_library(
-    GladiusTerm
+    GladiusUITerm
     term-cmds.h
     term.h term.cpp
 )
 
-include_directories(..)
+include_directories(../..)
 
 # TODO Add proper FindLibEdit configury.
-# TODO RM APA from here
 target_link_libraries(
-    GladiusTerm
+    GladiusUITerm
+    GladiusUI
     edit
 )

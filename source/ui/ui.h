@@ -9,6 +9,8 @@
 #ifndef GLADIUS_UI_UI_H_INCLUDED
 #define GLADIUS_UI_UI_H_INCLUDED
 
+#include "core/core.h"
+
 namespace gladius {
 namespace ui {
 
@@ -17,14 +19,18 @@ namespace ui {
  */
 class UI {
 protected:
-    int mArgC;
-    char **mArgV;
+    core::Args mArgs;
 
 public:
     /**
      *
      */
     UI(void);
+
+    /**
+     *
+     */
+    UI(const core::Args &args);
 
     /**
      *
