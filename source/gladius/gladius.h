@@ -9,15 +9,14 @@
 #ifndef GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
 #define GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
 
+#include "core/core.h"
 #include "ui/ui.h"
 
 namespace gladius {
 
 class Gladius {
 private:
-    int mArgc;
-    char **mArgV = nullptr;
-    char **mEnvp = nullptr;
+    core::Args mArgs;
     ui::UI *mUI = nullptr;
 
     Gladius(void);
@@ -25,11 +24,7 @@ private:
 public:
     ~Gladius(void);
 
-    Gladius(
-        int argc,
-        const char **argv,
-        const char **envp
-    );
+    Gladius(const core::Args &args);
 
     void
     run(void);

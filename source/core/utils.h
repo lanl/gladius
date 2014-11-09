@@ -71,12 +71,12 @@ public:
      */
     static char **
     dupArgv(int argc,
-            char **argv
+            const char **argv
     ) {
         if (!argv) GLADIUS_THROW_INVLD_ARG();
         int i, strLen;
         char **dup = NULL;
-        /* allocate an extra spot for cap */
+        // allocate an extra spot for cap
         dup = (char **)calloc(argc + 1, sizeof(char *));
         if (!dup) {
             GLADIUS_THROW_OOR();

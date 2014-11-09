@@ -12,7 +12,7 @@
 
 #include "gladius.h"
 
-#include "core/gladius-exception.h"
+#include "core/core.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -29,9 +29,10 @@ main(
     using namespace gladius;
     using namespace gladius::core;
     try {
-        Gladius gladius(argc,
-                        const_cast<const char **>(argv),
-                        const_cast<const char **>(envp));
+        Args args(argc,
+                  const_cast<const char **>(argv),
+                  const_cast<const char **>(envp));
+        Gladius gladius(args);
         gladius.run();
     }
     catch (GladiusException &e) {

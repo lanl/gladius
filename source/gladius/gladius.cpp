@@ -19,22 +19,15 @@ using namespace gladius;
  */
 Gladius::~Gladius(void)
 {
-    if (mArgV) core::Utils::freeDupArgv(mArgV);
     if (mUI) delete mUI;
 }
 
 /**
  *
  */
-Gladius::Gladius(
-    int argc,
-    const char **argv,
-    const char **envp
-) {
+Gladius::Gladius(const core::Args &args) {
     try {
-        mArgc = argc;
-        mArgV = core::Utils::dupArgv(mArgc, (char **)argv);
-        mEnvp = (char **)envp;
+        mArgs = args;
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -48,7 +41,7 @@ void
 Gladius::run(void)
 {
     try {
-        mUI->interact();
+        //mUI->interact();
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

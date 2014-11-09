@@ -12,5 +12,6 @@
 #include "gladius-package-info.h"
 #include "gladius-exception.h"
 #include "utils.h"
+#include "args.h"
 
 #endif

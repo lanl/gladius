@@ -13,12 +13,14 @@ LLDB_HOME := ${HOME}/local/lldb
 MRNET_HOME := ${HOME}/local/mrnet
 BUILD_LOC := build
 TEST_EXEC := ./source/gladius/gladius
+CMAKE_FLAGS :=
 
 all:
 	@ \
 	if [[ ! -d ${BUILD_LOC} ]]; then \
 		mkdir ${BUILD_LOC} && \
 		cd ${BUILD_LOC} && cmake ../ \
+		${CMAKE_FLAGS} \
 		-DGLADIUS_LLDB_HOME=${LLDB_HOME} \
 		-DGLADIUS_MRNET_HOME=${MRNET_HOME} && \
 		cd -; \
@@ -34,3 +36,6 @@ vclean:
 run:
 	@ \
 	make all && cd ${BUILD_LOC} && ${TEST_EXEC};
+
+debug:
+	make CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug" all

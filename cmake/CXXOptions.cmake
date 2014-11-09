@@ -12,7 +12,10 @@
 function(getCXXFlags result)
     getBaseGladiusCXXFlags(cxxFlags)
     getCXX11Flags(cxx11Flags)
-    set(${result} "${cxxFlags} ${cxx11Flags}" PARENT_SCOPE)
+    getBuildTypeCXXFlags(cxxBuildTypeFlags)
+    set(${result}
+        "${cxxFlags} ${cxx11Flags} ${cxxBuildTypeFlags}"
+        PARENT_SCOPE)
 endfunction()
 
 ################################################################################
@@ -40,5 +43,18 @@ function(getCXX11Flags outFlags)
                             "has no C++11 support. Please use a different "
                             "C++ compiler."
         )
+    endif()
+endfunction()
+
+################################################################################
+# Returns build-type-specific CXX flags.
+################################################################################
+function(getBuildTypeCXXFlags outFlags)
+    if(GLADIUS_BUILD_TYPE_DEBUG)
+        set(${outFlags} ${CMAKE_CXX_FLAGS_DEBUG} PARENT_SCOPE)
+    elseif(GLADIUS_BUILD_TYPE_REL)
+        set(${outFlags} ${CMAKE_CXX_FLAGS_RELEASE} PARENT_SCOPE)
+    elseif(GLADIUS_BUILD_TYPE_REL_WDBI)
+        set(${outFlags} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} PARENT_SCOPE)
     endif()
 endfunction()
