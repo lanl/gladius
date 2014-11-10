@@ -15,7 +15,7 @@ namespace gladius {
 namespace ui {
 
 /**
- * Base UI (virtual) class.
+ * Base User Interface (UI) (virtual) class.
  */
 class UI {
 protected:

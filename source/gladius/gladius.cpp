@@ -18,22 +18,24 @@ using namespace gladius;
 /**
  *
  */
-Gladius::~Gladius(void)
-{
-    if (mUI) delete mUI;
+Gladius::Gladius(const core::Args &args) {
+    try {
+        mArgs = args;
+        // TODO add parsing and real UI instantiation.
+        mUI = ui::UIFactory::getNewUI(mArgs, ui::UIFactory::UI_TERM);
+        if (!mUI) GLADIUS_THROW_CALL_FAILED("getNewUI");
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }
 
 /**
  *
  */
-Gladius::Gladius(const core::Args &args) {
-    try {
-        mArgs = args;
-        mUI = ui::UIFactory::getNewUI(mArgs, ui::UIFactory::UI_TERM);
-    }
-    catch(const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
-    }
+Gladius::~Gladius(void)
+{
+    if (mUI) delete mUI;
 }
 
 /**
