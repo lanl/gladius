@@ -29,14 +29,123 @@
 #include "tool-fe/tool-fe.h"
 
 #include <string>
-#include <map>
 #include <vector>
+#include <map>
+#include <initializer_list>
+#include <functional>
+#include <algorithm>
 
 #include "histedit.h"
 
 namespace gladius {
 namespace ui {
 namespace term {
+
+class Terminal;
+
+/**
+ *
+ */
+struct EvalInputCmdCallBackArgs {
+    Terminal *terminal;
+    int argc;
+    char **argv;
+
+    EvalInputCmdCallBackArgs(
+        Terminal *t,
+        int argc,
+        const char **argv
+    ) : terminal(t)
+      , argc(argc)
+      , argv((char **)argv) { ; }
+};
+
+/**
+ *
+ */
+class TermCommand {
+private:
+    // Command name
+    std::string mCMD;
+    // Short command usage.
+    std::string mShortUsage;
+    // Long command usage.
+    std::string mLongUsage;
+    // The call-back function that implements the command's functionality.
+    std::function<void(const EvalInputCmdCallBackArgs &)> mCBFun;
+public:
+    TermCommand(void) { ; }
+
+    TermCommand(
+        std::string cmd,
+        std::string shortUsage,
+        std::string longUsage,
+        std::function<void(const EvalInputCmdCallBackArgs &)> cmdCallBack
+    ) : mCMD(cmd)
+      , mShortUsage(shortUsage)
+      , mLongUsage(longUsage)
+      , mCBFun(cmdCallBack) { ; }
+
+    std::string
+    command(void) const { return mCMD; }
+
+    std::string
+    shortUsage(void) const { return mShortUsage; }
+
+    std::string
+    longUsage(void) const { return mLongUsage; }
+
+    void
+    exec(const EvalInputCmdCallBackArgs &args) const {
+        mCBFun(args);
+    }
+};
+
+/**
+ *
+ */
+class TermCommands {
+private:
+    // Map containing command name, callback pairs.
+    std::map<std::string , TermCommand> mNameTermMap;
+public:
+    /**
+     *
+     */
+    TermCommands(std::initializer_list<TermCommand> tCMDs) {
+        for (auto tm : tCMDs) {
+            mNameTermMap[tm.command()] = tm;
+        }
+    }
+
+    /**
+     *
+     */
+    const TermCommand *
+    getTermCMD(std::string name) const {
+        auto tmi = mNameTermMap.find(name);
+        // not found, so return nullptr;
+        if (tmi == mNameTermMap.end()) {
+            return nullptr;
+        }
+        else {
+            return &tmi->second;
+        }
+    }
+
+    /**
+     *
+     */
+    std::vector<std::string>
+    availableCommands(void) const {
+    std::vector<std::string> v;
+        for (auto nameCmd : mNameTermMap) {
+            v.push_back(nameCmd.first);
+        }
+        std::sort(v.begin(), v.end());
+        return v;
+    }
+};
 
 class Terminal : public UI {
 private:
@@ -109,31 +218,13 @@ public:
         return mHistEvent;
     }
 
-    struct EvalInputCmdCallBackArgs {
-        Terminal *terminal;
-        int argc;
-        char **argv;
-
-        EvalInputCmdCallBackArgs(
-            Terminal *t,
-            int argc,
-            const char **argv)
-            : terminal(t)
-            , argc(argc)
-            , argv((char **)argv
-        ) { ; }
-    };
-
     void
     interact(void);
 
     std::vector<std::string>
     termCmds(void) const;
-
 private:
-    // Map containing command name, callback pairs.
-    static std::map<const std::string,
-                    void (*)(const EvalInputCmdCallBackArgs &)> sEvalCMDMap;
+    static TermCommands sTermCommands;
 };
 
 } // end term namespace

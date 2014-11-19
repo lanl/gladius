@@ -11,13 +11,12 @@
  */
 
 #include "term.h"
-#include "term-cmds.h"
 #include "core/core.h"
+#include "term-cmds.h"
 
 #include <string>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 #include <locale.h>
 #include <dirent.h>
@@ -37,6 +36,7 @@ char *
 getPromptCallback(EditLine *el)
 {
     GLADIUS_UNUSED(el);
+    // TODO add mode name to prompt.
     static char p[] = "(" PACKAGE_NAME ") ";
     return p;
 }
@@ -72,6 +72,16 @@ disableBuffering(void)
 } // end namespace for private things
 
 using namespace gladius::ui::term;
+
+TermCommands Terminal::sTermCommands {
+        TermCommand("help", "s", "l", helpCMDCallback),
+        TermCommand("?", "s", "l", helpCMDCallback),
+        TermCommand("modes", "s", "l", modesCMDCallback),
+        TermCommand("history", "s", "l", historyCMDCallback),
+        TermCommand("hist", "s", "l", historyCMDCallback),
+        TermCommand("launch", "s", "l", launchCMDCallback),
+        TermCommand("set", "s", "l", setModeCMDCallback)
+};
 
 /**
  *
@@ -172,31 +182,12 @@ Terminal::mEnterREPL(void)
 }
 
 /**
- * Map between command name and callback function. This table is what is
- * searched when parsing user input.
- */
-std::map<const std::string, void (*)(const Terminal::EvalInputCmdCallBackArgs &)>
-Terminal::sEvalCMDMap = {
-    {"help", helpCMDCallback},
-    {"?", helpCMDCallback},
-    {"modes", modesCMDCallback},
-    {"history", historyCMDCallback},
-    {"hist", historyCMDCallback},
-    {"launch", launchCMDCallback}
-};
-
-/**
  *
  */
 std::vector<std::string>
 Terminal::termCmds(void) const
 {
-    std::vector<std::string> v;
-    for (auto nameCmd : sEvalCMDMap) {
-        v.push_back(nameCmd.first);
-    }
-    std::sort(v.begin(), v.end());
-    return v;
+    return sTermCommands.availableCommands();
 }
 
 /**
@@ -215,15 +206,15 @@ Terminal::evaluateInput(
     }
     // Else see if the command is in our command lookup table.
     else {
-        auto iter = sEvalCMDMap.find(argv[0]);
-        if (iter == sEvalCMDMap.end()) {
+        auto maybeTermCmd = sTermCommands.getTermCMD(argv[0]);
+        if (nullptr == maybeTermCmd) {
             std::cout << "error: \'" << argv[0] << "\' "
                       << "is not a valid command. Try \'help\'." << std::endl;
         }
         else {
             // Found it, so call the registered callback associated with the
             // string.
-            iter->second(EvalInputCmdCallBackArgs(this, argc, argv));
+            maybeTermCmd->exec(EvalInputCmdCallBackArgs(this, argc, argv));
         }
     }
     tok_reset(mTokenizer);

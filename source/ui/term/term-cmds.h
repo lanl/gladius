@@ -29,7 +29,7 @@ namespace term {
  * Displays help message.
  */
 inline void
-helpCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+helpCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     using namespace std;
     string header(PACKAGE_NAME " help");
@@ -50,17 +50,27 @@ helpCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
  * Displays the available modes.
  */
 inline void
-modesCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+modesCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     GLADIUS_UNUSED(args);
-    std::cout << PACKAGE_NAME << " modes" << std::endl;
+    std::cout << "TODO modes" << std::endl;
+}
+
+/**
+ * Sets the debug mode.
+ */
+inline void
+setModeCMDCallback(const EvalInputCmdCallBackArgs &args)
+{
+    GLADIUS_UNUSED(args);
+    std::cout << "TODO set" << std::endl;
 }
 
 /**
  * Displays history.
  */
 inline void
-historyCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     Terminal *t = args.terminal;
     HistEvent &histEvent = t->getHistEvent();
@@ -74,7 +84,7 @@ historyCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
  * Launches target application.
  */
 inline void
-launchCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     std::cout << "starting application launch..." << std::endl;
     int argc = args.argc;
