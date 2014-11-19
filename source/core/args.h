@@ -46,7 +46,8 @@ public:
     /**
      *
      */
-    ~Args(void) {
+    ~Args(void)
+    {
         if (mArgV) core::Utils::freeDupArgv(mArgV);
     }
 
@@ -76,7 +77,8 @@ public:
      *
      */
     int
-    argc(void) const {
+    argc(void) const
+    {
         return mArgC;
     }
 
@@ -84,7 +86,8 @@ public:
      *
      */
     char **
-    argv(void) const {
+    argv(void) const
+    {
         return mArgV;
     }
 
@@ -92,7 +95,8 @@ public:
      *
      */
     char **
-    envp(void) const {
+    envp(void) const
+    {
         return mEnv;
     }
 };

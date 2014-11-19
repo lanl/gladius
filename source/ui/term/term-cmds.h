@@ -13,6 +13,7 @@
 #include "core/core.h"
 
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <cstdio>
 
@@ -30,8 +31,29 @@ namespace term {
 inline void
 helpCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
 {
+    using namespace std;
+    string header(PACKAGE_NAME " help");
+    stringstream hbot;
+    for (auto ci = header.cbegin(); ci != header.cend(); ++ci) {
+        hbot << "-";
+    }
+    // Print help banner.
+    cout << '\n' << header << '\n' << hbot.str() << endl;
+    // Print available commands.
+    cout << "o Available Commands" << endl;
+    for (const auto cmdStr : args.terminal->termCmds()) {
+        cout << "- " << cmdStr << endl;
+    }
+}
+
+/**
+ * Displays the available modes.
+ */
+inline void
+modesCMDCallback(const Terminal::EvalInputCmdCallBackArgs &args)
+{
     GLADIUS_UNUSED(args);
-    std::cout << PACKAGE_NAME << " help" << std::endl;
+    std::cout << PACKAGE_NAME << " modes" << std::endl;
 }
 
 /**

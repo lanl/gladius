@@ -34,6 +34,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_BASE_CXX_FLAGS}")
 ################################################################################
 findLLDB(GLADIUS_LLDB_INCLUDE_DIRS GLADIUS_LLDB_LIB_DIRS GLADIUS_LLDB_LIBS)
 include_directories(${GLADIUS_LLDB_INCLUDE_DIRS})
+# XXX The use of this may be incorrect. Question: does this blast or append to
+# the list of link directories.
 link_directories(${GLADIUS_LLDB_LIB_DIRS})
 #target_link_libraries use where needed with ${GLADIUS_LLDB_LIBS}
 

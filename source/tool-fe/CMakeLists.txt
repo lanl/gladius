@@ -6,17 +6,9 @@
 # top-level directory of this distribution.
 #
 
-add_executable(
-    gladius
-    gladius-main.cpp
-    gladius.h gladius.cpp
+add_library(
+    GladiusToolFE
+    tool-fe.cpp tool-fe.h
 )
 
 include_directories(..)
-
-target_link_libraries(
-    gladius
-    GladiusCore
-    GladiusToolFE
-    GladiusUI
-)

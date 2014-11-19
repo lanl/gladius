@@ -26,9 +26,11 @@
 
 #include "core/core.h"
 #include "ui/ui.h"
+#include "tool-fe/tool-fe.h"
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "histedit.h"
 
@@ -43,6 +45,7 @@ private:
     Tokenizer *mTokenizer = nullptr;
     History *mHist = nullptr;
     HistEvent mHistEvent;
+    toolfe::ToolFE *mToolFE = nullptr;
 
     /**
      *
@@ -70,7 +73,6 @@ private:
      */
     void
     mEnterREPL(void);
-
 
 public:
     /**
@@ -125,8 +127,12 @@ public:
     void
     interact(void);
 
+    std::vector<std::string>
+    termCmds(void) const;
+
 private:
-    static std::map<std::string,
+    // Map containing command name, callback pairs.
+    static std::map<const std::string,
                     void (*)(const EvalInputCmdCallBackArgs &)> sEvalCMDMap;
 };
 

@@ -7,5 +7,6 @@
 #
 
 add_subdirectory(core)
+add_subdirectory(tool-fe)
 add_subdirectory(ui)
 add_subdirectory(gladius)

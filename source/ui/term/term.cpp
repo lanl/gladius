@@ -16,6 +16,8 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 #include <locale.h>
 #include <dirent.h>
@@ -116,10 +118,18 @@ Terminal::Terminal(const core::Args &args)
     mTokenizer = tok_init(NULL);
 }
 
+/**
+ * Implements UI interact functionality.
+ */
 void
 Terminal::interact(void)
 {
-    mEnterREPL();
+    try {
+        mEnterREPL();
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }
 
 /**
@@ -134,9 +144,9 @@ Terminal::mEnterREPL(void)
     const char *cLineBufp = NULL;
     int nCharsRead = 0, nContinuation = 0;
 
-    while (continueREPL &&
-           NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead)) &&
-           0 != nCharsRead)  {
+    while (continueREPL
+           && NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead))
+           && 0 != nCharsRead)  {
         if (gotsig) {
             (void)fprintf(stderr, "Got signal %d.\n", gotsig);
             gotsig = 0;
@@ -165,14 +175,29 @@ Terminal::mEnterREPL(void)
  * Map between command name and callback function. This table is what is
  * searched when parsing user input.
  */
-std::map<std::string, void (*)(const Terminal::EvalInputCmdCallBackArgs &)>
+std::map<const std::string, void (*)(const Terminal::EvalInputCmdCallBackArgs &)>
 Terminal::sEvalCMDMap = {
     {"help", helpCMDCallback},
     {"?", helpCMDCallback},
+    {"modes", modesCMDCallback},
     {"history", historyCMDCallback},
     {"hist", historyCMDCallback},
     {"launch", launchCMDCallback}
 };
+
+/**
+ *
+ */
+std::vector<std::string>
+Terminal::termCmds(void) const
+{
+    std::vector<std::string> v;
+    for (auto nameCmd : sEvalCMDMap) {
+        v.push_back(nameCmd.first);
+    }
+    std::sort(v.begin(), v.end());
+    return v;
+}
 
 /**
  *
@@ -226,4 +251,5 @@ Terminal::~Terminal(void)
     if (mEditLine) el_end(mEditLine);
     if (mTokenizer) tok_end(mTokenizer);
     if (mHist) history_end(mHist);
+    if (mToolFE) delete mToolFE;
 }
