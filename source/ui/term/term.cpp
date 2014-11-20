@@ -17,6 +17,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <set>
 
 #include <locale.h>
 #include <dirent.h>
@@ -73,14 +74,46 @@ disableBuffering(void)
 
 using namespace gladius::ui::term;
 
+/**
+ * Terminal commands.
+ */
 TermCommands Terminal::sTermCommands {
-        TermCommand("help", "s", "l", helpCMDCallback),
-        TermCommand("?", "s", "l", helpCMDCallback),
-        TermCommand("modes", "s", "l", modesCMDCallback),
-        TermCommand("history", "s", "l", historyCMDCallback),
-        TermCommand("hist", "s", "l", historyCMDCallback),
-        TermCommand("launch", "s", "l", launchCMDCallback),
-        TermCommand("set", "s", "l", setModeCMDCallback)
+    // TODO add quit
+    TermCommand(
+        "help",
+        "h, ?",
+        "help",
+        "Shows help.",
+        helpCMDCallback
+    ),
+    TermCommand(
+        "launch",
+        "l",
+        "launch [OPTIONS...]  executable [args...]",
+        "",
+        launchCMDCallback
+    ),
+    TermCommand(
+        "modes",
+        "",
+        "modes",
+        "l",
+        modesCMDCallback
+    ),
+    TermCommand(
+        "history",
+        "hist",
+        "s",
+        "l",
+        historyCMDCallback
+    ),
+    TermCommand(
+        "set",
+        "",
+        "s",
+        "l",
+        setModeCMDCallback
+    )
 };
 
 /**
@@ -184,10 +217,16 @@ Terminal::mEnterREPL(void)
 /**
  *
  */
-std::vector<std::string>
-Terminal::termCmds(void) const
+std::vector< std::pair<std::string, std::string> >
+Terminal::cmdPairs(void) const
 {
-    return sTermCommands.availableCommands();
+    using namespace std;
+    set< pair<string, string> > theSet;
+    for (auto tcmd : sTermCommands.availableCommands()) {
+        theSet.insert(make_pair(tcmd.command(), tcmd.shortUsage()));
+    }
+    vector< pair<string, string> > theVec(theSet.begin(), theSet.end());
+    return theVec;
 }
 
 /**
@@ -207,7 +246,7 @@ Terminal::evaluateInput(
     // Else see if the command is in our command lookup table.
     else {
         auto maybeTermCmd = sTermCommands.getTermCMD(argv[0]);
-        if (nullptr == maybeTermCmd) {
+        if (!maybeTermCmd) {
             std::cout << "error: \'" << argv[0] << "\' "
                       << "is not a valid command. Try \'help\'." << std::endl;
         }

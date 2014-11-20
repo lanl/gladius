@@ -41,8 +41,9 @@ helpCMDCallback(const EvalInputCmdCallBackArgs &args)
     cout << '\n' << header << '\n' << hbot.str() << endl;
     // Print available commands.
     cout << "o Available Commands" << endl;
-    for (const auto cmdStr : args.terminal->termCmds()) {
-        cout << "- " << cmdStr << endl;
+    for (const auto cmdp : args.terminal->cmdPairs()) {
+        cout << "- " << cmdp.first << " : "
+             << cmdp.second << endl;
     }
 }
 

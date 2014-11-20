@@ -30,10 +30,12 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 #include <map>
 #include <initializer_list>
 #include <functional>
 #include <algorithm>
+#include <sstream>
 
 #include "histedit.h"
 
@@ -67,6 +69,8 @@ class TermCommand {
 private:
     // Command name
     std::string mCMD;
+    // Command name aliases in "v, v, v" format.
+    std::string mCMDAliases;
     // Short command usage.
     std::string mShortUsage;
     // Long command usage.
@@ -78,16 +82,21 @@ public:
 
     TermCommand(
         std::string cmd,
+        std::string cmdAliases,
         std::string shortUsage,
         std::string longUsage,
         std::function<void(const EvalInputCmdCallBackArgs &)> cmdCallBack
     ) : mCMD(cmd)
+      , mCMDAliases(cmdAliases)
       , mShortUsage(shortUsage)
       , mLongUsage(longUsage)
       , mCBFun(cmdCallBack) { ; }
 
     std::string
     command(void) const { return mCMD; }
+
+    std::string
+    commandAliases(void) const { return mCMDAliases; }
 
     std::string
     shortUsage(void) const { return mShortUsage; }
@@ -108,13 +117,33 @@ class TermCommands {
 private:
     // Map containing command name, callback pairs.
     std::map<std::string , TermCommand> mNameTermMap;
+
+    /**
+     * Returns a vector of command aliases from a string of comma-separated
+     * values.
+     */
+    std::vector<std::string>
+    getCommandAliases(std::string nameCSV) {
+        std::vector<std::string> nameVec;
+        std::istringstream buf(nameCSV);
+        for (std::string tok; std::getline(buf, tok, ','); ) {
+            nameVec.push_back(core::Utils::trim(tok));
+        }
+        return nameVec;
+    }
 public:
     /**
      *
      */
     TermCommands(std::initializer_list<TermCommand> tCMDs) {
+        // For each TermCommand
         for (auto tm : tCMDs) {
+            // Bind the official name with the callback
             mNameTermMap[tm.command()] = tm;
+            // And do the rest (aliases)
+            for (auto cmdName : getCommandAliases(tm.commandAliases())) {
+                mNameTermMap[cmdName] = tm;
+            }
         }
     }
 
@@ -136,14 +165,13 @@ public:
     /**
      *
      */
-    std::vector<std::string>
+    std::vector<TermCommand>
     availableCommands(void) const {
-    std::vector<std::string> v;
+        std::vector<TermCommand> tv;
         for (auto nameCmd : mNameTermMap) {
-            v.push_back(nameCmd.first);
+            tv.push_back(nameCmd.second);
         }
-        std::sort(v.begin(), v.end());
-        return v;
+        return tv;
     }
 };
 
@@ -221,8 +249,8 @@ public:
     void
     interact(void);
 
-    std::vector<std::string>
-    termCmds(void) const;
+    std::vector< std::pair<std::string, std::string> >
+    cmdPairs(void) const;
 private:
     static TermCommands sTermCommands;
 };
