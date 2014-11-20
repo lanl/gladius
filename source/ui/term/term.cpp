@@ -78,40 +78,46 @@ using namespace gladius::ui::term;
  * Terminal commands.
  */
 TermCommands Terminal::sTermCommands {
-    // TODO add quit
+    TermCommand(
+        "quit",
+        "exit",
+        "quit",
+        "quit Help",
+        quitCMDCallback
+    ),
     TermCommand(
         "help",
         "h, ?",
         "help",
-        "Shows help.",
+        "help Help",
         helpCMDCallback
     ),
     TermCommand(
         "launch",
-        "l",
-        "launch [OPTIONS...]  executable [args...]",
         "",
+        "launch [OPTIONS...]  executable [args...]",
+        "launch Help",
         launchCMDCallback
     ),
     TermCommand(
         "modes",
         "",
         "modes",
-        "l",
+        "modes Help",
         modesCMDCallback
     ),
     TermCommand(
         "history",
         "hist",
-        "s",
-        "l",
+        "history",
+        "history Help",
         historyCMDCallback
     ),
     TermCommand(
         "set",
         "",
-        "s",
-        "l",
+        "set",
+        "set Help",
         setModeCMDCallback
     )
 };
@@ -210,7 +216,7 @@ Terminal::mEnterREPL(void)
         nContinuation = 0;
         if (continuation) continue;
         // Process current input
-        evaluateInput(tokArgc, tokArgv, &continueREPL);
+        evaluateInput(tokArgc, tokArgv, continueREPL);
     }
 }
 
@@ -236,29 +242,21 @@ void
 Terminal::evaluateInput(
     int argc,
     const char **argv,
-    bool *continueREPL
+    bool &continueREPL
 ) {
-    // This command is special, so check for it outside of the lookup table.
-    if (strcmp(argv[0], "quit") == 0) {
-        *continueREPL = false;
-        return;
+    auto maybeTermCmd = sTermCommands.getTermCMD(argv[0]);
+    if (!maybeTermCmd) {
+        std::cout << "error: \'" << argv[0] << "\' "
+                  << "is not a valid command. Try \'help\'." << std::endl;
     }
-    // Else see if the command is in our command lookup table.
     else {
-        auto maybeTermCmd = sTermCommands.getTermCMD(argv[0]);
-        if (!maybeTermCmd) {
-            std::cout << "error: \'" << argv[0] << "\' "
-                      << "is not a valid command. Try \'help\'." << std::endl;
-        }
-        else {
-            // Found it, so call the registered callback associated with the
-            // string.
-            maybeTermCmd->exec(EvalInputCmdCallBackArgs(this, argc, argv));
-        }
+        // Found it, so call the registered callback associated with the
+        // string and stash whether or not we should continue the REPL.
+        continueREPL = maybeTermCmd->exec(
+                           EvalInputCmdCallBackArgs(this, argc, argv)
+                       );
     }
     tok_reset(mTokenizer);
-    // continue REPL
-    *continueREPL = true;
 }
 
 /**

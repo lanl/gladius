@@ -76,7 +76,7 @@ private:
     // Long command usage.
     std::string mLongUsage;
     // The call-back function that implements the command's functionality.
-    std::function<void(const EvalInputCmdCallBackArgs &)> mCBFun;
+    std::function<bool (const EvalInputCmdCallBackArgs &)> mCBFun;
 public:
     TermCommand(void) { ; }
 
@@ -85,7 +85,7 @@ public:
         std::string cmdAliases,
         std::string shortUsage,
         std::string longUsage,
-        std::function<void(const EvalInputCmdCallBackArgs &)> cmdCallBack
+        std::function<bool (const EvalInputCmdCallBackArgs &)> cmdCallBack
     ) : mCMD(cmd)
       , mCMDAliases(cmdAliases)
       , mShortUsage(shortUsage)
@@ -104,9 +104,9 @@ public:
     std::string
     longUsage(void) const { return mLongUsage; }
 
-    void
+    bool
     exec(const EvalInputCmdCallBackArgs &args) const {
-        mCBFun(args);
+        return mCBFun(args);
     }
 };
 
@@ -202,7 +202,7 @@ private:
     evaluateInput(
         int ac,
         const char **argv,
-        bool *continueREPL
+        bool &continueREPL
     );
 
     /**

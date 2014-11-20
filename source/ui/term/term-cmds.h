@@ -26,9 +26,20 @@ namespace ui {
 namespace term {
 
 /**
+ * Quits.
+ */
+inline bool
+quitCMDCallback(const EvalInputCmdCallBackArgs &args)
+{
+    GLADIUS_UNUSED(args);
+    /* Done with REPL */
+    return false;
+}
+
+/**
  * Displays help message.
  */
-inline void
+inline bool
 helpCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     using namespace std;
@@ -45,32 +56,36 @@ helpCMDCallback(const EvalInputCmdCallBackArgs &args)
         cout << "- " << cmdp.first << " : "
              << cmdp.second << endl;
     }
+    /* Continue REPL */
+    return true;
 }
 
 /**
  * Displays the available modes.
  */
-inline void
+inline bool
 modesCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     GLADIUS_UNUSED(args);
-    std::cout << "TODO modes" << std::endl;
+    /* Continue REPL */
+    return true;
 }
 
 /**
  * Sets the debug mode.
  */
-inline void
+inline bool
 setModeCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     GLADIUS_UNUSED(args);
-    std::cout << "TODO set" << std::endl;
+    /* Continue REPL */
+    return true;
 }
 
 /**
  * Displays history.
  */
-inline void
+inline bool
 historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     Terminal *t = args.terminal;
@@ -79,12 +94,14 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
          rv != -1; rv = history(t->getHistory(), &histEvent, H_PREV)) {
         (void)fprintf(stdout, "%4d %s", histEvent.num, histEvent.str);
     }
+    /* Continue REPL */
+    return true;
 }
 
 /**
  * Launches target application.
  */
-inline void
+inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     std::cout << "starting application launch..." << std::endl;
@@ -119,6 +136,8 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
             }
         }
     }
+    /* Continue REPL */
+    return true;
 }
 
 } // end term namespace
