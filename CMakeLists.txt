@@ -13,14 +13,28 @@ cmake_minimum_required(VERSION 2.8.11)
 # Project configury includes
 include(cmake/BuildType.cmake)
 include(cmake/CXXOptions.cmake)
+include(cmake/DocOptions.cmake)
 include(cmake/FindLLDB.cmake)
 include(cmake/FindMRNet.cmake)
 include(cmake/EchoFinalSetup.cmake)
 
 ################################################################################
+# Versioning
+################################################################################
+set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
+set(VERSION_MINOR   1   CACHE STRING "Project minor version number.")
+set(VERSION_PATCH   0   CACHE STRING "Project patch version number.")
+mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
+
+################################################################################
 # Setup build type stuff
 ################################################################################
 buildTypeSetup()
+
+################################################################################
+# Set documentation configury.
+################################################################################
+docSetup()
 
 ################################################################################
 # Get the necessary base CXX flags
