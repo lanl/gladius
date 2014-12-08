@@ -31,9 +31,15 @@ namespace term {
 inline bool
 quitCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
+    using namespace std;
     GLADIUS_UNUSED(args);
+    cout << endl << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
+    switch (cin.get()) {
+        case 'Y' : return false;
+        default: return true;
+    }
     /* Done with REPL */
-    return false;
+    return true;
 }
 
 /**
