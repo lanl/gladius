@@ -28,7 +28,7 @@ public:
     helpText(void) const;
 
     void
-    launch();
+    launch(const core::Args &args);
 
     void
     beSend();

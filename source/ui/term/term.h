@@ -241,14 +241,36 @@ public:
     /**
      *
      */
+    toolfe::ToolFE *
+    getToolFE(void) {
+        return mToolFE;
+    }
+
+    /**
+     *
+     */
     HistEvent &
     getHistEvent(void) {
         return mHistEvent;
     }
 
+    /**
+     *
+     */
+    const TermCommands &
+    getTermCommands (void) const {
+        return sTermCommands;
+    }
+
+    /**
+     *
+     */
     void
     interact(void);
 
+    /**
+     *
+     */
     std::vector< std::pair<std::string, std::string> >
     cmdPairs(void) const;
 private:

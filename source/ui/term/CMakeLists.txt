@@ -19,5 +19,6 @@ include_directories(../..)
 target_link_libraries(
     GladiusUITerm
     GladiusUI
+    GladiusToolFE
     edit
 )

@@ -17,10 +17,6 @@
 #include <iostream>
 #include <cstdio>
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 namespace gladius {
 namespace ui {
 namespace term {
@@ -36,7 +32,7 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
     cout << endl << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
     char answer[8];
     cin.getline(answer, sizeof(answer));
-    if (!strcmp("Y", answer)) {
+    if (0 == strcmp("Y", answer)) {
         // Done with REPL
         return false;
     }
@@ -112,38 +108,16 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
-    std::cout << "starting application launch..." << std::endl;
-    int argc = args.argc;
-    const char **argv = const_cast<const char **>(args.argv);
-    Terminal *t = args.terminal;
-    EditLine *editLine = t->getEditLine();
-    // The return value is -1 if the command is unknown.
-    if (-1 == el_parse(editLine, argc, argv)) {
-        // argv[0] will be "launch", so eat that before dealing with the line
-        char **appArgv = const_cast<char **>(&argv[1]);
-        switch (fork()) {
-            // Child (spawned process)
-            case 0:
-                execvp(argv[1], (char *const *)(appArgv));
-                // Print out any errors that may have occurred during the execvp
-                perror(argv[0]);
-                _exit(EXIT_FAILURE);
-                // Not reached
-                break;
-            // Fork error
-            case -1:
-                perror("fork");
-                break;
-            // Parent
-            default: {
-                int status;
-                if (-1 == wait(&status)) {
-                    GLADIUS_THROW_CALL_FAILED("wait");
-                }
-                break;
-            }
-        }
+    if (args.argc < 2) {
+        // launch should have at least 2 arguments. So, help out the usage.
+        auto trmCMD = args.terminal->getTermCommands().getTermCMD(args.argv[0]);
+        std::cout << trmCMD->shortUsage();
     }
+    // If here then launch the thing...
+    toolfe::ToolFE *toolFE = args.terminal->getToolFE();
+    core::Args launchArgs(args.argc, (const char **)args.argv);
+    // TODO add return status to see if we should continue REPL.
+    toolFE->launch(launchArgs);
     /* Continue REPL */
     return true;
 }
