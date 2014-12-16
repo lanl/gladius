@@ -12,3 +12,7 @@ add_library(
 )
 
 include_directories(..)
+
+target_link_libraries(
+    GladiusToolBE
+)

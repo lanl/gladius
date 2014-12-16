@@ -7,8 +7,10 @@
  */
 
 #include "tool-fe.h"
+#include "tool-be/tool-be.h"
 
 #include <string>
+#include <thread>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -33,36 +35,23 @@ ToolFE::helpText(void)
 }
 
 /**
- * Responsible for application launch.
+ * Responsible for running the tool front-end instance. This is the tool-fe
+ * entry point from a caller's perspective.
  */
 void
-ToolFE::launch(
+ToolFE::run(
     const core::Args &args
 ) {
-    std::cout << "starting application launch..." << std::endl;
-    const char **argv = const_cast<const char **>(args.argv());
-    // argv[0] will be "launch", so eat that before dealing with the line
-    char **appArgv = const_cast<char **>(&argv[1]);
-    switch (fork()) {
-        // Child (spawned process)
-        case 0:
-            execvp(argv[1], (char *const *)(appArgv));
-            // Print out any errors that may have occurred during the execvp
-            perror(argv[0]);
-            _exit(EXIT_FAILURE);
-            // Not reached
-            break;
-        // Fork error
-        case -1:
-            perror("fork");
-            break;
-        // Parent
-        default: {
-            int status;
-            if (-1 == wait(&status)) {
-                GLADIUS_THROW_CALL_FAILED("wait");
-            }
-            break;
-        }
-    }
+    mAppArgs = args;
+    mLocalBody();
+}
+
+/**
+ * The "local" tool front-end that is responsible for all the tool setup.
+ */
+void
+ToolFE::mLocalBody(void)
+{
+    std::thread beThread(toolbe::ToolBE::foo, 12);
+    beThread.join();
 }

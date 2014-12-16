@@ -22,15 +22,19 @@ namespace toolfe {
 
 class ToolFE {
 private:
+    core::Args mAppArgs;
+
+    void
+    mLocalBody(void);
 
 public:
     ToolFE(void);
 
+    void
+    run(const core::Args &args);
+
     static std::string
     helpText(void);
-
-    void
-    launch(const core::Args &args);
 
     void
     beSend();
