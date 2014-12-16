@@ -80,7 +80,7 @@ using namespace gladius::ui::term;
 TermCommands Terminal::sTermCommands {
     TermCommand(
         "quit",
-        "exit",
+        "exit, q",
         "quit",
         "quit Help",
         quitCMDCallback
@@ -94,7 +94,7 @@ TermCommands Terminal::sTermCommands {
     ),
     TermCommand(
         "launch",
-        "",
+        "l",
         "launch [OPTIONS...] executable [args...]",
         "launch Help",
         launchCMDCallback

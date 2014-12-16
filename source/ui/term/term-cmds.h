@@ -111,7 +111,8 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     if (args.argc < 2) {
         // launch should have at least 2 arguments. So, help out the usage.
         auto trmCMD = args.terminal->getTermCommands().getTermCMD(args.argv[0]);
-        std::cout << trmCMD->shortUsage();
+        std::cout << trmCMD->shortUsage() << std::endl;
+        return true;
     }
     // If here then run to tool front-end and enter its REPL.
     core::Args launchArgs(args.argc, (const char **)args.argv);

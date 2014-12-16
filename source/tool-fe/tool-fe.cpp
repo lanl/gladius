@@ -10,7 +10,6 @@
 #include "tool-be/tool-be.h"
 
 #include <string>
-#include <thread>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -47,11 +46,34 @@ ToolFE::run(
 }
 
 /**
- * The "local" tool front-end that is responsible for all the tool setup.
+ * The local tool front-end thread (the main thread).
  */
 void
 ToolFE::mLocalBody(void)
 {
-    std::thread beThread(toolbe::ToolBE::foo, 12);
-    beThread.join();
+    try {
+        std::thread beThread(&ToolFE::mRemoteBody, this);
+        std::unique_lock<std::mutex> lock(mtFEBELock);
+        mtBELaunchComplete.wait(lock);
+        beThread.join();
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+}
+
+/**
+ * The thread that interacts with the tool back-end.
+ */
+void
+ToolFE::mRemoteBody(void)
+{
+    try {
+        std::cout << "starting be" << std::endl;
+        sleep(2);
+        mtBELaunchComplete.notify_one();
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }

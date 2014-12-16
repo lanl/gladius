@@ -16,16 +16,27 @@
 #include "core/core.h"
 
 #include <string>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 namespace gladius {
 namespace toolfe {
 
 class ToolFE {
 private:
+    // Threading things ////////////////////////////////////////////////////////
+    std::mutex mtFEBELock;
+    std::condition_variable mtBELaunchComplete;
+    ////////////////////////////////////////////////////////////////////////////
+
     core::Args mAppArgs;
 
     void
     mLocalBody(void);
+
+    void
+    mRemoteBody(void);
 
 public:
     ToolFE(void);
