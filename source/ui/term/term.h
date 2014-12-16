@@ -15,7 +15,7 @@
  * heavy lifting for the CLI is performed by editline (libedit).
  */
 
-/**
+/*
  * TODO
  * History - See source/Host/common/Editline.cpp in LLDB for an example.
  * Auto complete
@@ -67,15 +67,15 @@ struct EvalInputCmdCallBackArgs {
  */
 class TermCommand {
 private:
-    // Command name
+    /// Command name
     std::string mCMD;
-    // Command name aliases in "v, v, v" format.
+    /// Command name aliases in "v, v, v" format.
     std::string mCMDAliases;
-    // Short command usage.
+    /// Short command usage.
     std::string mShortUsage;
-    // Long command usage.
+    /// Long command usage.
     std::string mLongUsage;
-    // The call-back function that implements the command's functionality.
+    /// The call-back function that implements the command's functionality.
     std::function<bool (const EvalInputCmdCallBackArgs &)> mCBFun;
 public:
     TermCommand(void) { ; }

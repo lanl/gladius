@@ -75,7 +75,7 @@ disableBuffering(void)
 using namespace gladius::ui::term;
 
 /**
- * Terminal commands.
+ * Terminal commands registry.
  */
 TermCommands Terminal::sTermCommands {
     TermCommand(

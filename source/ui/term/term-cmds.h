@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014      Los Alamos National Security, LLC
+/*
+ * Copyright (c) 2014-2015 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -34,11 +34,13 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
     using namespace std;
     GLADIUS_UNUSED(args);
     cout << endl << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
-    switch (cin.get()) {
-        case 'Y' : return false;
-        default: return true;
+    char answer[8];
+    cin.getline(answer, sizeof(answer));
+    if (!strcmp("Y", answer)) {
+        // Done with REPL
+        return false;
     }
-    /* Done with REPL */
+    // The answer was not "Y", so continue REPL.
     return true;
 }
 
