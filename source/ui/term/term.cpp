@@ -165,6 +165,12 @@ Terminal::Terminal(const core::Args &args)
     el_source(mEditLine, NULL);
     // Initialize tokenizer
     mTokenizer = tok_init(NULL);
+    try {
+        mToolFE = new toolfe::ToolFE();
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }
 
 /**

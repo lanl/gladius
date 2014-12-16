@@ -17,10 +17,17 @@
 using namespace gladius::toolfe;
 
 /**
+ * Tool front-end constructor.
+ */
+ToolFE::ToolFE(void)
+{
+}
+
+/**
  * Returns tool front-end help string.
  */
 std::string
-ToolFE::helpText(void) const
+ToolFE::helpText(void)
 {
     return std::string {"toolFE help string goes here..."};
 }
@@ -28,7 +35,6 @@ ToolFE::helpText(void) const
 /**
  * Responsible for application launch.
  */
-
 void
 ToolFE::launch(
     const core::Args &args

@@ -24,8 +24,10 @@ class ToolFE {
 private:
 
 public:
-    std::string
-    helpText(void) const;
+    ToolFE(void);
+
+    static std::string
+    helpText(void);
 
     void
     launch(const core::Args &args);
