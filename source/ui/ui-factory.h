@@ -32,14 +32,13 @@ public:
 
     /**
      * Factory function that takes a UI type and args and produces a new UI
-     * based on the input. NULL returned on error. Must be deleted by caller.
+     * based on the input. nullptr returned on error. Must be deleted by caller.
      */
     static UI *
     getNewUI(
         const core::Args &args,
         UIType uiType
     ) {
-        core::Args tmp;
         switch (uiType) {
             case UI_TERM: return new term::Terminal(args);
             default: return nullptr;
