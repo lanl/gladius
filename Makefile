@@ -30,6 +30,9 @@ all:
 clean:
 	make -C ${BUILD_LOC} clean
 
+docs:
+	make -C ${BUILD_LOC} docs
+
 vclean:
 	rm -rf ${BUILD_LOC}
 

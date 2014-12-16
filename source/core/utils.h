@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014      Los Alamos National Security, LLC
+/*
+ * Copyright (c) 2014-2015 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -21,6 +21,9 @@
 
 #include <errno.h>
 
+/**
+ * Convenience macro used to silence warnings about unused variables.
+ */
 #define GLADIUS_UNUSED(x)                                                      \
 do {                                                                           \
     (void)(x);                                                                 \
@@ -74,8 +77,9 @@ public:
      * freed by the caller by calling freeDupArgv.
      */
     static char **
-    dupArgv(int argc,
-            const char **argv
+    dupArgv(
+        int argc,
+        const char **argv
     ) {
         if (!argv) GLADIUS_THROW_INVLD_ARG();
         int i, strLen;

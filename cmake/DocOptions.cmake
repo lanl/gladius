@@ -13,22 +13,22 @@ function(docSetup)
     # We need Doxygen, so look for it.
     find_package(Doxygen)
     option(BUILD_DOCUMENTATION
-           "Create and install the HTML based API documentation (requires Doxygen)"
+           "Create and install documentation (requires Doxygen)"
            ${DOXYGEN_FOUND}
     )
-    if(BUILD_DOCUMENTATION)
-        if(NOT DOXYGEN_FOUND)
+    if (BUILD_DOCUMENTATION)
+        if (NOT DOXYGEN_FOUND)
             message(FATAL_ERROR "Doxygen is needed to build the documentation.")
         endif()
 
-        set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
-        set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+        set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
+        set(DOXYFILE ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
-        configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+        configure_file(${DOXYFILE_IN} ${DOXYFILE} @ONLY)
 
         add_custom_target(
             docs
-            COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Generating API documentation with Doxygen"
             VERBATIM
