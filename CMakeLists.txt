@@ -13,12 +13,12 @@ cmake_minimum_required(VERSION 2.8.11)
 # Project configury includes
 include(cmake/BuildType.cmake)
 include(cmake/CXXOptions.cmake)
-include(cmake/DocOptions.cmake)
-include(cmake/FindLLDB.cmake)
+include(cmake/FindThreads.cmake)
 include(cmake/FindLaunchMON.cmake)
 include(cmake/FindMRNet.cmake)
-include(cmake/FindThreads.cmake)
+include(cmake/FindLLDB.cmake)
 include(cmake/EchoFinalSetup.cmake)
+include(cmake/DocOptions.cmake)
 
 ################################################################################
 # Versioning
@@ -39,17 +39,17 @@ buildTypeSetup()
 docSetup()
 
 ################################################################################
+# Threading setup
+################################################################################
+findThreads(GLADIUS_PTHREAD_C_FLAGS GLADIUS_PTHREAD_LINK_LIBS)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_PTHREAD_C_FLAGS}")
+
+################################################################################
 # Get the necessary base CXX flags
 ################################################################################
 getCXXFlags(GLADIUS_BASE_CXX_FLAGS)
 # Append to CMAKE_CXX_FLAGS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_BASE_CXX_FLAGS}")
-
-################################################################################
-# Threading setup 
-################################################################################
-findThreads(GLADIUS_PTHREAD_C_FLAGS GLADIUS_PTHREAD_LINK_LIBS)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GLADIUS_PTHREAD_C_FLAGS}")
 
 ################################################################################
 # LLDB setup

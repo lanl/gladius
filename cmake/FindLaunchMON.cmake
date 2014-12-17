@@ -51,14 +51,11 @@ function(findLMON outIncludeDirs outLinkDirs outLinkLibs)
             )
         endif()
     endforeach()
-    # Same goes for pthread
-    message(STATUS "Adding needed thread link libs")
-    find_package(Threads REQUIRED)
-    list(APPEND libNames "${CMAKE_THREAD_LIBS_INIT}")
     # If we are here, then all is well. Return the outs.
     set(${outIncludeDirs}
         "${prefix}/include"
-        PARENT_SCOPE)
+        PARENT_SCOPE
+    )
     set(${outLinkDirs} "${prefix}/lib" PARENT_SCOPE)
-    set(${outLinkLibs} ${libNames} PARENT_SCOPE)
+    set(${outLinkLibs} "${libNames}" PARENT_SCOPE)
 endfunction()

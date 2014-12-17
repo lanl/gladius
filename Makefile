@@ -10,7 +10,7 @@ SHELL = /bin/bash
 .PHONY: all clean vclean run
 
 LLDB_HOME := ${HOME}/local/lldb
-LMON_HOME := ${HOME}/local/STAT
+LMON_HOME := ${HOME}/local/lmon
 MRNET_HOME := ${HOME}/local/mrnet
 BUILD_LOC := build
 TEST_EXEC := ./source/gladius/gladius

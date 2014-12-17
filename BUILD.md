@@ -27,6 +27,8 @@ make && make install
 ```
 
 ## Building LaunchMON
+See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
+     Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
 ```bash
 export LMON_PREFIX=$HOME/local/lmon
 git clone git@github.com:scalability-llnl/LaunchMON.git
@@ -34,7 +36,7 @@ cd LaunchMON
 ./bootstrap
 ./configure --prefix=$LMON_PREFIX \
 MPICC=mpicc MPICXX=mpic++ \
-LDFLAGS="-lgpg-error"
+LDFLAGS="-lgpg-error" && \
 make && make install
 ```
 

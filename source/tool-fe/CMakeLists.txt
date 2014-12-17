@@ -9,12 +9,12 @@
 add_library(
     GladiusToolFE
     tool-fe.cpp tool-fe.h
+    lmon.h
 )
 
 include_directories(..)
 
 target_link_libraries(
     GladiusToolFE
-    GladiusToolBE
-    ${GLADIUS_LMON_LIBS}
+    -L/home/samuel/local/lmon/lib/libmonfeapi.la
 )
