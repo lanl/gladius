@@ -23,7 +23,11 @@ namespace gladius {
 namespace toolfe {
 
 class LaunchMon {
-private:
+public:
+    LaunchMon(void) {
+        auto rc = LMON_fe_init(LMON_VERSION);
+        if (LMON_OK != rc) exit(EXIT_FAILURE);
+    }
 };
 
 } // end toolfe namespace

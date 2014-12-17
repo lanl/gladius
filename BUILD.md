@@ -27,8 +27,6 @@ make && make install
 ```
 
 ## Building LaunchMON
-See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
-     Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
 ```bash
 export LMON_PREFIX=$HOME/local/lmon
 git clone git@github.com:scalability-llnl/LaunchMON.git
@@ -39,6 +37,15 @@ MPICC=mpicc MPICXX=mpic++ \
 LDFLAGS="-lgpg-error" && \
 make && make install
 ```
+If that does not work for you, then try this terrible mess of a process.
+```bash
+patch libgcrypt
+export  MAKEINFOFLAGS="--force"
+
+```
+
+See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
+     Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
 
 ## Building MRNet
 Download source distribution from http://www.paradyn.org/mrnet

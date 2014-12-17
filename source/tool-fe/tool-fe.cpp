@@ -52,6 +52,7 @@ ToolFE::run(
 void
 ToolFE::mLocalBody(void)
 {
+    LaunchMon *lmon = new LaunchMon();
     try {
         std::thread beThread(&ToolFE::mRemoteBody, this);
         std::unique_lock<std::mutex> lock(mtFEBELock);
