@@ -10,6 +10,7 @@ SHELL = /bin/bash
 .PHONY: all clean vclean run
 
 LLDB_HOME := ${HOME}/local/lldb
+LMON_HOME := ${HOME}/local/STAT
 MRNET_HOME := ${HOME}/local/mrnet
 BUILD_LOC := build
 TEST_EXEC := ./source/gladius/gladius
@@ -21,6 +22,7 @@ all:
 		mkdir ${BUILD_LOC} && \
 		cd ${BUILD_LOC} && cmake ../ \
 		${CMAKE_FLAGS} \
+		-DGLADIUS_LMON_HOME=${LMON_HOME} \
 		-DGLADIUS_LLDB_HOME=${LLDB_HOME} \
 		-DGLADIUS_MRNET_HOME=${MRNET_HOME} && \
 		cd -; \

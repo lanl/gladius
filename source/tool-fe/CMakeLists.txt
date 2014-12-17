@@ -14,5 +14,7 @@ add_library(
 include_directories(..)
 
 target_link_libraries(
+    GladiusToolFE
     GladiusToolBE
+    ${GLADIUS_LMON_LIBS}
 )

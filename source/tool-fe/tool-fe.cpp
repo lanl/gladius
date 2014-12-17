@@ -7,6 +7,7 @@
  */
 
 #include "tool-fe.h"
+#include "lmon.h"
 #include "tool-be/tool-be.h"
 
 #include <string>

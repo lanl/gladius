@@ -84,6 +84,7 @@ flags = [
 '-I/Users/samuel/local/mrnet/include',
 '-I/home/samuel/local/mrnet/include',
 '-I./source',
+'-I/home/samuel/local/STAT/include',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

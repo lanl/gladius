@@ -17,7 +17,6 @@ include_directories(..)
 target_link_libraries(
     gladius
     GladiusCore
-    GladiusToolFE
     GladiusUI
-    ${GLADIUS_PTHREAD_LINK_LIBS}
+    GladiusToolFE
 )

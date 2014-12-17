@@ -15,6 +15,7 @@ include(cmake/BuildType.cmake)
 include(cmake/CXXOptions.cmake)
 include(cmake/DocOptions.cmake)
 include(cmake/FindLLDB.cmake)
+include(cmake/FindLaunchMON.cmake)
 include(cmake/FindMRNet.cmake)
 include(cmake/FindThreads.cmake)
 include(cmake/EchoFinalSetup.cmake)
@@ -59,6 +60,14 @@ include_directories(${GLADIUS_LLDB_INCLUDE_DIRS})
 # the list of link directories.
 link_directories(${GLADIUS_LLDB_LIB_DIRS})
 #target_link_libraries use where needed with ${GLADIUS_LLDB_LIBS}
+
+################################################################################
+# LaunchMON setup
+################################################################################
+findLMON(GLADIUS_LMON_INCLUDE_DIRS GLADIUS_LMON_LIB_DIRS GLADIUS_LMON_LIBS)
+include_directories(${GLADIUS_LMON_INCLUDE_DIRS})
+link_directories(${GLADIUS_LMON_LIB_DIRS})
+#target_link_libraries use where needed with ${GLADIUS_LMON_LIBS}
 
 ################################################################################
 # MRNet setup

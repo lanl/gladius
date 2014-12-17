@@ -7,26 +7,26 @@
  */
 
 /**
- * The Back-End (BE) API. The interface to the back-end tool actions.
+ * The Front-End (FE) API. The interface to the tool actions.
  */
 
-#ifndef GLADIUS_TOOL_FE_TOOL_BE_H_INCLUDED
-#define GLADIUS_TOOL_FE_TOOL_BE_H_INCLUDED
+#ifndef GLADIUS_TOOL_FE_LMON_H_INCLUDED
+#define GLADIUS_TOOL_FE_LMON_H_INCLUDED
 
 #include "core/core.h"
 
+#include "lmon_api/lmon_fe.h"
+
+#include <string>
+
 namespace gladius {
-namespace toolbe {
+namespace toolfe {
 
-class ToolBE {
+class LaunchMon {
 private:
-    core::Args mAppArgs;
-
-public:
-    ToolBE(void);
 };
 
-} // end toolbe namespace
+} // end toolfe namespace
 } // end gladius namespace
 
 #endif
