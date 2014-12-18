@@ -8,9 +8,12 @@
     - swig (http://www.swig.org/)
     - libedit (http://thrysoee.dk/editline/)
 - LaunchMON (https://github.com/scalability-llnl/LaunchMON)
+    - libgcrypt (http://www.gnu.org/software/libgcrypt/)
+    - MPI Library (Open MPI or MPICH)
 - MRNet (http://www.paradyn.org/mrnet/)
     - boost (http://www.boost.org/)
     - flex (http://flex.sourceforge.net/)
+- GNU Autotools (m4, autoconf, automake, libtool)
 
 ## Building LLDB (see: http://lldb.llvm.org/build.html)
 ```bash
@@ -30,12 +33,13 @@ export LMON_PREFIX=$HOME/local/lmon
 git clone git@github.com:scalability-llnl/LaunchMON.git
 cd LaunchMON
 ./bootstrap
-./configure --prefix=$LMON_PREFIX && \
+./configure --prefix=$LMON_PREFIX \
+MPICC=mpicc MPICXX=mpic++ && \
 make && make install
 ```
 Or, use my version.
 ```bash
-https://github.com/samuelkgutierrez/LaunchMON/tree/update-tools
+git clone git@github.com:samuelkgutierrez/LaunchMON.git
 ```
 ### NOTES:
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
