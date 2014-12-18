@@ -7,7 +7,7 @@
 - LLDB (http://lldb.llvm.org/)
     - swig (http://www.swig.org/)
     - libedit (http://thrysoee.dk/editline/)
-- LaunchMON
+- LaunchMON (https://github.com/scalability-llnl/LaunchMON)
 - MRNet (http://www.paradyn.org/mrnet/)
     - boost (http://www.boost.org/)
     - flex (http://flex.sourceforge.net/)
@@ -37,9 +37,10 @@ Or, use my version.
 ```bash
 https://github.com/samuelkgutierrez/LaunchMON/tree/update-tools
 ```
-NOTES:
+### NOTES:
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
-     Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
+
+Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
 
 ## Building MRNet
 Download source distribution from http://www.paradyn.org/mrnet
@@ -54,7 +55,8 @@ make -j4 && make install
 ```bash
 mkdir build && cd build
 cmake ../ \
--DGLADIUS_LLDB_HOME=$LLVM_PREFIX
+-DGLADIUS_LMON_HOME=$LMON_PREFIX \
+-DGLADIUS_LLDB_HOME=$LLVM_PREFIX \
 -DGLADIUS_MRNET_HOME=$MRNET_PREFIX
 make
 ```
