@@ -8,8 +8,6 @@
     - swig (http://www.swig.org/)
     - libedit (http://thrysoee.dk/editline/)
 - LaunchMON
-    - libgcrypt (http://www.gnu.org/software/libgcrypt/)
-    - MPI Library (Open MPI or MPICH)
 - MRNet (http://www.paradyn.org/mrnet/)
     - boost (http://www.boost.org/)
     - flex (http://flex.sourceforge.net/)
@@ -32,18 +30,14 @@ export LMON_PREFIX=$HOME/local/lmon
 git clone git@github.com:scalability-llnl/LaunchMON.git
 cd LaunchMON
 ./bootstrap
-./configure --prefix=$LMON_PREFIX \
-MPICC=mpicc MPICXX=mpic++ \
-LDFLAGS="-lgpg-error" && \
+./configure --prefix=$LMON_PREFIX && \
 make && make install
 ```
-If that does not work for you, then try this terrible mess of a process.
+Or, use my version.
 ```bash
-patch libgcrypt
-export  MAKEINFOFLAGS="--force"
-
+https://github.com/samuelkgutierrez/LaunchMON/tree/update-tools
 ```
-
+NOTES:
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
      Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
 
