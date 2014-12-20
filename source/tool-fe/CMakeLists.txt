@@ -16,6 +16,5 @@ include_directories(..)
 
 target_link_libraries(
     GladiusToolFE
-    -L/home/samuel/local/lmon/lib/libmonfeapi.la
-    -lmonfeapi
+    ${GLADIUS_LMON_LIBS}
 )
