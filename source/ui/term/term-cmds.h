@@ -109,7 +109,7 @@ inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     if (args.argc < 2) {
-        // launch should have at least 2 arguments. So, help out the usage.
+        // launch should have at least 2 arguments. So, print out the usage.
         auto trmCMD = args.terminal->getTermCommands().getTermCMD(args.argv[0]);
         std::cout << trmCMD->shortUsage() << std::endl;
         return true;

@@ -20,6 +20,9 @@
 #include <locale>
 
 #include <errno.h>
+#include <limits.h>
+#include <unistd.h>
+#include <string.h>
 
 /**
  * Convenience macro used to silence warnings about unused variables.
@@ -158,6 +161,21 @@ public:
     trim(std::string &s)
     {
         return ltrim(rtrim(s));
+    }
+
+    static std::string
+    getHostname(void)
+    {
+        using namespace std;
+
+        char hnBuf[HOST_NAME_MAX];
+        (void)memset(hnBuf, '\0', sizeof(hnBuf));
+        if (-1 == gethostname(hnBuf, HOST_NAME_MAX)) {
+            int err = errno;
+            string errStr = "gethostname. Why: " + getStrError(err);
+            GLADIUS_THROW_CALL_FAILED(errStr);
+        }
+        return string(hnBuf);
     }
 };
 

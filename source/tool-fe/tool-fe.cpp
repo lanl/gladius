@@ -7,7 +7,6 @@
  */
 
 #include "tool-fe.h"
-#include "lmon.h"
 #include "tool-be/tool-be.h"
 
 #include <string>
@@ -52,8 +51,8 @@ ToolFE::run(
 void
 ToolFE::mLocalBody(void)
 {
-    LaunchMon *lmon = new LaunchMon();
     try {
+        mLMON.init();
         std::thread beThread(&ToolFE::mRemoteBody, this);
         std::unique_lock<std::mutex> lock(mtFEBELock);
         mtBELaunchComplete.wait(lock);
@@ -72,6 +71,7 @@ ToolFE::mRemoteBody(void)
 {
     try {
         std::cout << "starting be" << std::endl;
+        mLMON.attachAndSpawnDaemons(0);
         sleep(2);
         mtBELaunchComplete.notify_one();
     }

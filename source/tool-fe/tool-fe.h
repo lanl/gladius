@@ -14,6 +14,7 @@
 #define GLADIUS_TOOL_FE_TOOL_FE_H_INCLUDED
 
 #include "core/core.h"
+#include "lmon.h"
 
 #include <string>
 #include <thread>
@@ -30,6 +31,7 @@ private:
     std::condition_variable mtBELaunchComplete;
     ////////////////////////////////////////////////////////////////////////////
 
+    LaunchMon mLMON;
     core::Args mAppArgs;
 
     void
