@@ -7,12 +7,13 @@
 - LLDB (http://lldb.llvm.org/)
     - swig (http://www.swig.org/)
     - libedit (http://thrysoee.dk/editline/)
-- LaunchMON
+- LaunchMON (https://github.com/scalability-llnl/LaunchMON)
     - libgcrypt (http://www.gnu.org/software/libgcrypt/)
     - MPI Library (Open MPI or MPICH)
 - MRNet (http://www.paradyn.org/mrnet/)
     - boost (http://www.boost.org/)
     - flex (http://flex.sourceforge.net/)
+- GNU Autotools (m4, autoconf, automake, libtool)
 
 ## Building LLDB (see: http://lldb.llvm.org/build.html)
 ```bash
@@ -33,19 +34,17 @@ git clone git@github.com:scalability-llnl/LaunchMON.git
 cd LaunchMON
 ./bootstrap
 ./configure --prefix=$LMON_PREFIX \
-MPICC=mpicc MPICXX=mpic++ \
-LDFLAGS="-lgpg-error" && \
+MPICC=mpicc MPICXX=mpic++ && \
 make && make install
 ```
-If that does not work for you, then try this terrible mess of a process.
+Or, use my version.
 ```bash
-patch libgcrypt
-export  MAKEINFOFLAGS="--force"
-
+git clone git@github.com:samuelkgutierrez/LaunchMON.git
 ```
-
+### NOTES:
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
-     Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
+
+Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
 
 ## Building MRNet
 Download source distribution from http://www.paradyn.org/mrnet
@@ -60,7 +59,8 @@ make -j4 && make install
 ```bash
 mkdir build && cd build
 cmake ../ \
--DGLADIUS_LLDB_HOME=$LLVM_PREFIX
+-DGLADIUS_LMON_HOME=$LMON_PREFIX \
+-DGLADIUS_LLDB_HOME=$LLVM_PREFIX \
 -DGLADIUS_MRNET_HOME=$MRNET_PREFIX
 make
 ```
