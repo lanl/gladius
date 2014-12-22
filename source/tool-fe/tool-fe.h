@@ -30,8 +30,11 @@ private:
     std::mutex mtFEBELock;
     std::condition_variable mtBELaunchComplete;
     ////////////////////////////////////////////////////////////////////////////
-
+    // Flag indicating whether or not we'll be verbose about our actions.
+    bool mBeVerbose;
+    // Our LaunchMON instance.
     LaunchMon mLMON;
+    // Target application arguments.
     core::Args mAppArgs;
 
     void

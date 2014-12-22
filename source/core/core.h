@@ -13,5 +13,6 @@
 #include "gladius-exception.h"
 #include "utils.h"
 #include "args.h"
+#include "env.h"
 
 #endif

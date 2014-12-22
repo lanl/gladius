@@ -9,7 +9,7 @@
 add_library(
     GladiusToolFE
     tool-fe.cpp tool-fe.h
-    lmon.h
+    lmon.cpp lmon.h
 )
 
 include_directories(..)

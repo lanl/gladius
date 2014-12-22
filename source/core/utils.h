@@ -65,6 +65,15 @@ do {                                                                           \
           );                                                                   \
 } while (0)
 
+/**
+ * Convenience macro for printing out warning messages.
+ */
+#define GLADIUS_WARN(msg)                                                      \
+do {                                                                           \
+    std::cout << "[GLADIUS WARNING @ " << __FILE__ << ": " << __LINE__ << "]:" \
+              << std::string(msg) << std::endl;                                \
+} while (0)
+
 namespace gladius {
 namespace core {
 
@@ -163,6 +172,9 @@ public:
         return ltrim(rtrim(s));
     }
 
+    /**
+     * Returns a string containing the host name of the calling process.
+     */
     static std::string
     getHostname(void)
     {
@@ -172,10 +184,19 @@ public:
         (void)memset(hnBuf, '\0', sizeof(hnBuf));
         if (-1 == gethostname(hnBuf, HOST_NAME_MAX)) {
             int err = errno;
-            string errStr = "gethostname. Why: " + getStrError(err);
+            string errStr = "gethostname. Why: " + getStrError(err) + ".";
             GLADIUS_THROW_CALL_FAILED(errStr);
         }
         return string(hnBuf);
+    }
+
+    /**
+     * Returns whether or not a given environment variable is defined.
+     */
+    static bool
+    envVarSet(const std::string &envVarName)
+    {
+        return (NULL != getenv(envVarName.c_str()));
     }
 };
 

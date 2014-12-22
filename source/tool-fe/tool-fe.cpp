@@ -20,8 +20,14 @@ using namespace gladius::toolfe;
 /**
  * Tool front-end constructor.
  */
-ToolFE::ToolFE(void)
+ToolFE::ToolFE(
+    void
+) : mBeVerbose(false)
 {
+    if (core::Utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
+        mBeVerbose = true;
+        mLMON.verbose(mBeVerbose);
+    }
 }
 
 /**
@@ -71,7 +77,7 @@ ToolFE::mRemoteBody(void)
 {
     try {
         std::cout << "starting be" << std::endl;
-        mLMON.attachAndSpawnDaemons(0);
+        mLMON.launchAndSpawnDaemons();
         sleep(2);
         mtBELaunchComplete.notify_one();
     }

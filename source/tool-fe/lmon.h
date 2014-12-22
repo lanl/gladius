@@ -24,6 +24,8 @@ namespace gladius {
 namespace toolfe {
 
 class LaunchMon {
+    // Flag indicating whether or not we'll be verbose about our actions.
+    bool mBeVerbose;
     // The PID of the target application launcher (srun, mpirun, aprun, etc.)
     pid_t mLauncherPID;
     // LMON session number (handle).
@@ -36,52 +38,22 @@ class LaunchMon {
     std::string mDaemonOpts;
 
 public:
-    /**
-     *
-     */
-    LaunchMon(void) {
-        mToolD = "gladiustd";
-    }
+    LaunchMon(void);
 
-    /**
-     *
-     */
     void
-    init(void) {
-        mHostname = core::Utils::getHostname();
-        // Init LaunchMON
-        auto rc = LMON_fe_init(LMON_VERSION);
-        if (LMON_OK != rc) {
-            GLADIUS_THROW_CALL_FAILED("LMON_fe_init");
-        }
-        rc = LMON_fe_createSession(&mSessionNum);
-        if (LMON_OK != rc) {
-            GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
-        }
-    }
+    init(void);
 
-    /**
-     *
-     */
+    void
+    launchAndSpawnDaemons();
+
     void
     attachAndSpawnDaemons(pid_t launcherPID) {
-        // Stash the PID of the app launcher.
-        mLauncherPID = launcherPID;
-        std::string launcherPIDStr = std::to_string(mLauncherPID);
-        auto rc = LMON_fe_attachAndSpawnDaemons(
-                      mSessionNum,
-                      mHostname.c_str(),
-                      mLauncherPID,
-                      mToolD.c_str(),
-                      NULL,
-                      NULL,
-                      NULL
-                  );
-        if (LMON_OK != rc) {
-            auto rcs = std::to_string(rc);
-            auto errStr = "LMON_fe_attachAndSpawnDaemons. RC = " + rcs;
-            GLADIUS_THROW_CALL_FAILED(errStr);
-        }
+        GLADIUS_UNUSED(launcherPID);
+    }
+
+    void
+    verbose(bool bVerbose) {
+        mBeVerbose = bVerbose;
     }
 };
 

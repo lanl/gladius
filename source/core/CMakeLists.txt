@@ -11,5 +11,6 @@ add_library(
     core.h
     gladius-package-info.h
     utils.h
+    env.h
     gladius-exception.h gladius-exception.cpp
 )

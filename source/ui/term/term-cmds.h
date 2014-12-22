@@ -116,8 +116,8 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     }
     // If here then run to tool front-end and enter its REPL.
     core::Args launchArgs(args.argc, (const char **)args.argv);
-    // TODO add return status to see if we should continue REPL.
     toolfe::ToolFE *toolFE = args.terminal->getToolFE();
+    // TODO add return status to see if we should continue REPL.
     toolFE->run(launchArgs);
     /* Continue REPL */
     return true;
