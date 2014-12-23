@@ -77,7 +77,7 @@ ToolFE::mRemoteBody(void)
 {
     try {
         std::cout << "starting be" << std::endl;
-        mLMON.launchAndSpawnDaemons();
+        mLMON.launchAndSpawnDaemons(mAppArgs);
         sleep(2);
         mtBELaunchComplete.notify_one();
     }

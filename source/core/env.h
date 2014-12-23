@@ -15,4 +15,13 @@
 
 #define GLADIUS_TOOL_FE_VERBOSE_STR "GLADIUS_TOOL_FE_VERBOSE"
 
+/**
+ * GLADIUS_APP_LAUNCHER:
+ * Supported Values:
+ * - orte
+ * - srun
+ * - aprun
+ */
+#define GLADIUS_APP_LAUNCHER_STR    "GLADIUS_APP_LAUNCHER"
+
 #endif

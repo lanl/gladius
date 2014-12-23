@@ -7,6 +7,7 @@
 #
 
 add_subdirectory(core)
+add_subdirectory(appl)
 add_subdirectory(tool-be)
 add_subdirectory(tool-fe)
 add_subdirectory(ui)

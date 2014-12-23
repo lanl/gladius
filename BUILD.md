@@ -37,10 +37,6 @@ cd LaunchMON
 MPICC=mpicc MPICXX=mpic++ && \
 make && make install
 ```
-Or, use my version.
-```bash
-git clone git@github.com:samuelkgutierrez/LaunchMON.git
-```
 ### NOTES:
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
 

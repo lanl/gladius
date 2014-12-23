@@ -104,6 +104,8 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 
 /**
  * Launches target application.
+ * Expecting:
+ * launch -n NPES -N NPERNODE
  */
 inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
@@ -115,7 +117,9 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
         return true;
     }
     // If here then run to tool front-end and enter its REPL.
-    core::Args launchArgs(args.argc, (const char **)args.argv);
+    // Adjust the argv that we are gonig to pass to the toolfe by removing the
+    // launch command string and adjusting the arg count.
+    core::Args launchArgs(args.argc - 1, (const char **)args.argv + 1);
     toolfe::ToolFE *toolFE = args.terminal->getToolFE();
     // TODO add return status to see if we should continue REPL.
     toolFE->run(launchArgs);

@@ -70,7 +70,8 @@ do {                                                                           \
  */
 #define GLADIUS_WARN(msg)                                                      \
 do {                                                                           \
-    std::cout << "[GLADIUS WARNING @ " << __FILE__ << ": " << __LINE__ << "]:" \
+    std::cout << "[" PACKAGE_NAME " WARNING @ "                                \
+              << __FILE__ << ": " << __LINE__ << "]:"                          \
               << std::string(msg) << std::endl;                                \
 } while (0)
 
@@ -188,6 +189,21 @@ public:
             GLADIUS_THROW_CALL_FAILED(errStr);
         }
         return string(hnBuf);
+    }
+
+    /**
+     * Returns a string containing the value of envVarName.
+     */
+    static std::string
+    getEnv(const std::string &envVarName)
+    {
+        char *cEnvP = getenv(envVarName.c_str());
+        if (!cEnvP) {
+            auto errStr = "getEnv. Why: Value for '" + envVarName
+                        + "' requested, but not set.";
+            GLADIUS_THROW_CALL_FAILED(errStr);
+        }
+        return std::string(cEnvP);
     }
 
     /**

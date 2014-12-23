@@ -14,6 +14,8 @@
 
 #include "lmon.h"
 #include "core/core.h"
+#include "appl/appl-factory.h"
+#include "appl/appl.h"
 
 using namespace gladius::toolfe;
 
@@ -22,37 +24,41 @@ namespace {
  * LaunchMON static callback.
  */
 int
-statusFuncCB(int *status)
+statusFuncCallback(int *status)
 {
+    using namespace std;
+
+    if (!status) {
+        GLADIUS_THROW_INVLD_ARG();
+    }
     int stcp = *status;
-    fprintf(stdout, "**** status callback routine is invoked:0x%x ****\n", stcp);
     if (WIFREGISTERED(stcp)) {
-        fprintf(stdout, "* session registered\n");
+        cout << "* session registered" << endl;
     }
     else {
-        fprintf(stdout, "* session not registered\n");
+        cout << "* session not registered" << endl;
     }
     if (WIFBESPAWNED(stcp)) {
-        fprintf(stdout, "* BE daemons spawned\n");
+        cout << "* BE daemons spawned" << endl;
     }
     else {
-        fprintf(stdout, "* BE daemons not spawned or exited\n");
+        cout << "* BE daemons not spawned or exited" << endl;
     }
     if (WIFMWSPAWNED(stcp)) {
-        fprintf(stdout, "* MW daemons spawned\n");
+        cout << "* MW daemons spawned" << endl;
     }
     else {
-        fprintf(stdout, "* MW daemons not spawned or exited\n");
+        cout << "* MW daemons not spawned or exited" << endl;
     }
     if (WIFDETACHED(stcp)) {
-        fprintf(stdout, "* the job is detached\n");
+        cout << "* the job is detached" << endl;
     }
     else {
         if (WIFKILLED(stcp)) {
-            fprintf(stdout, "* the job is killed\n");
+            cout << "* the job is killed" << endl;
         }
         else {
-            fprintf(stdout, "* the job has not been killed\n");
+            cout << "* the job has not been killed" << endl;
         }
     }
     return 0;
@@ -88,7 +94,8 @@ LaunchMon::init(void)
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
     if (mBeVerbose) {
-        rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCB);
+        rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
+        // Not a fatal failure, but warn about this failure.
         if (LMON_OK != rc) {
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
@@ -99,5 +106,29 @@ LaunchMon::init(void)
  *
  */
 void
-LaunchMon::launchAndSpawnDaemons() {
+LaunchMon::launchAndSpawnDaemons(
+    const core::Args &appArgs
+) {
+    using namespace appl;
+    try {
+        AppL *appLauncher = AppLFactory::makeNewAppL();
+        char **launcherArgv = appArgs.argv();
+        auto rc = LMON_fe_launchAndSpawnDaemons(
+                      mSessionNum,
+                      mHostname.c_str(),
+                      launcherArgv[0],
+                      launcherArgv,
+                      NULL,
+                      NULL,
+                      NULL,
+                      NULL
+                  );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED("LMON_fe_launchAndSpawnDaemons");
+        }
+        delete appLauncher;
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }
