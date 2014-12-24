@@ -8,12 +8,8 @@
 
 #include "tool-be.h"
 
+#include <cstdlib>
 #include <string>
-#include <thread>
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 using namespace gladius::toolbe;
 
@@ -58,3 +54,15 @@ ToolBE::mLocalBody(void)
     }
 }
 #endif
+
+/**
+ * Tool daemon main
+ */
+int
+main(
+    int argc,
+    char **argv,
+    char **envp
+) {
+    return EXIT_SUCCESS;
+}

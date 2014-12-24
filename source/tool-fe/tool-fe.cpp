@@ -40,6 +40,21 @@ ToolFE::helpText(void)
 }
 
 /**
+ * Returns whether or not the tool-fe's environment setup is sane.
+ */
+bool
+ToolFE::envSane(std::string &whatsWrong)
+{
+    using namespace gladius::core;
+    bool sane = true;
+    if (!Utils::envVarSet(GLADIUS_APP_LAUNCHER_STR)) {
+        sane = false;
+        whatsWrong =  "Please setenv: " GLADIUS_APP_LAUNCHER_STR ".\n";
+    }
+    return sane;
+}
+
+/**
  * Responsible for running the tool front-end instance. This is the tool-fe
  * entry point from a caller's perspective.
  */
@@ -47,6 +62,14 @@ void
 ToolFE::run(
     const core::Args &args
 ) {
+    // First make sure that all the required bits are set before we get to
+    // launching anything.
+    std::string whatsWrong;
+    if (!envSane(whatsWrong)) {
+        GLADIUS_CERR << whatsWrong << std::endl;
+        return;
+    }
+    // If we are here, then our environment is sane enough to start...
     mAppArgs = args;
     mLocalBody();
 }

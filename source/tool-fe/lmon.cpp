@@ -96,7 +96,8 @@ LaunchMon::init(void)
     if (mBeVerbose) {
         rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
         // Not a fatal failure, but warn about this failure.
-        if (LMON_OK != rc) {
+        // XXX
+        if (LMON_OK == rc) {
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
     }

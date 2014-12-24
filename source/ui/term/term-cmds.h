@@ -17,6 +17,21 @@
 #include <iostream>
 #include <cstdio>
 
+namespace {
+/**
+ *
+ */
+void
+echoCommandUsage(
+    const gladius::ui::term::EvalInputCmdCallBackArgs &args,
+    const std::string &cmdName
+) {
+    auto trmCMD = args.terminal->getTermCommands().getTermCMD(cmdName);
+    std::cerr << "Usage: " << trmCMD->shortUsage() << std::endl;
+}
+
+}
+
 namespace gladius {
 namespace ui {
 namespace term {
@@ -76,13 +91,28 @@ modesCMDCallback(const EvalInputCmdCallBackArgs &args)
 }
 
 /**
- * Sets the debug mode.
+ * Sets an environment variable during a debug session.
+ * Form: setenv ENV_VAR VAL
  */
 inline bool
 setModeCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
-    GLADIUS_UNUSED(args);
-    /* Continue REPL */
+    using std::string;
+    using namespace gladius::core;
+
+    if (args.argc != 3) {
+        // launch should have at least 2 arguments. So, print out the usage.
+        echoCommandUsage(args, args.argv[0]);
+        return true;
+    }
+    try {
+        char **argv = args.argv;
+        Utils::setEnv(string(argv[1]), string(argv[2]));
+    }
+    catch(const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+    // Continue REPL
     return true;
 }
 
@@ -105,15 +135,14 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 /**
  * Launches target application.
  * Expecting:
- * launch -n NPES -N NPERNODE
+ * launch -n NPES [-N NPERNODE] APP APP_ARGS
  */
 inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     if (args.argc < 2) {
         // launch should have at least 2 arguments. So, print out the usage.
-        auto trmCMD = args.terminal->getTermCommands().getTermCMD(args.argv[0]);
-        std::cout << trmCMD->shortUsage() << std::endl;
+        echoCommandUsage(args, args.argv[0]);
         return true;
     }
     // If here then run to tool front-end and enter its REPL.

@@ -114,10 +114,10 @@ TermCommands Terminal::sTermCommands {
         historyCMDCallback
     ),
     TermCommand(
-        "set",
+        "setenv",
         "",
-        "set",
-        "set Help",
+        "setenv ENV_VAR VAL",
+        "setenv Help",
         setModeCMDCallback
     )
 };

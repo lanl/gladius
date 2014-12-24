@@ -6,9 +6,11 @@
 # top-level directory of this distribution.
 #
 
-add_library(
-    GladiusToolBE
+add_executable(
+    gladius-toold
     tool-be.cpp tool-be.h
 )
+
+install(TARGETS gladius-toold DESTINATION bin)
 
 include_directories(..)

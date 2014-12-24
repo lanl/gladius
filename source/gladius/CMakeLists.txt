@@ -12,6 +12,8 @@ add_executable(
     gladius.h gladius.cpp
 )
 
+install(TARGETS gladius DESTINATION bin)
+
 include_directories(..)
 
 target_link_libraries(

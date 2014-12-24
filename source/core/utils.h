@@ -70,10 +70,20 @@ do {                                                                           \
  */
 #define GLADIUS_WARN(msg)                                                      \
 do {                                                                           \
-    std::cout << "[" PACKAGE_NAME " WARNING @ "                                \
-              << __FILE__ << ": " << __LINE__ << "]:"                          \
+    std::cerr << gladius::core::Utils::ansiBeginColorRed()                     \
+              << "[" PACKAGE_NAME " WARNING @ "                                \
+              << __FILE__ << ": " << __LINE__ << "]: "                         \
+              << gladius::core::Utils::ansiEndColor()                          \
               << std::string(msg) << std::endl;                                \
 } while (0)
+
+/**
+ * Convenience macro for printing out messages to cerr;
+ */
+#define GLADIUS_CERR                                                           \
+    std::cerr << gladius::core::Utils::ansiBeginColorRed()                     \
+              << "[" PACKAGE_NAME "] "                                         \
+              << gladius::core::Utils::ansiEndColor()
 
 namespace gladius {
 namespace core {
@@ -207,12 +217,44 @@ public:
     }
 
     /**
+     * Wrapper for setenv(3).
+     */
+    static void
+    setEnv(
+        const std::string &envVarName,
+        const std::string &value,
+        bool overwrite = true
+    ) {
+        int overwriteI = overwrite ? 1 : 0;
+        auto rc = setenv(envVarName.c_str(), value.c_str(), overwriteI);
+        if (-1 == rc) {
+            GLADIUS_THROW_CALL_FAILED("setEnv");
+        }
+    }
+
+    /**
      * Returns whether or not a given environment variable is defined.
      */
     static bool
     envVarSet(const std::string &envVarName)
     {
         return (NULL != getenv(envVarName.c_str()));
+    }
+
+    /**
+     *
+     */
+    static std::string
+    ansiBeginColorRed(void) {
+        return "\033[0;31m";
+    }
+
+    /**
+     *
+     */
+    static std::string
+    ansiEndColor(void) {
+        return "\033[0m";
     }
 };
 

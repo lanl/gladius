@@ -57,6 +57,9 @@ public:
 
     void
     beRecv();
+
+    bool
+    envSane(std::string &whatsWrong);
 };
 
 }

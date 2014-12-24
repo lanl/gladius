@@ -54,6 +54,10 @@ public:
             throw core::GladiusException(GLADIUS_WHERE, e.what());
         }
     }
+
+    /**
+     *
+     */
 };
 
 } // end appl namespace
