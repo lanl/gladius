@@ -7,21 +7,16 @@
  */
 
 /**
- * Home to environment variable things that impact gladius' behavior.
+ * Home to environment variables that impact gladius' behavior.
  */
 
 #ifndef GLADIUS_CORE_ENV_H_INCLUDED
 #define GLADIUS_CORE_ENV_H_INCLUDED
 
-#define GLADIUS_TOOL_FE_VERBOSE_STR "GLADIUS_TOOL_FE_VERBOSE"
-
 /**
- * GLADIUS_APP_LAUNCHER:
- * Supported Values:
- * - orte
- * - srun
- * - aprun
+ * If this environment variable is set, then the tool front-end will be verbose
+ * about its actions.
  */
-#define GLADIUS_APP_LAUNCHER_STR    "GLADIUS_APP_LAUNCHER"
+#define GLADIUS_TOOL_FE_VERBOSE_STR "GLADIUS_TOOL_FE_VERBOSE"
 
 #endif

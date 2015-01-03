@@ -118,7 +118,7 @@ TermCommands Terminal::sTermCommands {
         "",
         "setenv ENV_VAR VAL",
         "setenv Help",
-        setModeCMDCallback
+        setEnvCMDCallback
     )
 };
 
@@ -252,8 +252,9 @@ Terminal::evaluateInput(
 ) {
     auto maybeTermCmd = sTermCommands.getTermCMD(argv[0]);
     if (!maybeTermCmd) {
-        std::cout << "error: \'" << argv[0] << "\' "
-                  << "is not a valid command. Try \'help\'." << std::endl;
+        GLADIUS_CERR << "\'" << argv[0] << "\' "
+                     << "is not a valid command. Try \'help\'."
+                     << std::endl;
     }
     else {
         // Found it, so call the registered callback associated with the
@@ -271,10 +272,12 @@ Terminal::evaluateInput(
 void
 Terminal::setSignalHandlers(void)
 {
+#if 0
     (void)signal(SIGINT, sigHandler);
     (void)signal(SIGQUIT, sigHandler);
     (void)signal(SIGHUP, sigHandler);
     (void)signal(SIGTERM, sigHandler);
+#endif
 }
 
 /**

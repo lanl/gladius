@@ -45,12 +45,8 @@ ToolFE::helpText(void)
 bool
 ToolFE::envSane(std::string &whatsWrong)
 {
-    using namespace gladius::core;
+    GLADIUS_UNUSED(whatsWrong);
     bool sane = true;
-    if (!Utils::envVarSet(GLADIUS_APP_LAUNCHER_STR)) {
-        sane = false;
-        whatsWrong =  "Please setenv: " GLADIUS_APP_LAUNCHER_STR ".\n";
-    }
     return sane;
 }
 
@@ -71,7 +67,14 @@ ToolFE::run(
     }
     // If we are here, then our environment is sane enough to start...
     mAppArgs = args;
-    mLocalBody();
+    try {
+        mLocalBody();
+    }
+    // If something went south, just print the haps and return to the top-level
+    // repl.
+    catch(const std::exception &e) {
+        GLADIUS_CERR << std::endl << e.what() << std::endl;
+    }
 }
 
 /**
@@ -99,7 +102,8 @@ void
 ToolFE::mRemoteBody(void)
 {
     try {
-        std::cout << "starting be" << std::endl;
+        // TODO make this output better...
+        GLADIUS_COUT_STAT << "launching..." << std::endl;
         mLMON.launchAndSpawnDaemons(mAppArgs);
         sleep(2);
         mtBELaunchComplete.notify_one();

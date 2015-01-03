@@ -26,8 +26,12 @@ echoCommandUsage(
     const gladius::ui::term::EvalInputCmdCallBackArgs &args,
     const std::string &cmdName
 ) {
+    using namespace gladius;
+
     auto trmCMD = args.terminal->getTermCommands().getTermCMD(cmdName);
-    std::cerr << "Usage: " << trmCMD->shortUsage() << std::endl;
+    GLADIUS_CERR_WARN << "Usage: "
+                      << trmCMD->shortUsage()
+                      << std::endl;
 }
 
 }
@@ -95,13 +99,13 @@ modesCMDCallback(const EvalInputCmdCallBackArgs &args)
  * Form: setenv ENV_VAR VAL
  */
 inline bool
-setModeCMDCallback(const EvalInputCmdCallBackArgs &args)
+setEnvCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     using std::string;
     using namespace gladius::core;
 
     if (args.argc != 3) {
-        // launch should have at least 2 arguments. So, print out the usage.
+        // should have 3 arguments. So, print out the usage.
         echoCommandUsage(args, args.argv[0]);
         return true;
     }
@@ -140,8 +144,8 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
+    // launch should have at least 2 arguments. So, print out the usage.
     if (args.argc < 2) {
-        // launch should have at least 2 arguments. So, print out the usage.
         echoCommandUsage(args, args.argv[0]);
         return true;
     }

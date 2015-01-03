@@ -16,6 +16,5 @@ include_directories(..)
 
 target_link_libraries(
     GladiusToolFE
-    GladiusAppL
     ${GLADIUS_LMON_LIBS}
 )

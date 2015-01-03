@@ -43,11 +43,12 @@ public:
             }
             // Don't know what this is...
             else {
-                auto errStr = "getNewAppL. Why: " GLADIUS_APP_LAUNCHER_STR
+                auto errStr = GLADIUS_APP_LAUNCHER_STR
                             " set to '" + applEnvStr
                             + "' and '" + applEnvStr
                             + "' is not a supported launcher type.";
-                GLADIUS_THROW_CALL_FAILED(errStr);
+                GLADIUS_CERR << errStr << std::endl;
+                return NULL;
             }
         }
         catch(const std::exception &e) {

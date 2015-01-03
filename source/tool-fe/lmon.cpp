@@ -14,8 +14,6 @@
 
 #include "lmon.h"
 #include "core/core.h"
-#include "appl/appl-factory.h"
-#include "appl/appl.h"
 
 using namespace gladius::toolfe;
 
@@ -72,7 +70,7 @@ statusFuncCallback(int *status)
 LaunchMon::LaunchMon(
     void
 ) : mBeVerbose(false)
-  , mToolD("gladiustd")
+  , mToolD("gladius-toold")
 {
 }
 
@@ -96,8 +94,7 @@ LaunchMon::init(void)
     if (mBeVerbose) {
         rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
         // Not a fatal failure, but warn about this failure.
-        // XXX
-        if (LMON_OK == rc) {
+        if (LMON_OK != rc) {
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
     }
@@ -110,16 +107,14 @@ void
 LaunchMon::launchAndSpawnDaemons(
     const core::Args &appArgs
 ) {
-    using namespace appl;
     try {
-        AppL *appLauncher = AppLFactory::makeNewAppL();
         char **launcherArgv = appArgs.argv();
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
-                      mHostname.c_str(),
-                      launcherArgv[0],
-                      launcherArgv,
                       NULL,
+                      launcherArgv[0], // launcher name
+                      launcherArgv,    // all of the launch command
+                      mToolD.c_str(),
                       NULL,
                       NULL,
                       NULL
@@ -127,7 +122,6 @@ LaunchMon::launchAndSpawnDaemons(
         if (LMON_OK != rc) {
             GLADIUS_THROW_CALL_FAILED("LMON_fe_launchAndSpawnDaemons");
         }
-        delete appLauncher;
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

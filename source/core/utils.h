@@ -70,7 +70,7 @@ do {                                                                           \
  */
 #define GLADIUS_WARN(msg)                                                      \
 do {                                                                           \
-    std::cerr << gladius::core::Utils::ansiBeginColorRed()                     \
+    std::cerr << gladius::core::Utils::ansiBeginColorYellow()                  \
               << "[" PACKAGE_NAME " WARNING @ "                                \
               << __FILE__ << ": " << __LINE__ << "]: "                         \
               << gladius::core::Utils::ansiEndColor()                          \
@@ -82,6 +82,22 @@ do {                                                                           \
  */
 #define GLADIUS_CERR                                                           \
     std::cerr << gladius::core::Utils::ansiBeginColorRed()                     \
+              << "[" PACKAGE_NAME "] "                                         \
+              << gladius::core::Utils::ansiEndColor()
+
+/**
+ * Convenience macro for printing out warning messages to cerr;
+ */
+#define GLADIUS_CERR_WARN                                                      \
+    std::cerr << gladius::core::Utils::ansiBeginColorYellow()                  \
+              << "[" PACKAGE_NAME "] "                                         \
+              << gladius::core::Utils::ansiEndColor()
+
+/**
+ * Convenience macro for printing out status messages to cout;
+ */
+#define GLADIUS_COUT_STAT                                                      \
+    std::cerr << gladius::core::Utils::ansiBeginColorGreen()                   \
               << "[" PACKAGE_NAME "] "                                         \
               << gladius::core::Utils::ansiEndColor()
 
@@ -247,6 +263,22 @@ public:
     static std::string
     ansiBeginColorRed(void) {
         return "\033[0;31m";
+    }
+
+    /**
+     *
+     */
+    static std::string
+    ansiBeginColorYellow(void) {
+        return "\033[0;33m";
+    }
+
+    /**
+     *
+     */
+    static std::string
+    ansiBeginColorGreen(void) {
+        return "\033[0;32m";
     }
 
     /**
