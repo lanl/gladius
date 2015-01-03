@@ -10,7 +10,6 @@ add_library(
     GladiusToolFE
     tool-fe.cpp tool-fe.h
     lmon.cpp lmon.h
-    ${CMAKE_CURRENT_BINARY_DIR}/lmon-path.h
 )
 
 include_directories(..)
