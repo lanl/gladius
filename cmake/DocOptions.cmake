@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014      Los Alamos National Security, LLC
+# Copyright (c) 2014-2015 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -9,15 +9,15 @@
 ################################################################################
 # Top-level call responsible for setting up documentation things. 
 ################################################################################
-function(docSetup)
+function(DOC_SETUP)
     # We need Doxygen, so look for it.
     find_package(Doxygen)
     option(BUILD_DOCUMENTATION
            "Create and install documentation (requires Doxygen)"
            ${DOXYGEN_FOUND}
     )
-    if (BUILD_DOCUMENTATION)
-        if (NOT DOXYGEN_FOUND)
+    if(BUILD_DOCUMENTATION)
+        if(NOT DOXYGEN_FOUND)
             message(FATAL_ERROR "Doxygen is needed to build the documentation.")
         endif()
 
@@ -33,9 +33,10 @@ function(docSetup)
             COMMENT "Generating API documentation with Doxygen"
             VERBATIM
         )
-        install(DIRECTORY
-                ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION
-                share/doc
+        install(
+            DIRECTORY
+            ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION
+            share/doc
         )
     endif(BUILD_DOCUMENTATION)
 endfunction()
