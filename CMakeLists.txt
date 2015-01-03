@@ -8,6 +8,8 @@
 
 # cmake -LAH to list all project options
 project(Gladius)
+# Make sure cmake adds the binary directory for the project to the include path
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 # Set minimum required version
 cmake_minimum_required(VERSION 2.8.11)
 # Project configury includes

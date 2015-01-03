@@ -48,7 +48,7 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     using namespace std;
     GLADIUS_UNUSED(args);
-    cout << endl << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
+    GLADIUS_CERR_WARN << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
     char answer[8];
     cin.getline(answer, sizeof(answer));
     if (0 == strcmp("Y", answer)) {

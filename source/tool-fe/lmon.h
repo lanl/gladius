@@ -15,6 +15,9 @@
 
 #include "core/core.h"
 
+#if 0
+#include "lmon-path.h"
+#endif
 #include "lmon_api/lmon_fe.h"
 
 #include <string>
@@ -36,6 +39,8 @@ class LaunchMon {
     std::string mToolD;
     // Daemon option string
     std::string mDaemonOpts;
+    // LaunchMON engine path.
+    std::string mEnginePath;
 
 public:
     LaunchMon(void);

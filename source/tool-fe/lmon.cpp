@@ -9,15 +9,19 @@
  */
 
 /**
- * Implements the tool Front-End (FE) API. The interface to the tool actions.
+ * Implements LaunchMON actions shim.
  */
 
 #include "lmon.h"
+
 #include "core/core.h"
 
 using namespace gladius::toolfe;
 
 namespace {
+/// The name of the tool daemon.
+static const std::string TOOLD_NAME = "gladius-toold";
+
 /**
  * LaunchMON static callback.
  */
@@ -70,7 +74,7 @@ statusFuncCallback(int *status)
 LaunchMon::LaunchMon(
     void
 ) : mBeVerbose(false)
-  , mToolD("gladius-toold")
+  , mToolD(TOOLD_NAME)
 {
 }
 
@@ -82,6 +86,8 @@ LaunchMon::init(void)
 {
     // Stash the tool FE's host name.
     mHostname = core::Utils::getHostname();
+    // And the LMON engine path.
+    //mEnginePath = core
     // Init LaunchMON
     auto rc = LMON_fe_init(LMON_VERSION);
     if (LMON_OK != rc) {
@@ -111,7 +117,7 @@ LaunchMon::launchAndSpawnDaemons(
         char **launcherArgv = appArgs.argv();
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
-                      NULL,
+                      mHostname.c_str(),
                       launcherArgv[0], // launcher name
                       launcherArgv,    // all of the launch command
                       mToolD.c_str(),
