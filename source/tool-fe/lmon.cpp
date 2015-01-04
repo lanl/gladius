@@ -22,7 +22,9 @@ using namespace gladius::toolfe;
 
 namespace {
 /// The name of the tool daemon.
-static const std::string TOOLD_NAME = "gladius-toold";
+static const std::string TOOLD_NAME = gladius::core::utils::installPrefix()
+                                    + "/bin/"
+                                    + "gladius-toold";
 /// What to use for remote login
 static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
 

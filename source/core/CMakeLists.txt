@@ -12,6 +12,13 @@ add_library(
     gladius-package-info.h
     ret-codes.h
     env.h
-    utils.h
+    utils.h utils.cpp
     gladius-exception.h gladius-exception.cpp
 )
+
+include_directories(..)
+# Used to help find the generated header during configure.
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+configure_file(gladius-paths.h.in gladius-paths.h)
+set_source_files_properties(gladius-paths.h PROPERTIES GENERATED TRUE)

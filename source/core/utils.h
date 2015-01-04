@@ -10,6 +10,7 @@
 #define GLADIUS_CORE_UTILS_H_INCLUDED
 
 #include "core/ret-codes.h"
+#include "core/gladius-exception.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -340,6 +341,12 @@ public:
                      result.end());
         return GLADIUS_SUCCESS;
     }
+
+    /**
+     * Returns the install prefix of gladius.
+     */
+    static std::string
+    installPrefix(void);
 };
 
 } // end core namespace

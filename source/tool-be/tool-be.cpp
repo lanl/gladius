@@ -64,5 +64,8 @@ main(
     char **argv,
     char **envp
 ) {
+    GLADIUS_UNUSED(argc);
+    GLADIUS_UNUSED(argv);
+    GLADIUS_UNUSED(envp);
     return EXIT_SUCCESS;
 }
