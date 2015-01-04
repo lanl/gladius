@@ -13,6 +13,7 @@
  */
 
 #include "lmon.h"
+// Automatically generated header.
 #include "lmon-paths.h"
 
 #include "core/core.h"
@@ -146,8 +147,8 @@ LaunchMon::launchAndSpawnDaemons(
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
                       mHostname.c_str(),
-                      launcherPath.c_str(), // launcher name
-                      launcherArgv,    // all of the launch command
+                      launcherPath.c_str(), // launcher absolute path
+                      launcherArgv, // all of the launch command
                       mToolD.c_str(),
                       NULL,
                       NULL,

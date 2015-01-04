@@ -108,7 +108,7 @@ ToolFE::mRemoteBody(void)
         mLMON.launchAndSpawnDaemons(mAppArgs);
     }
     catch(const std::exception &e) {
-        GLADIUS_CERR << e.what();
+        GLADIUS_CERR << e.what() << std::endl;
     }
     // Notify main thread unconditionally.
     mtBELaunchComplete.notify_one();
