@@ -9,7 +9,7 @@
 #ifndef GLADIUS_CORE_UTILS_H_INCLUDED
 #define GLADIUS_CORE_UTILS_H_INCLUDED
 
-#include "gladius-exception.h"
+#include "core/ret-codes.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -23,6 +23,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include <string.h>
+
+#include <iostream>
 
 /**
  * Convenience macro used to silence warnings about unused variables.
@@ -70,10 +72,10 @@ do {                                                                           \
  */
 #define GLADIUS_WARN(msg)                                                      \
 do {                                                                           \
-    std::cerr << gladius::core::Utils::ansiBeginColorYellow()                  \
+    std::cerr << gladius::core::utils::ansiBeginColorYellow()                  \
               << "[" PACKAGE_NAME " WARNING @ "                                \
               << __FILE__ << ": " << __LINE__ << "]: "                         \
-              << gladius::core::Utils::ansiEndColor()                          \
+              << gladius::core::utils::ansiEndColor()                          \
               << std::string(msg) << std::endl;                                \
 } while (0)
 
@@ -81,34 +83,34 @@ do {                                                                           \
  * Convenience macro for printing out messages to cerr;
  */
 #define GLADIUS_CERR                                                           \
-    std::cerr << gladius::core::Utils::ansiBeginColorRed()                     \
+    std::cerr << gladius::core::utils::ansiBeginColorRed()                     \
               << "[" PACKAGE_NAME "] "                                         \
-              << gladius::core::Utils::ansiEndColor()
+              << gladius::core::utils::ansiEndColor()
 
 /**
  * Convenience macro for printing out warning messages to cerr;
  */
 #define GLADIUS_CERR_WARN                                                      \
-    std::cerr << gladius::core::Utils::ansiBeginColorYellow()                  \
+    std::cerr << gladius::core::utils::ansiBeginColorYellow()                  \
               << "[" PACKAGE_NAME "] "                                         \
-              << gladius::core::Utils::ansiEndColor()
+              << gladius::core::utils::ansiEndColor()
 
 /**
  * Convenience macro for printing out status messages to cout;
  */
 #define GLADIUS_COUT_STAT                                                      \
-    std::cerr << gladius::core::Utils::ansiBeginColorGreen()                   \
+    std::cerr << gladius::core::utils::ansiBeginColorGreen()                   \
               << "[" PACKAGE_NAME "] "                                         \
-              << gladius::core::Utils::ansiEndColor()
+              << gladius::core::utils::ansiEndColor()
 
 namespace gladius {
 namespace core {
 
-class Utils {
+class utils {
 private:
-    Utils(void) { ; }
+    utils(void) { ; }
 
-    ~Utils(void) { ; }
+    ~utils(void) { ; }
 
 public:
     /**
@@ -269,14 +271,6 @@ public:
      *
      */
     static std::string
-    ansiBeginColorYellow(void) {
-        return "\033[0;33m";
-    }
-
-    /**
-     *
-     */
-    static std::string
     ansiBeginColorGreen(void) {
         return "\033[0;32m";
     }
@@ -285,8 +279,66 @@ public:
      *
      */
     static std::string
+    ansiBeginColorMagenta(void) {
+        return "\033[0;35m";
+    }
+
+    /**
+     *
+     */
+    static std::string
+    ansiBeginColorYellow(void) {
+        return "\033[0;33m";
+    }
+
+
+    /**
+     *
+     */
+    static std::string
     ansiEndColor(void) {
         return "\033[0m";
+    }
+
+    /**
+     * Returns whether or not a given path is an absolute path or not.
+     */
+    static bool
+    isAbsolutePath(std::string path)
+    {
+        // If the path starts with a '/', then it's absolute.
+        return std::string(path[0], 1) == std::string("/");
+    }
+
+    /**
+     * Replicates 'which'.
+     * Searches the user's $PATH for a program file.
+     */
+    static int
+    which(std::string execName,
+          std::string &result)
+    {
+        std::string cmdString = "which " + execName;
+        FILE *fp = popen(cmdString.c_str(), "r");
+        if (!fp) {
+            return GLADIUS_ERR_IO;
+        }
+        // Else capture the output. Should either be the path or nothing on
+        // first line.
+        char lineBuff[PATH_MAX];
+        fgets(lineBuff, sizeof(lineBuff), fp);
+        auto pcrc = pclose(fp);
+        // The exit status of this will tell us whether or not our command
+        // succeeded or not. If success, then finish prepping the answer.
+        if (0 != WEXITSTATUS(pcrc)) {
+            return GLADIUS_ERR;
+        }
+        // Stash into result string.
+        result = lineBuff;
+        // Remove newline from end of string.
+        result.erase(std::remove(result.begin(), result.end(), '\n'),
+                     result.end());
+        return GLADIUS_SUCCESS;
     }
 };
 

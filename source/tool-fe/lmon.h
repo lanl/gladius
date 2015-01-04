@@ -39,8 +39,13 @@ class LaunchMon {
     std::string mToolD;
     // Daemon option string
     std::string mDaemonOpts;
+    // LaunchMON install prefix
+    std::string mPrefixPath;
     // LaunchMON engine path.
     std::string mEnginePath;
+    //
+    void
+    setEnvs(void);
 
 public:
     LaunchMon(void);

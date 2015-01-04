@@ -24,7 +24,7 @@ ToolFE::ToolFE(
     void
 ) : mBeVerbose(false)
 {
-    if (core::Utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
+    if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
         mBeVerbose = true;
         mLMON.verbose(mBeVerbose);
     }
@@ -71,7 +71,7 @@ ToolFE::run(
         mLocalBody();
     }
     // If something went south, just print the haps and return to the top-level
-    // repl.
+    // REPL. Insulate the caller by catching things and handling them here.
     catch(const std::exception &e) {
         GLADIUS_CERR << std::endl << e.what() << std::endl;
     }
@@ -96,7 +96,8 @@ ToolFE::mLocalBody(void)
 }
 
 /**
- * The thread that interacts with the tool back-end.
+ * The thread that interacts with the tool back-end. This is NOT the main
+ * thread, so this is why we don't throw in the exceptional case.
  */
 void
 ToolFE::mRemoteBody(void)
@@ -105,10 +106,10 @@ ToolFE::mRemoteBody(void)
         // TODO make this output better...
         GLADIUS_COUT_STAT << "launching..." << std::endl;
         mLMON.launchAndSpawnDaemons(mAppArgs);
-        sleep(2);
-        mtBELaunchComplete.notify_one();
     }
     catch(const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+        GLADIUS_CERR << e.what();
     }
+    // Notify main thread unconditionally.
+    mtBELaunchComplete.notify_one();
 }

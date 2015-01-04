@@ -13,6 +13,7 @@
  */
 
 #include "lmon.h"
+#include "lmon-paths.h"
 
 #include "core/core.h"
 
@@ -21,6 +22,8 @@ using namespace gladius::toolfe;
 namespace {
 /// The name of the tool daemon.
 static const std::string TOOLD_NAME = "gladius-toold";
+/// What to use for remote login
+static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
 
 /**
  * LaunchMON static callback.
@@ -74,8 +77,22 @@ statusFuncCallback(int *status)
 LaunchMon::LaunchMon(
     void
 ) : mBeVerbose(false)
+  , mHostname(core::utils::getHostname())
   , mToolD(TOOLD_NAME)
+  , mPrefixPath(GLADIUS_TOOL_FE_LMON_PREFIX)
+  , mEnginePath(GLADIUS_TOOL_FE_LMON_ENGINE_PATH)
 {
+}
+
+/**
+ * Sets some environment variables that impact the behavior of LaunchMON.
+ */
+void
+LaunchMon::setEnvs(void)
+{
+    core::utils::setEnv("LMON_PREFIX", mPrefixPath);
+    core::utils::setEnv("LMON_LAUNCHMON_ENGINE_PATH", mEnginePath);
+    core::utils::setEnv("LMON_REMOTE_LOGIN", REMOTE_LOGIN);
 }
 
 /**
@@ -84,10 +101,7 @@ LaunchMon::LaunchMon(
 void
 LaunchMon::init(void)
 {
-    // Stash the tool FE's host name.
-    mHostname = core::Utils::getHostname();
-    // And the LMON engine path.
-    //mEnginePath = core
+    setEnvs();
     // Init LaunchMON
     auto rc = LMON_fe_init(LMON_VERSION);
     if (LMON_OK != rc) {
@@ -113,12 +127,26 @@ void
 LaunchMon::launchAndSpawnDaemons(
     const core::Args &appArgs
 ) {
+    using namespace std;
     try {
         char **launcherArgv = appArgs.argv();
+        string launcherPath;
+        // If we weren't provided an absolute path to the launcher, then fix
+        // that.
+        if (!core::utils::isAbsolutePath(launcherArgv[0])) {
+            auto status = core::utils::which(launcherArgv[0], launcherPath);
+            if (GLADIUS_SUCCESS != status) {
+                GLADIUS_CERR << "Could not find '" << launcherArgv[0]
+                             << "' in $PATH.\nProviding an absolute "
+                             << "path to the launcher may fix this. "
+                             << std::endl;
+                return;
+            }
+        }
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
                       mHostname.c_str(),
-                      launcherArgv[0], // launcher name
+                      launcherPath.c_str(), // launcher name
                       launcherArgv,    // all of the launch command
                       mToolD.c_str(),
                       NULL,

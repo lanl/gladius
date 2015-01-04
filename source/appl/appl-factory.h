@@ -37,7 +37,7 @@ public:
     makeNewAppL(void)
     {
         try {
-            auto applEnvStr = core::Utils::getEnv(GLADIUS_APP_LAUNCHER_STR);
+            auto applEnvStr = core::utils::getEnv(GLADIUS_APP_LAUNCHER_STR);
             if (sORTEName == applEnvStr) {
                 return new AppLORTE();
             }

@@ -9,7 +9,7 @@
 #ifndef GLADIUS_CORE_ARGS_H_INCLUDED
 #define GLADIUS_CORE_ARGS_H_INCLUDED
 
-#include "core.h"
+#include "core/utils.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -39,7 +39,7 @@ public:
          const char **envp = nullptr
     ) {
         mArgC = argc;
-        mArgV = core::Utils::dupArgv(argc, argv);
+        mArgV = core::utils::dupArgv(argc, argv);
         mEnv = const_cast<char **>(envp);
     }
 
@@ -48,7 +48,7 @@ public:
      */
     ~Args(void)
     {
-        if (mArgV) core::Utils::freeDupArgv(mArgV);
+        if (mArgV) core::utils::freeDupArgv(mArgV);
     }
 
     /**
@@ -57,7 +57,7 @@ public:
     Args(const Args &other)
     {
         mArgC = other.mArgC;
-        mArgV = core::Utils::dupArgv(other.argc(), (const char **)other.argv());
+        mArgV = core::utils::dupArgv(other.argc(), (const char **)other.argv());
         mEnv = other.mEnv;
     }
 
@@ -68,7 +68,7 @@ public:
     operator=(const Args &other)
     {
         mArgC = other.mArgC;
-        mArgV = core::Utils::dupArgv(other.argc(), (const char **)other.argv());
+        mArgV = core::utils::dupArgv(other.argc(), (const char **)other.argv());
         mEnv = other.mEnv;
         return *this;
     }

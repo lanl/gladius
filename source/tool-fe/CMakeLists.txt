@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014      Los Alamos National Security, LLC
+# Copyright (c) 2014-2015 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -13,6 +13,7 @@ add_library(
 )
 
 include_directories(..)
+# Used to help find the generated header during configure.
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(
@@ -22,6 +23,6 @@ target_link_libraries(
 
 # Generate header from .in.
 # @see cmake/FindLaunchMON.cmake for more details about GLADIUS_LMON_HOME.
-#set(GLADIUS_TOOL_FE_LMON_PATH ${GLADIUS_LMON_HOME})
-#configure_file(lmon-path.h.in lmon-path.h)
-#set_source_files_properties(lmon-path.h PROPERTIES GENERATED TRUE)
+set(GLADIUS_TOOL_FE_LMON_PATH ${GLADIUS_LMON_HOME})
+configure_file(lmon-paths.h.in lmon-paths.h)
+set_source_files_properties(lmon-paths.h PROPERTIES GENERATED TRUE)

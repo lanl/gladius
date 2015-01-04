@@ -72,7 +72,11 @@ helpCMDCallback(const EvalInputCmdCallBackArgs &args)
         hbot << "-";
     }
     // Print help banner.
-    cout << '\n' << header << '\n' << hbot.str() << endl;
+    cout << '\n'
+         << core::utils::ansiBeginColorMagenta()
+         << header
+         << core::utils::ansiEndColor()
+         << '\n' << hbot.str() << endl;
     // Print available commands.
     cout << "o Available Commands" << endl;
     for (const auto cmdp : args.terminal->cmdPairs()) {
@@ -111,7 +115,7 @@ setEnvCMDCallback(const EvalInputCmdCallBackArgs &args)
     }
     try {
         char **argv = args.argv;
-        Utils::setEnv(string(argv[1]), string(argv[2]));
+        utils::setEnv(string(argv[1]), string(argv[2]));
     }
     catch(const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

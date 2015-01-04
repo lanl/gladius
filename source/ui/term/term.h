@@ -127,7 +127,7 @@ private:
         std::vector<std::string> nameVec;
         std::istringstream buf(nameCSV);
         for (std::string tok; std::getline(buf, tok, ','); ) {
-            nameVec.push_back(core::Utils::trim(tok));
+            nameVec.push_back(core::utils::trim(tok));
         }
         return nameVec;
     }

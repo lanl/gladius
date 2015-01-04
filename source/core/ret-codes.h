@@ -9,10 +9,15 @@
 #ifndef GLADIUS_CORE_RET_CODES_H_INCLUDED
 #define GLADIUS_CORE_RET_CODES_H_INCLUDED
 
-#include <errno.h>
-
 /**
- * Using errno codes.
+ * Return codes.
  */
+
+enum {
+    GLADIUS_SUCCESS = 0,
+    GLADIUS_ERR,
+    GLADIUS_ERR_OOR,
+    GLADIUS_ERR_IO
+};
 
 #endif
