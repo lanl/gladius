@@ -13,9 +13,7 @@
 #include "core/core.h"
 
 #include <string>
-#include <sstream>
 #include <iostream>
-#include <cstdio>
 
 namespace {
 /**
@@ -143,7 +141,7 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 /**
  * Launches target application.
  * Expecting:
- * launch -n NPES [-N NPERNODE] APP APP_ARGS
+ * launch <LAUNCHER> [LAUNCHER_ARGS] APP
  */
 inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
@@ -158,7 +156,6 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     // launch command string and adjusting the arg count.
     core::Args launchArgs(args.argc - 1, (const char **)args.argv + 1);
     toolfe::ToolFE *toolFE = args.terminal->getToolFE();
-    // TODO add return status to see if we should continue REPL.
     toolFE->run(launchArgs);
     /* Continue REPL */
     return true;

@@ -11,6 +11,9 @@
 
 using namespace gladius::core;
 
+/**
+ * Returns a string that contains the install prefix of this software.
+ */
 std::string
 utils::installPrefix(void)
 {
