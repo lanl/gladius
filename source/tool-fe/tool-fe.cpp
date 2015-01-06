@@ -66,13 +66,13 @@ ToolFE::run(
         return;
     }
     // If we are here, then our environment is sane enough to start...
-    mAppArgs = args;
     try {
+        mAppArgs = args;
         mLocalBody();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         GLADIUS_CERR << std::endl << e.what() << std::endl;
     }
 }
@@ -90,7 +90,7 @@ ToolFE::mLocalBody(void)
         mtBELaunchComplete.wait(lock);
         beThread.join();
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
@@ -107,7 +107,7 @@ ToolFE::mRemoteBody(void)
         GLADIUS_COUT_STAT << "launching..." << std::endl;
         mLMON.launchAndSpawnDaemons(mAppArgs);
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;
     }
     // Notify main thread unconditionally.

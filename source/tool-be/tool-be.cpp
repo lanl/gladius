@@ -67,5 +67,6 @@ main(
     GLADIUS_UNUSED(argc);
     GLADIUS_UNUSED(argv);
     GLADIUS_UNUSED(envp);
+    std::cout << "hi from: " << getpid() << std::endl;
     return EXIT_SUCCESS;
 }

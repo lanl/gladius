@@ -28,7 +28,7 @@ UI::UI(const core::Args &args)
     try {
         mArgs = args;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }

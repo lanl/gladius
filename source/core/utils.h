@@ -336,6 +336,8 @@ public:
         }
         // Stash into result string.
         result = lineBuff;
+        // Trim
+        trim(result);
         // Remove newline from end of string.
         result.erase(std::remove(result.begin(), result.end(), '\n'),
                      result.end());

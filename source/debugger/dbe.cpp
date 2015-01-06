@@ -880,7 +880,7 @@ GladiusDBE::GladiusDBE(
         SBHostOS::ThreadCreated("<lldb.driver.main-thread>");
         setSignalHandlers();
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }

@@ -25,7 +25,7 @@ Gladius::Gladius(const core::Args &args) {
         mUI = ui::UIFactory::getNewUI(mArgs, ui::UIFactory::UI_TERM);
         if (!mUI) GLADIUS_THROW_CALL_FAILED("getNewUI");
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
@@ -47,7 +47,7 @@ Gladius::run(void)
     try {
         mUI->interact();
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }

@@ -21,7 +21,7 @@
 using namespace gladius::toolfe;
 
 namespace {
-/// The name of the tool daemon.
+/// The absolute path to our tool daemon.
 static const std::string TOOLD_NAME = gladius::core::utils::installPrefix()
                                     + "/bin/"
                                     + "gladius-toold";
@@ -160,7 +160,7 @@ LaunchMon::launchAndSpawnDaemons(
             GLADIUS_THROW_CALL_FAILED("LMON_fe_launchAndSpawnDaemons");
         }
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }

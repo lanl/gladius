@@ -168,7 +168,7 @@ Terminal::Terminal(const core::Args &args)
     try {
         mToolFE = new toolfe::ToolFE();
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
@@ -182,7 +182,7 @@ Terminal::interact(void)
     try {
         mEnterREPL();
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
