@@ -79,10 +79,16 @@ link_directories(${GLADIUS_LLDB_LIB_DIRS})
 ################################################################################
 # LaunchMON setup
 ################################################################################
-FIND_LMON(GLADIUS_LMON_INCLUDE_DIRS GLADIUS_LMON_LIB_DIRS GLADIUS_LMON_LIBS)
+FIND_LMON(
+    GLADIUS_LMON_INCLUDE_DIRS
+    GLADIUS_LMON_LIB_DIRS
+    GLADIUS_LMON_LIBS_FE
+    GLADIUS_LMON_LIBS_BE
+)
 include_directories(${GLADIUS_LMON_INCLUDE_DIRS})
 link_directories(${GLADIUS_LMON_LIB_DIRS})
-#target_link_libraries use where needed with ${GLADIUS_LMON_LIBS}
+#target_link_libraries use where needed with ${GLADIUS_LMON_LIBS_FE} and
+#${GLADIUS_LMON_LIBS_BE}.
 
 ################################################################################
 # MRNet setup

@@ -13,7 +13,7 @@ set(
     gladius. (Required)"
 )
 
-function(FIND_LMON OUT_INC_DIRS OUT_LINK_DIRS OUT_LINK_LIBS)
+function(FIND_LMON OUT_INC_DIRS OUT_LINK_DIRS OUT_LINK_LIBS_FE OUT_LINK_LIBS_BE)
     if (GLADIUS_LMON_HOME STREQUAL "")
         message(FATAL_ERROR "GLADIUS_LMON_HOME not defined. Cannot continue.")
     endif()
@@ -33,12 +33,16 @@ function(FIND_LMON OUT_INC_DIRS OUT_LINK_DIRS OUT_LINK_LIBS)
             message(FATAL_ERROR "Cannot find ${file}. Cannot continue.")
         endif()
     endforeach()
-    # Add any needed libraries here
-    set(LIB_NAMES
+    # Add any needed libraries here. In this case, just check for the front-end
+    # libs and assume that the back-end libs are there...
+    set(LIB_NAMES_FE
         "monfeapi"
     )
+    set(LIB_NAMES_BE
+        "monbeapi"
+    )
     set(LIBS_WE_NEED)
-    foreach (LIB_NAME ${LIB_NAMES})
+    foreach (LIB_NAME ${LIB_NAMES_FE})
         message(STATUS "Looking for lib${LIB_NAME}")
         file(GLOB LIB_WE_NEED
             "${prefix}/lib/lib${LIB_NAME}.*"
@@ -57,5 +61,6 @@ function(FIND_LMON OUT_INC_DIRS OUT_LINK_DIRS OUT_LINK_LIBS)
         PARENT_SCOPE
     )
     set(${OUT_LINK_DIRS} "${prefix}/lib" PARENT_SCOPE)
-    set(${OUT_LINK_LIBS} "${LIB_NAMES}" PARENT_SCOPE)
+    set(${OUT_LINK_LIBS_FE} "${LIB_NAMES_FE}" PARENT_SCOPE)
+    set(${OUT_LINK_LIBS_BE} "${LIB_NAMES_BE}" PARENT_SCOPE)
 endfunction()

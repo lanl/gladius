@@ -105,6 +105,7 @@ ToolFE::mRemoteBody(void)
     try {
         // TODO make this output better...
         GLADIUS_COUT_STAT << "launching..." << std::endl;
+        // XXX Which thread to init?
         mLMON.launchAndSpawnDaemons(mAppArgs);
     }
     catch (const std::exception &e) {
