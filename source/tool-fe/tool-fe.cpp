@@ -68,6 +68,7 @@ ToolFE::run(
     // If we are here, then our environment is sane enough to start...
     try {
         mAppArgs = args;
+        // FIXME dup stdout?
         mLocalBody();
     }
     // If something went south, just print the haps and return to the top-level
@@ -84,7 +85,6 @@ void
 ToolFE::mLocalBody(void)
 {
     try {
-        mLMON.init();
         std::thread beThread(&ToolFE::mRemoteBody, this);
         std::unique_lock<std::mutex> lock(mtFEBELock);
         mtBELaunchComplete.wait(lock);
@@ -106,6 +106,7 @@ ToolFE::mRemoteBody(void)
         // TODO make this output better...
         GLADIUS_COUT_STAT << "launching..." << std::endl;
         // XXX Which thread to init?
+        mLMON.init();
         mLMON.launchAndSpawnDaemons(mAppArgs);
     }
     catch (const std::exception &e) {

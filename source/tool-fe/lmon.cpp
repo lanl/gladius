@@ -158,11 +158,13 @@ LaunchMon::init(void)
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
     }
+#if 0 // FIXME
     rc = LMON_fe_getRMInfo(mSessionNum, &mRMInfo);
     if (LMON_EDUNAV != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_getRMInfo Failed...");
     }
     mCreateAndPopulateProcTab();
+#endif
 }
 
 /**
@@ -175,7 +177,11 @@ LaunchMon::launchAndSpawnDaemons(
     using namespace std;
     try {
         char **launcherArgv = appArgs.argv();
-        string launcherPath;
+        for (auto i = 0; i < appArgs.argc(); ++i) {
+            std::cout << "arg[" << i << "] = " << launcherArgv[i] << std::endl;
+        }
+        string launcherPath = launcherArgv[0];
+        std::cout << "LPATH: " << launcherPath << std::endl;
         // If we weren't provided an absolute path to the launcher, then fix
         // that.
         if (!core::utils::isAbsolutePath(launcherArgv[0])) {
@@ -190,10 +196,10 @@ LaunchMon::launchAndSpawnDaemons(
         }
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
-                      mHostname.c_str(),
+                      NULL,  // FIXME mHostname.c_str(),
                       launcherPath.c_str(), // launcher absolute path
-                      launcherArgv, // all of the launch command
-                      mToolD.c_str(),
+                      launcherArgv,         // all of the launch command
+                      mToolD.c_str(),       // tool daemon's absolute path
                       NULL,
                       NULL,
                       NULL
@@ -201,6 +207,16 @@ LaunchMon::launchAndSpawnDaemons(
         if (LMON_OK != rc) {
             GLADIUS_THROW_CALL_FAILED("LMON_fe_launchAndSpawnDaemons");
         }
+        int jobidSize = 0;
+        char jobid[PATH_MAX];
+        LMON_fe_getResourceHandle(
+            mSessionNum,
+            jobid,
+            &jobidSize,
+            PATH_MAX
+        );
+        LMON_fe_recvUsrDataBe(mSessionNum, NULL);
+        LMON_fe_sendUsrDataBe(mSessionNum, NULL);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
