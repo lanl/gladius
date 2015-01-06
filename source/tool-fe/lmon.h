@@ -15,10 +15,8 @@
 
 #include "core/core.h"
 
-#if 0
-#include "lmon-path.h"
-#endif
 #include "lmon_api/lmon_fe.h"
+#include "lmon_api/lmon_proctab.h"
 
 #include <string>
 #include <unistd.h>
@@ -43,12 +41,28 @@ class LaunchMon {
     std::string mPrefixPath;
     // LaunchMON engine path.
     std::string mEnginePath;
+    // Resource manager info
+    lmon_rm_info_t mRMInfo;
     //
+    unsigned int mNumProcTabEntries;
+    // XXX What is this?
+    unsigned int mPSize;
+    // Points to the job's process table.
+    MPIR_PROCDESC_EXT *mProcTab = nullptr;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Private Functions
+    ////////////////////////////////////////////////////////////////////////////
     void
-    setEnvs(void);
+    mSetEnvs(void);
+
+    void
+    mCreateAndPopulateProcTab(void);
 
 public:
     LaunchMon(void);
+
+    ~LaunchMon(void);
 
     void
     init(void);

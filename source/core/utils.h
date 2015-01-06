@@ -64,7 +64,20 @@ do {                                                                           \
 do {                                                                           \
     throw gladius::core::GladiusException(                                     \
               GLADIUS_WHERE,                                                   \
-              "The following call failed: " + std::string(msg)                 \
+              "The following call failed: '" + std::string(msg) + "'."         \
+          );                                                                   \
+} while (0)
+
+/**
+ * Convenience macro for throwing a call failure message with a numerical status
+ * code.
+ */
+#define GLADIUS_THROW_CALL_FAILED_RC(msg, rc)                                  \
+do {                                                                           \
+    throw gladius::core::GladiusException(                                     \
+              GLADIUS_WHERE,                                                   \
+              "The following call failed: '" + std::string(msg) +              \
+              "' with status code " + std::to_string(rc) + "."                 \
           );                                                                   \
 } while (0)
 

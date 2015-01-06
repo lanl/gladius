@@ -87,15 +87,52 @@ LaunchMon::LaunchMon(
 {
 }
 
+LaunchMon::~LaunchMon(void)
+{
+    if (mProcTab) {
+        free(mProcTab);
+        mProcTab = nullptr;
+    }
+}
+
 /**
  * Sets some environment variables that impact the behavior of LaunchMON.
  */
 void
-LaunchMon::setEnvs(void)
+LaunchMon::mSetEnvs(void)
 {
     core::utils::setEnv("LMON_PREFIX", mPrefixPath);
     core::utils::setEnv("LMON_LAUNCHMON_ENGINE_PATH", mEnginePath);
     core::utils::setEnv("LMON_REMOTE_LOGIN", REMOTE_LOGIN);
+}
+
+/**
+ * Creates and populates the process table.
+ */
+void
+LaunchMon::mCreateAndPopulateProcTab(void)
+{
+    auto rc = LMON_fe_getProctableSize(
+                  mSessionNum,
+                  &mNumProcTabEntries
+              );
+    if (LMON_OK != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctableSize", rc);
+    }
+    // Now that we know this, allocate the process table.
+    mProcTab = (MPIR_PROCDESC_EXT *)calloc(mNumProcTabEntries,
+                                           sizeof(*mProcTab));
+    if (!mProcTab) GLADIUS_THROW_OOR();
+    // Now populate the thing...
+    rc = LMON_fe_getProctable(
+             mSessionNum,
+             mProcTab,
+             &mPSize,
+             mNumProcTabEntries
+         );
+    if (LMON_OK != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
+    }
 }
 
 /**
@@ -104,7 +141,7 @@ LaunchMon::setEnvs(void)
 void
 LaunchMon::init(void)
 {
-    setEnvs();
+    mSetEnvs();
     // Init LaunchMON
     auto rc = LMON_fe_init(LMON_VERSION);
     if (LMON_OK != rc) {
@@ -121,6 +158,11 @@ LaunchMon::init(void)
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
     }
+    rc = LMON_fe_getRMInfo(mSessionNum, &mRMInfo);
+    if (LMON_EDUNAV != rc) {
+        GLADIUS_THROW_CALL_FAILED("LMON_fe_getRMInfo Failed...");
+    }
+    mCreateAndPopulateProcTab();
 }
 
 /**
