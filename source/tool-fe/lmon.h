@@ -45,7 +45,7 @@ class LaunchMon {
     std::string mEnginePath;
     // Resource manager info
     lmon_rm_info_t mRMInfo;
-    //
+    // XXX How is this different from mPSize?
     unsigned int mNumProcTabEntries;
     // Length of mProcTab.
     unsigned int mPSize;
@@ -67,6 +67,9 @@ class LaunchMon {
 
     void
     mCreateAndPopulateProcTab(void);
+
+    void
+    mDestroyProcTab(void);
 
     void
     mSetRMInfo(void);

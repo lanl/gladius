@@ -19,6 +19,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(
     GladiusToolFE
     GladiusCore
+    GladiusToolCommon
     ${GLADIUS_LMON_LIBS_FE}
 )
 

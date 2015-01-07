@@ -6,9 +6,11 @@
 # top-level directory of this distribution.
 #
 
-add_subdirectory(core)
-add_subdirectory(tool-common)
-add_subdirectory(tool-be)
-add_subdirectory(tool-fe)
-add_subdirectory(ui)
-add_subdirectory(gladius)
+add_library(
+    GladiusToolCommon
+    tool-common.h tool-common.cpp
+)
+
+include_directories(..)
+# Used to help find the generated header during configure.
+include_directories(${CMAKE_CURRENT_BINARY_DIR})

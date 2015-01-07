@@ -24,7 +24,7 @@ namespace {
 // This component's name.
 static const std::string CNAME = "tool-fe";
 // CNAME's color code.
-static const std::string NAMEC = gladius::core::utils::ansiBeginColorYellow();
+static const std::string NAMEC = gladius::core::utils::ansiBeginColorMagenta();
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /// The absolute path to our tool daemon.
@@ -99,22 +99,6 @@ dump(
     }
     COMP_COUT << endl;
 }
-/**
- *
- */
-void
-freeProcTab(
-    MPIR_PROCDESC_EXT *pTab,
-    unsigned long pSize
-) {
-    if (pTab) {
-        for (auto i = 0UL; i < pSize; i++) {
-            if (pTab[i].pd.executable_name) free(pTab[i].pd.executable_name);
-            if (pTab[i].pd.host_name) free(pTab[i].pd.host_name);
-        }
-        free(pTab);
-    }
-}
 } // end nameless namespace
 
 /**
@@ -185,6 +169,26 @@ LaunchMon::mCreateAndPopulateProcTab(void)
  *
  */
 void
+LaunchMon::mDestroyProcTab(void)
+{
+    if (mProcTab) {
+        for (auto i = 0UL; i < mPSize; i++) {
+            if (mProcTab[i].pd.executable_name) {
+                free(mProcTab[i].pd.executable_name);
+            }
+            if (mProcTab[i].pd.host_name) {
+                free(mProcTab[i].pd.host_name);
+            }
+        }
+        free(mProcTab);
+        mProcTab = nullptr;
+    }
+}
+
+/**
+ *
+ */
+void
 LaunchMon::init(void)
 {
     mSetEnvs();
@@ -221,9 +225,8 @@ void
 LaunchMon::mEndSession(void)
 {
     // TODO
-    freeProcTab(mProcTab, mPSize);
+    mDestroyProcTab();
 }
-
 
 /**
  *
