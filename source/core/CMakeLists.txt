@@ -13,6 +13,7 @@ add_library(
     ret-codes.h
     env.h
     utils.h utils.cpp
+    session.h session.cpp
     gladius-exception.h gladius-exception.cpp
 )
 

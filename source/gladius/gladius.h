@@ -10,25 +10,10 @@
 #define GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
 
 #include "core/core.h"
+#include "core/session.h"
 #include "ui/ui.h"
 
 namespace gladius {
-
-/**
- *
- */
-class Session {
-    static const std::string sDotName;
-    std::string mSessionDir;
-
-public:
-    Session(void);
-
-    ~Session(void);
-
-    std::string
-    sessionDir(void) { return mSessionDir; }
-};
 
 class Gladius {
 private:
@@ -37,6 +22,7 @@ private:
     //
     ui::UI *mUI = nullptr;
     //
+    core::Session mCurrentSession;
 
     /**
      *

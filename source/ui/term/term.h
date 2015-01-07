@@ -17,7 +17,6 @@
 
 /*
  * TODO
- * History - See source/Host/common/Editline.cpp in LLDB for an example.
  * Auto complete
  */
 
@@ -25,6 +24,7 @@
 #define GLADIUS_UI_TERM_TERM_H_INCLUDED
 
 #include "core/core.h"
+#include "core/session.h"
 #include "ui/ui.h"
 #include "tool-fe/tool-fe.h"
 
@@ -176,8 +176,10 @@ public:
 };
 
 class Terminal : public UI {
-private:
     static constexpr int sHistSize = 100;
+    static const std::string sHistFileName;
+    core::Session mSession;
+    std::string mHistFile;
     EditLine *mEditLine = nullptr;
     Tokenizer *mTokenizer = nullptr;
     History *mHist = nullptr;
@@ -210,6 +212,18 @@ private:
      */
     void
     mEnterREPL(void);
+
+    /**
+     * Loads command history from file.
+     */
+    void
+    mLoadHistory(void);
+
+    /**
+     * Saves command history to file.
+     */
+    void
+    mSaveHistory(void);
 
 public:
     /**

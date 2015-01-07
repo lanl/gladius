@@ -16,50 +16,13 @@
 using namespace gladius;
 
 /**
- * Name of the dot directory where session data are stored.
- */
-const std::string Session::sDotName = "." PACKAGE_NAME;
-
-/**
- *
- */
-Session::Session(void)
-{
-    try {
-        auto home = core::utils::getEnv("HOME");
-        mSessionDir = home + core::utils::osPathSep + sDotName;
-        // if this doesn't exist, then create it.
-        if (!core::utils::fileExists(mSessionDir)) {
-            GLADIUS_COUT_STAT << "Creating " + mSessionDir << std::endl;
-            int errNo = 0;
-            auto status = core::utils::mkDir(mSessionDir, errNo);
-            if (GLADIUS_SUCCESS != status) {
-                GLADIUS_CERR << "mkDir Failed: "
-                             << core::utils::getStrError(errNo)
-                             << std::endl;
-                return;
-            }
-        }
-    }
-    catch (const std::exception &e) {
-        GLADIUS_CERR_WARN << "Session creation failed: "
-                          << e.what() << std::endl;
-    }
-}
-
-/**
- *
- */
-Session::~Session(void)
-{
-}
-
-/**
  *
  */
 Gladius::Gladius(const core::Args &args) {
     try {
-        Session currentSession;
+        // Setup session things.
+        mCurrentSession.open();
+        // Stash a copy of the args.
         mArgs = args;
         // TODO add parsing and real UI instantiation.
         mUI = ui::UIFactory::getNewUI(mArgs, ui::UIFactory::UI_TERM);

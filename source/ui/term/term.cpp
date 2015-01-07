@@ -75,6 +75,11 @@ disableBuffering(void)
 using namespace gladius::ui::term;
 
 /**
+ * Name of the history file.
+ */
+const std::string Terminal::sHistFileName = "history";
+
+/**
  * Terminal commands registry.
  */
 TermCommands Terminal::sTermCommands {
@@ -166,6 +171,12 @@ Terminal::Terminal(const core::Args &args)
     // Initialize tokenizer
     mTokenizer = tok_init(NULL);
     try {
+        mSession.open();
+        mHistFile = mSession.sessionDir()
+                  + core::utils::osPathSep
+                  + sHistFileName;
+        // Load history
+        mLoadHistory();
         mToolFE = new toolfe::ToolFE();
     }
     catch (const std::exception &e) {
@@ -196,7 +207,7 @@ Terminal::mEnterREPL(void)
     // Flag indicating whether or not the REPL should continue.
     bool continueREPL = true;
     // Points to current line
-    const char *cLineBufp = NULL;
+    const char *cLineBufp = nullptr;
     int nCharsRead = 0, nContinuation = 0;
 
     while (continueREPL
@@ -274,10 +285,36 @@ Terminal::setSignalHandlers(void)
 {
 #if 0
     (void)signal(SIGINT, sigHandler);
+#endif
     (void)signal(SIGQUIT, sigHandler);
     (void)signal(SIGHUP, sigHandler);
     (void)signal(SIGTERM, sigHandler);
-#endif
+}
+
+/**
+ *
+ */
+void
+Terminal::mLoadHistory(void)
+{
+    if (core::utils::fileExists(mHistFile)) {
+        if (history(mHist, &mHistEvent, H_LOAD, mHistFile.c_str()) < 0) {
+            GLADIUS_CERR_WARN << "Command history couldn't be loaded from: "
+                              << mHistFile << std::endl;
+        }
+    }
+}
+
+/**
+ *
+ */
+void
+Terminal::mSaveHistory(void)
+{
+    if (history(mHist, &mHistEvent, H_SAVE, mHistFile.c_str()) < 0) {
+        GLADIUS_CERR_WARN << "Command history couldn't be saved to: "
+                          << mHistFile << std::endl;
+    }
 }
 
 /**
@@ -285,6 +322,7 @@ Terminal::setSignalHandlers(void)
  */
 Terminal::~Terminal(void)
 {
+    mSaveHistory();
     if (mEditLine) el_end(mEditLine);
     if (mTokenizer) tok_end(mTokenizer);
     if (mHist) history_end(mHist);
