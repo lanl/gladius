@@ -23,7 +23,9 @@ using namespace gladius::toolfe;
 namespace {
 /// The absolute path to our tool daemon.
 static const std::string TOOLD_NAME = gladius::core::utils::installPrefix()
-                                    + "/bin/"
+                                    + gladius::core::utils::osPathSep
+                                    + "bin"
+                                    + gladius::core::utils::osPathSep
                                     + "gladius-toold";
 /// What to use for remote login
 static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
@@ -70,6 +72,24 @@ statusFuncCallback(int *status)
         }
     }
     return 0;
+}
+
+/**
+ *
+ */
+void
+dump(
+    const MPIR_PROCDESC_EXT *pTab,
+    unsigned long pSize
+) {
+    for (auto i = 0U; i < pSize ; ++i) {
+        fprintf(stdout,
+               "[LMON FE] host_name: %s\n", pTab[i].pd.host_name);
+        fprintf(stdout,
+               "[LMON FE] executable_name: %s\n", pTab[i].pd.executable_name);
+        fprintf(stdout,
+               "[LMON FE] pid: %d(rank %d)\n", pTab[i].pd.pid, pTab[i].mpirank);
+    }
 }
 
 } // end nameless namespace
@@ -133,6 +153,9 @@ LaunchMon::mCreateAndPopulateProcTab(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
     }
+    if (mBeVerbose) {
+        dump(mProcTab, mPSize);
+    }
 }
 
 /**
@@ -158,13 +181,6 @@ LaunchMon::init(void)
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
     }
-#if 0 // FIXME
-    rc = LMON_fe_getRMInfo(mSessionNum, &mRMInfo);
-    if (LMON_EDUNAV != rc) {
-        GLADIUS_THROW_CALL_FAILED("LMON_fe_getRMInfo Failed...");
-    }
-    mCreateAndPopulateProcTab();
-#endif
 }
 
 /**
@@ -177,14 +193,10 @@ LaunchMon::launchAndSpawnDaemons(
     using namespace std;
     try {
         char **launcherArgv = appArgs.argv();
-        for (auto i = 0; i < appArgs.argc(); ++i) {
-            std::cout << "arg[" << i << "] = " << launcherArgv[i] << std::endl;
-        }
         string launcherPath = launcherArgv[0];
-        std::cout << "LPATH: " << launcherPath << std::endl;
         // If we weren't provided an absolute path to the launcher, then fix
         // that.
-        if (!core::utils::isAbsolutePath(launcherArgv[0])) {
+        if (!core::utils::isAbsolutePath(launcherPath)) {
             auto status = core::utils::which(launcherArgv[0], launcherPath);
             if (GLADIUS_SUCCESS != status) {
                 GLADIUS_CERR << "Could not find '" << launcherArgv[0]
@@ -194,6 +206,8 @@ LaunchMon::launchAndSpawnDaemons(
                 return;
             }
         }
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
                       NULL,  // FIXME mHostname.c_str(),
@@ -215,6 +229,7 @@ LaunchMon::launchAndSpawnDaemons(
             &jobidSize,
             PATH_MAX
         );
+        mCreateAndPopulateProcTab();
         LMON_fe_recvUsrDataBe(mSessionNum, NULL);
         LMON_fe_sendUsrDataBe(mSessionNum, NULL);
     }

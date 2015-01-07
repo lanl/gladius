@@ -36,7 +36,7 @@ main(
         gladius.run();
     }
     catch (GladiusException &e) {
-        std::cerr << e.what() << std::endl;
+        GLADIUS_CERR << e.what() << std::endl;
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;

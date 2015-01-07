@@ -24,6 +24,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <iostream>
 
@@ -127,6 +129,10 @@ private:
     ~utils(void) { ; }
 
 public:
+    /**
+     * OS-specific path separator.
+     */
+    static const std::string osPathSep;
     /**
      * Takes an argv-like structure and returns a duplicate that needs to be
      * freed by the caller by calling freeDupArgv.
@@ -362,6 +368,34 @@ public:
      */
     static std::string
     installPrefix(void);
+
+    /**
+     * Returns whether or now a given file exists.
+     */
+    static bool
+    fileExists(const std::string &file)
+    {
+        return (0 == access(file.c_str(), F_OK));
+    }
+
+    /**
+     * Creates directories like: mkdir PATH.
+     */
+    static int
+    mkDir(
+        const std::string &path,
+        int &errOnFailure
+    ) {
+        errOnFailure = 0;
+        auto status = mkdir(path.c_str(),
+                            S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+                      );
+        if (0 != status) {
+            errOnFailure = errno;
+            return GLADIUS_ERR;
+        }
+        return GLADIUS_SUCCESS;
+    }
 };
 
 } // end core namespace

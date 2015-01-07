@@ -11,6 +11,8 @@
 
 using namespace gladius::core;
 
+const std::string utils::osPathSep = "/";
+
 /**
  * Returns a string that contains the install prefix of this software.
  */

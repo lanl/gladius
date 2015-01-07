@@ -14,10 +14,29 @@
 
 namespace gladius {
 
+/**
+ *
+ */
+class Session {
+    static const std::string sDotName;
+    std::string mSessionDir;
+
+public:
+    Session(void);
+
+    ~Session(void);
+
+    std::string
+    sessionDir(void) { return mSessionDir; }
+};
+
 class Gladius {
 private:
+    //
     core::Args mArgs;
+    //
     ui::UI *mUI = nullptr;
+    //
 
     /**
      *
