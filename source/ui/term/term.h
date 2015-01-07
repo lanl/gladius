@@ -15,11 +15,6 @@
  * heavy lifting for the CLI is performed by editline (libedit).
  */
 
-/*
- * TODO
- * Auto complete
- */
-
 #ifndef GLADIUS_UI_TERM_TERM_H_INCLUDED
 #define GLADIUS_UI_TERM_TERM_H_INCLUDED
 
@@ -224,6 +219,18 @@ class Terminal : public UI {
      */
     void
     mSaveHistory(void);
+
+    /**
+     * Returns whether or not an input string is asking for a history recall
+     * action based on history number. Like: !505. Also checks validity of
+     * request. If not valid, then an error message will be printed and false
+     * will be returned.
+     */
+    bool
+    mHistRecallRequest(
+        const std::string &input,
+        std::string &histStringIfValid
+    );
 
 public:
     /**

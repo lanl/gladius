@@ -19,6 +19,7 @@
 #include <vector>
 #include <set>
 
+#include <string.h>
 #include <locale.h>
 #include <dirent.h>
 #include <signal.h>
@@ -92,7 +93,7 @@ TermCommands Terminal::sTermCommands {
     ),
     TermCommand(
         "help",
-        "h, ?",
+        "?",
         "help",
         "help Help",
         helpCMDCallback
@@ -113,7 +114,7 @@ TermCommands Terminal::sTermCommands {
     ),
     TermCommand(
         "history",
-        "hist",
+        "hist, h",
         "history",
         "history Help",
         historyCMDCallback
@@ -142,6 +143,10 @@ Terminal::Terminal(const core::Args &args)
     // Remember events
     if (history(mHist, &mHistEvent, H_SETSIZE, sHistSize) < 0) {
         GLADIUS_THROW_CALL_FAILED("history");
+    }
+    // Save only unique events that are next to each other.
+    if (history(getHistory(), &getHistEvent(), H_SETUNIQUE, 1) < 0) {
+        GLADIUS_THROW_CALL_FAILED("history H_SETUNIQUE");
     }
     if (NULL == (mEditLine = el_init(*(mArgs.argv()), stdin, stdout, stderr))) {
         GLADIUS_THROW_CALL_FAILED("el_init");
@@ -213,6 +218,7 @@ Terminal::mEnterREPL(void)
     while (continueREPL
            && NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead))
            && 0 != nCharsRead)  {
+        // FIXME TODO
         if (gotsig) {
             (void)fprintf(stderr, "Got signal %d.\n", gotsig);
             gotsig = 0;
@@ -227,8 +233,12 @@ Terminal::mEnterREPL(void)
                                       &tokArgc, &tokArgv, &cc, &co)) < 0) {
             GLADIUS_THROW_CALL_FAILED("tok_line");
         }
-        // Update our history
-        history(mHist, &mHistEvent, continuation ? H_APPEND : H_ENTER, cLineBufp);
+        // Don't add bang#s to history.
+        if ('!' != cLineBufp[0]) {
+            // Update our history
+            history(getHistory(), &getHistEvent(),
+                    continuation ? H_APPEND : H_ENTER, cLineBufp);
+        }
         continuation = nContinuation;
         nContinuation = 0;
         if (continuation) continue;
@@ -255,12 +265,64 @@ Terminal::cmdPairs(void) const
 /**
  *
  */
+bool
+Terminal::mHistRecallRequest(
+    const std::string &input,
+    std::string &histStringIfValid
+) {
+    histStringIfValid = "";
+    if ('!' == input.at(0)) {
+        // Okay, this is the start of a request. Now make sure that the next bit
+        // is a number and corresponds to a history event.
+        try {
+            auto numStr = input.substr(1);
+            auto histNum = std::stoi(numStr);
+            HistEvent &histEvent = getHistEvent();
+            auto status = history(getHistory(), &histEvent,
+                                  H_NEXT_EVENT, histNum);
+            // Not found in history...
+            if (status < 0) {
+                GLADIUS_CERR << input << ": event not found" << std::endl;
+                // Return true here so that an empty string will be pushed and
+                // only one path will run. Trust me, this seems to work...
+                return true;
+            }
+            // If we are here, then all is well. Return the history string.
+            histStringIfValid = histEvent.str;
+            return true;
+        }
+        catch (...) {
+            // Some invalid garbage passed to us, so just return false.
+            return false;
+        }
+    }
+    else return false;
+}
+
+/**
+ *
+ */
 void
 Terminal::evaluateInput(
     int argc,
     const char **argv,
     bool &continueREPL
 ) {
+    // First see if this is a history recall. If so, handle that.
+    std::string maybeHistRecallString;
+    if (mHistRecallRequest(argv[0], maybeHistRecallString)) {
+        tok_reset(mTokenizer);
+        // Removing the newline before passing things to el_push provide history
+        // recall behavior akin to bash's when shopt -s histverify.
+        maybeHistRecallString.erase(
+            std::remove(maybeHistRecallString.begin(),
+                        maybeHistRecallString.end(), '\n'),
+            maybeHistRecallString.end()
+        );
+        el_push(getEditLine(), maybeHistRecallString.c_str());
+        return;
+    }
+    // If here, then just deal with the input as is.
     auto maybeTermCmd = sTermCommands.getTermCMD(argv[0]);
     if (!maybeTermCmd) {
         GLADIUS_CERR << "\'" << argv[0] << "\' "
@@ -297,6 +359,7 @@ Terminal::setSignalHandlers(void)
 void
 Terminal::mLoadHistory(void)
 {
+    // If the file exists, then load it.
     if (core::utils::fileExists(mHistFile)) {
         if (history(mHist, &mHistEvent, H_LOAD, mHistFile.c_str()) < 0) {
             GLADIUS_CERR_WARN << "Command history couldn't be loaded from: "
