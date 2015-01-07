@@ -17,6 +17,20 @@
 
 using namespace gladius::toolfe;
 
+namespace {
+void
+echoLaunchStart(const gladius::core::Args &args)
+{
+    std::string lstr;
+    for (auto i = 0; i < args.argc(); ++i) {
+        lstr += args.argv()[i];
+        lstr += " ";
+    }
+    GLADIUS_COUT_STAT << "Launch Sequence Initiated..." << std::endl;
+    GLADIUS_COUT_STAT << "Starting: " << lstr << std::endl;
+}
+}
+
 /**
  * Tool front-end constructor.
  */
@@ -105,9 +119,8 @@ void
 ToolFE::mRemoteBody(void)
 {
     try {
-        // TODO make this output better...
-        GLADIUS_COUT_STAT << "launching..." << std::endl;
-        // XXX Which thread to init?
+        echoLaunchStart(mAppArgs);
+        // And so it begins...
         mLMON.launchAndSpawnDaemons(mAppArgs);
     }
     catch (const std::exception &e) {
