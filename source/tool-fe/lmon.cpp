@@ -99,7 +99,22 @@ dump(
     }
     COMP_COUT << endl;
 }
-
+/**
+ *
+ */
+void
+freeProcTab(
+    MPIR_PROCDESC_EXT *pTab,
+    unsigned long pSize
+) {
+    if (pTab) {
+        for (auto i = 0UL; i < pSize; i++) {
+            if (pTab[i].pd.executable_name) free(pTab[i].pd.executable_name);
+            if (pTab[i].pd.host_name) free(pTab[i].pd.host_name);
+        }
+        free(pTab);
+    }
+}
 } // end nameless namespace
 
 /**
@@ -206,7 +221,7 @@ void
 LaunchMon::mEndSession(void)
 {
     // TODO
-    // TODO Free proc table
+    freeProcTab(mProcTab, mPSize);
 }
 
 
