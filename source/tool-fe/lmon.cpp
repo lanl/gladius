@@ -21,6 +21,12 @@
 using namespace gladius::toolfe;
 
 namespace {
+// This component's name.
+static const std::string CNAME = "tool-fe";
+// CNAME's color code.
+static const std::string NAMEC = gladius::core::utils::ansiBeginColorYellow();
+// Convenience macro to decorate this component's output.
+#define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /// The absolute path to our tool daemon.
 static const std::string TOOLD_NAME = gladius::core::utils::installPrefix()
                                     + gladius::core::utils::osPathSep
@@ -43,32 +49,32 @@ statusFuncCallback(int *status)
     }
     int stcp = *status;
     if (WIFREGISTERED(stcp)) {
-        cout << "* session registered" << endl;
+        COMP_COUT << "* Session Registered" << endl;
     }
     else {
-        cout << "* session not registered" << endl;
+        COMP_COUT << "* Session Not Registered" << endl;
     }
     if (WIFBESPAWNED(stcp)) {
-        cout << "* BE daemons spawned" << endl;
+        COMP_COUT << "* Back-End Daemons Spawned" << endl;
     }
     else {
-        cout << "* BE daemons not spawned or exited" << endl;
+        COMP_COUT << "* Back-End Daemons Not Spawned or Exited" << endl;
     }
     if (WIFMWSPAWNED(stcp)) {
-        cout << "* MW daemons spawned" << endl;
+        COMP_COUT << "* MW Daemons Spawned" << endl;
     }
     else {
-        cout << "* MW daemons not spawned or exited" << endl;
+        COMP_COUT << "* MW Daemons Not Spawned or Exited" << endl;
     }
     if (WIFDETACHED(stcp)) {
-        cout << "* the job is detached" << endl;
+        COMP_COUT << "* The Job is Detached" << endl;
     }
     else {
         if (WIFKILLED(stcp)) {
-            cout << "* the job is killed" << endl;
+            COMP_COUT << "* The Job is Killed" << endl;
         }
         else {
-            cout << "* the job has not been killed" << endl;
+            COMP_COUT << "* The Job Has Not Been Killed" << endl;
         }
     }
     return 0;
@@ -82,14 +88,16 @@ dump(
     const MPIR_PROCDESC_EXT *pTab,
     unsigned long pSize
 ) {
+    using namespace std;
+    COMP_COUT << "*** Process Table Dump ***" << endl;
     for (auto i = 0U; i < pSize ; ++i) {
-        fprintf(stdout,
-               "[LMON FE] host_name: %s\n", pTab[i].pd.host_name);
-        fprintf(stdout,
-               "[LMON FE] executable_name: %s\n", pTab[i].pd.executable_name);
-        fprintf(stdout,
-               "[LMON FE] pid: %d(rank %d)\n", pTab[i].pd.pid, pTab[i].mpirank);
+        COMP_COUT << "Host Name: " << pTab[i].pd.host_name << endl;
+        COMP_COUT << "Executable Name: " << pTab[i].pd.executable_name << endl;
+        COMP_COUT << "PID: " << pTab[i].pd.pid << " "
+                  << "NID: " << pTab[i].mpirank
+                  << endl;
     }
+    COMP_COUT << endl;
 }
 
 } // end nameless namespace
@@ -170,7 +178,15 @@ LaunchMon::init(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_init");
     }
-    rc = LMON_fe_createSession(&mSessionNum);
+}
+
+/**
+ * Starts a new session.
+ */
+void
+LaunchMon::mStartSession(void)
+{
+    auto rc = LMON_fe_createSession(&mSessionNum);
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
@@ -181,6 +197,30 @@ LaunchMon::init(void)
             GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
         }
     }
+}
+
+/**
+ *
+ */
+void
+LaunchMon::mEndSession(void)
+{
+    // TODO
+    // TODO Free proc table
+}
+
+
+/**
+ *
+ */
+void
+LaunchMon::mSetRMInfo(void)
+{
+    auto rc = LMON_fe_getRMInfo(mSessionNum, &mRMInfo);
+    if (LMON_OK != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getRMInfo", rc);
+    }
+    mLauncherPID = mRMInfo.rm_launcher_pid;
 }
 
 /**
@@ -208,6 +248,9 @@ LaunchMon::launchAndSpawnDaemons(
         }
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
+        // New sesh...
+        mStartSession();
+        //
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
                       NULL,  // FIXME mHostname.c_str(),
@@ -219,8 +262,13 @@ LaunchMon::launchAndSpawnDaemons(
                       NULL
                   );
         if (LMON_OK != rc) {
-            GLADIUS_THROW_CALL_FAILED("LMON_fe_launchAndSpawnDaemons");
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_launchAndSpawnDaemons", rc);
         }
+        // Get and set RM things
+        mSetRMInfo();
+        // Create and populate process table.
+        mCreateAndPopulateProcTab();
+        // Let the people know what's going on
         int jobidSize = 0;
         char jobid[PATH_MAX];
         LMON_fe_getResourceHandle(
@@ -229,7 +277,6 @@ LaunchMon::launchAndSpawnDaemons(
             &jobidSize,
             PATH_MAX
         );
-        mCreateAndPopulateProcTab();
         LMON_fe_recvUsrDataBe(mSessionNum, NULL);
         LMON_fe_sendUsrDataBe(mSessionNum, NULL);
     }

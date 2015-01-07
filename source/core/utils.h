@@ -119,6 +119,15 @@ do {                                                                           \
               << "[" PACKAGE_NAME "] "                                         \
               << gladius::core::utils::ansiEndColor()
 
+/**
+ * Convenience macro for printing out component-specific status messages to
+ * cout; The caller is able to customize (w00t) the output for their needs.
+ */
+#define GLADIUS_COMP_COUT(compName, compNameColorCode)                         \
+    std::cerr << compNameColorCode                                             \
+              << "[" + std::string(compName) + "] "                            \
+              << gladius::core::utils::ansiEndColor()
+
 namespace gladius {
 namespace core {
 

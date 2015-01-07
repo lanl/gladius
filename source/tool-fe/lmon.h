@@ -20,6 +20,8 @@
 
 #include <string>
 #include <unistd.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace gladius {
 namespace toolfe {
@@ -45,7 +47,7 @@ class LaunchMon {
     lmon_rm_info_t mRMInfo;
     //
     unsigned int mNumProcTabEntries;
-    // XXX What is this?
+    // Length of mProcTab.
     unsigned int mPSize;
     // Points to the job's process table.
     MPIR_PROCDESC_EXT *mProcTab = nullptr;
@@ -57,7 +59,17 @@ class LaunchMon {
     mSetEnvs(void);
 
     void
+    mStartSession(void);
+
+    void
+    mEndSession(void);
+
+
+    void
     mCreateAndPopulateProcTab(void);
+
+    void
+    mSetRMInfo(void);
 
 public:
     LaunchMon(void);

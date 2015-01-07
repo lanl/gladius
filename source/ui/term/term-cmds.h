@@ -81,6 +81,7 @@ helpCMDCallback(const EvalInputCmdCallBackArgs &args)
         cout << "- " << cmdp.first << " : "
              << cmdp.second << endl;
     }
+    cout << endl;
     /* Continue REPL */
     return true;
 }

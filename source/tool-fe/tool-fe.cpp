@@ -85,6 +85,8 @@ void
 ToolFE::mLocalBody(void)
 {
     try {
+        // One-time init things go in init.
+        mLMON.init();
         std::thread beThread(&ToolFE::mRemoteBody, this);
         std::unique_lock<std::mutex> lock(mtFEBELock);
         mtBELaunchComplete.wait(lock);
@@ -106,7 +108,6 @@ ToolFE::mRemoteBody(void)
         // TODO make this output better...
         GLADIUS_COUT_STAT << "launching..." << std::endl;
         // XXX Which thread to init?
-        mLMON.init();
         mLMON.launchAndSpawnDaemons(mAppArgs);
     }
     catch (const std::exception &e) {
