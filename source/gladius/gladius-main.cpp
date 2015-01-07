@@ -17,6 +17,37 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <signal.h>
+
+namespace {
+// I don't like this, but such is life. Thanks, signals.
+gladius::Gladius *gGladius = nullptr;
+/**
+ *
+ */
+void
+quitSigHandler(int i)
+{
+    GLADIUS_UNUSED(i);
+    if (gGladius) {
+        // Really gonig to quit?
+        if (gGladius->shutdown()) {
+            delete gGladius;
+            exit(EXIT_SUCCESS);
+        }
+    }
+    else exit(EXIT_SUCCESS);
+}
+/**
+ *
+ */
+void
+installSignalHandlers(void)
+{
+    (void)signal(SIGINT, quitSigHandler);
+}
+} // end namespace
+
 /**
  * main
  */
@@ -29,15 +60,18 @@ main(
     using namespace gladius;
     using namespace gladius::core;
     try {
+        // Install our signal handlers before we begin.
+        installSignalHandlers();
         Args args(argc,
                   const_cast<const char **>(argv),
                   const_cast<const char **>(envp));
-        Gladius gladius(args);
-        gladius.run();
+        gGladius = new Gladius(args);
+        gGladius->run();
     }
     catch (GladiusException &e) {
         GLADIUS_CERR << e.what() << std::endl;
         return EXIT_FAILURE;
     }
+    if (gGladius) delete gGladius;
     return EXIT_SUCCESS;
 }

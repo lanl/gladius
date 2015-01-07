@@ -42,6 +42,13 @@ public:
      */
     virtual void
     interact(void) = 0;
+
+    /**
+     * Top-level function that sends a quit request to the UI instance. Returns
+     * true if the quit request was accepted.
+     */
+    virtual bool
+    quit(void) = 0;
 };
 
 } // end ui namespace

@@ -45,6 +45,10 @@ public:
      */
     void
     run(void);
+
+    bool
+    shutdown(void);
+
 };
 
 } // end gladius namespace

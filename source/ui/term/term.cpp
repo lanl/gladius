@@ -204,6 +204,16 @@ Terminal::interact(void)
 }
 
 /**
+ * Implements UI shutdown functionality.
+ */
+bool
+Terminal::quit(void)
+{
+    EvalInputCmdCallBackArgs dummy(this, 0, NULL);
+    return !quitCMDCallback(dummy);
+}
+
+/**
  * Top-level routine to start the read–eval–print loop (REPL).
  */
 void

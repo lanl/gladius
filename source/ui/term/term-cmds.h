@@ -46,6 +46,7 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     using namespace std;
     GLADIUS_UNUSED(args);
+    cerr << endl;
     GLADIUS_CERR_WARN << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
     char answer[8];
     cin.getline(answer, sizeof(answer));
@@ -53,6 +54,8 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
         // Done with REPL
         return false;
     }
+    // This request may be comming from a signal handler, so refresh for nice output.
+    el_set(args.terminal->getEditLine(), EL_REFRESH);
     // The answer was not "Y", so continue REPL.
     return true;
 }

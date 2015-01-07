@@ -54,3 +54,20 @@ Gladius::run(void)
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
+
+/**
+ *
+ */
+bool
+Gladius::shutdown(void)
+{
+    try {
+        // If we have an active instance, then ask it
+        if (mUI) return mUI->quit();
+        // Otherwise shutdown
+        else return true;
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+}

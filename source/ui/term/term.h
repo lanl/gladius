@@ -283,11 +283,11 @@ public:
         return sTermCommands;
     }
 
-    /**
-     *
-     */
     void
     interact(void);
+
+    bool
+    quit(void);
 
     /**
      *
