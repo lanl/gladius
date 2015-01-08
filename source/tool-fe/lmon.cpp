@@ -15,7 +15,6 @@
 #include "lmon.h"
 // Automatically generated header.
 #include "lmon-paths.h"
-
 #include "core/core.h"
 
 using namespace gladius::toolfe;
@@ -137,6 +136,7 @@ LaunchMon::mCreateAndPopulateProcTab(void)
             GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
         }
         if (mBeVerbose) {
+            COMP_COUT << "Done Getting Process Table" << std::endl;
             mProcTab.dump();
         }
     }
@@ -228,7 +228,7 @@ LaunchMon::launchAndSpawnDaemons(
         ////////////////////////////////////////////////////////////////////////
         // New sesh...
         mStartSession();
-        //
+        GLADIUS_COUT_STAT << "Launching and Spawning Daemons" << std::endl;
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
                       NULL,  // FIXME mHostname.c_str(),
@@ -244,8 +244,16 @@ LaunchMon::launchAndSpawnDaemons(
         }
         // Get and set RM things
         mSetRMInfo();
+        GLADIUS_COUT_STAT << "Launcher PID: "
+                          << mRMInfo.rm_launcher_pid
+                          << std::endl;
         // Create and populate process table.
         mCreateAndPopulateProcTab();
+        // Setup hosts
+        mHosts = toolcommon::Hosts(mProcTab);
+        for (auto &hn : mHosts.hostNames()) {
+            std::cout << "Host: " << hn << std::endl;
+        }
         // Let the people know what's going on
         int jobidSize = 0;
         char jobid[PATH_MAX];

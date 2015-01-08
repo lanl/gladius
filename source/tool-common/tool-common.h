@@ -86,6 +86,17 @@ public:
     procTab(void) {
         return mProcTab;
     }
+    /**
+     * Returns a set of node (host) names.
+     */
+    std::set<std::string>
+    hostNamesInTable(void) const {
+        std::set<std::string> nameSet;
+        for (auto te = 0UL; te < mNEntries; ++te) {
+            nameSet.insert(mProcTab[te].pd.host_name);
+        }
+        return nameSet;
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +106,26 @@ public:
  */
 class Hosts {
     std::set<std::string> mHostNames;
+public:
+    Hosts(void) { ; }
+    //
+    Hosts(const ProcessTable &pTab) {
+        mHostNames = pTab.hostNamesInTable();
+    }
+    /**
+     * Returns reference to our set of host names.
+     */
+    std::set<std::string> &
+    hostNames(void) {
+        return mHostNames;
+    }
+    /**
+     * Returns the number of hosts.
+     */
+    size_t
+    nHosts(void) {
+        return mHostNames.size();
+    }
 };
 
 }

@@ -35,6 +35,7 @@ ProcessTable::dump(void) {
         COMP_COUT << "Executable Name: "
                   << mProcTab[i].pd.executable_name << endl;
         COMP_COUT << "PID: " << mProcTab[i].pd.pid << " "
+                     // NID: "Node ID"
                   << "NID: " << mProcTab[i].mpirank
                   << endl;
     }

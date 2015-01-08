@@ -48,6 +48,8 @@ class LaunchMon {
     lmon_rm_info_t mRMInfo;
     // The process table of the active job.
     toolcommon::ProcessTable mProcTab;
+    // The hosts in our job.
+    toolcommon::Hosts mHosts;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
