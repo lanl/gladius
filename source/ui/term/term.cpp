@@ -254,7 +254,11 @@ Terminal::mEnterREPL(void)
         const char **tokArgv = NULL;
         if ((nContinuation = tok_line(mTokenizer, el_line(mEditLine),
                                       &tokArgc, &tokArgv, &cc, &co)) < 0) {
-            GLADIUS_THROW_CALL_FAILED("tok_line");
+            GLADIUS_CERR_WARN << "tok_line failed... Resetting things..."
+                              << std::endl;
+            tok_reset(mTokenizer);
+            el_reset(mEditLine);
+            continue;
         }
         continuation = nContinuation;
         nContinuation = 0;
@@ -308,17 +312,20 @@ Terminal::mHistRecallRequest(
                 GLADIUS_CERR << input << ": event not found" << std::endl;
                 // Event was not found, so restore the history position.
                 history(getHistory(), &histEvent, H_FIRST);
-                // Return true here so that an empty string will be pushed and
-                // only one handler path will run. Trust me, this seems to
-                // work...
-                return true;
+                // Return true also in this path so that an empty string will be
+                // pushed and only one handler path will run. Trust me, this
+                // seems to work...
             }
-            // If we are here, then all is well. Return the history string.
-            histStringIfValid = histEvent.str;
+            else {
+                // If we are here, then all is well. Return the history string.
+                histStringIfValid = histEvent.str;
+            }
             return true;
         }
         catch (...) {
-            // Some invalid garbage passed to us, so just return false.
+            // Some invalid garbage passed to us, so reset things and return
+            // false;
+            history(getHistory(), &getHistEvent(), H_FIRST);
             return false;
         }
     }
