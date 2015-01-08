@@ -51,10 +51,8 @@ sigHandler(int i)
 {
     gotsig = i;
     switch(i) {
-        case SIGINT:
-            std::cout << "^C\n" << std::flush;
-            break;
-        default: std::cout << "\n" << std::flush;
+        case SIGINT: std::cout << "^C\n" << std::flush; break;
+        default    : std::cout << "\n" << std::flush;
     }
 }
 
@@ -226,8 +224,8 @@ Terminal::interact(void)
 bool
 Terminal::quit(void)
 {
-    EvalInputCmdCallBackArgs dummy(this, 0, NULL);
-    return !quitCMDCallback(dummy);
+    EvalInputCmdCallBackArgs cba(this, 0, NULL);
+    return !quitCMDCallback(cba);
 }
 
 /**
@@ -258,17 +256,18 @@ Terminal::mEnterREPL(void)
                                       &tokArgc, &tokArgv, &cc, &co)) < 0) {
             GLADIUS_THROW_CALL_FAILED("tok_line");
         }
-        // Don't add bang#s to history.
-        if ('!' != cLineBufp[0]) {
-            // Update our history
-            history(getHistory(), &getHistEvent(),
-                    continuation ? H_APPEND : H_ENTER, cLineBufp);
-        }
         continuation = nContinuation;
         nContinuation = 0;
         if (continuation) continue;
         // Process current input
         evaluateInput(tokArgc, tokArgv, continueREPL);
+        // Update our history, but don't add bang#s to history. We only want to
+        // add the command that corresponds to a !#.
+        if ('!' != cLineBufp[0]) {
+            history(getHistory(), &getHistEvent(),
+                    continuation ? H_APPEND : H_ENTER, cLineBufp);
+        }
+        tok_reset(mTokenizer);
     }
 }
 
@@ -286,7 +285,6 @@ Terminal::cmdPairs(void) const
     vector< pair<string, string> > theVec(theSet.begin(), theSet.end());
     return theVec;
 }
-
 /**
  *
  */
@@ -308,8 +306,11 @@ Terminal::mHistRecallRequest(
             // Not found in history...
             if (status < 0) {
                 GLADIUS_CERR << input << ": event not found" << std::endl;
+                // Event was not found, so restore the history position.
+                history(getHistory(), &histEvent, H_FIRST);
                 // Return true here so that an empty string will be pushed and
-                // only one path will run. Trust me, this seems to work...
+                // only one handler path will run. Trust me, this seems to
+                // work...
                 return true;
             }
             // If we are here, then all is well. Return the history string.
@@ -361,7 +362,6 @@ Terminal::evaluateInput(
                            EvalInputCmdCallBackArgs(this, argc, argv)
                        );
     }
-    tok_reset(mTokenizer);
 }
 
 /**
