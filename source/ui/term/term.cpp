@@ -50,6 +50,12 @@ void
 sigHandler(int i)
 {
     gotsig = i;
+    switch(i) {
+        case SIGINT:
+            std::cout << "^C\n" << std::flush;
+            break;
+        default: std::cout << "\n" << std::flush;
+    }
 }
 
 /**
@@ -129,14 +135,25 @@ TermCommands Terminal::sTermCommands {
 };
 
 /**
- *
+*
  */
-Terminal::Terminal(const core::Args &args)
-    : UI(args)
+Terminal &
+Terminal::TheTerminal(void)
 {
+    static Terminal *singleton = new Terminal();
+    return *singleton;
+}
+
+/**
+ * Implements UI init functionality.
+ */
+void
+Terminal::init(const core::Args &args)
+{
+    mArgs = args;
     setLocale();
     disableBuffering();
-    setSignalHandlers();
+    installSignalHandlers();
     if (NULL == (mHist = history_init())) {
         GLADIUS_THROW_CALL_FAILED("history_init");
     }
@@ -169,7 +186,7 @@ Terminal::Terminal(const core::Args &args)
     }
     // Bind C-R: Cycle through backwards search, entering string
     if (el_set(mEditLine, EL_BIND, "^r", "em-inc-search-prev", NULL) < 0) {
-        GLADIUS_THROW_CALL_FAILED("el_set EL_BIND");
+        GLADIUS_THROW_CALL_FAILED("el_set EL_BIND ^r");
     }
     // Source $PWD/.editrc then $HOME/.editrc
     el_source(mEditLine, NULL);
@@ -228,9 +245,7 @@ Terminal::mEnterREPL(void)
     while (continueREPL
            && NULL != (cLineBufp = el_gets(mEditLine, &nCharsRead))
            && 0 != nCharsRead)  {
-        // FIXME TODO
         if (gotsig) {
-            (void)fprintf(stderr, "Got signal %d.\n", gotsig);
             gotsig = 0;
             el_reset(mEditLine);
             continue;
@@ -353,14 +368,14 @@ Terminal::evaluateInput(
  *
  */
 void
-Terminal::setSignalHandlers(void)
+Terminal::installSignalHandlers(void)
 {
-#if 0
     (void)signal(SIGINT, sigHandler);
-#endif
+#if 0
     (void)signal(SIGQUIT, sigHandler);
     (void)signal(SIGHUP, sigHandler);
     (void)signal(SIGTERM, sigHandler);
+#endif
 }
 
 /**

@@ -25,8 +25,9 @@ Gladius::Gladius(const core::Args &args) {
         // Stash a copy of the args.
         mArgs = args;
         // TODO add parsing and real UI instantiation.
-        mUI = ui::UIFactory::getNewUI(mArgs, ui::UIFactory::UI_TERM);
-        if (!mUI) GLADIUS_THROW_CALL_FAILED("getNewUI");
+        mUI = ui::UIFactory::getUI(mArgs, ui::UIFactory::UI_TERM);
+        if (!mUI) GLADIUS_THROW_CALL_FAILED("getUI");
+        mUI->init(args);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

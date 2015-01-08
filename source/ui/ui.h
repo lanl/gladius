@@ -30,12 +30,13 @@ public:
     /**
      *
      */
-    UI(const core::Args &args);
+    virtual ~UI(void);
 
     /**
-     *
+     * Top-level function that inits the UI.
      */
-    virtual ~UI(void);
+    virtual void
+    init(const core::Args &args) = 0;
 
     /**
      * Top-level function that starts the UI interaction.

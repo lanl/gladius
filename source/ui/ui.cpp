@@ -19,16 +19,3 @@ UI::~UI(void) { ; }
  *
  */
 UI::UI(void) { ; }
-
-/**
- *
- */
-UI::UI(const core::Args &args)
-{
-    try {
-        mArgs = args;
-    }
-    catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
-    }
-}

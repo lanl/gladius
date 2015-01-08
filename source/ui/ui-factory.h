@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014      Los Alamos National Security, LLC
+ * Copyright (c) 2014-2015 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -31,16 +31,17 @@ public:
     };
 
     /**
-     * Factory function that takes a UI type and args and produces a new UI
-     * based on the input. nullptr returned on error. Must be deleted by caller.
+     * Factory function that takes a UI type and args and produces a UI based on
+     * the input. nullptr returned on error. Must be deleted by caller.
      */
     static UI *
-    getNewUI(
+    getUI(
         const core::Args &args,
         UIType uiType
     ) {
+        GLADIUS_UNUSED(args);
         switch (uiType) {
-            case UI_TERM: return new term::Terminal(args);
+            case UI_TERM: return &term::Terminal::TheTerminal();
             default: return nullptr;
         }
     }

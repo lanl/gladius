@@ -184,13 +184,8 @@ class Terminal : public UI {
     /**
      *
      */
-    Terminal(void);
-
-    /**
-     *
-     */
     void
-    setSignalHandlers(void);
+    installSignalHandlers(void);
 
     /**
      *
@@ -233,15 +228,15 @@ class Terminal : public UI {
     );
 
 public:
-    /**
-     *
-     */
-    ~Terminal(void);
+    static Terminal &
+    TheTerminal(void);
+
+    Terminal(void) { ; }
 
     /**
      *
      */
-    Terminal(const core::Args &args);
+    ~Terminal(void);
 
     /**
      *
@@ -282,6 +277,9 @@ public:
     getTermCommands (void) const {
         return sTermCommands;
     }
+
+    void
+    init(const core::Args &args);
 
     void
     interact(void);
