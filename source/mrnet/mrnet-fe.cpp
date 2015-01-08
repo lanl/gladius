@@ -7,7 +7,7 @@
  */
 
 #include "mrnet-fe.h"
-#include "core/core-includes.h"
+#include "core/core.h"
 
 #include "mrnet/MRNet.h"
 

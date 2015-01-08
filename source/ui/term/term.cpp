@@ -51,8 +51,7 @@ sigHandler(int i)
 {
     gotsig = i;
     switch(i) {
-        case SIGINT: std::cout << "^C\n" << std::flush; break;
-        default    : std::cout << "\n" << std::flush;
+        default: std::cout << std::endl << std::flush;
     }
 }
 

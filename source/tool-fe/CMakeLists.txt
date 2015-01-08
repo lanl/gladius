@@ -20,6 +20,7 @@ target_link_libraries(
     GladiusToolFE
     GladiusCore
     GladiusToolCommon
+    GladiusMRNetFE
     ${GLADIUS_LMON_LIBS_FE}
 )
 

@@ -41,5 +41,3 @@ ProcessTable::dump(void) {
     }
     COMP_COUT << endl;
 }
-
-using namespace gladius::toolcommon;

@@ -71,20 +71,19 @@ class LaunchMon {
 
 public:
     LaunchMon(void);
-
+    //
     ~LaunchMon(void);
-
+    //
     void
     init(void);
-
+    //
     void
     launchAndSpawnDaemons(const core::Args &appArgs);
-
+    //
     void
     attachAndSpawnDaemons(pid_t launcherPID) {
         GLADIUS_UNUSED(launcherPID);
     }
-
     /**
      * Sets whether or not LaunchMON operations will be verbose.
      */

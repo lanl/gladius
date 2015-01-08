@@ -244,17 +244,20 @@ LaunchMon::launchAndSpawnDaemons(
         }
         // Get and set RM things
         mSetRMInfo();
+        // Create and populate process table.
+        mCreateAndPopulateProcTab();
+        // Populate target hosts. Note: this is a set of host names, so the size
+        // of this set is equal to the number of server (nodes) are being used
+        // in this job. This "should" be equal to the number of daemons that
+        // were also spawned.
+        mHosts = toolcommon::Hosts(mProcTab);
+        // Let the people know what's going on
         GLADIUS_COUT_STAT << "Launcher PID: "
                           << mRMInfo.rm_launcher_pid
                           << std::endl;
-        // Create and populate process table.
-        mCreateAndPopulateProcTab();
-        // Setup hosts
-        mHosts = toolcommon::Hosts(mProcTab);
-        for (auto &hn : mHosts.hostNames()) {
-            std::cout << "Host: " << hn << std::endl;
-        }
-        // Let the people know what's going on
+        GLADIUS_COUT_STAT << "Number of Spawned Daemons: "
+                          << mHosts.nHosts()
+                          << std::endl;
         int jobidSize = 0;
         char jobid[PATH_MAX];
         LMON_fe_getResourceHandle(

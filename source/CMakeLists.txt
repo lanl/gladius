@@ -7,6 +7,7 @@
 #
 
 add_subdirectory(core)
+add_subdirectory(mrnet)
 add_subdirectory(tool-common)
 add_subdirectory(tool-be)
 add_subdirectory(tool-fe)

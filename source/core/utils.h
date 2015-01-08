@@ -280,6 +280,22 @@ public:
     }
 
     /**
+     * Wrapper for unsetenv(3).
+     */
+    static void
+    unsetEnv(
+        const std::string &envVarName,
+        const std::string &value,
+        bool overwrite = true
+    ) {
+        int overwriteI = overwrite ? 1 : 0;
+        auto rc = setenv(envVarName.c_str(), value.c_str(), overwriteI);
+        if (-1 == rc) {
+            GLADIUS_THROW_CALL_FAILED("setEnv");
+        }
+    }
+
+    /**
      * Returns whether or not a given environment variable is defined.
      */
     static bool
