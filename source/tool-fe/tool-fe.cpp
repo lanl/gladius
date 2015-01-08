@@ -18,6 +18,15 @@
 using namespace gladius::toolfe;
 
 namespace {
+// This component's name.
+static const std::string CNAME = "tool-fe";
+// CNAME's color code.
+static const std::string NAMEC = gladius::core::utils::ansiBeginColorMagenta();
+// Convenience macro to decorate this component's output.
+#define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+/**
+ *
+ */
 void
 echoLaunchStart(const gladius::core::Args &args)
 {

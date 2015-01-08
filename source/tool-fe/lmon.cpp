@@ -22,7 +22,7 @@ using namespace gladius::toolfe;
 
 namespace {
 // This component's name.
-static const std::string CNAME = "tool-fe";
+static const std::string CNAME = "lmon-fe";
 // CNAME's color code.
 static const std::string NAMEC = gladius::core::utils::ansiBeginColorMagenta();
 // Convenience macro to decorate this component's output.
@@ -79,26 +79,6 @@ statusFuncCallback(int *status)
     }
     return 0;
 }
-
-/**
- *
- */
-void
-dump(
-    const MPIR_PROCDESC_EXT *pTab,
-    unsigned long pSize
-) {
-    using namespace std;
-    COMP_COUT << "*** Process Table Dump ***" << endl;
-    for (auto i = 0U; i < pSize ; ++i) {
-        COMP_COUT << "Host Name: " << pTab[i].pd.host_name << endl;
-        COMP_COUT << "Executable Name: " << pTab[i].pd.executable_name << endl;
-        COMP_COUT << "PID: " << pTab[i].pd.pid << " "
-                  << "NID: " << pTab[i].mpirank
-                  << endl;
-    }
-    COMP_COUT << endl;
-}
 } // end nameless namespace
 
 /**
@@ -110,17 +90,12 @@ LaunchMon::LaunchMon(
   , mHostname(core::utils::getHostname())
   , mToolD(TOOLD_NAME)
   , mPrefixPath(GLADIUS_TOOL_FE_LMON_PREFIX)
-  , mEnginePath(GLADIUS_TOOL_FE_LMON_ENGINE_PATH)
-{
-}
+  , mEnginePath(GLADIUS_TOOL_FE_LMON_ENGINE_PATH) { ; }
 
-LaunchMon::~LaunchMon(void)
-{
-    if (mProcTab) {
-        free(mProcTab);
-        mProcTab = nullptr;
-    }
-}
+/**
+ * Destructor.
+ */
+LaunchMon::~LaunchMon(void) { ; }
 
 /**
  * Sets some environment variables that impact the behavior of LaunchMON.
@@ -139,49 +114,34 @@ LaunchMon::mSetEnvs(void)
 void
 LaunchMon::mCreateAndPopulateProcTab(void)
 {
-    auto rc = LMON_fe_getProctableSize(
-                  mSessionNum,
-                  &mNumProcTabEntries
-              );
-    if (LMON_OK != rc) {
-        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctableSize", rc);
-    }
-    // Now that we know this, allocate the process table.
-    mProcTab = (MPIR_PROCDESC_EXT *)calloc(mNumProcTabEntries,
-                                           sizeof(*mProcTab));
-    if (!mProcTab) GLADIUS_THROW_OOR();
-    // Now populate the thing...
-    rc = LMON_fe_getProctable(
-             mSessionNum,
-             mProcTab,
-             &mPSize,
-             mNumProcTabEntries
-         );
-    if (LMON_OK != rc) {
-        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
-    }
-    if (mBeVerbose) {
-        dump(mProcTab, mPSize);
-    }
-}
-
-/**
- *
- */
-void
-LaunchMon::mDestroyProcTab(void)
-{
-    if (mProcTab) {
-        for (auto i = 0UL; i < mPSize; i++) {
-            if (mProcTab[i].pd.executable_name) {
-                free(mProcTab[i].pd.executable_name);
-            }
-            if (mProcTab[i].pd.host_name) {
-                free(mProcTab[i].pd.host_name);
-            }
+    try {
+        unsigned int numProcTabEntries = 0;
+        auto rc = LMON_fe_getProctableSize(
+                      mSessionNum,
+                      &numProcTabEntries
+                  );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctableSize", rc);
         }
-        free(mProcTab);
-        mProcTab = nullptr;
+        // Allocate room for the entries.
+        mProcTab.allocate(numProcTabEntries);
+        // Now populate the thing...
+        unsigned int pSize = 0;
+        rc = LMON_fe_getProctable(
+                 mSessionNum,
+                 mProcTab.procTab(),
+                 &pSize,
+                 numProcTabEntries // Max Length
+             );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
+        }
+        if (mBeVerbose) {
+            mProcTab.dump();
+        }
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
 
@@ -224,8 +184,8 @@ LaunchMon::mStartSession(void)
 void
 LaunchMon::mEndSession(void)
 {
-    // TODO
-    mDestroyProcTab();
+    // TODO Finish
+    mProcTab.deallocate();
 }
 
 /**

@@ -14,14 +14,15 @@
 #define GLADIUS_TOOL_FE_LMON_H_INCLUDED
 
 #include "core/core.h"
-
-#include "lmon_api/lmon_fe.h"
-#include "lmon_api/lmon_proctab.h"
+#include "tool-common/tool-common.h"
 
 #include <string>
 #include <unistd.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "lmon_api/lmon_fe.h"
+#include "lmon_api/lmon_proctab.h"
 
 namespace gladius {
 namespace toolfe {
@@ -45,32 +46,24 @@ class LaunchMon {
     std::string mEnginePath;
     // Resource manager info
     lmon_rm_info_t mRMInfo;
-    // XXX How is this different from mPSize?
-    unsigned int mNumProcTabEntries;
-    // Length of mProcTab.
-    unsigned int mPSize;
-    // Points to the job's process table.
-    MPIR_PROCDESC_EXT *mProcTab = nullptr;
+    // The process table of the active job.
+    toolcommon::ProcessTable mProcTab;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////
     void
     mSetEnvs(void);
-
+    //
     void
     mStartSession(void);
-
+    //
     void
     mEndSession(void);
-
-
+    //
     void
     mCreateAndPopulateProcTab(void);
-
-    void
-    mDestroyProcTab(void);
-
+    //
     void
     mSetRMInfo(void);
 
