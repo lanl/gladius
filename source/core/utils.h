@@ -282,17 +282,17 @@ public:
     /**
      * Wrapper for unsetenv(3).
      */
-    static void
+    static int
     unsetEnv(
         const std::string &envVarName,
-        const std::string &value,
-        bool overwrite = true
+        int &errNo
     ) {
-        int overwriteI = overwrite ? 1 : 0;
-        auto rc = setenv(envVarName.c_str(), value.c_str(), overwriteI);
+        auto rc = unsetenv(envVarName.c_str());
         if (-1 == rc) {
-            GLADIUS_THROW_CALL_FAILED("setEnv");
+            errNo = errno;
+            return GLADIUS_ERR;
         }
+        return GLADIUS_SUCCESS;
     }
 
     /**

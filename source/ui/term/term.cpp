@@ -18,6 +18,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <algorithm>
 
 #include <string.h>
 #include <locale.h>
@@ -128,6 +129,13 @@ TermCommands Terminal::sTermCommands {
         "setenv ENV_VAR VAL",
         "setenv Help",
         setEnvCMDCallback
+    ),
+    TermCommand(
+        "unsetenv",
+        "",
+        "unsetenv ENV_VAR",
+        "unsetenv Help",
+        unsetEnvCMDCallback
     ),
     TermCommand(
         "clear",
@@ -293,6 +301,7 @@ Terminal::cmdPairs(void) const
         theSet.insert(make_pair(tcmd.command(), tcmd.shortUsage()));
     }
     vector< pair<string, string> > theVec(theSet.begin(), theSet.end());
+    std::sort(theVec.begin(), theVec.end());
     return theVec;
 }
 /**

@@ -135,6 +135,31 @@ setEnvCMDCallback(const EvalInputCmdCallBackArgs &args)
 }
 
 /**
+ * Unsets an environment variable during a debug session.
+ * Form: unsetenv ENV_VAR
+ */
+inline bool
+unsetEnvCMDCallback(const EvalInputCmdCallBackArgs &args)
+{
+    using std::string;
+    using namespace gladius::core;
+
+    if (args.argc != 2) {
+        // should have 3 arguments. So, print out the usage.
+        echoCommandUsage(args, args.argv[0]);
+        return true;
+    }
+    char **argv = args.argv;
+    auto err = 0;
+    if (GLADIUS_SUCCESS != utils::unsetEnv(string(argv[1]), err)) {
+        string whatsWrong = utils::getStrError(err);
+        GLADIUS_CERR_WARN << "unsetenv Failed: " << whatsWrong << std::endl;
+    }
+    // Continue REPL
+    return true;
+}
+
+/**
  * Displays history.
  */
 inline bool
