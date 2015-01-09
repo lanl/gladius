@@ -230,13 +230,25 @@ class Terminal : public UI {
 public:
     static Terminal &
     TheTerminal(void);
-
+    //
     Terminal(void) { ; }
 
     /**
      *
      */
     ~Terminal(void);
+    /**
+     * Disable copy constructor.
+     */
+    Terminal(const Terminal &that) = delete;
+    /**
+     * Just return the singleton.
+     */
+    Terminal &
+    operator=(const Terminal &other) {
+        GLADIUS_UNUSED(other);
+        return Terminal::TheTerminal();
+    }
 
     /**
      *

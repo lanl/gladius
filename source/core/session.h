@@ -9,8 +9,7 @@
 #ifndef GLADIUS_CORE_SESSION_H_INCLUDED
 #define GLADIUS_CORE_SESSION_H_INCLUDED
 
-#include "core/ret-codes.h"
-#include "core/gladius-exception.h"
+#include "core/utils.h"
 
 namespace gladius {
 namespace core {
@@ -23,14 +22,25 @@ class Session {
 
 public:
     Session(void) { ; }
-
+    //
     ~Session(void) { ; }
-
+    //
+    static Session &
+    TheSession(void);
+    //
     std::string
     sessionDir(void) { return mSessionDir; }
-
+    //
     void
     open(void);
+    // Disable copy constructor.
+    Session(const Session &that) = delete;
+    // Just return the singleton.
+    Session &
+    operator=(const Session &other) {
+        GLADIUS_UNUSED(other);
+        return Session::TheSession();
+    }
 };
 
 }

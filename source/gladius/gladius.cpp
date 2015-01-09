@@ -18,7 +18,10 @@ using namespace gladius;
 /**
  *
  */
-Gladius::Gladius(const core::Args &args) {
+Gladius::Gladius(
+    const core::Args &args
+) : mCurrentSession(core::Session::TheSession())
+{
     try {
         // Setup session things.
         mCurrentSession.open();

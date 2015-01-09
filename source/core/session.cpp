@@ -17,6 +17,16 @@ using namespace gladius::core;
 const std::string Session::sDotName = "." PACKAGE_NAME;
 
 /**
+ * Access to the session singleton.
+ */
+Session &
+Session::TheSession(void)
+{
+    static Session *singleton = new Session();
+    return *singleton;
+}
+
+/**
  *
  */
 void

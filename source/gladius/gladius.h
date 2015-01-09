@@ -22,7 +22,7 @@ private:
     //
     ui::UI *mUI = nullptr;
     //
-    core::Session mCurrentSession;
+    core::Session &mCurrentSession;
     //
     Gladius(void);
 
