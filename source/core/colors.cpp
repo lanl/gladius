@@ -6,8 +6,8 @@
  * top-level directory of this distribution.
  */
 
-#include "core/utils.h"
 #include "core/colors.h"
+#include "core/utils.h"
 #include "core/session.h"
 
 using namespace gladius::core;

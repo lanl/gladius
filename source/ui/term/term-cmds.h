@@ -34,7 +34,6 @@ echoCommandUsage(
                       << trmCMD->shortUsage()
                       << std::endl;
 }
-
 }
 
 namespace gladius {

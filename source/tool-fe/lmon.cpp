@@ -29,10 +29,10 @@ static const std::string NAMEC =
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /// The absolute path to our tool daemon.
-static const std::string TOOLD_NAME = gladius::core::utils::installPrefix()
-                                    + gladius::core::utils::osPathSep
+static const std::string TOOLD_NAME = core::utils::installPrefix()
+                                    + core::utils::osPathSep
                                     + "bin"
-                                    + gladius::core::utils::osPathSep
+                                    + core::utils::osPathSep
                                     + "gladius-toold";
 /// What to use for remote login
 static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
@@ -253,9 +253,9 @@ LaunchMon::launchAndSpawnDaemons(
         // Create and populate process table.
         mCreateAndPopulateProcTab();
         // Populate target hosts. Note: this is a set of host names, so the size
-        // of this set is equal to the number of server (nodes) are being used
-        // in this job. This "should" be equal to the number of daemons that
-        // were also spawned.
+        // of this set is equal to the number of servers (nodes) that are being
+        // used in this job. This "should" be equal to the number of daemons
+        // that were also spawned.
         mHosts = toolcommon::Hosts(mProcTab);
         // Let the people know what's going on
         GLADIUS_COUT_STAT << "Launcher PID: "
