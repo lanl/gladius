@@ -32,17 +32,17 @@ public:
 
     /**
      * Factory function that takes a UI type and args and produces a UI based on
-     * the input. nullptr returned on error. Must be deleted by caller.
+     * the provided input.
      */
-    static UI *
+    static UI &
     getUI(
         const core::Args &args,
         UIType uiType
     ) {
         GLADIUS_UNUSED(args);
         switch (uiType) {
-            case UI_TERM: return &term::Terminal::TheTerminal();
-            default: return nullptr;
+            case UI_TERM: return term::Terminal::TheTerminal();
+            default: GLADIUS_THROW_INVLD_ARG();
         }
     }
 };

@@ -23,19 +23,24 @@ class Session {
     //
     Session(void) { ; }
     //
-    ~Session(void) { ; }
-    //
     void
     mOpen(void);
+    //
+    ~Session(void) { ; }
 public:
+    //
     static Session &
     TheSession(void);
     //
     std::string
     sessionDir(void) { return mSessionDir; }
-    // Disable copy constructor.
+    /**
+     * Disable copy constructor.
+     */
     Session(const Session &that) = delete;
-    // Just return the singleton.
+    /**
+     * Just return the singleton.
+     */
     Session &
     operator=(const Session &other) {
         GLADIUS_UNUSED(other);

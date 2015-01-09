@@ -152,8 +152,8 @@ TermCommands Terminal::sTermCommands {
 Terminal &
 Terminal::TheTerminal(void)
 {
-    static Terminal *singleton = new Terminal();
-    return *singleton;
+    static Terminal singleton;
+    return singleton;
 }
 
 /**

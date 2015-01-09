@@ -21,8 +21,11 @@ namespace core {
 
 class Args {
 private:
+    //
     int mArgC = 0;
+    //
     char **mArgV = nullptr;
+    //
     char **mEnv = nullptr;
 
 public:

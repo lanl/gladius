@@ -21,14 +21,12 @@ using namespace gladius;
 Gladius::Gladius(
     const core::Args &args
 ) : mCurrentSession(core::Session::TheSession())
+  , mUI(ui::UIFactory::getUI(mArgs, ui::UIFactory::UI_TERM))
 {
     try {
         // Stash a copy of the args.
         mArgs = args;
-        // TODO add parsing and real UI instantiation.
-        mUI = ui::UIFactory::getUI(mArgs, ui::UIFactory::UI_TERM);
-        if (!mUI) GLADIUS_THROW_CALL_FAILED("getUI");
-        mUI->init(args);
+        mUI.init(args);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -40,7 +38,6 @@ Gladius::Gladius(
  */
 Gladius::~Gladius(void)
 {
-    if (mUI) delete mUI;
 }
 
 /**
@@ -50,7 +47,7 @@ void
 Gladius::run(void)
 {
     try {
-        mUI->interact();
+        mUI.interact();
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -64,10 +61,8 @@ bool
 Gladius::shutdown(void)
 {
     try {
-        // If we have an active instance, then ask it
-        if (mUI) return mUI->quit();
-        // Otherwise shutdown
-        else return true;
+        // Ask active instance.
+        return mUI.quit();
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

@@ -20,9 +20,9 @@ private:
     //
     core::Args mArgs;
     //
-    ui::UI *mUI = nullptr;
-    //
     core::Session &mCurrentSession;
+    //
+    ui::UI &mUI;
     //
     Gladius(void);
 

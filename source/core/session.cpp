@@ -23,12 +23,13 @@ Session &
 Session::TheSession(void)
 {
     static bool opened = false;
-    static Session *singleton = new Session();
+    static Session singleton;
+    // Open the session once.
     if (!opened) {
-        singleton->mOpen();
+        singleton.mOpen();
         opened = true;
     }
-    return *singleton;
+    return singleton;
 }
 
 /**
