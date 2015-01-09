@@ -27,8 +27,10 @@ Session::TheSession(void)
     static Session singleton;
     // Open the session once.
     if (!opened) {
-        singleton.mOpen();
+        // Set this BEFORE and instance actions. Badness will happen if you move
+        // this. Don't do it.
         opened = true;
+        singleton.mOpen();
     }
     return singleton;
 }
