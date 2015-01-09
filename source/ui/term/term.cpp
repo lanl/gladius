@@ -128,6 +128,13 @@ TermCommands Terminal::sTermCommands {
         "setenv ENV_VAR VAL",
         "setenv Help",
         setEnvCMDCallback
+    ),
+    TermCommand(
+        "clear",
+        "",
+        "clear",
+        "clear",
+        clearCMDCallback
     )
 };
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014      Los Alamos National Security, LLC
+ * Copyright (c) 2014-2015 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -8,10 +8,6 @@
  * Copyright (c) 2003-2012 Dorian C. Arnold, Philip C. Roth, Barton P. Miller
  * Detailed MRNet usage rights in "LICENSE" file in the MRNet distribution.
  *
- */
-
-/**
- * Implements the MRNet interface.
  */
 
 #ifndef GLADIUS_MRNET_MRNET_FE_H_INCLUDED
@@ -24,9 +20,14 @@
 namespace gladius {
 namespace mrnet {
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * Implements the MRNet interface for a tool front-end.
+ */
 class MRNetFE {
 private:
-    // Path to MRNet topology file that has already been populated
+    // Path to MRNet topology file.
     std::string topoFile;
     // Name of the backend executable
     std::string beExe;
@@ -34,8 +35,13 @@ private:
 
 public:
     MRNetFE(void);
-
+    //
     ~MRNetFE(void);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+class MRNetBE {
 };
 
 } // end mrnet namespace

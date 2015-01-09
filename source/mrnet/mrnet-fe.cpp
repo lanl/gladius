@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014      Los Alamos National Security, LLC
+ * Copyright (c) 2014-2015 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -17,7 +17,7 @@ using namespace gladius;
 using namespace gladius::mrnet;
 
 /**
- *
+ * Constructor.
  */
 MRNetFE::MRNetFE(void)
 {
@@ -31,7 +31,6 @@ MRNetFE::MRNetFE(void)
                       beExe.c_str(),
                       &dummyArgv
                   );
-
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -41,7 +40,6 @@ MRNetFE::MRNetFE(void)
 /**
  *
  */
-
 MRNetFE::~MRNetFE(void)
 {
 }

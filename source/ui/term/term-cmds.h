@@ -14,6 +14,8 @@
 
 #include <string>
 #include <iostream>
+#include <sys/types.h>
+#include <signal.h>
 
 namespace {
 /**
@@ -37,7 +39,16 @@ echoCommandUsage(
 namespace gladius {
 namespace ui {
 namespace term {
-
+/**
+ * Clears the screen.
+ */
+inline bool
+clearCMDCallback(const EvalInputCmdCallBackArgs &args)
+{
+    static char clearHex[2] = {0x0C, '\0'};
+    el_push(args.terminal->getEditLine(), clearHex);
+    return true;
+}
 /**
  * Quits.
  */
