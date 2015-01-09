@@ -18,7 +18,7 @@ namespace gladius {
 namespace ui {
 
 /**
- * UI factory class.
+ * User Interface (UI) factory class.
  */
 class UIFactory {
 public:
@@ -29,10 +29,9 @@ public:
         UI_TERM,
         UI_GUI
     };
-
     /**
      * Factory function that takes a UI type and args and produces a UI based on
-     * the provided input.
+     * the provided input. Throws GladiusException on failure.
      */
     static UI &
     getUI(

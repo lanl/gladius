@@ -9,11 +9,8 @@
 #ifndef GLADIUS_CORE_CORE_H_INCLUDED
 #define GLADIUS_CORE_CORE_H_INCLUDED
 
-#include "gladius-package-info.h"
-#include "gladius-exception.h"
-#include "utils.h"
-#include "args.h"
-#include "env.h"
-#include "ret-codes.h"
+#include "core/gladius-package-info.h"
+#include "core/ret-codes.h"
+#include "core/env.h"
 
 #endif

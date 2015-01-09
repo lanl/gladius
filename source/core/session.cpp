@@ -8,6 +8,7 @@
 
 #include "session.h"
 #include "core/core.h"
+#include "core/utils.h"
 
 using namespace gladius::core;
 
@@ -33,6 +34,15 @@ Session::TheSession(void)
 }
 
 /**
+ * Just return the singleton.
+ */
+Session &
+Session::operator=(const Session &other) {
+    GLADIUS_UNUSED(other);
+    return Session::TheSession();
+}
+
+/**
  *
  */
 void
@@ -53,6 +63,8 @@ Session::mOpen(void)
                 return;
             }
         }
+        // Is colored output enabled?
+        mColorizeSession = !utils::envVarSet(GLADIUS_NO_TERM_COLORS_STR);
     }
     catch (const std::exception &e) {
         GLADIUS_CERR_WARN << "Session creation failed: "

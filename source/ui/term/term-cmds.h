@@ -11,6 +11,7 @@
 
 #include "term.h"
 #include "core/core.h"
+#include "core/colors.h"
 
 #include <string>
 #include <iostream>
@@ -74,6 +75,7 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
 inline bool
 helpCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
+    using namespace gladius::core;
     using namespace std;
     string header(PACKAGE_NAME " help");
     stringstream hbot;
@@ -82,9 +84,9 @@ helpCMDCallback(const EvalInputCmdCallBackArgs &args)
     }
     // Print help banner.
     cout << '\n'
-         << core::utils::ansiBeginColorMagenta()
+         << colors::color().ansiBeginColor(colors::MAGENTA)
          << header
-         << core::utils::ansiEndColor()
+         << colors::color().ansiEndColor()
          << '\n' << hbot.str() << endl;
     // Print available commands.
     cout << "o Available Commands" << endl;

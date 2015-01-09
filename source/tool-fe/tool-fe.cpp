@@ -7,6 +7,7 @@
  */
 
 #include "tool-fe.h"
+#include "core/utils.h"
 #include "tool-be/tool-be.h"
 
 #include <string>
@@ -15,13 +16,15 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+using namespace gladius;
 using namespace gladius::toolfe;
 
 namespace {
 // This component's name.
 static const std::string CNAME = "tool-fe";
 // CNAME's color code.
-static const std::string NAMEC = gladius::core::utils::ansiBeginColorMagenta();
+static const std::string NAMEC =
+    core::colors::color().ansiBeginColor(core::colors::DGRAY);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /**
@@ -50,6 +53,7 @@ ToolFE::ToolFE(
     if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
         mBeVerbose = true;
         mLMON.verbose(mBeVerbose);
+        mMRNFE.verbose(mBeVerbose);
     }
 }
 
@@ -110,6 +114,7 @@ ToolFE::mLocalBody(void)
     try {
         // One-time init things go in init.
         mLMON.init();
+        mMRNFE.init();
         std::thread beThread(&ToolFE::mRemoteBody, this);
         std::unique_lock<std::mutex> lock(mtFEBELock);
         mtBELaunchComplete.wait(lock);

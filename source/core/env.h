@@ -19,4 +19,10 @@
  */
 #define GLADIUS_TOOL_FE_VERBOSE_STR "GLADIUS_TOOL_FE_VERBOSE"
 
+/**
+ * If this environment variable is set, then the tool will not colorize its
+ * terminal output.
+ */
+#define GLADIUS_NO_TERM_COLORS_STR "GLADIUS_NO_TERM_COLORS"
+
 #endif

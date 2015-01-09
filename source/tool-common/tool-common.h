@@ -14,6 +14,8 @@
 #define GLADIUS_TOOL_COMMON_TOOL_COMMON_H_INCLUDED
 
 #include "core/core.h"
+#include "core/utils.h"
+
 #include "lmon_api/lmon_proctab.h"
 
 #include <string>

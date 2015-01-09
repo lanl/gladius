@@ -9,7 +9,7 @@
 #ifndef GLADIUS_UI_UI_H_INCLUDED
 #define GLADIUS_UI_UI_H_INCLUDED
 
-#include "core/core.h"
+#include "core/args.h"
 
 namespace gladius {
 namespace ui {

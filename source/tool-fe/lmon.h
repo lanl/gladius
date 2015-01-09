@@ -14,6 +14,7 @@
 #define GLADIUS_TOOL_FE_LMON_H_INCLUDED
 
 #include "core/core.h"
+#include "core/args.h"
 #include "tool-common/tool-common.h"
 
 #include <string>

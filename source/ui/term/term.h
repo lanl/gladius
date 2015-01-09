@@ -19,6 +19,7 @@
 #define GLADIUS_UI_TERM_TERM_H_INCLUDED
 
 #include "core/core.h"
+#include "core/args.h"
 #include "core/session.h"
 #include "ui/ui.h"
 #include "tool-fe/tool-fe.h"

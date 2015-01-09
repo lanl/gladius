@@ -1,5 +1,7 @@
 # Gladius TODO
 
+- Add logging support in terminal.
+- Add verbosity levels.
 - Populate help strings in term-cmds.
 - Terminal show all environment variables.
 - Parsing for application version, etc.
@@ -8,3 +10,4 @@
 - ToolFE reset signal handlers and such (LMON).
 - Fix weird terminal behavior after LMON launch.
 - GUI
+- Add basic fe/be plugins that perform basic communication.

@@ -11,6 +11,7 @@
 
 #include "core/ret-codes.h"
 #include "core/gladius-exception.h"
+#include "core/macros.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -29,114 +30,15 @@
 
 #include <iostream>
 
-/**
- * Convenience macro used to silence warnings about unused variables.
- */
-#define GLADIUS_UNUSED(x)                                                      \
-do {                                                                           \
-    (void)(x);                                                                 \
-} while (0)
-
-/**
- * Convenience macro for throwing an out of resource exception.
- */
-#define GLADIUS_THROW_OOR()                                                    \
-do {                                                                           \
-    throw gladius::core::GladiusException(                                     \
-              GLADIUS_WHERE,                                                   \
-              "Out of Resources"                                               \
-          );                                                                   \
-} while (0)
-
-/**
- * Convenience macro for throwing an invalid argument exception.
- */
-#define GLADIUS_THROW_INVLD_ARG()                                              \
-do {                                                                           \
-    throw gladius::core::GladiusException(                                     \
-              GLADIUS_WHERE,                                                   \
-              "Invalid argument detected"                                      \
-          );                                                                   \
-} while (0)
-
-/**
- * Convenience macro for throwing a call failure message.
- */
-#define GLADIUS_THROW_CALL_FAILED(msg)                                         \
-do {                                                                           \
-    throw gladius::core::GladiusException(                                     \
-              GLADIUS_WHERE,                                                   \
-              "The following call failed: '" + std::string(msg) + "'."         \
-          );                                                                   \
-} while (0)
-
-/**
- * Convenience macro for throwing a call failure message with a numerical status
- * code.
- */
-#define GLADIUS_THROW_CALL_FAILED_RC(msg, rc)                                  \
-do {                                                                           \
-    throw gladius::core::GladiusException(                                     \
-              GLADIUS_WHERE,                                                   \
-              "The following call failed: '" + std::string(msg) +              \
-              "' with status code " + std::to_string(rc) + "."                 \
-          );                                                                   \
-} while (0)
-
-/**
- * Convenience macro for printing out warning messages.
- */
-#define GLADIUS_WARN(msg)                                                      \
-do {                                                                           \
-    std::cerr << gladius::core::utils::ansiBeginColorYellow()                  \
-              << "[" PACKAGE_NAME " WARNING @ "                                \
-              << __FILE__ << ": " << __LINE__ << "]: "                         \
-              << gladius::core::utils::ansiEndColor()                          \
-              << std::string(msg) << std::endl;                                \
-} while (0)
-
-/**
- * Convenience macro for printing out messages to cerr;
- */
-#define GLADIUS_CERR                                                           \
-    std::cerr << gladius::core::utils::ansiBeginColorRed()                     \
-              << "[" PACKAGE_NAME "] "                                         \
-              << gladius::core::utils::ansiEndColor()
-
-/**
- * Convenience macro for printing out warning messages to cerr;
- */
-#define GLADIUS_CERR_WARN                                                      \
-    std::cerr << gladius::core::utils::ansiBeginColorYellow()                  \
-              << "[" PACKAGE_NAME "] "                                         \
-              << gladius::core::utils::ansiEndColor()
-
-/**
- * Convenience macro for printing out status messages to cout;
- */
-#define GLADIUS_COUT_STAT                                                      \
-    std::cerr << gladius::core::utils::ansiBeginColorGreen()                   \
-              << "[" PACKAGE_NAME "] "                                         \
-              << gladius::core::utils::ansiEndColor()
-
-/**
- * Convenience macro for printing out component-specific status messages to
- * cout; The caller is able to customize (w00t) the output for their needs.
- */
-#define GLADIUS_COMP_COUT(compName, compNameColorCode)                         \
-    std::cerr << compNameColorCode                                             \
-              << "[" + std::string(compName) + "] "                            \
-              << gladius::core::utils::ansiEndColor()
-
 namespace gladius {
 namespace core {
 
 class utils {
 private:
+    //
     utils(void) { ; }
-
+    //
     ~utils(void) { ; }
-
 public:
     /**
      * OS-specific path separator.
@@ -305,47 +207,6 @@ public:
     }
 
     /**
-     *
-     */
-    static std::string
-    ansiBeginColorRed(void) {
-        return "\033[0;31m";
-    }
-
-    /**
-     *
-     */
-    static std::string
-    ansiBeginColorGreen(void) {
-        return "\033[0;32m";
-    }
-
-    /**
-     *
-     */
-    static std::string
-    ansiBeginColorMagenta(void) {
-        return "\033[0;35m";
-    }
-
-    /**
-     *
-     */
-    static std::string
-    ansiBeginColorYellow(void) {
-        return "\033[0;33m";
-    }
-
-
-    /**
-     *
-     */
-    static std::string
-    ansiEndColor(void) {
-        return "\033[0m";
-    }
-
-    /**
      * Returns whether or not a given path is an absolute path or not.
      */
     static bool
@@ -388,9 +249,7 @@ public:
         return GLADIUS_SUCCESS;
     }
 
-    /**
-     * Returns the install prefix of gladius.
-     */
+    //
     static std::string
     installPrefix(void);
 

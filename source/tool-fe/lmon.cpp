@@ -17,13 +17,15 @@
 #include "lmon-paths.h"
 #include "core/core.h"
 
+using namespace gladius;
 using namespace gladius::toolfe;
 
 namespace {
 // This component's name.
 static const std::string CNAME = "lmon-fe";
 // CNAME's color code.
-static const std::string NAMEC = gladius::core::utils::ansiBeginColorMagenta();
+static const std::string NAMEC =
+    core::colors::color().ansiBeginColor(core::colors::DGRAY);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /// The absolute path to our tool daemon.
@@ -152,6 +154,9 @@ LaunchMon::mCreateAndPopulateProcTab(void)
 void
 LaunchMon::init(void)
 {
+    if (mBeVerbose) {
+        COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
+    }
     mSetEnvs();
     // Init LaunchMON
     auto rc = LMON_fe_init(LMON_VERSION);

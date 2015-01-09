@@ -14,6 +14,7 @@
 #define GLADIUS_TOOL_FE_TOOL_BE_H_INCLUDED
 
 #include "core/core.h"
+#include "core/args.h"
 
 namespace gladius {
 namespace toolbe {

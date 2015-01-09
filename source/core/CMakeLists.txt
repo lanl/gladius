@@ -15,6 +15,8 @@ add_library(
     utils.h utils.cpp
     session.h session.cpp
     gladius-exception.h gladius-exception.cpp
+    macros.h
+    colors.cpp colors.h
 )
 
 include_directories(..)

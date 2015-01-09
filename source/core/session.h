@@ -9,7 +9,7 @@
 #ifndef GLADIUS_CORE_SESSION_H_INCLUDED
 #define GLADIUS_CORE_SESSION_H_INCLUDED
 
-#include "core/utils.h"
+#include <string>
 
 namespace gladius {
 namespace core {
@@ -27,6 +27,8 @@ class Session {
     mOpen(void);
     //
     ~Session(void) { ; }
+    //
+    bool mColorizeSession = false;
 public:
     //
     static Session &
@@ -38,13 +40,15 @@ public:
      * Disable copy constructor.
      */
     Session(const Session &that) = delete;
-    /**
-     * Just return the singleton.
-     */
+    //
     Session &
-    operator=(const Session &other) {
-        GLADIUS_UNUSED(other);
-        return Session::TheSession();
+    operator=(const Session &other);
+    /**
+     * Returns whether or not we are colorizing the current session.
+     */
+    bool
+    sessionColorized(void) {
+        return mColorizeSession;
     }
 };
 

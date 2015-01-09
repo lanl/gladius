@@ -27,6 +27,10 @@ namespace mrnet {
  */
 class MRNetFE {
 private:
+    // Be verbose or not.
+    bool mBeVerbose = false;
+    // Base session directory.
+    std::string mSessionDir;
     // Path to MRNet topology file.
     std::string mTopoFile;
     // Name of the backend executable
@@ -41,6 +45,19 @@ public:
     //
     void
     createNetworkFE(void);
+    //
+    void
+    init(void);
+    //
+    void
+    finalize(void);
+    /**
+     * Sets MRNetFE verbosity.
+     */
+    void
+    verbose(bool b) {
+        mBeVerbose = b;
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
