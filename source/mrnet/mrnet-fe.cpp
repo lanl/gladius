@@ -24,13 +24,7 @@ MRNetFE::MRNetFE(void)
     try {
         // FIXME. We can't have this sort of thing becuse of multiple
         // allocations on a cluster. mktmp or something.
-        topoFile = "/home/samuel/.gladiusrc/topo";
-        const char *dummyArgv = NULL;
-        network = MRN::Network::CreateNetworkFE(
-                      topoFile.c_str(),
-                      beExe.c_str(),
-                      &dummyArgv
-                  );
+        mTopoFile = "/home/samuel/.gladiusrc/topo";
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -42,4 +36,18 @@ MRNetFE::MRNetFE(void)
  */
 MRNetFE::~MRNetFE(void)
 {
+}
+
+/**
+ *
+ */
+void
+MRNetFE::createNetworkFE(void)
+{
+    const char *dummyArgv = NULL;
+    mNetwork = MRN::Network::CreateNetworkFE(
+                   mTopoFile.c_str(),
+                   mBEExe.c_str(),
+                   &dummyArgv
+               );
 }

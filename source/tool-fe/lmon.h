@@ -44,6 +44,8 @@ class LaunchMon {
     std::string mPrefixPath;
     // LaunchMON engine path.
     std::string mEnginePath;
+    // What to use for remote login.
+    std::string mRemoteLogin;
     // Resource manager info
     lmon_rm_info_t mRMInfo;
     // The process table of the active job.

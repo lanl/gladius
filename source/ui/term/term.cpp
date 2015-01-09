@@ -290,7 +290,7 @@ Terminal::mEnterREPL(void)
 }
 
 /**
- *
+ * Returns a vector of string pairs sorted by command name.
  */
 std::vector< std::pair<std::string, std::string> >
 Terminal::cmdPairs(void) const
@@ -304,6 +304,7 @@ Terminal::cmdPairs(void) const
     std::sort(theVec.begin(), theVec.end());
     return theVec;
 }
+
 /**
  *
  */

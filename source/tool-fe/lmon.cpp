@@ -36,7 +36,7 @@ static const std::string TOOLD_NAME = gladius::core::utils::installPrefix()
 static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
 
 /**
- * LaunchMON static callback.
+ * LaunchMON status callback.
  */
 int
 statusFuncCallback(int *status)
@@ -81,7 +81,7 @@ statusFuncCallback(int *status)
 } // end nameless namespace
 
 /**
- *
+ * Constructor.
  */
 LaunchMon::LaunchMon(
     void
@@ -89,7 +89,8 @@ LaunchMon::LaunchMon(
   , mHostname(core::utils::getHostname())
   , mToolD(TOOLD_NAME)
   , mPrefixPath(GLADIUS_TOOL_FE_LMON_PREFIX)
-  , mEnginePath(GLADIUS_TOOL_FE_LMON_ENGINE_PATH) { ; }
+  , mEnginePath(GLADIUS_TOOL_FE_LMON_ENGINE_PATH)
+  , mRemoteLogin(REMOTE_LOGIN) { ; }
 
 /**
  * Destructor.
@@ -104,7 +105,7 @@ LaunchMon::mSetEnvs(void)
 {
     core::utils::setEnv("LMON_PREFIX", mPrefixPath);
     core::utils::setEnv("LMON_LAUNCHMON_ENGINE_PATH", mEnginePath);
-    core::utils::setEnv("LMON_REMOTE_LOGIN", REMOTE_LOGIN);
+    core::utils::setEnv("LMON_REMOTE_LOGIN", mRemoteLogin);
 }
 
 /**
@@ -179,7 +180,7 @@ LaunchMon::mStartSession(void)
 }
 
 /**
- *
+ * Ends an existing session and cleans up session things.
  */
 void
 LaunchMon::mEndSession(void)

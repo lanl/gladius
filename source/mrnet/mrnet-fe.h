@@ -28,15 +28,19 @@ namespace mrnet {
 class MRNetFE {
 private:
     // Path to MRNet topology file.
-    std::string topoFile;
+    std::string mTopoFile;
     // Name of the backend executable
-    std::string beExe;
-    MRN::Network *network = nullptr;
+    std::string mBEExe;
+    // The MRNet network instance.
+    MRN::Network *mNetwork = nullptr;
 
 public:
     MRNetFE(void);
     //
     ~MRNetFE(void);
+    //
+    void
+    createNetworkFE(void);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

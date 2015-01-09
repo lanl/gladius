@@ -7,7 +7,7 @@
  */
 
 /**
- * Home to common infrastructure by tool front-ends and back-ends.
+ * Home to common infrastructure used by tool front-ends and back-ends.
  */
 
 #ifndef GLADIUS_TOOL_COMMON_TOOL_COMMON_H_INCLUDED
