@@ -23,8 +23,6 @@ Gladius::Gladius(
 ) : mCurrentSession(core::Session::TheSession())
 {
     try {
-        // Setup session things.
-        mCurrentSession.open();
         // Stash a copy of the args.
         mArgs = args;
         // TODO add parsing and real UI instantiation.

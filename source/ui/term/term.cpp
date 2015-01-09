@@ -160,8 +160,9 @@ Terminal::TheTerminal(void)
  * Implements UI init functionality.
  */
 void
-Terminal::init(const core::Args &args)
-{
+Terminal::init(
+    const core::Args &args
+) {
     mArgs = args;
     setLocale();
     disableBuffering();
@@ -205,7 +206,6 @@ Terminal::init(const core::Args &args)
     // Initialize tokenizer
     mTokenizer = tok_init(NULL);
     try {
-        mSession.open();
         mHistFile = mSession.sessionDir()
                   + core::utils::osPathSep
                   + sHistFileName;
@@ -306,7 +306,9 @@ Terminal::cmdPairs(void) const
 }
 
 /**
- *
+ * Returns whether or not an input string is asking for a history recall action
+ * based on history number. Like: !505. Also checks validity of request. If not
+ * valid, then an error message will be printed and false will be returned.
  */
 bool
 Terminal::mHistRecallRequest(
@@ -402,7 +404,7 @@ Terminal::installSignalHandlers(void)
 }
 
 /**
- *
+ * Loads command history from file.
  */
 void
 Terminal::mLoadHistory(void)
@@ -417,7 +419,7 @@ Terminal::mLoadHistory(void)
 }
 
 /**
- *
+ * Saves command history to file.
  */
 void
 Terminal::mSaveHistory(void)

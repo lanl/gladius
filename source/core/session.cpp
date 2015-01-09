@@ -22,7 +22,12 @@ const std::string Session::sDotName = "." PACKAGE_NAME;
 Session &
 Session::TheSession(void)
 {
+    static bool opened = false;
     static Session *singleton = new Session();
+    if (!opened) {
+        singleton->mOpen();
+        opened = true;
+    }
     return *singleton;
 }
 
@@ -30,7 +35,7 @@ Session::TheSession(void)
  *
  */
 void
-Session::open(void)
+Session::mOpen(void)
 {
     try {
         auto home = core::utils::getEnv("HOME");

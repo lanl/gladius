@@ -112,7 +112,6 @@ class TermCommands {
 private:
     // Map containing command name, callback pairs.
     std::map<std::string , TermCommand> mNameTermMap;
-
     /**
      * Returns a vector of command aliases from a string of comma-separated
      * values.
@@ -141,7 +140,6 @@ public:
             }
         }
     }
-
     /**
      *
      */
@@ -156,9 +154,8 @@ public:
             return &tmi->second;
         }
     }
-
     /**
-     *
+     * Returns a vector of available terminal commands.
      */
     std::vector<TermCommand>
     availableCommands(void) const {
@@ -171,72 +168,57 @@ public:
 };
 
 class Terminal : public UI {
+    //
     static constexpr int sHistSize = 100;
+    //
     static const std::string sHistFileName;
-    core::Session mSession;
+    //
+    core::Session &mSession;
+    //
     std::string mHistFile;
+    //
     EditLine *mEditLine = nullptr;
+    //
     Tokenizer *mTokenizer = nullptr;
+    //
     History *mHist = nullptr;
+    //
     HistEvent mHistEvent;
+    //
     toolfe::ToolFE *mToolFE = nullptr;
-
-    /**
-     *
-     */
+    //
+    Terminal(void) : mSession(core::Session::TheSession()) { ; }
+    //
+    ~Terminal(void);
+    //
     void
     installSignalHandlers(void);
-
-    /**
-     *
-     */
+    //
     void
     evaluateInput(
         int ac,
         const char **argv,
         bool &continueREPL
     );
-
-    /**
-     *
-     */
+    //
     void
     mEnterREPL(void);
-
-    /**
-     * Loads command history from file.
-     */
+    //
     void
     mLoadHistory(void);
-
-    /**
-     * Saves command history to file.
-     */
+    //
     void
     mSaveHistory(void);
-
-    /**
-     * Returns whether or not an input string is asking for a history recall
-     * action based on history number. Like: !505. Also checks validity of
-     * request. If not valid, then an error message will be printed and false
-     * will be returned.
-     */
+    //
     bool
     mHistRecallRequest(
         const std::string &input,
         std::string &histStringIfValid
     );
-
 public:
+    //
     static Terminal &
     TheTerminal(void);
-    //
-    Terminal(void) { ; }
-
-    /**
-     *
-     */
-    ~Terminal(void);
     /**
      * Disable copy constructor.
      */
@@ -249,59 +231,41 @@ public:
         GLADIUS_UNUSED(other);
         return Terminal::TheTerminal();
     }
-
-    /**
-     *
-     */
+    //
     EditLine *
     getEditLine(void) {
         return mEditLine;
     }
-
-    /**
-     *
-     */
+    //
     History *
     getHistory(void) {
         return mHist;
     }
-
-    /**
-     *
-     */
+    //
     toolfe::ToolFE *
     getToolFE(void) {
         return mToolFE;
     }
-
-    /**
-     *
-     */
+    //
     HistEvent &
     getHistEvent(void) {
         return mHistEvent;
     }
-
-    /**
-     *
-     */
+    //
     const TermCommands &
     getTermCommands (void) const {
         return sTermCommands;
     }
-
+    //
     void
     init(const core::Args &args);
-
+    //
     void
     interact(void);
-
+    //
     bool
     quit(void);
-
-    /**
-     *
-     */
+    //
     std::vector< std::pair<std::string, std::string> >
     cmdPairs(void) const;
 private:

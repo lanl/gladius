@@ -18,21 +18,21 @@ namespace core {
  */
 class Session {
     static const std::string sDotName;
+    //
     std::string mSessionDir;
-
-public:
+    //
     Session(void) { ; }
     //
     ~Session(void) { ; }
     //
+    void
+    mOpen(void);
+public:
     static Session &
     TheSession(void);
     //
     std::string
     sessionDir(void) { return mSessionDir; }
-    //
-    void
-    open(void);
     // Disable copy constructor.
     Session(const Session &that) = delete;
     // Just return the singleton.
