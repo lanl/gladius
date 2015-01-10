@@ -10,6 +10,7 @@
 #include "core/core.h"
 
 using namespace gladius;
+using namespace gladius::toolcommon;
 
 namespace {
 // This component's name.
@@ -21,7 +22,6 @@ static const std::string NAMEC =
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 }
 
-using namespace gladius::toolcommon;
 /**
  *
  */

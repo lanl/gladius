@@ -20,7 +20,7 @@
 #include <signal.h>
 
 /**
- * main
+ * Main driver.
  */
 int
 main(

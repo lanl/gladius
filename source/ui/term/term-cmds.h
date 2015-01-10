@@ -12,6 +12,7 @@
 #include "term.h"
 #include "core/core.h"
 #include "core/colors.h"
+#include "core/env.h"
 
 #include <string>
 #include <iostream>
@@ -49,6 +50,7 @@ clearCMDCallback(const EvalInputCmdCallBackArgs &args)
     el_push(args.terminal->getEditLine(), clearHex);
     return true;
 }
+
 /**
  * Quits.
  */
@@ -195,6 +197,24 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     core::Args launchArgs(args.argc - 1, (const char **)args.argv + 1);
     toolfe::ToolFE *toolFE = args.terminal->getToolFE();
     toolFE->run(launchArgs);
+    /* Continue REPL */
+    return true;
+}
+
+/**
+ * Prints environment variables.
+ * Expecting:
+ * env
+ */
+inline bool
+envCMDCallback(const EvalInputCmdCallBackArgs &args)
+{
+    // env should have 1 argument
+    if (args.argc != 1) {
+        echoCommandUsage(args, args.argv[0]);
+        return true;
+    }
+    core::Environment::TheEnvironment().prettyPrint();
     /* Continue REPL */
     return true;
 }

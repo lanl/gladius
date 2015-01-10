@@ -30,6 +30,7 @@ private:
     // Threading things ////////////////////////////////////////////////////////
     // XXX NEEDED?
     std::mutex mtFEBELock;
+    //
     std::condition_variable mtBELaunchComplete;
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
@@ -40,28 +41,29 @@ private:
     mrnet::MRNetFE mMRNFE;
     // Target application arguments.
     core::Args mAppArgs;
-
+    //
     void
     mLocalBody(void);
-
+    //
     void
     mRemoteBody(void);
 
 public:
+    //
     ToolFE(void);
-
+    //
     void
     run(const core::Args &args);
-
+    //
     static std::string
     helpText(void);
-
+    //
     void
     beSend();
-
+    //
     void
     beRecv();
-
+    //
     bool
     envSane(std::string &whatsWrong);
 };

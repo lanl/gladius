@@ -11,6 +11,7 @@
 
 #include "core/core.h"
 #include "core/session.h"
+#include "core/env.h"
 #include "ui/ui.h"
 
 namespace gladius {
@@ -21,6 +22,8 @@ private:
     core::Args mArgs;
     //
     core::Session &mCurrentSession;
+    //
+    core::Environment &mEnv;
     //
     ui::UI &mUI;
     //

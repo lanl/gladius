@@ -11,12 +11,12 @@ add_library(
     core.h
     gladius-package-info.h
     ret-codes.h
-    env.h
+    env.h env.cpp
     utils.h utils.cpp
     session.h session.cpp
     gladius-exception.h gladius-exception.cpp
     macros.h
-    colors.cpp colors.h
+    colors.h colors.cpp
 )
 
 include_directories(..)

@@ -143,6 +143,13 @@ TermCommands Terminal::sTermCommands {
         "clear",
         "clear",
         clearCMDCallback
+    ),
+    TermCommand(
+        "env",
+        "",
+        "env",
+        "env Help",
+        envCMDCallback
     )
 };
 
@@ -214,7 +221,7 @@ Terminal::init(
         mToolFE = new toolfe::ToolFE();
     }
     catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+        GLADIUS_CERR_WARN << "Could not load history file..." << std::endl;
     }
 }
 

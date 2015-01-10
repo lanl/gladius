@@ -28,8 +28,8 @@ colors::color(void) {
     static bool initialized = false;
     static colors singleton;
     if (!initialized) {
-        singleton.mColorize = Session::TheSession().sessionColorized();
         initialized = true;
+        singleton.mColorize = Session::TheSession().sessionColorized();
     }
     return singleton;
 }
