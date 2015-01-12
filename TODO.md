@@ -3,7 +3,6 @@
 - Add logging support in terminal.
 - Add verbosity levels.
 - Populate help strings in term-cmds.
-- Terminal show all environment variables.
 - Parsing for application version, etc.
 - Terminal UI autocomplete.
 - Terminal ls and cd
