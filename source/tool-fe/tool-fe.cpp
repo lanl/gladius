@@ -139,7 +139,7 @@ ToolFE::mRemoteBody(void)
         // And so it begins...
         mLMON.launchAndSpawnDaemons(mAppArgs, remoteHosts);
         // Create MRNet network FE.
-        mMRNFE.createNetworkFE(remoteHosts);
+        //mMRNFE.createNetworkFE(remoteHosts);
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

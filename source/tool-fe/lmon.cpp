@@ -275,8 +275,10 @@ LaunchMon::launchAndSpawnDaemons(
             &jobidSize,
             PATH_MAX
         );
+#if 0
         LMON_fe_recvUsrDataBe(mSessionNum, NULL);
         LMON_fe_sendUsrDataBe(mSessionNum, NULL);
+#endif
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

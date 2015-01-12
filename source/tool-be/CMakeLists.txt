@@ -19,6 +19,7 @@ add_executable(
 target_link_libraries(
     gladius-toold
     GladiusCore
+    GladiusToolCommon
     GladiusToolBE
     ${GLADIUS_LMON_LIBS_BE}
 )

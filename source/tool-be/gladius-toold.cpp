@@ -7,7 +7,9 @@
  */
 
 #include "tool-be.h"
+
 #include "core/core.h"
+#include "tool-common/tool-common.h"
 
 #include "lmon_api/lmon_be.h"
 
@@ -23,12 +25,13 @@ main(
     char **argv,
     char **envp
 ) {
+    using namespace gladius;
     using namespace gladius::toolbe;
     GLADIUS_UNUSED(envp);
 
-    FILE *test = fopen("/tmp/BE.txt", "wr+");
-    fprintf(test, "HI FROM BE!!!\n");
-    fclose(test);
+    std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
+    // TODO FIXME
+    freopen(fName.c_str(), "w", stdout);
 
     try {
         auto lmonRC = LMON_be_init(LMON_VERSION, &argc, &argv);
@@ -43,13 +46,42 @@ main(
         if (LMON_OK != lmonRC) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);
         }
-        sleep(5);
+        ////////////////////////////////////////////////////////////////////////
+        toolcommon::ProcessTable mProcTab;
+        auto numProcTabEntries = 0;
+        auto rc = ::LMON_be_getMyProctabSize(
+                      &numProcTabEntries
+                  );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_getMyProctabSize", rc);
+        }
+        // Allocate room for the entries.
+        mProcTab.allocate(numProcTabEntries);
+        // Now populate the thing...
+        int pSize = 0;
+        rc = LMON_be_getMyProctab(
+                 mProcTab.procTab(),
+                 &pSize,
+                 numProcTabEntries // Max Length
+             );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
+        }
+        if (true) {
+            std::cout << "Done Getting Process Table" << std::endl;
+            mProcTab.dump();
+        }
+        ////////////////////////////////////////////////////////////////////////
+#if 0
         lmonRC = LMON_be_sendUsrData(NULL);
         lmonRC = LMON_be_recvUsrData(NULL);
+#endif
         lmonRC = LMON_be_finalize();
+        mProcTab.deallocate();
         if (LMON_OK != lmonRC) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);
         }
+
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

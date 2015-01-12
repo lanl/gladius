@@ -114,7 +114,7 @@ do {                                                                           \
  * cout; The caller is able to customize (w00t) the output for their needs.
  */
 #define GLADIUS_COMP_COUT(compName, compNameColorCode)                         \
-    std::cerr << compNameColorCode                                             \
+    std::cout << compNameColorCode                                             \
               << "[" + std::string(compName) + "] "                            \
               << gladius::core::colors::color().ansiEndColor()
 

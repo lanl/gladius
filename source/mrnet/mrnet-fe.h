@@ -80,6 +80,9 @@ public:
     ~MRNetFE(void);
     //
     void
+    mSetEnvs(void);
+    //
+    void
     createNetworkFE(
         const toolcommon::Hosts &hosts
     );

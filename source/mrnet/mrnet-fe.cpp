@@ -89,7 +89,7 @@ MRNetTopology::mGenFlatTopo(void)
     using namespace std;
     auto id = 0;
     // The "host:0 =>" bit.
-    std::string resTopoStr = "localhost: " + to_string(id++) + " =>\n";
+    string resTopoStr = "localhost: " + to_string(id++) + " =>\n";
     // TODO make sure that the tool FE isn't included in this list when you go
     // distributed.
     for (const auto &hostName : mHosts.hostNames()) {
@@ -116,6 +116,15 @@ MRNetFE::MRNetFE(void) { ; }
 MRNetFE::~MRNetFE(void) { ; }
 
 /**
+ * Sets some environment variables that impact the behavior of MRNetFE.
+ */
+void
+MRNetFE::mSetEnvs(void)
+{
+    core::utils::setEnv("MRNET_RSH", "/usr/bin/ssh");
+}
+
+/**
  * Initialization.
  */
 void
@@ -127,6 +136,7 @@ MRNetFE::init(void)
         if (mBeVerbose) {
             COMP_COUT << "Initializing MRNet Front-End." << endl;
         }
+        mSetEnvs();
         mSessionDir = core::Session::TheSession().sessionDir();
         mTopoFile = mSessionDir + utils::osPathSep
                   + std::to_string(getpid()) + "-" + CNAME + ".topo";
@@ -175,10 +185,14 @@ MRNetFE::createNetworkFE(
         core::utils::getHostname(),
         hosts
     );
+    const char *dummyBackendExe = NULL;
     const char *dummyArgv = NULL;
     mNetwork = MRN::Network::CreateNetworkFE(
                    mTopoFile.c_str(),
-                   mBEExe.c_str(),
+                   dummyBackendExe,
                    &dummyArgv
                );
+    if (!mNetwork) {
+        GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkFE");
+    }
 }
