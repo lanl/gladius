@@ -12,8 +12,16 @@ add_library(
 )
 
 include_directories(..)
+# Used to help find the generated header during configure.
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
 
 target_link_libraries(
     GladiusMRNetFE
     ${GLADIUS_MRNET_LIBS}
 )
+
+# Generate header from .in.
+# @see cmake/FindMRNet.cmake for more details about GLADIUS_MRNET_HOME.
+set(GLADIUS_MRNET_PATH ${GLADIUS_MRNET_HOME})
+configure_file(mrnet-paths.h.in mrnet-paths.h)
+set_source_files_properties(mrnet-paths.h PROPERTIES GENERATED TRUE)

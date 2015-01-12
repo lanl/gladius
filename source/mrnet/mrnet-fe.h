@@ -14,11 +14,45 @@
 #define GLADIUS_MRNET_MRNET_FE_H_INCLUDED
 
 #include "mrnet/MRNet.h"
+#include "tool-common/tool-common.h"
 
 #include <string>
 
 namespace gladius {
 namespace mrnet {
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+class MRNetTopology {
+public:
+    //
+    enum TopologyType {
+        FLAT = 0
+    };
+private:
+    //
+    std::string mTopoFilePath;
+    //
+    TopologyType mTopoType;
+    // Hostname of the tool front-end.
+    std::string mFEHostName;
+    //
+    toolcommon::Hosts mHosts;
+    //
+    std::string
+    mGenFlatTopo(void);
+public:
+    //
+    MRNetTopology(void) { ; }
+    //
+    ~MRNetTopology(void) { ; }
+    //
+    MRNetTopology(
+        const std::string &topoFilePath,
+        TopologyType topoType,
+        const std::string &feHostName,
+        const toolcommon::Hosts &hosts
+    );
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +65,8 @@ private:
     bool mBeVerbose = false;
     // Base session directory.
     std::string mSessionDir;
+    // Absolute path to MRNet installation.
+    static std::string sInstallPrefix;
     // Path to MRNet topology file.
     std::string mTopoFile;
     // Name of the backend executable
@@ -44,7 +80,9 @@ public:
     ~MRNetFE(void);
     //
     void
-    createNetworkFE(void);
+    createNetworkFE(
+        const toolcommon::Hosts &hosts
+    );
     //
     void
     init(void);

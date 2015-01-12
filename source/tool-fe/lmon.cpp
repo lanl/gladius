@@ -212,7 +212,8 @@ LaunchMon::mSetRMInfo(void)
  */
 void
 LaunchMon::launchAndSpawnDaemons(
-    const core::Args &appArgs
+    const core::Args &appArgs,
+    toolcommon::Hosts &outRemoteHosts
 ) {
     using namespace std;
     try {
@@ -257,6 +258,8 @@ LaunchMon::launchAndSpawnDaemons(
         // used in this job. This "should" be equal to the number of daemons
         // that were also spawned.
         mHosts = toolcommon::Hosts(mProcTab);
+        // While we're at it, pass hosts to caller.
+        outRemoteHosts = mHosts;
         // Let the people know what's going on
         GLADIUS_COUT_STAT << "Launcher PID: "
                           << mRMInfo.rm_launcher_pid

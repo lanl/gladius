@@ -81,7 +81,10 @@ public:
     init(void);
     //
     void
-    launchAndSpawnDaemons(const core::Args &appArgs);
+    launchAndSpawnDaemons(
+        const core::Args &appArgs,
+        toolcommon::Hosts &outRemoteHosts
+    );
     //
     void
     attachAndSpawnDaemons(pid_t launcherPID) {

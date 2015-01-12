@@ -134,8 +134,12 @@ ToolFE::mRemoteBody(void)
 {
     try {
         echoLaunchStart(mAppArgs);
+        // Remote hosts. Populated by launchAndSpawnDaemons.
+        toolcommon::Hosts remoteHosts;
         // And so it begins...
-        mLMON.launchAndSpawnDaemons(mAppArgs);
+        mLMON.launchAndSpawnDaemons(mAppArgs, remoteHosts);
+        // Create MRNet network FE.
+        mMRNFE.createNetworkFE(remoteHosts);
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

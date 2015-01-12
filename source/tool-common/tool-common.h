@@ -31,7 +31,9 @@ namespace toolcommon {
  * Process table class.
  */
 class ProcessTable {
+    //
     unsigned int mNEntries = 0;
+    //
     MPIR_PROCDESC_EXT *mProcTab = nullptr;
 public:
     /**
@@ -107,8 +109,10 @@ public:
  * TODO add real host resolution things?
  */
 class Hosts {
+    //
     std::set<std::string> mHostNames;
 public:
+    //
     Hosts(void) { ; }
     //
     Hosts(const ProcessTable &pTab) {

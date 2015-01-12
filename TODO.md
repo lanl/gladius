@@ -10,3 +10,4 @@
 - Fix weird terminal behavior after LMON launch.
 - GUI
 - Add basic fe/be plugins that perform basic communication.
+- MRNetFE dynamically create a reasonable topology based on job size.
