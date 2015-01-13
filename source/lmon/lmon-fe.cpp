@@ -155,7 +155,7 @@ void
 LaunchMonFE::init(void)
 {
     if (mBeVerbose) {
-        COMP_COUT << "Initializing LaunchMonFE Front-End." << std::endl;
+        COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
     }
     mSetEnvs();
     // Init LaunchMON
