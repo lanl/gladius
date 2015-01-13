@@ -17,7 +17,7 @@
 #include <string>
 
 /**
- * Tool daemon main
+ * Tool daemon main.
  */
 int
 main(
@@ -72,6 +72,10 @@ main(
             mProcTab.dump();
         }
         ////////////////////////////////////////////////////////////////////////
+        int mLMONRank = 0;
+        LMON_be_getMyRank(&mLMONRank);
+        std::cout << "Hi from: " << mLMONRank << std::endl;
+
 #if 0
         lmonRC = LMON_be_sendUsrData(NULL);
         lmonRC = LMON_be_recvUsrData(NULL);

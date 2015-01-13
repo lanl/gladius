@@ -14,7 +14,7 @@
 #define GLADIUS_TOOL_FE_TOOL_FE_H_INCLUDED
 
 #include "core/core.h"
-#include "tool-fe/lmon.h"
+#include "lmon/lmon.h"
 #include "mrnet/mrnet-fe.h"
 
 #include <string>

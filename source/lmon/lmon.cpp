@@ -14,7 +14,7 @@
 
 #include "lmon.h"
 // Automatically generated header.
-#include "lmon-paths.h"
+#include "lmon/lmon-paths.h"
 #include "core/core.h"
 
 using namespace gladius;
