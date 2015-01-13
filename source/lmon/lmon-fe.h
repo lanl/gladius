@@ -28,7 +28,7 @@
 namespace gladius {
 namespace toolfe {
 
-class LaunchMon {
+class LaunchMonFE {
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
     // The PID of the target application launcher (srun, mpirun, aprun, etc.)
@@ -73,9 +73,9 @@ class LaunchMon {
     mSetRMInfo(void);
 
 public:
-    LaunchMon(void);
+    LaunchMonFE(void);
     //
-    ~LaunchMon(void);
+    ~LaunchMonFE(void);
     //
     void
     init(void);

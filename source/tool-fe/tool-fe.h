@@ -14,7 +14,7 @@
 #define GLADIUS_TOOL_FE_TOOL_FE_H_INCLUDED
 
 #include "core/core.h"
-#include "lmon/lmon.h"
+#include "lmon/lmon-fe.h"
 #include "mrnet/mrnet-fe.h"
 
 #include <string>
@@ -35,8 +35,8 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
-    // Our LaunchMON instance.
-    LaunchMon mLMON;
+    // Our LaunchMON front-end instance.
+    LaunchMonFE mLMONFE;
     // Our MRNet instance.
     mrnet::MRNetFE mMRNFE;
     // Target application arguments.

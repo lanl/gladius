@@ -15,6 +15,6 @@ include_directories(..)
 
 target_link_libraries(
     GladiusToolFE
-    GladiusLaunchMON
+    GladiusLaunchMONFE
     GladiusMRNetFE
 )

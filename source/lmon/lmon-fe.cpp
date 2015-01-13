@@ -12,7 +12,7 @@
  * Implements LaunchMON actions shim.
  */
 
-#include "lmon.h"
+#include "lmon/lmon-fe.h"
 // Automatically generated header.
 #include "lmon/lmon-paths.h"
 #include "core/core.h"
@@ -85,7 +85,7 @@ statusFuncCallback(int *status)
 /**
  * Constructor.
  */
-LaunchMon::LaunchMon(
+LaunchMonFE::LaunchMonFE(
     void
 ) : mBeVerbose(false)
   , mHostname(core::utils::getHostname())
@@ -97,13 +97,13 @@ LaunchMon::LaunchMon(
 /**
  * Destructor.
  */
-LaunchMon::~LaunchMon(void) { ; }
+LaunchMonFE::~LaunchMonFE(void) { ; }
 
 /**
  * Sets some environment variables that impact the behavior of LaunchMON.
  */
 void
-LaunchMon::mSetEnvs(void)
+LaunchMonFE::mSetEnvs(void)
 {
     core::utils::setEnv("LMON_PREFIX", mPrefixPath);
     core::utils::setEnv("LMON_LAUNCHMON_ENGINE_PATH", mEnginePath);
@@ -114,7 +114,7 @@ LaunchMon::mSetEnvs(void)
  * Creates and populates the process table.
  */
 void
-LaunchMon::mCreateAndPopulateProcTab(void)
+LaunchMonFE::mCreateAndPopulateProcTab(void)
 {
     try {
         unsigned int numProcTabEntries = 0;
@@ -152,10 +152,10 @@ LaunchMon::mCreateAndPopulateProcTab(void)
  *
  */
 void
-LaunchMon::init(void)
+LaunchMonFE::init(void)
 {
     if (mBeVerbose) {
-        COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
+        COMP_COUT << "Initializing LaunchMonFE Front-End." << std::endl;
     }
     mSetEnvs();
     // Init LaunchMON
@@ -169,7 +169,7 @@ LaunchMon::init(void)
  * Starts a new session.
  */
 void
-LaunchMon::mStartSession(void)
+LaunchMonFE::mStartSession(void)
 {
     auto rc = LMON_fe_createSession(&mSessionNum);
     if (LMON_OK != rc) {
@@ -188,7 +188,7 @@ LaunchMon::mStartSession(void)
  * Ends an existing session and cleans up session things.
  */
 void
-LaunchMon::mEndSession(void)
+LaunchMonFE::mEndSession(void)
 {
     // TODO Finish
     mProcTab.deallocate();
@@ -198,7 +198,7 @@ LaunchMon::mEndSession(void)
  *
  */
 void
-LaunchMon::mSetRMInfo(void)
+LaunchMonFE::mSetRMInfo(void)
 {
     auto rc = LMON_fe_getRMInfo(mSessionNum, &mRMInfo);
     if (LMON_OK != rc) {
@@ -211,7 +211,7 @@ LaunchMon::mSetRMInfo(void)
  *
  */
 void
-LaunchMon::launchAndSpawnDaemons(
+LaunchMonFE::launchAndSpawnDaemons(
     const core::Args &appArgs,
     toolcommon::Hosts &outRemoteHosts
 ) {

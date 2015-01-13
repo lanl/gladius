@@ -7,8 +7,8 @@
 #
 
 add_library(
-    GladiusLaunchMON
-    lmon.cpp lmon.h
+    GladiusLaunchMONFE
+    lmon-fe.cpp lmon-fe.h
 )
 
 include_directories(..)
@@ -16,7 +16,7 @@ include_directories(..)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
 
 target_link_libraries(
-    GladiusLaunchMON
+    GladiusLaunchMONFE
     GladiusCore
     GladiusToolCommon
     ${GLADIUS_LMON_LIBS_FE}

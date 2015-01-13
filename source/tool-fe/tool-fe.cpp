@@ -52,7 +52,7 @@ ToolFE::ToolFE(
 {
     if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
         mBeVerbose = true;
-        mLMON.verbose(mBeVerbose);
+        mLMONFE.verbose(mBeVerbose);
         mMRNFE.verbose(mBeVerbose);
     }
 }
@@ -113,7 +113,7 @@ ToolFE::mLocalBody(void)
 {
     try {
         // One-time init things go in init.
-        mLMON.init();
+        mLMONFE.init();
         mMRNFE.init();
         std::thread beThread(&ToolFE::mRemoteBody, this);
         std::unique_lock<std::mutex> lock(mtFEBELock);
@@ -137,7 +137,7 @@ ToolFE::mRemoteBody(void)
         // Remote hosts. Populated by launchAndSpawnDaemons.
         toolcommon::Hosts remoteHosts;
         // And so it begins...
-        mLMON.launchAndSpawnDaemons(mAppArgs, remoteHosts);
+        mLMONFE.launchAndSpawnDaemons(mAppArgs, remoteHosts);
         // Create MRNet network FE.
         //mMRNFE.createNetworkFE(remoteHosts);
     }
