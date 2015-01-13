@@ -42,6 +42,7 @@ public:
     ProcessTable(void)
         : mNEntries(0)
         , mProcTab(nullptr) { ; }
+
     /**
      * Allocates space for process table.
      */
@@ -52,11 +53,13 @@ public:
         mProcTab = (MPIR_PROCDESC_EXT *)calloc(nEntries, sizeof(*mProcTab));
         if (!mProcTab) GLADIUS_THROW_OOR();
     }
+
     /**
      *
      */
     void
     dump(void);
+
     /**
      *
      */
@@ -76,6 +79,7 @@ public:
         }
         mNEntries = 0;
     }
+
     /**
      * Returns the number of entries in the process table.
      */
@@ -83,6 +87,7 @@ public:
     nEntries(void) {
         return mNEntries;
     }
+
     /**
      * Returns pointer to the process table.
      */
@@ -90,6 +95,7 @@ public:
     procTab(void) {
         return mProcTab;
     }
+
     /**
      * Returns a set of node (host) names.
      */
@@ -118,6 +124,7 @@ public:
     Hosts(const ProcessTable &pTab) {
         mHostNames = pTab.hostNamesInTable();
     }
+
     /**
      * Returns reference to our set of host names.
      */
@@ -125,6 +132,7 @@ public:
     hostNames(void) {
         return mHostNames;
     }
+
     /**
      * Returns the number of hosts.
      */

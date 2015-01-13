@@ -186,8 +186,6 @@ class Terminal : public UI {
     //
     HistEvent mHistEvent;
     //
-    toolfe::ToolFE *mToolFE = nullptr;
-    //
     Terminal(void) : mSession(core::Session::TheSession()) { ; }
     //
     ~Terminal(void);
@@ -241,11 +239,6 @@ public:
     History *
     getHistory(void) {
         return mHist;
-    }
-    //
-    toolfe::ToolFE *
-    getToolFE(void) {
-        return mToolFE;
     }
     //
     HistEvent &

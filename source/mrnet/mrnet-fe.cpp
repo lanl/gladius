@@ -185,6 +185,7 @@ MRNetFE::createNetworkFE(
         core::utils::getHostname(),
         hosts
     );
+    // Both NULL because MRNet is NOT going to be launching the tool daemons.
     const char *dummyBackendExe = NULL;
     const char *dummyArgv = NULL;
     mNetwork = MRN::Network::CreateNetworkFE(

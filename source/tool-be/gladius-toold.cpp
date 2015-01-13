@@ -49,7 +49,7 @@ main(
         ////////////////////////////////////////////////////////////////////////
         toolcommon::ProcessTable mProcTab;
         auto numProcTabEntries = 0;
-        auto rc = ::LMON_be_getMyProctabSize(
+        auto rc = LMON_be_getMyProctabSize(
                       &numProcTabEntries
                   );
         if (LMON_OK != rc) {
@@ -75,7 +75,6 @@ main(
         int mLMONRank = 0;
         LMON_be_getMyRank(&mLMONRank);
         std::cout << "Hi from: " << mLMONRank << std::endl;
-
 #if 0
         lmonRC = LMON_be_sendUsrData(NULL);
         lmonRC = LMON_be_recvUsrData(NULL);

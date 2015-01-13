@@ -47,16 +47,16 @@ private:
     //
     void
     mRemoteBody(void);
+    //
+    void
+    mEnvRefresh(void);
 
 public:
     //
     ToolFE(void);
     //
     void
-    run(const core::Args &args);
-    //
-    static std::string
-    helpText(void);
+    mainLoop(const core::Args &args);
     //
     void
     beSend();

@@ -218,7 +218,6 @@ Terminal::init(
                   + sHistFileName;
         // Load history
         mLoadHistory();
-        mToolFE = new toolfe::ToolFE();
     }
     catch (const std::exception &e) {
         GLADIUS_CERR_WARN << "Could not load history file..." << std::endl;
@@ -438,7 +437,7 @@ Terminal::mSaveHistory(void)
 }
 
 /**
- *
+ * Destructor.
  */
 Terminal::~Terminal(void)
 {
@@ -446,5 +445,4 @@ Terminal::~Terminal(void)
     if (mEditLine) el_end(mEditLine);
     if (mTokenizer) tok_end(mTokenizer);
     if (mHist) history_end(mHist);
-    if (mToolFE) delete mToolFE;
 }

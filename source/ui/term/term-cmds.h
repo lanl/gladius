@@ -191,13 +191,15 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
         echoCommandUsage(args, args.argv[0]);
         return true;
     }
-    // If here then run to tool front-end and enter its REPL.
-    // Adjust the argv that we are gonig to pass to the toolfe by removing the
-    // launch command string and adjusting the arg count.
+    // If here then create the tool front-end and enter its main loop.  Adjust
+    // the argv that we are gonig to pass to the toolfe by removing the launch
+    // command string and adjusting the arg count.
     core::Args launchArgs(args.argc - 1, (const char **)args.argv + 1);
-    toolfe::ToolFE *toolFE = args.terminal->getToolFE();
-    toolFE->run(launchArgs);
-    /* Continue REPL */
+    // A new instance every time we are here.
+    toolfe::ToolFE toolFE;
+    // Enter the tool's main loop.
+    toolFE.mainLoop(launchArgs);
+    // Continue REPL
     return true;
 }
 

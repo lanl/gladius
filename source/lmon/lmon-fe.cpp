@@ -175,6 +175,7 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
+    // If being verbose, register LMON status callbacks.
     if (mBeVerbose) {
         rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
         // Not a fatal failure, but warn about this failure.

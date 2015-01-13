@@ -90,6 +90,7 @@ public:
     attachAndSpawnDaemons(pid_t launcherPID) {
         GLADIUS_UNUSED(launcherPID);
     }
+
     /**
      * Sets whether or not LaunchMON operations will be verbose.
      */

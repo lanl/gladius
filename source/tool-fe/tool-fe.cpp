@@ -16,6 +16,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+/**
+ * To fully understand the entire set of interactions here, you'll also need to
+ * see the back-end versions of the tool, LaunchMon, and MRNet.
+ */
+
 using namespace gladius;
 using namespace gladius::toolfe;
 
@@ -27,6 +32,7 @@ static const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::DGRAY);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+
 /**
  *
  */
@@ -50,20 +56,7 @@ ToolFE::ToolFE(
     void
 ) : mBeVerbose(false)
 {
-    if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
-        mBeVerbose = true;
-        mLMONFE.verbose(mBeVerbose);
-        mMRNFE.verbose(mBeVerbose);
-    }
-}
-
-/**
- * Returns tool front-end help string.
- */
-std::string
-ToolFE::helpText(void)
-{
-    return std::string {"toolFE help string goes here..."};
+    ;
 }
 
 /**
@@ -78,22 +71,41 @@ ToolFE::envSane(std::string &whatsWrong)
 }
 
 /**
+ *
+ */
+void
+ToolFE::mEnvRefresh(void)
+{
+    if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
+        mBeVerbose = true;
+    }
+    else {
+        mBeVerbose = false;
+    }
+    mLMONFE.verbose(mBeVerbose);
+    mMRNFE.verbose(mBeVerbose);
+}
+
+/**
  * Responsible for running the tool front-end instance. This is the tool-fe
  * entry point from a caller's perspective.
  */
 void
-ToolFE::run(
+ToolFE::mainLoop(
     const core::Args &args
 ) {
-    // First make sure that all the required bits are set before we get to
-    // launching anything.
-    std::string whatsWrong;
-    if (!envSane(whatsWrong)) {
-        GLADIUS_CERR << whatsWrong << std::endl;
-        return;
-    }
-    // If we are here, then our environment is sane enough to start...
     try {
+        // Refresh our environment because things could
+        // have changed since the last invocation.
+        mEnvRefresh();
+        // Make sure that all the required bits are
+        // set before we get to launching anything.
+        std::string whatsWrong;
+        if (!envSane(whatsWrong)) {
+            GLADIUS_CERR << whatsWrong << std::endl;
+            return;
+        }
+        // If we are here, then our environment is sane enough to start...
         mAppArgs = args;
         // FIXME dup stdout?
         mLocalBody();
