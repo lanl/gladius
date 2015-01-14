@@ -192,7 +192,6 @@ void
 LaunchMonFE::mEndSession(void)
 {
     // TODO Finish
-    mProcTab.deallocate();
 }
 
 /**
@@ -227,7 +226,7 @@ LaunchMonFE::launchAndSpawnDaemons(
             if (GLADIUS_SUCCESS != status) {
                 GLADIUS_CERR << "Could not find '" << launcherArgv[0]
                              << "' in $PATH.\nProviding an absolute "
-                             << "path to the launcher may fix this. "
+                             << "path to the launcher may fix this."
                              << std::endl;
                 return;
             }

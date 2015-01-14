@@ -35,7 +35,7 @@ cd LaunchMON
 ./bootstrap
 ./configure --prefix=$LMON_PREFIX \
 MPICC=mpicc MPICXX=mpic++ && \
-make && make install
+MAKEINFOFLAGS="--force" make && make install
 ```
 ### NOTES:
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003

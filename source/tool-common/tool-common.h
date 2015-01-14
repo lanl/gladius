@@ -35,13 +35,41 @@ class ProcessTable {
     unsigned int mNEntries = 0;
     //
     MPIR_PROCDESC_EXT *mProcTab = nullptr;
-public:
+
     /**
      *
+     */
+    void
+    mDeallocate(void) {
+        if (mProcTab) {
+            for (auto i = 0UL; i < mNEntries; ++i) {
+                if (mProcTab[i].pd.executable_name) {
+                    free(mProcTab[i].pd.executable_name);
+                }
+                if (mProcTab[i].pd.host_name) {
+                    free(mProcTab[i].pd.host_name);
+                }
+            }
+            free(mProcTab);
+            mProcTab = nullptr;
+        }
+        mNEntries = 0;
+    }
+
+public:
+    /**
+     * Constructor.
      */
     ProcessTable(void)
         : mNEntries(0)
         , mProcTab(nullptr) { ; }
+
+    /**
+     * Destructor.
+     */
+    ~ProcessTable(void) {
+        mDeallocate();
+    }
 
     /**
      * Allocates space for process table.
@@ -59,26 +87,6 @@ public:
      */
     void
     dump(void);
-
-    /**
-     *
-     */
-    void
-    deallocate(void) {
-        if (mProcTab) {
-            for (auto i = 0UL; i < mNEntries; ++i) {
-                if (mProcTab[i].pd.executable_name) {
-                    free(mProcTab[i].pd.executable_name);
-                }
-                if (mProcTab[i].pd.host_name) {
-                    free(mProcTab[i].pd.host_name);
-                }
-            }
-            free(mProcTab);
-            mProcTab = nullptr;
-        }
-        mNEntries = 0;
-    }
 
     /**
      * Returns the number of entries in the process table.
