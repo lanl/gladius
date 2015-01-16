@@ -125,8 +125,9 @@ LaunchMonFE::mCreateAndPopulateProcTab(void)
         if (LMON_OK != rc) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctableSize", rc);
         }
-        // Allocate room for the entries.
-        mProcTab.allocate(numProcTabEntries);
+        // Construct the process table and allocate room for the entries now
+        // that we know how many entries we need to accommodate.
+        mProcTab = toolcommon::ProcessTable(numProcTabEntries);
         // Now populate the thing...
         unsigned int pSize = 0;
         rc = LMON_fe_getProctable(

@@ -56,7 +56,7 @@ main(
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_getMyProctabSize", rc);
         }
         // Allocate room for the entries.
-        mProcTab.allocate(numProcTabEntries);
+        mProcTab = toolcommon::ProcessTable(numProcTabEntries);
         // Now populate the thing...
         int pSize = 0;
         rc = LMON_be_getMyProctab(

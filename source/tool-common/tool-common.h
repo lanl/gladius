@@ -37,6 +37,17 @@ class ProcessTable {
     MPIR_PROCDESC_EXT *mProcTab = nullptr;
 
     /**
+     * Allocates space for process table.
+     */
+    void
+    mAllocate(size_t nEntries) {
+        mNEntries = nEntries;
+        // Now that we know this, allocate the process table.
+        mProcTab = (MPIR_PROCDESC_EXT *)calloc(nEntries, sizeof(*mProcTab));
+        if (!mProcTab) GLADIUS_THROW_OOR();
+    }
+
+    /**
      *
      */
     void
@@ -58,8 +69,12 @@ class ProcessTable {
 
 public:
     /**
-     * Constructor.
+     * Constructors.
      */
+    ProcessTable(size_t nEntries) {
+        mAllocate(nEntries);
+    }
+    //
     ProcessTable(void)
         : mNEntries(0)
         , mProcTab(nullptr) { ; }
@@ -69,17 +84,6 @@ public:
      */
     ~ProcessTable(void) {
         mDeallocate();
-    }
-
-    /**
-     * Allocates space for process table.
-     */
-    void
-    allocate(size_t nEntries) {
-        mNEntries = nEntries;
-        // Now that we know this, allocate the process table.
-        mProcTab = (MPIR_PROCDESC_EXT *)calloc(nEntries, sizeof(*mProcTab));
-        if (!mProcTab) GLADIUS_THROW_OOR();
     }
 
     /**
