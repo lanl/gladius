@@ -176,6 +176,11 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
+    //
+    rc = LMON_fe_regPackForFeToBe(mSessionNum, mFEToBePackFn);
+    if (LMON_OK != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getRMInfo", rc);
+    }
     // If being verbose, register LMON status callbacks.
     if (mBeVerbose) {
         rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
@@ -193,6 +198,12 @@ void
 LaunchMonFE::mEndSession(void)
 {
     // TODO Finish
+    if (mIsLaunched && -1 != mSessionNum) {
+        auto rc = LMON_fe_detach(mSessionNum);
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_detach", rc);
+        }
+    }
 }
 
 /**
@@ -206,6 +217,22 @@ LaunchMonFE::mSetRMInfo(void)
         GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getRMInfo", rc);
     }
     mLauncherPID = mRMInfo.rm_launcher_pid;
+}
+
+/**
+ *
+ */
+void
+LaunchMonFE::regPackForFeToBe(
+    int
+    (*packFeBeFn) (
+        void *udata,
+        void *msgbuf,
+        int msgbufmax,
+        int *msgBufLen
+    )
+) {
+    mFEToBePackFn = packFeBeFn;
 }
 
 /**
@@ -254,6 +281,8 @@ LaunchMonFE::launchAndSpawnDaemons(
         mSetRMInfo();
         // Create and populate process table.
         mCreateAndPopulateProcTab();
+        // Update flag
+        mIsLaunched = true;
         // Populate target hosts. Note: this is a set of host names, so the size
         // of this set is equal to the number of servers (nodes) that are being
         // used in this job. This "should" be equal to the number of daemons
@@ -280,6 +309,7 @@ LaunchMonFE::launchAndSpawnDaemons(
         LMON_fe_recvUsrDataBe(mSessionNum, NULL);
         LMON_fe_sendUsrDataBe(mSessionNum, NULL);
 #endif
+        mEndSession();
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

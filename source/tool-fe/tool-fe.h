@@ -20,6 +20,7 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 
 namespace gladius {
@@ -32,6 +33,8 @@ private:
     std::mutex mtLashUpLock;
     //
     std::condition_variable mtLashUpComplete;
+    //
+    std::atomic<int> mtStatus;
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;

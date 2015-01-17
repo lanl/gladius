@@ -30,11 +30,13 @@ namespace toolfe {
 
 class LaunchMonFE {
     // Flag indicating whether or not we'll be verbose about our actions.
-    bool mBeVerbose;
+    bool mBeVerbose = false;
     // The PID of the target application launcher (srun, mpirun, aprun, etc.)
-    pid_t mLauncherPID;
+    pid_t mLauncherPID = 0;
     // LMON session number (handle).
-    int mSessionNum;
+    int mSessionNum = 0;
+    //
+    bool mIsLaunched = false;
     // The hostname of tool front-end.
     std::string mHostname;
     // The name of the tool daemon.
@@ -53,6 +55,8 @@ class LaunchMonFE {
     toolcommon::ProcessTable mProcTab;
     // The hosts in our job.
     toolcommon::Hosts mHosts;
+    //
+    int (*mFEToBePackFn)(void *, void *, int, int *) = nullptr;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
@@ -98,6 +102,17 @@ public:
     verbose(bool bVerbose) {
         mBeVerbose = bVerbose;
     }
+    //
+    void
+    regPackForFeToBe(
+        int
+        (*packFeBeFn) (
+            void *udata,
+            void *msgbuf,
+            int msgbufmax,
+            int *msgBufLen
+        )
+    );
 };
 
 } // end toolfe namespace

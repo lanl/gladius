@@ -47,6 +47,20 @@ echoLaunchStart(const gladius::core::Args &args)
     GLADIUS_COUT_STAT << "Launch Sequence Initiated..." << std::endl;
     GLADIUS_COUT_STAT << "Starting: " << lstr << std::endl;
 }
+
+/**
+ *
+ */
+int
+feToBEPack(
+    void *data,
+    void *buf,
+    int bufMax,
+    int *bufLen
+) {
+    std::cout << "feToBEPack Called!" << std::endl;
+    return 1;
+}
 } // end namespace
 
 /**
@@ -124,6 +138,7 @@ ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
         mLMONFE.init();
+        mLMONFE.regPackForFeToBe(feToBEPack);
         mMRNFE.init();
     }
     catch (const std::exception &e) {
@@ -142,6 +157,9 @@ ToolFE::mStartToolLashUpThread(void)
         std::unique_lock<std::mutex> lock(mtLashUpLock);
         mtLashUpComplete.wait(lock);
         luThread.join();
+        if (GLADIUS_SUCCESS != mtStatus) {
+            GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", mtStatus);
+        }
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -156,6 +174,7 @@ void
 ToolFE::mInitiateToolLashUp(void)
 {
     try {
+        mtStatus = GLADIUS_SUCCESS;
         echoLaunchStart(mAppArgs);
         // Remote hosts. Populated by launchAndSpawnDaemons.
         toolcommon::Hosts remoteHosts;
@@ -166,6 +185,7 @@ ToolFE::mInitiateToolLashUp(void)
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;
+        mtStatus = GLADIUS_ERR_LMON;
     }
     // Notify main thread unconditionally.
     mtLashUpComplete.notify_one();
