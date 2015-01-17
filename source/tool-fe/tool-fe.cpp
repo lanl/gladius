@@ -137,10 +137,15 @@ ToolFE::mInitializeToolInfrastructure(void)
 void
 ToolFE::mStartToolLashUpThread(void)
 {
-    std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
-    std::unique_lock<std::mutex> lock(mtLashUpLock);
-    mtLashUpComplete.wait(lock);
-    luThread.join();
+    try {
+        std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
+        std::unique_lock<std::mutex> lock(mtLashUpLock);
+        mtLashUpComplete.wait(lock);
+        luThread.join();
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }
 
 /**
