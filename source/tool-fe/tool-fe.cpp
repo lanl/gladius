@@ -47,6 +47,22 @@ echoLaunchStart(const gladius::core::Args &args)
     GLADIUS_COUT_STAT << "Launch Sequence Initiated..." << std::endl;
     GLADIUS_COUT_STAT << "Starting: " << lstr << std::endl;
 }
+} // end namespace
+
+/**
+ *
+ */
+void
+ToolFE::mGetStateFromEnvs(void)
+{
+    if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
+        mBeVerbose = true;
+    }
+    else {
+        mBeVerbose = false;
+    }
+    mLMONFE.verbose(mBeVerbose);
+    mMRNFE.verbose(mBeVerbose);
 }
 
 /**
@@ -56,7 +72,7 @@ ToolFE::ToolFE(
     void
 ) : mBeVerbose(false)
 {
-    ;
+    mGetStateFromEnvs();
 }
 
 /**
@@ -71,22 +87,6 @@ ToolFE::envSane(std::string &whatsWrong)
 }
 
 /**
- *
- */
-void
-ToolFE::mEnvRefresh(void)
-{
-    if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
-        mBeVerbose = true;
-    }
-    else {
-        mBeVerbose = false;
-    }
-    mLMONFE.verbose(mBeVerbose);
-    mMRNFE.verbose(mBeVerbose);
-}
-
-/**
  * Responsible for running the tool front-end instance. This is the tool-fe
  * entry point from a caller's perspective.
  */
@@ -95,9 +95,7 @@ ToolFE::mainLoop(
     const core::Args &args
 ) {
     try {
-        // Refresh our environment because things could
-        // have changed since the last invocation.
-        mEnvRefresh();
+        mAppArgs = args;
         // Make sure that all the required bits are
         // set before we get to launching anything.
         std::string whatsWrong;
@@ -106,9 +104,10 @@ ToolFE::mainLoop(
             return;
         }
         // If we are here, then our environment is sane enough to start...
-        mAppArgs = args;
         // FIXME dup stdout?
-        mLocalBody();
+        mInitializeToolInfrastructure();
+        // Start lash-up thread.
+        mStartToolLashUpThread();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
@@ -118,19 +117,14 @@ ToolFE::mainLoop(
 }
 
 /**
- * The local tool front-end thread (the main thread).
+ *
  */
 void
-ToolFE::mLocalBody(void)
+ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
-        // One-time init things go in init.
         mLMONFE.init();
         mMRNFE.init();
-        std::thread beThread(&ToolFE::mRemoteBody, this);
-        std::unique_lock<std::mutex> lock(mtFEBELock);
-        mtBELaunchComplete.wait(lock);
-        beThread.join();
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -138,11 +132,23 @@ ToolFE::mLocalBody(void)
 }
 
 /**
- * The thread that interacts with the tool back-end. This is NOT the main
- * thread, so this is why we don't throw in the exceptional case.
+ *
  */
 void
-ToolFE::mRemoteBody(void)
+ToolFE::mStartToolLashUpThread(void)
+{
+    std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
+    std::unique_lock<std::mutex> lock(mtLashUpLock);
+    mtLashUpComplete.wait(lock);
+    luThread.join();
+}
+
+/**
+ * The thread that initiates the tool lash-up.  This is NOT the main thread, so
+ * this is why we don't throw in the exceptional case.
+ */
+void
+ToolFE::mInitiateToolLashUp(void)
 {
     try {
         echoLaunchStart(mAppArgs);
@@ -157,5 +163,5 @@ ToolFE::mRemoteBody(void)
         GLADIUS_CERR << e.what() << std::endl;
     }
     // Notify main thread unconditionally.
-    mtBELaunchComplete.notify_one();
+    mtLashUpComplete.notify_one();
 }

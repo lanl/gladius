@@ -28,10 +28,10 @@ namespace toolfe {
 class ToolFE {
 private:
     // Threading things ////////////////////////////////////////////////////////
-    // XXX NEEDED?
-    std::mutex mtFEBELock;
     //
-    std::condition_variable mtBELaunchComplete;
+    std::mutex mtLashUpLock;
+    //
+    std::condition_variable mtLashUpComplete;
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
@@ -43,13 +43,16 @@ private:
     core::Args mAppArgs;
     //
     void
-    mLocalBody(void);
+    mGetStateFromEnvs(void);
     //
     void
-    mRemoteBody(void);
+    mInitializeToolInfrastructure(void);
     //
     void
-    mEnvRefresh(void);
+    mStartToolLashUpThread(void);
+    //
+    void
+    mInitiateToolLashUp(void);
 
 public:
     //
