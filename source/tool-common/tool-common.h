@@ -21,6 +21,8 @@
 #include <string>
 #include <set>
 #include <cstdlib>
+#include <ostream>
+#include <iostream>
 
 namespace gladius {
 namespace toolcommon {
@@ -90,7 +92,7 @@ public:
      *
      */
     void
-    dump(void);
+    dumpTo(std::ostream &os);
 
     /**
      * Returns the number of entries in the process table.
