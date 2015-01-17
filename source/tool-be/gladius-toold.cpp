@@ -75,11 +75,9 @@ main(
         int mLMONRank = 0;
         LMON_be_getMyRank(&mLMONRank);
         std::cout << "Hi from: " << mLMONRank << std::endl;
-#if 0
+        sleep(10);
         lmonRC = LMON_be_sendUsrData(NULL);
         lmonRC = LMON_be_recvUsrData(NULL);
-#endif
-        sleep(10);
         lmonRC = LMON_be_finalize();
         if (LMON_OK != lmonRC) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);

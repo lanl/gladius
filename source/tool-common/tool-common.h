@@ -69,6 +69,31 @@ class ProcessTable {
         mNEntries = 0;
     }
 
+    /**
+     *
+     */
+    static MPIR_PROCDESC_EXT *
+    dupMPIRProcDescExt(
+        unsigned int nEntries,
+        MPIR_PROCDESC_EXT *from
+    ) {
+        if (!from || 0 == nEntries) return nullptr;
+        MPIR_PROCDESC_EXT *res = nullptr;
+        res = (MPIR_PROCDESC_EXT *)calloc(nEntries, sizeof(*res));
+        if (!res) GLADIUS_THROW_OOR();
+        for (auto i = 0UL; i < nEntries; ++i) {
+            res[i].cnodeid = from[i].cnodeid;
+            res[i].mpirank = from[i].mpirank;
+            res[i].pd.pid = from[i].pd.pid;
+            res[i].pd.host_name = strdup(from[i].pd.host_name);
+            if (!res[i].pd.host_name) GLADIUS_THROW_OOR();
+            res[i].pd.executable_name = strdup(from[i].pd.executable_name);
+            if (!res[i].pd.executable_name) GLADIUS_THROW_OOR();
+        }
+        return res;
+    }
+
+
 public:
     /**
      * Constructors.
@@ -82,10 +107,30 @@ public:
         , mProcTab(nullptr) { ; }
 
     /**
+     * Copy constructor.
+     */
+    ProcessTable(const ProcessTable &other)
+    {
+        mNEntries = other.mNEntries;
+        mProcTab = dupMPIRProcDescExt(mNEntries, other.mProcTab);
+    }
+
+    /**
      * Destructor.
      */
     ~ProcessTable(void) {
         mDeallocate();
+    }
+
+    /**
+     *
+     */
+    ProcessTable &
+    operator=(const ProcessTable &other)
+    {
+        mNEntries = other.mNEntries;
+        mProcTab = dupMPIRProcDescExt(mNEntries, other.mProcTab);
+        return *this;
     }
 
     /**

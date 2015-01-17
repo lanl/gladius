@@ -90,12 +90,9 @@ MRNetTopology::mGenFlatTopo(void)
     auto id = 0;
     // The "host:0 =>" bit.
     string resTopoStr = "localhost: " + to_string(id++) + " =>\n";
-    // TODO make sure that the tool FE isn't included in this list when you go
-    // distributed.
     for (const auto &hostName : mHosts.hostNames()) {
-        GLADIUS_UNUSED(hostName);
-        //resTopoStr += "  " + hostName + ":" + to_string(id++) + "\n";
-        resTopoStr += "  localhost:" + to_string(id++) + "\n";
+        COMP_COUT << "HOST: " << hostName << std::endl;
+        resTopoStr += "  " + hostName + ":" + to_string(id++) + "\n";
     }
     resTopoStr += ";";
     return resTopoStr;
@@ -193,7 +190,7 @@ MRNetFE::createNetworkFE(
                    dummyBackendExe,
                    &dummyArgv
                );
-    if (!mNetwork) {
+    if (!mNetwork || mNetwork->has_Error()) {
         GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkFE");
     }
 }

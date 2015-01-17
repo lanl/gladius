@@ -152,17 +152,13 @@ ToolFE::mInitializeToolInfrastructure(void)
 void
 ToolFE::mStartToolLashUpThread(void)
 {
-    try {
-        std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
-        std::unique_lock<std::mutex> lock(mtLashUpLock);
-        mtLashUpComplete.wait(lock);
-        luThread.join();
-        if (GLADIUS_SUCCESS != mtStatus) {
-            GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", mtStatus);
-        }
-    }
-    catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    std::unique_lock<std::mutex> lock(mtLashUpLock);
+    std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
+    luThread.join();
+    mtLashUpComplete.wait(lock);
+    if (GLADIUS_SUCCESS != mtStatus) {
+        mLMONFE.shutdown();
+        GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", mtStatus);
     }
 }
 
@@ -180,6 +176,9 @@ ToolFE::mInitiateToolLashUp(void)
         toolcommon::Hosts remoteHosts;
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs, remoteHosts);
+        if (!mLMONFE.daemonsLaunched()) {
+            GLADIUS_THROW("Tool Daemons Not Launched.");
+        }
         // Create MRNet network FE.
         //mMRNFE.createNetworkFE(remoteHosts);
     }

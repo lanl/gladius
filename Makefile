@@ -67,5 +67,15 @@ runv:
 	--track-origins=yes \
 	--log-file=ValgrindOutput.txt ${TEST_EXEC}
 
+runh:
+	@ \
+	make all && \
+	make install && \
+	export LD_LIBRARY_PATH=${LMON_HOME}/lib:${LD_LIBRARY_PATH} && \
+	export GLADIUS_APP_LAUNCHER=${APP_LAUNCHER} && \
+	valgrind \
+	--tool=helgrind \
+	--log-file=HelgrindOutput.txt ${TEST_EXEC}
+
 debug:
 	make CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug" all

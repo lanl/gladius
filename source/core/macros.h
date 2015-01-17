@@ -32,6 +32,17 @@ do {                                                                           \
 } while (0)
 
 /**
+ * Convenience macro for throwing an exception with a given string.
+ */
+#define GLADIUS_THROW(msg)                                                     \
+do {                                                                           \
+    throw gladius::core::GladiusException(                                     \
+              GLADIUS_WHERE,                                                   \
+              std::string(msg)                                                 \
+          );                                                                   \
+} while (0)
+
+/**
  * Convenience macro for throwing an invalid argument exception.
  */
 #define GLADIUS_THROW_INVLD_ARG()                                              \

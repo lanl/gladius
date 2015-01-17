@@ -96,11 +96,25 @@ public:
     }
 
     /**
+     * Shuts down LaunchMON.
+     */
+    void
+    shutdown(void);
+
+    /**
      * Sets whether or not LaunchMON operations will be verbose.
      */
     void
     verbose(bool bVerbose) {
         mBeVerbose = bVerbose;
+    }
+
+    /**
+     * Returns whether or not daemons have been launched.
+     */
+    bool
+    daemonsLaunched(void) const {
+        return mIsLaunched;
     }
     //
     void
