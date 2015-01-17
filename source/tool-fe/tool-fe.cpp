@@ -76,7 +76,7 @@ ToolFE::mGetStateFromEnvs(void)
         mBeVerbose = false;
     }
     mLMONFE.verbose(mBeVerbose);
-    mMRNFE.verbose(mBeVerbose);
+    //mMRNFE.verbose(mBeVerbose);
 }
 
 /**
@@ -139,7 +139,7 @@ ToolFE::mInitializeToolInfrastructure(void)
     try {
         mLMONFE.init();
         mLMONFE.regPackForFeToBe(feToBEPack);
-        mMRNFE.init();
+        //mMRNFE.init();
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -154,8 +154,8 @@ ToolFE::mStartToolLashUpThread(void)
 {
     std::unique_lock<std::mutex> lock(mtLashUpLock);
     std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
-    luThread.join();
     mtLashUpComplete.wait(lock);
+    luThread.join();
     if (GLADIUS_SUCCESS != mtStatus) {
         mLMONFE.shutdown();
         GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", mtStatus);

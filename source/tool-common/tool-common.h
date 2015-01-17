@@ -85,10 +85,14 @@ class ProcessTable {
             res[i].cnodeid = from[i].cnodeid;
             res[i].mpirank = from[i].mpirank;
             res[i].pd.pid = from[i].pd.pid;
-            res[i].pd.host_name = strdup(from[i].pd.host_name);
-            if (!res[i].pd.host_name) GLADIUS_THROW_OOR();
-            res[i].pd.executable_name = strdup(from[i].pd.executable_name);
-            if (!res[i].pd.executable_name) GLADIUS_THROW_OOR();
+            if (res[i].pd.host_name) {
+                res[i].pd.host_name = strdup(from[i].pd.host_name);
+                if (!res[i].pd.host_name) GLADIUS_THROW_OOR();
+            }
+            if (res[i].pd.executable_name) {
+                res[i].pd.executable_name = strdup(from[i].pd.executable_name);
+                if (!res[i].pd.executable_name) GLADIUS_THROW_OOR();
+            }
         }
         return res;
     }

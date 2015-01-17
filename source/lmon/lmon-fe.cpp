@@ -266,7 +266,7 @@ LaunchMonFE::launchAndSpawnDaemons(
         GLADIUS_COUT_STAT << "Launching and Spawning Daemons" << std::endl;
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
-                      NULL,  // FIXME mHostname.c_str(),
+                      mHostname.c_str(),
                       launcherPath.c_str(), // launcher absolute path
                       launcherArgv,         // all of the launch command
                       mToolD.c_str(),       // tool daemon's absolute path
