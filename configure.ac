@@ -31,21 +31,36 @@ AX_PTHREAD(
     ],
     [AC_MSG_ERROR([Pthreads support required, but not found.])]
 )
-#
+################################################################################
 AX_BOOST_BASE(
     [1.54], [], [AC_MSG_ERROR([Could not find a usable version of boost.])]
 )
-#
-AC_SEARCH_LIBS([dlopen], [dl])
-#
-# TODO Add libedit configury here.
-#
+################################################################################
+AC_SEARCH_LIBS(
+    [dlopen],
+    [dl],
+    [],
+    [AC_MSG_ERROR([Could not find dlopen.])]
+)
+################################################################################
+# Don't want to modify LIBS, so stash and undo after check.
+LIBS_SAVE=${LIBS}
+LIBEDIT_LIBS=""
+AC_SEARCH_LIBS(
+    [el_init],
+    [edit],
+    [LIBEDIT_LIBS="-ledit"],
+    [AC_MSG_ERROR([Could not find libedit.])]
+)
+AC_SUBST(LIBEDIT_LIBS)
+LIBS=${LIBS_SAVE}
+################################################################################
 AX_LMON
 # Add this for convenience. We want to hide tool-common's CPPFLAGS behind this
 # so they can change freely and only be updated in one spot.
 GLADIUS_TOOL_COMMON_CPPFLAGS="${LMON_CPPFLAGS}"
 AC_SUBST(GLADIUS_TOOL_COMMON_CPPFLAGS)
-#
+################################################################################
 AX_MRNET
 
 ################################################################################

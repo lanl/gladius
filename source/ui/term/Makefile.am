@@ -23,9 +23,8 @@ ${GLADIUS_TOOL_COMMON_CPPFLAGS} \
 ${LMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 
-# FIXME add check for libedit
 libGladiusUITerm_la_LDFLAGS = \
--ledit \
+${LIBEDIT_LIBS} \
 -version-info ${LIBVINFO}
 
 libGladiusUITerm_la_LIBADD = \
