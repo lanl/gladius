@@ -53,10 +53,12 @@ make -j4 && make install
 
 ## Building Gladius
 ```bash
-mkdir build && cd build
-cmake ../ \
--DGLADIUS_LMON_HOME=$LMON_PREFIX \
--DGLADIUS_LLDB_HOME=$LLVM_PREFIX \
--DGLADIUS_MRNET_HOME=$MRNET_PREFIX
-make
+# If NOT building from a distribution, autogen first.
+./autogen
+```
+```bash
+./configure \
+--prefix=$HOME/local/gladius \
+--with-lmon=$LMON_PREFIX \
+--with-mrnet=$MRNET_PREFIX
 ```
