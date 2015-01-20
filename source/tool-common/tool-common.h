@@ -16,13 +16,14 @@
 #include "core/core.h"
 #include "core/utils.h"
 
-#include "lmon_api/lmon_proctab.h"
 
 #include <string>
 #include <set>
 #include <cstdlib>
 #include <ostream>
 #include <iostream>
+
+#include "lmon_api/lmon_proctab.h"
 
 namespace gladius {
 namespace toolcommon {
@@ -96,7 +97,6 @@ class ProcessTable {
         }
         return res;
     }
-
 
 public:
     /**

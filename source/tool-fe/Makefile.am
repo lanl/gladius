@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2014-2015 Los Alamos National Security, LLC
+#                         All rights reserved.
+#
+# This file is part of the Gladius project. See the LICENSE.txt file at the
+# top-level directory of this distribution.
+#
+
+LIBVINFO = "1:0:0"
+
+lib_LTLIBRARIES = \
+libGladiusToolFE.la
+
+libGladiusToolFE_la_SOURCES = \
+tool-fe.h tool-fe.cpp
+
+libGladiusToolFE_la_CFLAGS =
+
+libGladiusToolFE_la_CPPFLAGS = \
+-I${top_srcdir}/source \
+${GLADIUS_TOOL_COMMON_CPPFLAGS} \
+${LMON_CPPFLAGS} \
+${MRNET_CPPFLAGS}
+
+libGladiusToolFE_la_LDFLAGS =
+
+libGladiusToolFE_la_LIBADD = \
+${top_srcdir}/source/core/libGladiusCore.la \
+${top_srcdir}/source/tool-common/libGladiusToolCommon.la \
+$(top_srcdir)/source/lmon/libGladiusLaunchMONFE.la \
+$(top_srcdir)/source/mrnet/libGladiusMRNetFE.la

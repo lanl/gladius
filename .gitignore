@@ -1,2 +1,9 @@
 .ycm_extra_conf.pyc
 *.swp
+Makefile.in
+*.deps
+*.la
+*.lo
+*.o
+*.libs
+*~

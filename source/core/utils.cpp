@@ -7,7 +7,7 @@
  */
 
 #include "core/utils.h"
-#include "gladius-paths.h"
+#include "core/gladius-paths.h"
 
 using namespace gladius::core;
 
