@@ -1,7 +1,7 @@
 # Running with Gladius
 
 ## Gladius Environment
-$HOME/.gladiusrc
+$HOME/.gladius/
 
 ## Gladius Environment Variables
 ```bash
