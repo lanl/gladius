@@ -6,7 +6,7 @@
 # top-level directory of this distribution.
 #
 
-# See: LT_VERSION_SCHEME.txt For Guidance
+# See: LT-VERSION-SCHEME.txt For Guidance
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
