@@ -24,4 +24,4 @@ libGladiusToolCommon_la_LDFLAGS = \
 -version-info ${LIBVINFO}
 
 libGladiusToolCommon_la_LIBADD = \
-${top_srcdir}/source/core/libGladiusCore.la
+${top_builddir}/source/core/libGladiusCore.la

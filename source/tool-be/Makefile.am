@@ -25,5 +25,5 @@ gladius_toold_LDFLAGS = \
 ${LMONBE_LDFLAGS}
 
 gladius_toold_LDADD = \
-${top_srcdir}/source/core/libGladiusCore.la \
-${top_srcdir}/source/tool-common/libGladiusToolCommon.la
+${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/tool-common/libGladiusToolCommon.la

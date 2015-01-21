@@ -213,7 +213,7 @@ public:
     isAbsolutePath(std::string path)
     {
         // If the path starts with a '/', then it's absolute.
-        return std::string(path[0], 1) == std::string("/");
+        return std::string(path[0], 1) == utils::osPathSep;
     }
 
     /**

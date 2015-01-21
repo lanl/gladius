@@ -28,7 +28,7 @@ ${LIBEDIT_LIBS} \
 -version-info ${LIBVINFO}
 
 libGladiusUITerm_la_LIBADD = \
-${top_srcdir}/source/core/libGladiusCore.la \
-$(top_srcdir)/source/lmon/libGladiusLaunchMONFE.la \
-$(top_srcdir)/source/mrnet/libGladiusMRNetFE.la \
-$(top_srcdir)/source/ui/libGladiusUI.la
+${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/lmon/libGladiusLaunchMONFE.la \
+${top_builddir}/source/mrnet/libGladiusMRNetFE.la \
+${top_builddir}/source/ui/libGladiusUI.la

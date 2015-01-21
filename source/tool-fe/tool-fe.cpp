@@ -40,7 +40,7 @@ void
 echoLaunchStart(const gladius::core::Args &args)
 {
     std::string lstr;
-    for (auto i = 0; i < args.argc(); ++i) {
+    for (auto i = 0U; i < args.argc(); ++i) {
         lstr += args.argv()[i];
         lstr += " ";
     }

@@ -25,7 +25,7 @@ ${MRNET_CPPFLAGS}
 libGladiusToolFE_la_LDFLAGS =
 
 libGladiusToolFE_la_LIBADD = \
-${top_srcdir}/source/core/libGladiusCore.la \
-${top_srcdir}/source/tool-common/libGladiusToolCommon.la \
-$(top_srcdir)/source/lmon/libGladiusLaunchMONFE.la \
-$(top_srcdir)/source/mrnet/libGladiusMRNetFE.la
+${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/tool-common/libGladiusToolCommon.la \
+${top_builddir}/source/lmon/libGladiusLaunchMONFE.la \
+${top_builddir}/source/mrnet/libGladiusMRNetFE.la

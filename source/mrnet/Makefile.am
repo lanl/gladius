@@ -31,4 +31,4 @@ ${BOOST_LDFLAGS} -lboost_timer \
 -version-info ${LIBVINFO}
 
 libGladiusMRNetFE_la_LIBADD = \
-${top_srcdir}/source/core/libGladiusCore.la
+${top_builddir}/source/core/libGladiusCore.la
