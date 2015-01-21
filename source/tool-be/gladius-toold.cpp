@@ -49,9 +49,7 @@ main(
         ////////////////////////////////////////////////////////////////////////
         toolcommon::ProcessTable mProcTab;
         auto numProcTabEntries = 0;
-        auto rc = LMON_be_getMyProctabSize(
-                      &numProcTabEntries
-                  );
+        auto rc = LMON_be_getMyProctabSize(&numProcTabEntries);
         if (LMON_OK != rc) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_getMyProctabSize", rc);
         }

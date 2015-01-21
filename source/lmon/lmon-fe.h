@@ -29,6 +29,10 @@ namespace gladius {
 namespace toolfe {
 
 class LaunchMonFE {
+    // The name of the LaunchMon engine executable.
+    static const std::string sLaunchMONName;
+    // The name of the tool daemon.
+    static const std::string sToolDName;
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
     // The PID of the target application launcher (srun, mpirun, aprun, etc.)
@@ -39,7 +43,7 @@ class LaunchMonFE {
     bool mIsLaunched = false;
     // The hostname of tool front-end.
     std::string mHostname;
-    // The name of the tool daemon.
+    // The absolute path to our tool daemon.
     std::string mToolD;
     // Daemon option string
     std::string mDaemonOpts;
@@ -75,6 +79,14 @@ class LaunchMonFE {
     //
     void
     mSetRMInfo(void);
+    //
+    bool
+    mEnvSane(std::string &whatsWrong);
+    //
+    std::string
+    mGetLmonPrefixFromEnginePath(
+        const std::string &whichString
+    );
 
 public:
     LaunchMonFE(void);

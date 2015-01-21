@@ -90,7 +90,7 @@ atexit gethostname memmove memset mkdir setenv \
 setlocale strchr strdup strerror strtol \
 ])
 
-# note: -Wall -Werror are automake options.  they are NOT compiler flags
+# NOTE: -Wall -Werror are automake options -- they are NOT compiler flags.
 AM_INIT_AUTOMAKE([1.14 -Wall -Werror foreign])
 # Check If AM_SILENT_RULES Rule Are Supported
 # If So, Build Using AM_SILENT_RULES
@@ -108,12 +108,9 @@ AC_CONFIG_FILES([
     Makefile
     source/Makefile
     source/core/Makefile
-    source/core/gladius-paths.h
     source/tool-common/Makefile
     source/lmon/Makefile
-    source/lmon/lmon-paths.h
     source/mrnet/Makefile
-    source/mrnet/mrnet-paths.h
     source/ui/Makefile
     source/ui/term/Makefile
     source/tool-fe/Makefile

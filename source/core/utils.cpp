@@ -7,17 +7,7 @@
  */
 
 #include "core/utils.h"
-#include "core/gladius-paths.h"
 
 using namespace gladius::core;
 
 const std::string utils::osPathSep = "/";
-
-/**
- * Returns a string that contains the install prefix of this software.
- */
-std::string
-utils::installPrefix(void)
-{
-    return GLADIUS_PREFIX;
-}

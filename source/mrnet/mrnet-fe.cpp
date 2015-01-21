@@ -7,8 +7,6 @@
  */
 
 #include "mrnet/mrnet-fe.h"
-// CMake generated header
-#include "mrnet/mrnet-paths.h"
 
 #include "core/core.h"
 #include "core/utils.h"
@@ -100,7 +98,8 @@ MRNetTopology::mGenFlatTopo(void)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-std::string MRNetFE::sInstallPrefix = GLADIUS_MRNET_PREFIX;
+// FIXME
+std::string MRNetFE::sInstallPrefix = "";
 
 /**
  * Constructor.

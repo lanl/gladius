@@ -13,7 +13,6 @@ lib_LTLIBRARIES = \
 libGladiusCore.la
 
 libGladiusCore_la_SOURCES = \
-gladius-paths.h \
 core.h \
 ret-codes.h \
 args.h \

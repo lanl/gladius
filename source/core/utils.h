@@ -249,10 +249,6 @@ public:
         return GLADIUS_SUCCESS;
     }
 
-    //
-    static std::string
-    installPrefix(void);
-
     /**
      * Returns whether or now a given file exists.
      */
@@ -268,17 +264,39 @@ public:
     static int
     mkDir(
         const std::string &path,
-        int &errOnFailure
+        int &errnoOnFailure
     ) {
-        errOnFailure = 0;
+        errnoOnFailure = 0;
         auto status = mkdir(path.c_str(),
                             S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
                       );
         if (0 != status) {
-            errOnFailure = errno;
+            errnoOnFailure = errno;
             return GLADIUS_ERR;
         }
         return GLADIUS_SUCCESS;
+    }
+
+    /**
+     * Returns the absolute path to the caller's executable name.
+     */
+    static int
+    getSelfPath(
+        std::string &maybeRes,
+        int &errnoIfNotSuccess
+    ) {
+        char buff[PATH_MAX];
+        (void)memset(buff, '\0', sizeof(buff));
+        auto len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+        if (len != -1) {
+            buff[len] = '\0';
+            maybeRes = std::string(buff);
+            return GLADIUS_SUCCESS;
+        }
+        else {
+            errnoIfNotSuccess = errno;
+            return GLADIUS_ERR;
+        }
     }
 };
 

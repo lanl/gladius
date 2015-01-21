@@ -12,7 +12,6 @@ lib_LTLIBRARIES = \
 libGladiusLaunchMONFE.la
 
 libGladiusLaunchMONFE_la_SOURCES = \
-lmon-paths.h \
 lmon-fe.h lmon-fe.cpp
 
 libGladiusLaunchMONFE_la_CFLAGS =

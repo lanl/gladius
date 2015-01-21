@@ -12,9 +12,11 @@
  * Implements LaunchMON actions shim.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "lmon/lmon-fe.h"
-// Automatically generated header.
-#include "lmon/lmon-paths.h"
 #include "core/core.h"
 
 using namespace gladius;
@@ -28,12 +30,6 @@ static const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::DGRAY);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
-/// The absolute path to our tool daemon.
-static const std::string TOOLD_NAME = core::utils::installPrefix()
-                                    + core::utils::osPathSep
-                                    + "bin"
-                                    + core::utils::osPathSep
-                                    + "gladius-toold";
 /// What to use for remote login
 static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
 
@@ -80,7 +76,24 @@ statusFuncCallback(int *status)
     }
     return 0;
 }
+
+/**
+ *
+ */
+std::string
+genNotInPathErrString(
+    const std::string &whatsNotInPath
+) {
+    auto msg = "It appears as if '" + whatsNotInPath
+               + "', is not in your $PATH.\n"
+               + "Please update your $PATH to include its location.";
+    return msg;
+}
+
 } // end nameless namespace
+
+const std::string LaunchMonFE::sLaunchMONName = "launchmon";
+const std::string LaunchMonFE::sToolDName = "gladius-toold";
 
 /**
  * Constructor.
@@ -89,9 +102,9 @@ LaunchMonFE::LaunchMonFE(
     void
 ) : mBeVerbose(false)
   , mHostname(core::utils::getHostname())
-  , mToolD(TOOLD_NAME)
-  , mPrefixPath(GLADIUS_TOOL_FE_LMON_PREFIX)
-  , mEnginePath(GLADIUS_TOOL_FE_LMON_ENGINE_PATH)
+  , mToolD("")
+  , mPrefixPath("")
+  , mEnginePath("")
   , mRemoteLogin(REMOTE_LOGIN) { ; }
 
 /**
@@ -152,11 +165,64 @@ LaunchMonFE::mCreateAndPopulateProcTab(void)
 /**
  *
  */
+bool
+LaunchMonFE::mEnvSane(
+    std::string &whatsWrong
+) {
+    whatsWrong = "";
+    if (mBeVerbose) {
+        COMP_COUT << "Checking Sanity of our Environment." << std::endl;
+    }
+    // Make sure that our tool daemon is in our PATH.
+    auto status = core::utils::which(sToolDName, mToolD);
+    if (GLADIUS_SUCCESS != status) {
+        whatsWrong = genNotInPathErrString(sToolDName);
+        return false;
+    }
+    // Do the same for launchmon
+    status = core::utils::which(sLaunchMONName, mEnginePath);
+    if (GLADIUS_SUCCESS != status) {
+        whatsWrong = genNotInPathErrString(sLaunchMONName);
+        return false;
+    }
+    // While we're at it, set LaunchMON's prefix.
+    mPrefixPath = mGetLmonPrefixFromEnginePath(mEnginePath);
+    return true;
+}
+
+/**
+ *
+ */
+std::string
+LaunchMonFE::mGetLmonPrefixFromEnginePath(
+    const std::string &whichString
+) {
+    std::string badness = "Could not determine LaunchMON's installation "
+                          "prefix by inspecting the following path:"
+                          "'" + whichString + "'";
+    std::string prefix = whichString;
+    std::string last = "/bin/" + sLaunchMONName;
+    auto found = prefix.rfind(last);
+    // Not found, so something is wrong.
+    if (std::string::npos == found) {
+        GLADIUS_THROW(badness);
+    }
+    prefix = prefix.substr(0, found);
+    return prefix;
+}
+
+/**
+ *
+ */
 void
 LaunchMonFE::init(void)
 {
     if (mBeVerbose) {
         COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
+    }
+    std::string whatsWrong;
+    if (!mEnvSane(whatsWrong)) {
+        GLADIUS_THROW(whatsWrong);
     }
     mSetEnvs();
     // Init LaunchMON
