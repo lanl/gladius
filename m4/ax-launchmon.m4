@@ -48,7 +48,7 @@ AC_ARG_WITH([lmon],
 )
 
 if test "x$ax_lmon_path" = "x"; then
-    AC_MSG_ERROR([Please specify a path to your LaunchMON installation.])
+    AC_MSG_ERROR([Please specify a path to your LaunchMON installation with: --with-lmon])
 else
     succeeded=no
     includesubdirs="include"

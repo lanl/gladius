@@ -48,7 +48,7 @@ AC_ARG_WITH([mrnet],
 )
 
 if test "x$ax_mrnet_path" = "x"; then
-    AC_MSG_ERROR([Please specify a path to your MRNet installation.])
+    AC_MSG_ERROR([Please specify a path to your MRNet installation with --with-mrnet])
 else
     succeeded=no
     includesubdirs="include"
