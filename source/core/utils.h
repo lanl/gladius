@@ -278,7 +278,7 @@ public:
     }
 
     /**
-     * Returns the absolute path to the caller's executable name.
+     * Returns the absolute path to the caller's executable.
      */
     static int
     getSelfPath(

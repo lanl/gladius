@@ -22,6 +22,18 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 ################################################################################
+# Add some nice flags for development.
+################################################################################
+# TODO Check if this is a devel build.
+case ${CXX} in
+    clang++ | g++ ) GLADIUS_DEVEL_CFLAGS="-Wall -Wextra -Wpedantic" ;;
+    * )             GLADIUS_DEVEL_CFLAGS="" ;;
+esac
+AC_MSG_NOTICE([Appending Developer CFLAGS])
+CFLAGS="${CFLAGS} ${GLADIUS_DEVEL_CFLAGS}"
+CXXFLAGS="${CXXFLAGS} ${GLADIUS_DEVEL_CFLAGS}"
+
+################################################################################
 # Checks for libraries.
 ################################################################################
 AX_PTHREAD(
