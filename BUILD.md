@@ -41,6 +41,11 @@ MAKEINFOFLAGS="--force" make && make install
 See: https://forum.videolan.org/viewtopic.php?f=13&t=33860#p121003
 
 Basically, the problem is a missing '-lgpg-error' in testName_LDADD.
+testName List
+- basic
+- tsexp
+- keygen
+- benchmark
 
 ## Building MRNet
 Download source distribution from http://www.paradyn.org/mrnet

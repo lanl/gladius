@@ -50,16 +50,15 @@ AC_ARG_WITH([lmon],
 if test "x$ax_lmon_path" = "x"; then
     AC_MSG_ERROR([Please specify a path to your LaunchMON installation with: --with-lmon])
 else
-    succeeded=no
     includesubdirs="include"
     libsubdirs="lib"
     # The LaunchMON front-end libraries.
-    fe_link_libs="-lmonfeapi"
+    lmon_fe_link_libs="-lmonfeapi"
     # The LaunchMON back-end libraries.
-    be_link_libs="-lmonbeapi"
+    lmon_be_link_libs="-lmonbeapi"
     LMON_CPPFLAGS="-I$ax_lmon_path/$includesubdirs"
-    LMONFE_LDFLAGS="-L$ax_lmon_path/$libsubdirs $fe_link_libs"
-    LMONBE_LDFLAGS="-L$ax_lmon_path/$libsubdirs $be_link_libs"
+    LMONFE_LDFLAGS="-L$ax_lmon_path/$libsubdirs $lmon_fe_link_libs"
+    LMONBE_LDFLAGS="-L$ax_lmon_path/$libsubdirs $lmon_be_link_libs"
 
     CPPFLAGS_SAVED="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $LMON_CPPFLAGS"
@@ -69,22 +68,35 @@ else
     LDFLAGS="$LDFLAGS $LMONFE_LDFLAGS"
     export LDFLAGS
 
+    LIBS_SAVED="$LIBS"
+
     AC_REQUIRE([AC_PROG_CXX])
     AC_LANG_PUSH(C++)
-    AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([[@%:@include "lmon_api/lmon_fe.h"]],
-                         [[(void)LMON_fe_init(LMON_VERSION);]]
-         )
-        ],
-        [succeeded=yes],
-        []
+    AC_CHECK_HEADERS(
+        [lmon_api/lmon_fe.h],
+        [],
+        [AC_MSG_ERROR([Cannot find header: lmon_api/lmon_fe.h])]
+    )
+    AC_CHECK_HEADERS(
+        [lmon_api/lmon_be.h],
+        [],
+        [AC_MSG_ERROR([Cannot find header: lmon_api/lmon_be.h])]
+    )
+    AC_SEARCH_LIBS(
+        [LMON_fe_init],
+        [monfeapi],
+        [],
+        [AC_MSG_ERROR([Could not find symbol: LMON_fe_init.])]
+    )
+    # Undo AC_SEARCH_LIBS changes.
+    LIBS="$LIBS_SAVED"
+    AC_SEARCH_LIBS(
+        [LMON_be_init],
+        [monbeapi],
+        [],
+        [AC_MSG_ERROR([Could not find symbol: LMON_be_init.])]
     )
     AC_LANG_POP([C++])
-    if test "x$succeeded" = "xno"; then
-        AC_MSG_ERROR(
-            [Cannot Compile/Link LaunchMON Apps with Current Setup.]
-        )
-    fi
     AC_SUBST(LMON_CPPFLAGS)
     AC_SUBST(LMONFE_LDFLAGS)
     AC_SUBST(LMONBE_LDFLAGS)
@@ -92,5 +104,6 @@ else
     # Cleanup
     CPPFLAGS="$CPPFLAGS_SAVED"
     LDFLAGS="$LDFLAGS_SAVED"
+    LIBS="$LIBS_SAVED"
 fi
 ])dnl

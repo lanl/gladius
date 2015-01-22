@@ -25,4 +25,5 @@ ${LMONFE_LDFLAGS} \
 -version-info ${LIBVINFO}
 
 libGladiusLaunchMONFE_la_LIBADD = \
-${top_builddir}/source/core/libGladiusCore.la
+${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/tool-common/libGladiusToolCommon.la

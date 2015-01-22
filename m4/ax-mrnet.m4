@@ -50,17 +50,16 @@ AC_ARG_WITH([mrnet],
 if test "x$ax_mrnet_path" = "x"; then
     AC_MSG_ERROR([Please specify a path to your MRNet installation with --with-mrnet])
 else
-    succeeded=no
     includesubdirs="include"
     libsubdirs="lib"
     # The MRNet front-end libraries.
-    fe_link_libs="-lmrnet -lxplat"
+    mrnet_fe_link_libs="-lmrnet -lxplat"
     # The MRNet back-end libraries.
-    be_link_libs=""
+    mrnet_be_link_libs=""
     MRNET_CPPFLAGS="-I$ax_mrnet_path/$includesubdirs"
     MRNET_CPPFLAGS="$MRNET_CPPFLAGS -I$ax_mrnet_path/lib/xplat-4.0.0/include"
-    MRNETFE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $fe_link_libs"
-    MRNETBE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $be_link_libs"
+    MRNETFE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_fe_link_libs"
+    MRNETBE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_be_link_libs"
 
     CPPFLAGS_SAVED="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $MRNET_CPPFLAGS"
@@ -70,22 +69,25 @@ else
     LDFLAGS="$LDFLAGS $MRNETFE_LDFLAGS"
     export LDFLAGS
 
+    LIBS_SAVED="$LIBS"
+
     AC_REQUIRE([AC_PROG_CXX])
     AC_LANG_PUSH(C++)
-    AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([[@%:@include "mrnet/MRNet.h"]],
-                         [[MRN::Network *net;]]
-         )
-        ],
-        [succeeded=yes],
-        []
+    AC_CHECK_HEADERS(
+        [mrnet/MRNet.h],
+        [],
+        [AC_MSG_ERROR([Cannot find MRNet header: mrnet/MRNet.h])]
     )
-    AC_LANG_POP([C++])
-    if test "x$succeeded" = "xno"; then
-        AC_MSG_ERROR(
-            [Cannot Compile/Link MRNet Apps with Current Setup.]
-        )
+    AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM(#include "mrnet/MRNet.h"
+                         MRN::Network *net;)],
+        [libmrnet_found=yes],
+        [libmrnet_found=no]
+    )
+    if test "x$libmrnet_found" = "xno"; then
+        AC_MSG_ERROR([Cannot link to MRNet.])
     fi
+    AC_LANG_POP([C++])
     AC_SUBST(MRNET_CPPFLAGS)
     AC_SUBST(MRNETFE_LDFLAGS)
     AC_SUBST(MRNETBE_LDFLAGS)
@@ -93,5 +95,6 @@ else
     # Cleanup
     CPPFLAGS="$CPPFLAGS_SAVED"
     LDFLAGS="$LDFLAGS_SAVED"
+    LIBS="$LIBS_SAVED"
 fi
 ])dnl
