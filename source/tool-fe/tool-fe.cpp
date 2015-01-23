@@ -108,6 +108,9 @@ void
 ToolFE::mainLoop(
     const core::Args &args
 ) {
+    if (mBeVerbose) {
+        COMP_COUT << "Entering Main Loop." << std::endl;
+    }
     try {
         mAppArgs = args;
         // Make sure that all the required bits are

@@ -81,7 +81,7 @@ class LaunchMonFE {
     mSetRMInfo(void);
     //
     bool
-    mEnvSane(std::string &whatsWrong);
+    mDetermineAndSetPaths(std::string &whatsWrong);
     //
     std::string
     mGetLmonPrefixFromEnginePath(

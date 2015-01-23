@@ -166,12 +166,12 @@ LaunchMonFE::mCreateAndPopulateProcTab(void)
  *
  */
 bool
-LaunchMonFE::mEnvSane(
+LaunchMonFE::mDetermineAndSetPaths(
     std::string &whatsWrong
 ) {
     whatsWrong = "";
     if (mBeVerbose) {
-        COMP_COUT << "Checking Sanity of our Environment." << std::endl;
+        COMP_COUT << "Determining and Setting Paths." << std::endl;
     }
     // Make sure that our tool daemon is in our PATH.
     auto status = core::utils::which(sToolDName, mToolD);
@@ -221,7 +221,7 @@ LaunchMonFE::init(void)
         COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
     }
     std::string whatsWrong;
-    if (!mEnvSane(whatsWrong)) {
+    if (!mDetermineAndSetPaths(whatsWrong)) {
         GLADIUS_THROW(whatsWrong);
     }
     mSetEnvs();

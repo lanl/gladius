@@ -14,6 +14,18 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([source])
 
 ################################################################################
+# Automake things.
+################################################################################
+# NOTE: -Wall -Werror are automake options -- they are NOT compiler flags.
+# Run AM_INIT_AUTOMAKE BEFORE AC_PROG_CC and friends.
+AM_INIT_AUTOMAKE([1.14 -Wall -Werror foreign])
+# Check If AM_SILENT_RULES Rule Are Supported
+# If So, Build Using AM_SILENT_RULES
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+AM_PROG_CC_C_O
+AM_PROG_AR
+
+################################################################################
 # Checks for programs.
 ################################################################################
 AC_PROG_CXX([clang++ g++])
@@ -101,14 +113,6 @@ AC_CHECK_FUNCS([\
 atexit gethostname memmove memset mkdir setenv \
 setlocale strchr strdup strerror strtol \
 ])
-
-# NOTE: -Wall -Werror are automake options -- they are NOT compiler flags.
-AM_INIT_AUTOMAKE([1.14 -Wall -Werror foreign])
-# Check If AM_SILENT_RULES Rule Are Supported
-# If So, Build Using AM_SILENT_RULES
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
-AM_PROG_CC_C_O
-AM_PROG_AR
 
 ################################################################################
 # Libtool things
