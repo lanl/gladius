@@ -36,14 +36,23 @@ AC_PROG_MAKE_SET
 ################################################################################
 # Add some nice flags for development.
 ################################################################################
-# TODO Check if this is a devel build.
-case ${CXX} in
-    clang++ | g++ ) GLADIUS_DEVEL_CFLAGS="-Wall -Wextra -Wpedantic" ;;
-    * )             GLADIUS_DEVEL_CFLAGS="" ;;
-esac
-AC_MSG_NOTICE([Appending Developer CFLAGS])
-CFLAGS="${CFLAGS} ${GLADIUS_DEVEL_CFLAGS}"
-CXXFLAGS="${CXXFLAGS} ${GLADIUS_DEVEL_CFLAGS}"
+AC_MSG_CHECKING([if building in developer mode])
+if test -d '.git'; then
+    AC_MSG_RESULT([yes])
+    GLADIUS_DEVEL_BUILD=yes
+else
+    AC_MSG_RESULT([no])
+    GLADIUS_DEVEL_BUILD=no
+fi
+
+if test "x${GLADIUS_DEVEL_BUILD}" = "xyes"; then
+    case ${CXX} in
+        clang++ | g++ ) GLADIUS_DEVEL_CFLAGS="-Wall -Wextra -Wpedantic" ;;
+        * )             GLADIUS_DEVEL_CFLAGS="" ;;
+    esac
+    CFLAGS="${CFLAGS} ${GLADIUS_DEVEL_CFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${GLADIUS_DEVEL_CFLAGS}"
+fi
 
 ################################################################################
 # Checks for libraries.
