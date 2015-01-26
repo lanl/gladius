@@ -179,6 +179,7 @@ ToolFE::mInitiateToolLashUp(void)
         toolcommon::Hosts remoteHosts;
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs, remoteHosts);
+        // Make sure that the tool daemons launched.
         if (!mLMONFE.daemonsLaunched()) {
             GLADIUS_THROW("Tool Daemons Not Launched.");
         }

@@ -6,7 +6,12 @@
  * top-level directory of this distribution.
  */
 
-#include "session.h"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "core/session.h"
 #include "core/core.h"
 #include "core/utils.h"
 

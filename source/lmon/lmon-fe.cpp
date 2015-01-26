@@ -343,12 +343,12 @@ LaunchMonFE::launchAndSpawnDaemons(
         if (LMON_OK != rc) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_launchAndSpawnDaemons", rc);
         }
+        // Update state, so we know that things have been launched.
+        mIsLaunched = true;
         // Get and set RM things
         mSetRMInfo();
         // Create and populate process table.
         mCreateAndPopulateProcTab();
-        // Update flag
-        mIsLaunched = true;
         // Populate target hosts. Note: this is a set of host names, so the size
         // of this set is equal to the number of servers (nodes) that are being
         // used in this job. This "should" be equal to the number of daemons

@@ -9,6 +9,10 @@
 #ifndef GLADIUS_CORE_MACROS_H_INCLUDED
 #define GLADIUS_CORE_MACROS_H_INCLUDED
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "core/gladius-exception.h"
 #include "core/colors.h"
 

@@ -57,6 +57,7 @@ public:
     //
     static Environment &
     TheEnvironment(void);
+
     /**
      * Disable copy constructor.
      */
