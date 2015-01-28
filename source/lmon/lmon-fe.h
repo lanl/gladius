@@ -94,7 +94,7 @@ public:
     ~LaunchMonFE(void);
     //
     void
-    init(void);
+    init(bool beVerbose = false);
     //
     void
     launchAndSpawnDaemons(

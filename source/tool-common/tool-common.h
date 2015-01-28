@@ -28,6 +28,25 @@
 namespace gladius {
 namespace toolcommon {
 
+class utils {
+    utils(void) { ; }
+    //
+    ~utils(void) { ; }
+public:
+    /**
+     *
+     */
+    static std::string
+    genNotInPathErrString(
+        const std::string &whatsNotInPath
+    ) {
+        auto msg = "It appears as if '" + whatsNotInPath
+                   + "', is not in your $PATH.\n"
+                   + "Please update your $PATH to include its location.";
+        return msg;
+    }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**

@@ -75,8 +75,6 @@ ToolFE::mGetStateFromEnvs(void)
     else {
         mBeVerbose = false;
     }
-    mLMONFE.verbose(mBeVerbose);
-    //mMRNFE.verbose(mBeVerbose);
 }
 
 /**
@@ -140,9 +138,11 @@ void
 ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
-        mLMONFE.init();
+        // First init LaunchMON
+        mLMONFE.init(mBeVerbose);
         mLMONFE.regPackForFeToBe(feToBEPack);
-        //mMRNFE.init();
+        // Then do the same for MRNet
+        mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

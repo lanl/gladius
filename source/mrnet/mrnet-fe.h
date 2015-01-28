@@ -61,18 +61,26 @@ public:
  */
 class MRNetFE {
 private:
+    static const std::string sCommNodeName;
     // Be verbose or not.
     bool mBeVerbose = false;
     // Base session directory.
     std::string mSessionDir;
-    // Absolute path to MRNet installation.
-    static std::string sInstallPrefix;
     // Path to MRNet topology file.
     std::string mTopoFile;
     // Name of the backend executable
     std::string mBEExe;
     // The MRNet network instance.
     MRN::Network *mNetwork = nullptr;
+    // Absolute path to MRNet installation.
+    std::string mPrefixPath;
+    bool
+    mDetermineAndSetPaths(std::string &whatsWrong);
+    //
+    std::string
+    mGetPrefixFromCommNode(
+        const std::string &whichString
+    );
 
 public:
     MRNetFE(void);
@@ -88,7 +96,7 @@ public:
     );
     //
     void
-    init(void);
+    init(bool beVerbose = false);
     //
     void
     finalize(void);

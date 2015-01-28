@@ -18,6 +18,7 @@
 
 #include "lmon/lmon-fe.h"
 #include "core/core.h"
+#include "tool-common/tool-common.h"
 
 using namespace gladius;
 using namespace gladius::toolfe;
@@ -75,19 +76,6 @@ statusFuncCallback(int *status)
         }
     }
     return 0;
-}
-
-/**
- *
- */
-std::string
-genNotInPathErrString(
-    const std::string &whatsNotInPath
-) {
-    auto msg = "It appears as if '" + whatsNotInPath
-               + "', is not in your $PATH.\n"
-               + "Please update your $PATH to include its location.";
-    return msg;
 }
 
 } // end nameless namespace
@@ -176,13 +164,13 @@ LaunchMonFE::mDetermineAndSetPaths(
     // Make sure that our tool daemon is in our PATH.
     auto status = core::utils::which(sToolDName, mToolD);
     if (GLADIUS_SUCCESS != status) {
-        whatsWrong = genNotInPathErrString(sToolDName);
+        whatsWrong = toolcommon::utils::genNotInPathErrString(sToolDName);
         return false;
     }
     // Do the same for launchmon
     status = core::utils::which(sLaunchMONName, mEnginePath);
     if (GLADIUS_SUCCESS != status) {
-        whatsWrong = genNotInPathErrString(sLaunchMONName);
+        whatsWrong = toolcommon::utils::genNotInPathErrString(sLaunchMONName);
         return false;
     }
     // While we're at it, set LaunchMON's prefix.
@@ -215,8 +203,10 @@ LaunchMonFE::mGetLmonPrefixFromEnginePath(
  *
  */
 void
-LaunchMonFE::init(void)
-{
+LaunchMonFE::init(
+    bool beVerbose
+) {
+    mBeVerbose = beVerbose;
     if (mBeVerbose) {
         COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
     }
@@ -371,8 +361,8 @@ LaunchMonFE::launchAndSpawnDaemons(
             &jobidSize,
             PATH_MAX
         );
-        LMON_fe_recvUsrDataBe(mSessionNum, NULL);
-        LMON_fe_sendUsrDataBe(mSessionNum, NULL);
+        //LMON_fe_recvUsrDataBe(mSessionNum, NULL);
+        //LMON_fe_sendUsrDataBe(mSessionNum, NULL);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

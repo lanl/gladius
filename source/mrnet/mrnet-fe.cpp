@@ -12,6 +12,7 @@
 #include "core/utils.h"
 #include "core/session.h"
 #include "core/colors.h"
+#include "tool-common/tool-common.h"
 
 #include "mrnet/MRNet.h"
 
@@ -98,13 +99,14 @@ MRNetTopology::mGenFlatTopo(void)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// FIXME
-std::string MRNetFE::sInstallPrefix = "";
+const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
 
 /**
  * Constructor.
  */
-MRNetFE::MRNetFE(void) { ; }
+MRNetFE::MRNetFE(
+    void
+) : mPrefixPath("") { ; }
 
 /**
  * Destructor.
@@ -124,13 +126,19 @@ MRNetFE::mSetEnvs(void)
  * Initialization.
  */
 void
-MRNetFE::init(void)
-{
+MRNetFE::init(
+    bool beVerbose
+) {
     using namespace std;
     using namespace core;
+    string whatsWrong;
     try {
+        mBeVerbose = beVerbose;
         if (mBeVerbose) {
             COMP_COUT << "Initializing MRNet Front-End." << endl;
+        }
+        if (!mDetermineAndSetPaths(whatsWrong)) {
+            GLADIUS_THROW(whatsWrong);
         }
         mSetEnvs();
         mSessionDir = core::Session::TheSession().sessionDir();
@@ -144,6 +152,53 @@ MRNetFE::init(void)
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
+}
+
+/**
+ *
+ */
+std::string
+MRNetFE::mGetPrefixFromCommNode(
+    const std::string &whichString
+) {
+    std::string badness = "Could not determine MRNet's installation "
+                          "prefix by inspecting the following path:"
+                          "'" + whichString + "'";
+    std::string prefix = whichString;
+    std::string last = "/bin/" + sCommNodeName;
+    auto found = prefix.rfind(last);
+    // Not found, so something is wrong.
+    if (std::string::npos == found) {
+        GLADIUS_THROW(badness);
+    }
+    prefix = prefix.substr(0, found);
+    return prefix;
+}
+
+/**
+ *
+ */
+bool
+MRNetFE::mDetermineAndSetPaths(
+    std::string &whatsWrong
+) {
+    using namespace std;
+
+    whatsWrong = "";
+    if (mBeVerbose) {
+        COMP_COUT << "Determining and Setting Paths." << std::endl;
+    }
+    // Make sure that we can find mrnet_commnode. Really just to get the base
+    // MRNet installation path. That way we can find the libraries that we need.
+    string cnPath;
+    auto status = core::utils::which(sCommNodeName, cnPath);
+    if (GLADIUS_SUCCESS != status) {
+        whatsWrong = toolcommon::utils::genNotInPathErrString(sCommNodeName);
+        return false;
+    }
+    // Now get MRNet's installation prefix.
+    mPrefixPath = mGetPrefixFromCommNode(cnPath);
+    return true;
 }
 
 /**
