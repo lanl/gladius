@@ -142,7 +142,9 @@ MRNetFE::init(
         }
         mSetEnvs();
         mSessionDir = core::Session::TheSession().sessionDir();
+        // Create a unique name for the file.
         mTopoFile = mSessionDir + utils::osPathSep
+                  + utils::getHostname() + "-"
                   + std::to_string(getpid()) + "-" + CNAME + ".topo";
         if (mBeVerbose) {
             COMP_COUT << "Topology Specification File: "
