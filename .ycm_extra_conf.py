@@ -31,6 +31,8 @@
 import os
 import ycm_core
 
+home = os.getenv("HOME")
+
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
 # CHANGE THIS LIST OF FLAGS. YES, THIS IS THE DROID YOU HAVE BEEN LOOKING FOR.
@@ -79,12 +81,12 @@ flags = [
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1',
 '-isystem',
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-'-I/Users/samuel/local/lldb/include',
-'-I/home/samuel/local/lldb/include',
-'-I/Users/samuel/local/mrnet/include',
-'-I/home/samuel/local/mrnet/include',
 '-I./source',
-'-I/home/samuel/local/STAT/include',
+'-I' + home + '/local/lldb/include',
+'-I' + home + '/local/mrnet/include',
+'-I' + home + '/local/lldb/include',
+'-I' + home + '/local/mrnet/include',
+'-I' + home + '/local/STAT/include',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

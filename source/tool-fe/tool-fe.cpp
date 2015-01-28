@@ -129,7 +129,7 @@ ToolFE::mainLoop(
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
     catch (const std::exception &e) {
-        GLADIUS_CERR << std::endl << e.what() << std::endl;
+        GLADIUS_CERR << e.what() << std::endl;
     }
 }
 
