@@ -19,6 +19,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <map>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -31,7 +33,7 @@ namespace {
 static const std::string CNAME = "mrnetfe";
 // CNAME's color code.
 static const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::DGRAY);
+    core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 }
@@ -76,21 +78,20 @@ MRNetTopology::MRNetTopology(
 
 /**
  * Generates a 1xN (where N is the number of remote hosts) topology.
- * host:0 =>
+ * localhost:0 =>
  *   host:1
  *   host:2
- *   host:n ;
+ *   host:n-1 ;
  */
-// FIXME host names
 std::string
 MRNetTopology::mGenFlatTopo(void)
 {
     using namespace std;
     auto id = 0;
     // The "host:0 =>" bit.
+    // The top of the tree is always going to be localhost.
     string resTopoStr = "localhost: " + to_string(id++) + " =>\n";
     for (const auto &hostName : mHosts.hostNames()) {
-        COMP_COUT << "HOST: " << hostName << std::endl;
         resTopoStr += "  " + hostName + ":" + to_string(id++) + "\n";
     }
     resTopoStr += ";";
@@ -111,7 +112,11 @@ MRNetFE::MRNetFE(
 /**
  * Destructor.
  */
-MRNetFE::~MRNetFE(void) { ; }
+MRNetFE::~MRNetFE(void)
+{
+    // TODO complete
+    if (mNetwork) { }
+}
 
 /**
  * Sets some environment variables that impact the behavior of MRNetFE.
@@ -225,13 +230,18 @@ MRNetFE::finalize(void)
  */
 void
 MRNetFE::createNetworkFE(
-    const toolcommon::Hosts &hosts
+    const toolcommon::ProcessTable &procTab
 ) {
     // First, create and populate MRNet network topology file.
     // TODO dynamic TopologyType based on job characteristics.
     if (mBeVerbose) {
         COMP_COUT << "Creating and Populating MRNet Topology" << std::endl;
     }
+    // Stash the process table because we'll need this info later.
+    mProcTab = procTab;
+    //
+    auto hosts = toolcommon::Hosts(procTab);
+    // Create the topology file.
     MRNetTopology topo(
         mTopoFile,
         MRNetTopology::TopologyType::FLAT,
@@ -246,7 +256,46 @@ MRNetFE::createNetworkFE(
                    dummyBackendExe,
                    &dummyArgv
                );
-    if (!mNetwork || mNetwork->has_Error()) {
+    if (!mNetwork) {
         GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkFE");
+    }
+    else if (mNetwork->has_Error()) {
+        auto netErr = mNetwork->get_ErrorStr(mNetwork->get_Error());
+        GLADIUS_THROW_CALL_FAILED(netErr);
+    }
+    //
+    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
+    if (!mLeafInfo.networkTopology) {
+        GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
+    }
+    mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
+                             hosts.hostNames().cend());
+    //
+    mCreateDaemonRankMap();
+}
+
+/**
+ *
+ */
+void
+MRNetFE::mCreateDaemonRankMap(void)
+{
+    using namespace std;
+
+    // A map between host names and the node IDs on them.
+    map< string, vector<int> > hostNIDMap;
+
+    const auto procTabPtr = mProcTab.procTab();
+    auto npte = mProcTab.nEntries();
+    for (decltype(npte) nid = 0; nid < npte; ++nid) {
+        hostNIDMap[procTabPtr->pd.host_name].push_back(procTabPtr->mpirank);
+    }
+    if (mBeVerbose) {
+        for (const auto &host : hostNIDMap) {
+            COMP_COUT << "Host " << host.first
+                      << " Responsible for: "
+                      << host.second.size()
+                      << " Processes." << endl;
+        }
     }
 }

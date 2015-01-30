@@ -28,7 +28,7 @@ namespace {
 static const std::string CNAME = "lmon-fe";
 // CNAME's color code.
 static const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::DGRAY);
+    core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /// What to use for remote login
@@ -296,8 +296,7 @@ LaunchMonFE::regPackForFeToBe(
  */
 void
 LaunchMonFE::launchAndSpawnDaemons(
-    const core::Args &appArgs,
-    toolcommon::Hosts &outRemoteHosts
+    const core::Args &appArgs
 ) {
     using namespace std;
     try {
@@ -343,15 +342,13 @@ LaunchMonFE::launchAndSpawnDaemons(
         // of this set is equal to the number of servers (nodes) that are being
         // used in this job. This "should" be equal to the number of daemons
         // that were also spawned.
-        mHosts = toolcommon::Hosts(mProcTab);
-        // While we're at it, pass hosts to caller.
-        outRemoteHosts = mHosts;
+        auto hosts = toolcommon::Hosts(mProcTab);
         // Let the people know what's going on
         GLADIUS_COUT_STAT << "Launcher PID: "
                           << mRMInfo.rm_launcher_pid
                           << std::endl;
         GLADIUS_COUT_STAT << "Number of Spawned Daemons: "
-                          << mHosts.nHosts()
+                          << hosts.nHosts()
                           << std::endl;
         int jobidSize = 0;
         char jobid[PATH_MAX];
@@ -361,6 +358,7 @@ LaunchMonFE::launchAndSpawnDaemons(
             &jobidSize,
             PATH_MAX
         );
+        // XXX Wait for back-ends here?
         //LMON_fe_recvUsrDataBe(mSessionNum, NULL);
         //LMON_fe_sendUsrDataBe(mSessionNum, NULL);
     }

@@ -303,7 +303,7 @@ Terminal::cmdPairs(void) const
 {
     using namespace std;
     set< pair<string, string> > theSet;
-    for (auto tcmd : sTermCommands.availableCommands()) {
+    for (const auto &tcmd : sTermCommands.availableCommands()) {
         theSet.insert(make_pair(tcmd.command(), tcmd.shortUsage()));
     }
     vector< pair<string, string> > theVec(theSet.begin(), theSet.end());

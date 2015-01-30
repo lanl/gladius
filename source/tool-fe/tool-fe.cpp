@@ -29,7 +29,7 @@ namespace {
 static const std::string CNAME = "tool-fe";
 // CNAME's color code.
 static const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::DGRAY);
+    core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 
@@ -40,7 +40,7 @@ void
 echoLaunchStart(const gladius::core::Args &args)
 {
     std::string lstr;
-    for (auto i = 0; i < args.argc(); ++i) {
+    for (decltype(args.argc()) i = 0; i < args.argc(); ++i) {
         lstr += args.argv()[i];
         lstr += " ";
     }
@@ -175,16 +175,14 @@ ToolFE::mInitiateToolLashUp(void)
     try {
         mtStatus = GLADIUS_SUCCESS;
         echoLaunchStart(mAppArgs);
-        // Remote hosts. Populated by launchAndSpawnDaemons.
-        toolcommon::Hosts remoteHosts;
         // And so it begins...
-        mLMONFE.launchAndSpawnDaemons(mAppArgs, remoteHosts);
+        mLMONFE.launchAndSpawnDaemons(mAppArgs);
         // Make sure that the tool daemons launched.
         if (!mLMONFE.daemonsLaunched()) {
             GLADIUS_THROW("Tool Daemons Not Launched.");
         }
         // Create MRNet network FE.
-        //mMRNFE.createNetworkFE(remoteHosts);
+        mMRNFE.createNetworkFE(mLMONFE.getProcTab());
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

@@ -30,11 +30,12 @@ public:
      * ColorCodeTab.
      */
     enum Color {
-        RED = 0,
+        WHITE = 0,
+        RED,
         GREEN,
         YELLOW,
         MAGENTA,
-        DGRAY
+        DGRAY,
     };
     /**
      * Returns reference to the color instance.

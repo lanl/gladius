@@ -57,8 +57,6 @@ class LaunchMonFE {
     lmon_rm_info_t mRMInfo;
     // The process table of the active job.
     toolcommon::ProcessTable mProcTab;
-    // The hosts in our job.
-    toolcommon::Hosts mHosts;
     //
     int (*mFEToBePackFn)(void *, void *, int, int *) = nullptr;
 
@@ -89,6 +87,7 @@ class LaunchMonFE {
     );
 
 public:
+    //
     LaunchMonFE(void);
     //
     ~LaunchMonFE(void);
@@ -98,10 +97,9 @@ public:
     //
     void
     launchAndSpawnDaemons(
-        const core::Args &appArgs,
-        toolcommon::Hosts &outRemoteHosts
+        const core::Args &appArgs
     );
-    //
+    // TODO
     void
     attachAndSpawnDaemons(pid_t launcherPID) {
         GLADIUS_UNUSED(launcherPID);
@@ -139,6 +137,14 @@ public:
             int *msgBufLen
         )
     );
+
+    /**
+     *
+     */
+    const toolcommon::ProcessTable &
+    getProcTab(void) const {
+        return mProcTab;
+    }
 };
 
 } // end toolfe namespace

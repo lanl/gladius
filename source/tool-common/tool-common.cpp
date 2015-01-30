@@ -33,7 +33,7 @@ ProcessTable::dumpTo(std::ostream &os) {
         os << "XXX Process Table Not Allocated XXX" << endl;
         return;
     }
-    for (auto i = 0UL; i < mNEntries; ++i) {
+    for (decltype(mNEntries) i = 0; i < mNEntries; ++i) {
         os << "Host Name: " << mProcTab[i].pd.host_name << endl;
         os << "Executable Name: "
                   << mProcTab[i].pd.executable_name << endl;
@@ -42,5 +42,4 @@ ProcessTable::dumpTo(std::ostream &os) {
                   << "NID: " << mProcTab[i].mpirank
                   << endl;
     }
-    os << endl;
 }

@@ -8,6 +8,7 @@
  * Copyright (c) 2003-2012 Dorian C. Arnold, Philip C. Roth, Barton P. Miller
  * Detailed MRNet usage rights in "LICENSE" file in the MRNet distribution.
  *
+ * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  */
 
 #ifndef GLADIUS_MRNET_MRNET_FE_H_INCLUDED
@@ -20,6 +21,15 @@
 
 namespace gladius {
 namespace mrnet {
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+struct LeafInfo {
+    MRN::NetworkTopology *networkTopology = nullptr;
+    std::multiset<std::string> daemons;
+    std::vector<MRN::NetworkTopology::Node *> leafCps;
+    // TODO add destructor
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 class MRNetTopology {
@@ -70,10 +80,15 @@ private:
     std::string mTopoFile;
     // Name of the backend executable
     std::string mBEExe;
-    // The MRNet network instance.
-    MRN::Network *mNetwork = nullptr;
     // Absolute path to MRNet installation.
     std::string mPrefixPath;
+    // The process table of our job.
+    toolcommon::ProcessTable mProcTab;
+    // The MRNet network instance.
+    MRN::Network *mNetwork = nullptr;
+    //
+    LeafInfo mLeafInfo;
+    //
     bool
     mDetermineAndSetPaths(std::string &whatsWrong);
     //
@@ -81,6 +96,9 @@ private:
     mGetPrefixFromCommNode(
         const std::string &whichString
     );
+    //
+    void
+    mCreateDaemonRankMap(void);
 
 public:
     MRNetFE(void);
@@ -92,7 +110,7 @@ public:
     //
     void
     createNetworkFE(
-        const toolcommon::Hosts &hosts
+        const toolcommon::ProcessTable &procTab
     );
     //
     void

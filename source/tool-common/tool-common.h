@@ -75,7 +75,7 @@ class ProcessTable {
     void
     mDeallocate(void) {
         if (mProcTab) {
-            for (auto i = 0UL; i < mNEntries; ++i) {
+            for (decltype(mNEntries) i = 0; i < mNEntries; ++i) {
                 if (mProcTab[i].pd.executable_name) {
                     free(mProcTab[i].pd.executable_name);
                 }
@@ -101,15 +101,15 @@ class ProcessTable {
         MPIR_PROCDESC_EXT *res = nullptr;
         res = (MPIR_PROCDESC_EXT *)calloc(nEntries, sizeof(*res));
         if (!res) GLADIUS_THROW_OOR();
-        for (auto i = 0UL; i < nEntries; ++i) {
+        for (decltype(nEntries) i = 0; i < nEntries; ++i) {
             res[i].cnodeid = from[i].cnodeid;
             res[i].mpirank = from[i].mpirank;
             res[i].pd.pid = from[i].pd.pid;
-            if (res[i].pd.host_name) {
+            if (from[i].pd.host_name) {
                 res[i].pd.host_name = strdup(from[i].pd.host_name);
                 if (!res[i].pd.host_name) GLADIUS_THROW_OOR();
             }
-            if (res[i].pd.executable_name) {
+            if (from[i].pd.executable_name) {
                 res[i].pd.executable_name = strdup(from[i].pd.executable_name);
                 if (!res[i].pd.executable_name) GLADIUS_THROW_OOR();
             }
@@ -184,7 +184,7 @@ public:
     std::set<std::string>
     hostNamesInTable(void) const {
         std::set<std::string> nameSet;
-        for (auto te = 0UL; te < mNEntries; ++te) {
+        for (decltype(mNEntries) te = 0; te < mNEntries; ++te) {
             nameSet.insert(mProcTab[te].pd.host_name);
         }
         return nameSet;
