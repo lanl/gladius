@@ -2,6 +2,8 @@
  * Copyright (c) 2014-2015 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
+ * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
+ *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
  */
@@ -240,7 +242,7 @@ MRNetFE::createNetworkFE(
     // Stash the process table because we'll need this info later.
     mProcTab = procTab;
     //
-    auto hosts = toolcommon::Hosts(procTab);
+    const auto &hosts = toolcommon::Hosts(mProcTab);
     // Create the topology file.
     MRNetTopology topo(
         mTopoFile,
@@ -264,28 +266,28 @@ MRNetFE::createNetworkFE(
         GLADIUS_THROW_CALL_FAILED(netErr);
     }
     //
-    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
-    if (!mLeafInfo.networkTopology) {
-        GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
-    }
-    mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
-                             hosts.hostNames().cend());
-    //
-    mCreateDaemonRankMap();
+    mCreateDaemonNIDMap();
 }
 
 /**
  *
  */
 void
-MRNetFE::mCreateDaemonRankMap(void)
+MRNetFE::mCreateDaemonNIDMap(void)
 {
     using namespace std;
+    using namespace toolcommon;
 
+    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
+    if (!mLeafInfo.networkTopology) {
+        GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
+    }
+    const auto &hosts = toolcommon::Hosts(mProcTab);
+    mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
+                             hosts.hostNames().cend());
     // A map between host names and the node IDs on them.
-    map< string, vector<int> > hostNIDMap;
-
     const auto procTabPtr = mProcTab.procTab();
+    map< string, vector<decltype(procTabPtr->mpirank)> > hostNIDMap;
     auto npte = mProcTab.nEntries();
     for (decltype(npte) nid = 0; nid < npte; ++nid) {
         hostNIDMap[procTabPtr->pd.host_name].push_back(procTabPtr->mpirank);
@@ -297,5 +299,14 @@ MRNetFE::mCreateDaemonRankMap(void)
                       << host.second.size()
                       << " Processes." << endl;
         }
+    }
+    //
+    set<MRN::NetworkTopology::Node *> backendNodes;
+    map<string, int> hostToMrnetRankMap;
+    mLeafInfo.networkTopology->get_BackEndNodes(backendNodes);
+    for (const auto &beNode : backendNodes) {
+        const auto nodeRank = beNode->get_Rank();
+        const auto chn = Hosts::canonicalForm(beNode->get_HostName());
+        hostToMrnetRankMap[chn] = nodeRank;
     }
 }

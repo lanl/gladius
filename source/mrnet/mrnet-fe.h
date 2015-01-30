@@ -98,7 +98,7 @@ private:
     );
     //
     void
-    mCreateDaemonRankMap(void);
+    mCreateDaemonNIDMap(void);
 
 public:
     MRNetFE(void);

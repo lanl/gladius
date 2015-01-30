@@ -58,6 +58,10 @@ feToBEPack(
     int bufMax,
     int *bufLen
 ) {
+    GLADIUS_UNUSED(data);
+    GLADIUS_UNUSED(buf);
+    GLADIUS_UNUSED(bufMax);
+    GLADIUS_UNUSED(bufLen);
     std::cout << "feToBEPack Called!" << std::endl;
     return 1;
 }

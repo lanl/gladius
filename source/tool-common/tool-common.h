@@ -210,8 +210,8 @@ public:
     /**
      * Returns reference to our set of host names.
      */
-    std::set<std::string> &
-    hostNames(void) {
+    const std::set<std::string> &
+    hostNames(void) const {
         return mHostNames;
     }
 
@@ -221,6 +221,19 @@ public:
     size_t
     nHosts(void) {
         return mHostNames.size();
+    }
+
+    /**
+     * Returns the canonical hostname form from an arbitrary hostname string.
+     */
+    static std::string
+    canonicalForm(const std::string &hostname) {
+        auto chn = hostname;
+        auto dotPos = chn.find_first_of(".");
+        if (std::string::npos != dotPos) {
+            chn = chn.substr(0, dotPos);
+        }
+        return chn;
     }
 };
 
