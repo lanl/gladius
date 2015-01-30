@@ -54,6 +54,7 @@ MRNetTopology::MRNetTopology(
   , mTopoType(topoType)
   , mFEHostName(feHostName)
   , mHosts(hosts)
+  , mCanRMFile(false)
 {
     using namespace std;
     ofstream theFile;
@@ -71,6 +72,7 @@ MRNetTopology::MRNetTopology(
         // Populate the topology with the generated string.
         theFile << topoString;
         theFile.close();
+        mCanRMFile = true;
     }
     catch (const std::exception &e) {
         if (theFile.is_open()) theFile.close();

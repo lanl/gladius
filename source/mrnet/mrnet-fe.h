@@ -50,11 +50,15 @@ private:
     //
     std::string
     mGenFlatTopo(void);
+    //
+    bool mCanRMFile = false;
 public:
     //
     MRNetTopology(void) { ; }
     //
-    ~MRNetTopology(void) { ; }
+    ~MRNetTopology(void) {
+        if (mCanRMFile) ::remove(mTopoFilePath.c_str());
+    }
     //
     MRNetTopology(
         const std::string &topoFilePath,
