@@ -64,10 +64,12 @@ AX_PTHREAD(
     ],
     [AC_MSG_ERROR([Pthreads support required, but not found.])]
 )
+
 ################################################################################
 AX_BOOST_BASE(
     [1.54], [], [AC_MSG_ERROR([Could not find a usable version of boost.])]
 )
+
 ################################################################################
 AC_SEARCH_LIBS(
     [dlopen],
@@ -75,6 +77,7 @@ AC_SEARCH_LIBS(
     [],
     [AC_MSG_ERROR([Could not find dlopen.])]
 )
+
 ################################################################################
 # Don't want to modify LIBS, so stash and undo after check.
 LIBS_SAVE=${LIBS}
@@ -87,14 +90,17 @@ AC_SEARCH_LIBS(
 )
 AC_SUBST(LIBEDIT_LIBS)
 LIBS=${LIBS_SAVE}
+
 ################################################################################
 AX_LMON
-# Add this for convenience. We want to hide tool-common's CPPFLAGS behind this
-# so they can change freely and only be updated in one spot.
-GLADIUS_TOOL_COMMON_CPPFLAGS="${LMON_CPPFLAGS}"
-AC_SUBST(GLADIUS_TOOL_COMMON_CPPFLAGS)
+
 ################################################################################
 AX_MRNET
+
+# Add this for convenience. We want to hide tool-common's CPPFLAGS behind this
+# so they can change freely and only be updated in one spot.
+GLADIUS_TOOL_COMMON_CPPFLAGS="${LMON_CPPFLAGS} ${MRNET_CPPFLAGS}"
+AC_SUBST(GLADIUS_TOOL_COMMON_CPPFLAGS)
 
 ################################################################################
 # Checks for header files.
@@ -177,5 +183,6 @@ cat << EOF
 | mrnet ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 +-------------------------------------------------------------------------------
 | MRNET_HOME : ${ax_mrnet_path}
+| FOO : ${GLADIUS_TOOL_COMMON_CPPFLAGS}
 
 EOF

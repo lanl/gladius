@@ -58,7 +58,7 @@ class LaunchMonFE {
     // The process table of the active job.
     toolcommon::ProcessTable mProcTab;
     //
-    int (*mFEToBePackFn)(void *, void *, int, int *) = nullptr;
+    toolcommon::FEToBePackFnP mFEToBePackFn = nullptr;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
@@ -129,13 +129,7 @@ public:
     //
     void
     regPackForFeToBe(
-        int
-        (*packFeBeFn) (
-            void *udata,
-            void *msgbuf,
-            int msgbufmax,
-            int *msgBufLen
-        )
+        toolcommon::FEToBePackFnP packFeBeFn
     );
 
     /**
@@ -145,6 +139,11 @@ public:
     getProcTab(void) const {
         return mProcTab;
     }
+    //
+    void
+    sendDaemonInfo(
+        const toolcommon::LeafInfo &leafInfo
+    );
 };
 
 } // end toolfe namespace

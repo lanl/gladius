@@ -18,6 +18,7 @@ libGladiusLaunchMONFE_la_CFLAGS =
 
 libGladiusLaunchMONFE_la_CPPFLAGS = \
 -I${top_srcdir}/source \
+${GLADIUS_TOOL_COMMON_CPPFLAGS} \
 ${LMON_CPPFLAGS}
 
 libGladiusLaunchMONFE_la_LDFLAGS = \

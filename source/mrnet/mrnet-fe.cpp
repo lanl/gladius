@@ -105,6 +105,26 @@ MRNetTopology::mGenFlatTopo(void)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+namespace {
+/**
+ *
+ */
+int
+feToBEPack(
+    void *data,
+    void *buf,
+    int bufMax,
+    int *bufLen
+) {
+    GLADIUS_UNUSED(data);
+    GLADIUS_UNUSED(buf);
+    GLADIUS_UNUSED(bufMax);
+    GLADIUS_UNUSED(bufLen);
+    std::cout << "feToBEPack Called!" << std::endl;
+    return 1;
+}
+} // end namespace
+
 const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
 
 /**
@@ -121,6 +141,17 @@ MRNetFE::~MRNetFE(void)
 {
     // TODO complete
     if (mNetwork) { }
+}
+
+/**
+ * Returns a function pointer that is responsible for packing data for front-end
+ * to back-end transfers.
+ */
+
+toolcommon::FEToBePackFnP
+MRNetFE::getFEToBePackFun(void)
+{
+    return feToBEPack;
 }
 
 /**
@@ -292,7 +323,7 @@ MRNetFE::mCreateDaemonTIDMap(void)
     using namespace toolcommon;
 
     // A map between host names and the task IDs on them.
-    const auto procTab = mProcTab.procTab();
+    const auto *procTab = mProcTab.procTab();
     map< string, vector<decltype(procTab->mpirank)> > hostTIDMap;
     auto npte = mProcTab.nEntries();
     for (decltype(npte) tid = 0; tid < npte; ++tid) {

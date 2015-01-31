@@ -280,13 +280,7 @@ LaunchMonFE::mSetRMInfo(void)
  */
 void
 LaunchMonFE::regPackForFeToBe(
-    int
-    (*packFeBeFn) (
-        void *udata,
-        void *msgbuf,
-        int msgbufmax,
-        int *msgBufLen
-    )
+    toolcommon::FEToBePackFnP packFeBeFn
 ) {
     mFEToBePackFn = packFeBeFn;
 }
@@ -359,11 +353,25 @@ LaunchMonFE::launchAndSpawnDaemons(
             PATH_MAX
         );
         // XXX Wait for back-ends here?
-        //LMON_fe_recvUsrDataBe(mSessionNum, NULL);
-        //LMON_fe_sendUsrDataBe(mSessionNum, NULL);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+}
+
+/**
+ *
+ */
+void
+LaunchMonFE::sendDaemonInfo(
+    const toolcommon::LeafInfo &leafInfo
+) {
+    if (!mFEToBePackFn) {
+        GLADIUS_THROW("Front-end to Back-end packing function not set.");
+    }
+    auto rc = LMON_fe_sendUsrDataBe(mSessionNum, (void *)&leafInfo);
+    if (LMON_OK != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_sendUsrDataBe", rc);
     }
 }
 

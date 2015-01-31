@@ -23,15 +23,6 @@ namespace gladius {
 namespace mrnet {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-struct LeafInfo {
-    MRN::NetworkTopology *networkTopology = nullptr;
-    std::multiset<std::string> daemons;
-    std::vector<MRN::NetworkTopology::Node *> leafCps;
-    // TODO add destructor
-};
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 class MRNetTopology {
 public:
     //
@@ -93,7 +84,7 @@ private:
     // The number of tree nodes in our topology.
     unsigned int mNTreeNodes = 0;
     //
-    LeafInfo mLeafInfo;
+    toolcommon::LeafInfo mLeafInfo;
     // A mapping between MRNet ranks and target task IDs.
     std::map< int, toolcommon::TxList<int> > mMRNetRankToTIDsMap;
     //
@@ -132,6 +123,14 @@ public:
     void
     verbose(bool b) {
         mBeVerbose = b;
+    }
+    //
+    static toolcommon::FEToBePackFnP
+    getFEToBePackFun(void);
+    //
+    const toolcommon::LeafInfo &
+    getLeafInfo(void) const {
+        return mLeafInfo;
     }
 };
 

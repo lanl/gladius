@@ -48,23 +48,6 @@ echoLaunchStart(const gladius::core::Args &args)
     GLADIUS_COUT_STAT << "Starting: " << lstr << std::endl;
 }
 
-/**
- *
- */
-int
-feToBEPack(
-    void *data,
-    void *buf,
-    int bufMax,
-    int *bufLen
-) {
-    GLADIUS_UNUSED(data);
-    GLADIUS_UNUSED(buf);
-    GLADIUS_UNUSED(bufMax);
-    GLADIUS_UNUSED(bufLen);
-    std::cout << "feToBEPack Called!" << std::endl;
-    return 1;
-}
 } // end namespace
 
 /**
@@ -144,7 +127,9 @@ ToolFE::mInitializeToolInfrastructure(void)
     try {
         // First init LaunchMON
         mLMONFE.init(mBeVerbose);
-        mLMONFE.regPackForFeToBe(feToBEPack);
+        // Register function that is responsible for packing data for front-end
+        // to back-end transfers. The MRNetFE know how to do this.
+        mLMONFE.regPackForFeToBe(mrnet::MRNetFE::getFEToBePackFun());
         // Then do the same for MRNet
         mMRNFE.init(mBeVerbose);
     }
@@ -187,6 +172,8 @@ ToolFE::mInitiateToolLashUp(void)
         }
         // Create MRNet network FE.
         mMRNFE.createNetworkFE(mLMONFE.getProcTab());
+        // Send info to daemons.
+        mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;
