@@ -17,11 +17,13 @@
 #include "core/utils.h"
 
 
+#include <cstring>
 #include <string>
 #include <set>
 #include <cstdlib>
 #include <ostream>
 #include <iostream>
+
 
 #include "lmon_api/lmon_proctab.h"
 
@@ -44,6 +46,71 @@ public:
                    + "', is not in your $PATH.\n"
                    + "Please update your $PATH to include its location.";
         return msg;
+    }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * A struct of items and meta-data that can be transfered over-the-wire. No
+ * complex data types, please! T should be things like: int, double, etc.
+ */
+template <class T>
+class TxList {
+    //
+    T *
+    dupElems(size_t ne, T *es)
+    {
+        if (0 == ne || !es) return nullptr;
+        auto res = (T *)calloc(ne, sizeof(T));
+        if (!res) GLADIUS_THROW_OOR();
+        (void)memmove(res, es, sizeof(T) * ne);
+        return res;
+    }
+
+public:
+    // The length of the elems array.
+    size_t nElems = 0;
+    // Points to the element array.
+    T *elems = nullptr;
+
+    /**
+     *
+     */
+    TxList(void)
+        : nElems(0)
+        , elems(nullptr) { ; }
+
+    /**
+     *
+     */
+    ~TxList(void) {
+        if (elems) {
+            free(elems);
+            elems = nullptr;
+        }
+        nElems = 0;
+    }
+
+    /**
+     * Copy constructor.
+     */
+    TxList(const TxList &other)
+    {
+        nElems = other.nElems;
+        elems = dupElems(nElems, other.elems);
+    }
+
+    /**
+     *
+     */
+    TxList &
+    operator=(const TxList &other)
+    {
+        nElems = other.nElems;
+        elems = dupElems(nElems, other.elems);
+        return *this;
     }
 };
 

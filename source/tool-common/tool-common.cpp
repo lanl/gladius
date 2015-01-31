@@ -36,10 +36,10 @@ ProcessTable::dumpTo(std::ostream &os) {
     for (decltype(mNEntries) i = 0; i < mNEntries; ++i) {
         os << "Host Name: " << mProcTab[i].pd.host_name << endl;
         os << "Executable Name: "
-                  << mProcTab[i].pd.executable_name << endl;
+           << mProcTab[i].pd.executable_name << endl;
         os << "PID: " << mProcTab[i].pd.pid << " "
-                     // NID: "Node ID"
-                  << "NID: " << mProcTab[i].mpirank
-                  << endl;
+           // TID: "Task ID"
+           << "TID: " << mProcTab[i].mpirank
+           << endl;
     }
 }

@@ -57,7 +57,7 @@ public:
     MRNetTopology(void) { ; }
     //
     ~MRNetTopology(void) {
-        if (mCanRMFile) ::remove(mTopoFilePath.c_str());
+        if (mCanRMFile) remove(mTopoFilePath.c_str());
     }
     //
     MRNetTopology(
@@ -90,8 +90,12 @@ private:
     toolcommon::ProcessTable mProcTab;
     // The MRNet network instance.
     MRN::Network *mNetwork = nullptr;
+    // The number of tree nodes in our topology.
+    unsigned int mNTreeNodes = 0;
     //
     LeafInfo mLeafInfo;
+    // A mapping between MRNet ranks and target task IDs.
+    std::map< int, toolcommon::TxList<int> > mMRNetRankToTIDsMap;
     //
     bool
     mDetermineAndSetPaths(std::string &whatsWrong);
@@ -102,7 +106,7 @@ private:
     );
     //
     void
-    mCreateDaemonNIDMap(void);
+    mCreateDaemonTIDMap(void);
 
 public:
     MRNetFE(void);

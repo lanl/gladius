@@ -23,6 +23,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -268,47 +269,82 @@ MRNetFE::createNetworkFE(
         GLADIUS_THROW_CALL_FAILED(netErr);
     }
     //
-    mCreateDaemonNIDMap();
+    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
+    if (!mLeafInfo.networkTopology) {
+        GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
+    }
+    mNTreeNodes = mLeafInfo.networkTopology->get_NumNodes();
+    mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
+                             hosts.hostNames().cend());
+    //
+    mCreateDaemonTIDMap();
+    //
+    mLeafInfo.networkTopology->get_Leaves(mLeafInfo.leafCps);
 }
 
 /**
  *
  */
 void
-MRNetFE::mCreateDaemonNIDMap(void)
+MRNetFE::mCreateDaemonTIDMap(void)
 {
     using namespace std;
     using namespace toolcommon;
 
-    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
-    if (!mLeafInfo.networkTopology) {
-        GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
-    }
-    const auto &hosts = toolcommon::Hosts(mProcTab);
-    mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
-                             hosts.hostNames().cend());
-    // A map between host names and the node IDs on them.
-    const auto procTabPtr = mProcTab.procTab();
-    map< string, vector<decltype(procTabPtr->mpirank)> > hostNIDMap;
+    // A map between host names and the task IDs on them.
+    const auto procTab = mProcTab.procTab();
+    map< string, vector<decltype(procTab->mpirank)> > hostTIDMap;
     auto npte = mProcTab.nEntries();
-    for (decltype(npte) nid = 0; nid < npte; ++nid) {
-        hostNIDMap[procTabPtr->pd.host_name].push_back(procTabPtr->mpirank);
+    for (decltype(npte) tid = 0; tid < npte; ++tid) {
+        hostTIDMap[procTab[tid].pd.host_name].push_back(procTab[tid].mpirank);
     }
     if (mBeVerbose) {
-        for (const auto &host : hostNIDMap) {
+        for (const auto &host : hostTIDMap) {
             COMP_COUT << "Host " << host.first
                       << " Responsible for: "
                       << host.second.size()
                       << " Processes." << endl;
         }
     }
-    //
+    // A call to get_BackEndNodes will populate this thing...
     set<MRN::NetworkTopology::Node *> backendNodes;
+    // A mapping between hostnames and MRNet ranks.
     map<string, int> hostToMrnetRankMap;
+    // Populate backendNodes.
     mLeafInfo.networkTopology->get_BackEndNodes(backendNodes);
+    // Populate hostname to MRNet ranks.
     for (const auto &beNode : backendNodes) {
         const auto nodeRank = beNode->get_Rank();
         const auto chn = Hosts::canonicalForm(beNode->get_HostName());
         hostToMrnetRankMap[chn] = nodeRank;
+    }
+    // Now prepare info to be transfered to the remote daemons.
+    auto loopi = 0UL;
+    for (auto &host : hostTIDMap) {
+        // Convenience TID vector reference.
+        auto &tvf = host.second;
+        auto tid = procTab->mpirank;
+        TxList<decltype(tid)> daemonTIDs;
+        // Stash the number of TIDs
+        daemonTIDs.nElems = tvf.size();
+        // Make room for the list of TIDs.
+        daemonTIDs.elems = (decltype(tid) *)
+            calloc(daemonTIDs.nElems, sizeof(tid));
+        if (!daemonTIDs.elems) GLADIUS_THROW_OOR();
+        // Sort the TID vector.
+        sort(tvf.begin(), tvf.end());
+        // And then copy over all that good TID info.
+        for (auto id = 0UL; id < daemonTIDs.nElems; ++id) {
+            daemonTIDs.elems[id] = tvf[id];
+        }
+        // The MRNet BEs are NOT connected.
+        if (0 == hostToMrnetRankMap.size()) {
+            // XXX Why like this?
+            mMRNetRankToTIDsMap[mNTreeNodes + loopi] = daemonTIDs;
+        }
+        else {
+            // XXX See: STAT_FrontEnd::createDaemonRankMap for more info.
+            assert(false && "Oops! Guess we need to deal with this...");
+        }
     }
 }
