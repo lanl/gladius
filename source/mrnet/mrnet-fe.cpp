@@ -24,6 +24,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <set>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -116,12 +117,113 @@ feToBEPack(
     int bufMax,
     int *bufLen
 ) {
-    GLADIUS_UNUSED(data);
-    GLADIUS_UNUSED(buf);
-    GLADIUS_UNUSED(bufMax);
-    GLADIUS_UNUSED(bufLen);
-    std::cout << "feToBEPack Called!" << std::endl;
-    return 1;
+    using namespace std;
+    using namespace MRN;
+    using namespace toolcommon;
+
+    LeafInfo *leafInfo = (LeafInfo *)data;
+    NetworkTopology *networkTopology = leafInfo->networkTopology;
+    //
+    unsigned int nNodes = 0, depth = 0, minFanout = 0, maxFanout = 0;
+    double averageFanout = 0.0, stdDevFanout = 0.0;
+    // Grab some tree stats.
+    networkTopology->get_TreeStatistics(
+        nNodes,
+        depth,
+        minFanout,
+        maxFanout,
+        averageFanout,
+        stdDevFanout
+    );
+    // Show off the fresh stats.
+    COMP_COUT << "::: MRNet Tree Statistics ::::::::::::::::::::::::::::::::::";
+    cout      << endl;
+    COMP_COUT << "Number of Nodes : " << nNodes << endl;
+    COMP_COUT << "Depth           : " << depth << endl;
+    COMP_COUT << "Minimum Fanout  : " << minFanout << endl;
+    COMP_COUT << "Maximum Fanout  : " << maxFanout << endl;
+    COMP_COUT << "Average Fanout  : " << averageFanout << endl;
+    COMP_COUT << "Sigma Fanout    : " << stdDevFanout << endl;
+    COMP_COUT << "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
+    cout      << endl;
+
+    char *ptr = (char *)buf;
+    char *daemonCountPtr = ptr;
+
+    // Reserve space for the number of daemons (to be calculated later).
+    int total = sizeof(int);
+    ptr += sizeof(int);
+
+    // Pack up the number of parent nodes.
+    int nLeaves = leafInfo->leafCps.size();
+    (void)memcpy(ptr, (void *)&nLeaves, sizeof(int));
+    ptr += sizeof(int);
+    total += sizeof(int);
+
+    std::set<std::string>::iterator daemonIter = leafInfo->daemons.begin();
+    NetworkTopology::Node *node = nullptr;
+    char *childCountPtr = nullptr;
+    int len = 0, port = 0, rank = 0, daemonRank = 0, daemonCount = 0;
+    unsigned long i = 0, j;
+    // Write the data one parent at a time.
+    for (i = 0; i < (unsigned long)nLeaves; ++i) {
+        // Get the parent info.
+        node = leafInfo->leafCps[i];
+        port = node->get_Port();
+        rank = node->get_Rank();
+        std::string currentHost = node->get_HostName();
+
+        // Calculate the amount of data.
+        len = strlen(currentHost.c_str()) + 1;
+        // 3x for node, port, and rank.
+        total += (3 * sizeof(int)) + len;
+        if (total > bufMax) {
+            GLADIUS_CERR << "Exceeded Maximum Packing Buffer" << std::endl;
+            return -1;
+        }
+
+        // Write the parent host name, port, rank and child count.
+        (void)memcpy(ptr, (void *)currentHost.c_str(), len);
+        ptr += len;
+        (void)memcpy(ptr, (void *)&port, sizeof(int));
+        ptr += sizeof(int);
+        (void)memcpy(ptr, (void *)&rank, sizeof(int));
+        ptr += sizeof(int);
+        childCountPtr = ptr;
+        ptr += sizeof(int);
+
+        for (j = 0;
+             j < (leafInfo->daemons.size() / nLeaves)
+                 + (leafInfo->daemons.size() % nLeaves > i ? 1 : 0);
+             j++) {
+            if (daemonIter == leafInfo->daemons.end()) break;
+            len = strlen(daemonIter->c_str()) + 1;
+            total += sizeof(int) + len;
+
+            if (total > bufMax) {
+                GLADIUS_CERR << "Exceeded Maximum Packing Buffer" << std::endl;
+                return -1;
+            }
+
+            // Copy the daemon host name.
+            (void)memcpy(ptr, (void *)(daemonIter->c_str()), len);
+            ptr += len;
+
+            // Copy the daemon rank.
+            daemonRank = daemonCount + nNodes;
+            (void)memcpy(ptr, (void *)(&daemonRank), sizeof(int));
+            ptr += sizeof(int);
+            daemonIter++;
+            daemonCount++;
+        }
+        (void)memcpy(childCountPtr, (void *)&j, sizeof(int));
+    }
+
+    // Write the daemon count to the appropriate location */
+    (void)memcpy(daemonCountPtr, (void *)&daemonCount, sizeof(int));
+
+    *bufLen = total;
+    return 0;
 }
 } // end namespace
 

@@ -366,6 +366,9 @@ void
 LaunchMonFE::sendDaemonInfo(
     const toolcommon::LeafInfo &leafInfo
 ) {
+    if (mBeVerbose) {
+        COMP_COUT << "Sending Daemon Info." << std::endl;
+    }
     if (!mFEToBePackFn) {
         GLADIUS_THROW("Front-end to Back-end packing function not set.");
     }
