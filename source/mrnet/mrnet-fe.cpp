@@ -223,6 +223,17 @@ feToBEPack(
     *bufLen = total;
     return 0;
 }
+
+/**
+ * Connection event callback.
+ */
+void
+beConnectCbFn(
+    MRN::Event *event,
+    void *dummy
+) {
+
+}
 } // end namespace
 
 const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
@@ -232,7 +243,8 @@ const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
  */
 MRNetFE::MRNetFE(
     void
-) : mPrefixPath("") { ; }
+) : maNConnectedBEs(0)
+  , mPrefixPath("") { ; }
 
 /**
  * Destructor.
@@ -362,6 +374,23 @@ MRNetFE::finalize(void)
 }
 
 /**
+ * Registers network event callbacks.
+ */
+void
+MRNetFE::mRegisterEventCallbacks(void)
+{
+    using namespace MRN;
+
+    bool rc = mNetwork->register_EventCallback(
+                  Event::TOPOLOGY_EVENT,
+                  TopologyEvent::TOPOL_ADD_BE,
+                  beConnectCbFn,
+                  this
+              );
+    if (!rc) GLADIUS_THROW_CALL_FAILED("register_EventCallback");
+}
+
+/**
  *
  */
 void
@@ -399,6 +428,8 @@ MRNetFE::createNetworkFE(
         auto netErr = mNetwork->get_ErrorStr(mNetwork->get_Error());
         GLADIUS_THROW_CALL_FAILED(netErr);
     }
+    //
+    mRegisterEventCallbacks();
     //
     mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
     if (!mLeafInfo.networkTopology) {
@@ -479,5 +510,16 @@ MRNetFE::mCreateDaemonTIDMap(void)
             // XXX See: STAT_FrontEnd::createDaemonRankMap for more info.
             assert(false && "Oops! Guess we need to deal with this...");
         }
+    }
+}
+
+/**
+ *
+ */
+void
+MRNetFE::connect(void)
+{
+    if (mBeVerbose) {
+        COMP_COUT << "Connecting" << std::endl;
     }
 }

@@ -104,6 +104,9 @@ public:
     attachAndSpawnDaemons(pid_t launcherPID) {
         GLADIUS_UNUSED(launcherPID);
     }
+    //
+    int
+    getState(void);
 
     /**
      * Shuts down LaunchMON.

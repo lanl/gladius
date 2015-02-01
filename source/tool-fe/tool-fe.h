@@ -14,6 +14,7 @@
 #define GLADIUS_TOOL_FE_TOOL_FE_H_INCLUDED
 
 #include "core/core.h"
+#include "tool-common/tool-common.h"
 #include "lmon/lmon-fe.h"
 #include "mrnet/mrnet-fe.h"
 
@@ -34,7 +35,7 @@ private:
     //
     std::condition_variable mtLashUpComplete;
     //
-    std::atomic<int> mtStatus;
+    std::atomic<int> maStatus;
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
@@ -44,6 +45,10 @@ private:
     mrnet::MRNetFE mMRNFE;
     // Target application arguments.
     core::Args mAppArgs;
+    // Connection timeout (in seconds).
+    toolcommon::timeout_t mConnectionTimeoutInSec;
+    // Max number of connection retries.
+    toolcommon::retry_t mMaxRetries;
     //
     void
     mGetStateFromEnvs(void);

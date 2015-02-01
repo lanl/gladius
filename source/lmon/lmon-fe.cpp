@@ -32,47 +32,56 @@ static const std::string NAMEC =
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 /// What to use for remote login
-static const std::string REMOTE_LOGIN = "/usr/bin/ssh";
+const std::string REMOTE_LOGIN = "/usr/bin/ssh";
+// Global variable holding latest LaunchMON state (set by statusFuncCallback).
+int gLMONState = 0;
+// Global variable that indicates whether or not this component will be verbose.
+bool gBeVerbose = false;
 
 /**
  * LaunchMON status callback.
  */
 int
-statusFuncCallback(int *status)
-{
+statusFuncCallback(
+    int *status
+) {
     using namespace std;
 
     if (!status) {
         GLADIUS_THROW_INVLD_ARG();
     }
-    int stcp = *status;
-    if (WIFREGISTERED(stcp)) {
-        COMP_COUT << "* Session Registered" << endl;
-    }
-    else {
-        COMP_COUT << "* Session Not Registered" << endl;
-    }
-    if (WIFBESPAWNED(stcp)) {
-        COMP_COUT << "* Back-End Daemons Spawned" << endl;
-    }
-    else {
-        COMP_COUT << "* Back-End Daemons Not Spawned or Exited" << endl;
-    }
-    if (WIFMWSPAWNED(stcp)) {
-        COMP_COUT << "* MW Daemons Spawned" << endl;
-    }
-    else {
-        COMP_COUT << "* MW Daemons Not Spawned or Exited" << endl;
-    }
-    if (WIFDETACHED(stcp)) {
-        COMP_COUT << "* The Job is Detached" << endl;
-    }
-    else {
-        if (WIFKILLED(stcp)) {
-            COMP_COUT << "* The Job is Killed" << endl;
+    // Set global state.
+    gLMONState = *status;
+    if (gBeVerbose) {
+        //
+        if (WIFREGISTERED(gLMONState)) {
+            COMP_COUT << "* Session Registered" << endl;
         }
         else {
-            COMP_COUT << "* The Job Has Not Been Killed" << endl;
+            COMP_COUT << "* Session Not Registered" << endl;
+        }
+        if (WIFBESPAWNED(gLMONState)) {
+            COMP_COUT << "* Back-End Daemons Spawned" << endl;
+        }
+        else {
+            COMP_COUT << "* Back-End Daemons Not Spawned or Exited" << endl;
+        }
+        if (WIFMWSPAWNED(gLMONState)) {
+            COMP_COUT << "* MW Daemons Spawned" << endl;
+        }
+        else {
+            COMP_COUT << "* MW Daemons Not Spawned or Exited" << endl;
+        }
+        if (WIFDETACHED(gLMONState)) {
+            COMP_COUT << "* The Job is Detached" << endl;
+        }
+        else {
+            if (WIFKILLED(gLMONState)) {
+                COMP_COUT << "* The Job is Killed" << endl;
+            }
+            else {
+                COMP_COUT << "* The Job Has Not Been Killed" << endl;
+            }
         }
     }
     return 0;
@@ -93,7 +102,11 @@ LaunchMonFE::LaunchMonFE(
   , mToolD("")
   , mPrefixPath("")
   , mEnginePath("")
-  , mRemoteLogin(REMOTE_LOGIN) { ; }
+  , mRemoteLogin(REMOTE_LOGIN
+) {
+    gLMONState = 0;
+    gBeVerbose = mBeVerbose;
+}
 
 /**
  * Destructor.
@@ -207,6 +220,7 @@ LaunchMonFE::init(
     bool beVerbose
 ) {
     mBeVerbose = beVerbose;
+    gBeVerbose = mBeVerbose;
     if (mBeVerbose) {
         COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
     }
@@ -220,6 +234,15 @@ LaunchMonFE::init(
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_init");
     }
+}
+
+/**
+ *
+ */
+int
+getState(void)
+{
+    return gLMONState;
 }
 
 /**
@@ -237,13 +260,10 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getRMInfo", rc);
     }
-    // If being verbose, register LMON status callbacks.
-    if (mBeVerbose) {
-        rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
-        // Not a fatal failure, but warn about this failure.
-        if (LMON_OK != rc) {
-            GLADIUS_WARN("LMON_fe_regStatusCB Failed...");
-        }
+    // Register LMON status callbacks.
+    rc = LMON_fe_regStatusCB(mSessionNum, statusFuncCallback);
+    if (LMON_OK != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_regStatusCB", rc);
     }
 }
 

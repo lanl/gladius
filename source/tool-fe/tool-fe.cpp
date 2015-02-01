@@ -70,6 +70,8 @@ ToolFE::mGetStateFromEnvs(void)
 ToolFE::ToolFE(
     void
 ) : mBeVerbose(false)
+  , mConnectionTimeoutInSec(toolcommon::unlimitedTimeout)
+  , mMaxRetries(toolcommon::unlimitedRetries)
 {
     mGetStateFromEnvs();
 }
@@ -148,9 +150,9 @@ ToolFE::mStartToolLashUpThread(void)
     std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
     mtLashUpComplete.wait(lock);
     luThread.join();
-    if (GLADIUS_SUCCESS != mtStatus) {
+    if (GLADIUS_SUCCESS != maStatus) {
         mLMONFE.shutdown();
-        GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", mtStatus);
+        GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", maStatus);
     }
 }
 
@@ -162,7 +164,7 @@ void
 ToolFE::mInitiateToolLashUp(void)
 {
     try {
-        mtStatus = GLADIUS_SUCCESS;
+        maStatus = GLADIUS_SUCCESS;
         echoLaunchStart(mAppArgs);
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs);
@@ -174,10 +176,13 @@ ToolFE::mInitiateToolLashUp(void)
         mMRNFE.createNetworkFE(mLMONFE.getProcTab());
         // Send info to daemons.
         mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
+        // Connect the MRNet tree.
+        // SKG Resume
+        mMRNFE.connect();
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;
-        mtStatus = GLADIUS_ERR_LMON;
+        maStatus = GLADIUS_ERR_LMON;
     }
     // Notify main thread unconditionally.
     mtLashUpComplete.notify_one();

@@ -17,6 +17,8 @@
 #include "tool-common/tool-common.h"
 
 #include <string>
+#include <atomic>
+#include <cstdint>
 
 namespace gladius {
 namespace mrnet {
@@ -65,7 +67,10 @@ public:
  */
 class MRNetFE {
 private:
+    //
     static const std::string sCommNodeName;
+    //
+    std::atomic<uint64_t> maNConnectedBEs;
     // Be verbose or not.
     bool mBeVerbose = false;
     // Base session directory.
@@ -86,6 +91,9 @@ private:
     toolcommon::LeafInfo mLeafInfo;
     // A mapping between MRNet ranks and target task IDs.
     std::map< int, toolcommon::TxList<int> > mMRNetRankToTIDsMap;
+    // Registers MRNet even callbacks.
+    void
+    mRegisterEventCallbacks(void);
     //
     bool
     mDetermineAndSetPaths(std::string &whatsWrong);
@@ -116,6 +124,7 @@ public:
     //
     void
     finalize(void);
+
     /**
      * Sets MRNetFE verbosity.
      */
@@ -131,6 +140,9 @@ public:
     getLeafInfo(void) const {
         return mLeafInfo;
     }
+    //
+    void
+    connect(void);
 };
 
 } // end mrnet namespace
