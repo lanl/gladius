@@ -195,7 +195,7 @@ feToBEPack(
         for (j = 0;
              j < (leafInfo->daemons.size() / nLeaves)
                  + (leafInfo->daemons.size() % nLeaves > i ? 1 : 0);
-             j++) {
+             ++j, daemonIter++, daemonCount++) {
             if (daemonIter == leafInfo->daemons.end()) break;
             len = strlen(daemonIter->c_str()) + 1;
             total += sizeof(int) + len;
@@ -213,8 +213,6 @@ feToBEPack(
             daemonRank = daemonCount + nNodes;
             (void)memcpy(ptr, (void *)(&daemonRank), sizeof(int));
             ptr += sizeof(int);
-            daemonIter++;
-            daemonCount++;
         }
         (void)memcpy(childCountPtr, (void *)&j, sizeof(int));
     }
@@ -406,7 +404,9 @@ MRNetFE::createNetworkFE(
     if (!mLeafInfo.networkTopology) {
         GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
     }
+    //
     mNTreeNodes = mLeafInfo.networkTopology->get_NumNodes();
+    //
     mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
                              hosts.hostNames().cend());
     //

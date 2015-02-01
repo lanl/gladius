@@ -8,7 +8,6 @@
  * Copyright (c) 2003-2012 Dorian C. Arnold, Philip C. Roth, Barton P. Miller
  * Detailed MRNet usage rights in "LICENSE" file in the MRNet distribution.
  *
- * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  */
 
 #ifndef GLADIUS_MRNET_MRNET_FE_H_INCLUDED
