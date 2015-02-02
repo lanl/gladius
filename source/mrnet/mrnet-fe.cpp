@@ -514,12 +514,22 @@ MRNetFE::mCreateDaemonTIDMap(void)
 }
 
 /**
- *
+ * Returns GLADIUS_SUCCESS if all expected participants have connected
+ * successfully.
  */
-void
+int
 MRNetFE::connect(void)
 {
     if (mBeVerbose) {
         COMP_COUT << "Connecting" << std::endl;
     }
+    try {
+    }
+    catch (const std::exception &e) {
+        if (mBeVerbose) {
+            GLADIUS_CERR << e.what() << std::endl;
+        }
+        return GLADIUS_NOT_CONNECTED;
+    }
+    return GLADIUS_SUCCESS;
 }

@@ -156,6 +156,31 @@ public:
         std::string &maybeRes,
         int &errnoIfNotSuccess
     );
+    //
+    template <typename T>
+    static int
+    getEnvAs(
+        const std::string &envString,
+        T &as,
+        int base = 10
+    ) {
+        using std::is_same;
+
+        if (!envVarSet(envString)) {
+            return GLADIUS_ENV_NOT_SET;
+        }
+        if (is_same<T, int>::value) {
+            as = std::stoi(envString, 0, base);
+        }
+        else if (is_same<T, long>::value) {
+            as = std::stol(envString, 0, base);
+        }
+        else {
+            // Type not supported.
+            GLADIUS_THROW("Type case not implemented!");
+        }
+        return GLADIUS_SUCCESS;
+    }
 };
 
 } // end core namespace

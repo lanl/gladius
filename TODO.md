@@ -1,5 +1,6 @@
 # Gladius TODO
 
+- Implement component registry scheme.
 - Register timeout and retry environment variabes to tool FE.
 - Automatically push PATH to remote hosts.
   Now, we are relying on paths to the base infrastructure to be in .rcs that get

@@ -141,7 +141,7 @@ public:
         return mLeafInfo;
     }
     //
-    void
+    int
     connect(void);
 };
 

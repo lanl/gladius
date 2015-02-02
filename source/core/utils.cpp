@@ -8,6 +8,9 @@
 
 #include "core/utils.h"
 
+#include <type_traits>
+#include <cassert>
+
 using namespace gladius::core;
 
 const std::string utils::osPathSep = "/";

@@ -62,6 +62,9 @@ echoLaunchStart(const gladius::core::Args &args)
 
 } // end namespace
 
+const toolcommon::timeout_t ToolFE::sDefaultTimeout = 30;
+const toolcommon::retry_t ToolFE::sDefaultMaxRetries = 8;
+
 /**
  * Component registration.
  */
@@ -87,6 +90,34 @@ ToolFE::mGetStateFromEnvs(void)
     }
     else {
         mBeVerbose = false;
+    }
+    //
+    auto rc = core::utils::getEnvAs(
+                  ENV_VAR_CONNECT_MAX_RETRIES,
+                  mMaxRetries
+              );
+    // Not set, so default to some number of retries.
+    if (GLADIUS_ENV_NOT_SET == rc) {
+        mMaxRetries = sDefaultMaxRetries;
+    }
+    else if (GLADIUS_SUCCESS != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("core::utils::getEnvAs", rc);
+    }
+    if (mMaxRetries <= 0) mMaxRetries = toolcommon::unlimitedRetries;
+    //
+    rc = core::utils::getEnvAs(
+             ENV_VAR_CONNECT_TIMEOUT_IN_SEC,
+             mConnectionTimeoutInSec
+         );
+    // Not set, so default to some timeout.
+    if (GLADIUS_ENV_NOT_SET == rc) {
+        mConnectionTimeoutInSec = sDefaultTimeout;
+    }
+    else if (GLADIUS_SUCCESS != rc) {
+        GLADIUS_THROW_CALL_FAILED_RC("core::utils::getEnvAs", rc);
+    }
+    if (mConnectionTimeoutInSec <= 0) {
+        mConnectionTimeoutInSec = toolcommon::unlimitedTimeout;
     }
 }
 
@@ -183,6 +214,27 @@ ToolFE::mStartToolLashUpThread(void)
 }
 
 /**
+ *
+ */
+void
+ToolFE::mConnectMRNetTree(void)
+{
+    // TODO add a timer here
+    decltype(mMaxRetries) attempt = 1;
+    do {
+        if (mBeVerbose) {
+            COMP_COUT << "Connection Attempt: " << attempt << std::endl;
+        }
+        auto status = mMRNFE.connect();
+        if (GLADIUS_SUCCESS == status) break;
+        if (toolcommon::unlimitedRetries == mMaxRetries) continue;
+        if (attempt++ >= mMaxRetries) {
+            GLADIUS_THROW("Max Retries Reached");
+        }
+    } while (true);
+}
+
+/**
  * The thread that initiates the tool lash-up.  This is NOT the main thread, so
  * this is why we don't throw in the exceptional case.
  */
@@ -203,8 +255,7 @@ ToolFE::mInitiateToolLashUp(void)
         // Send info to daemons.
         mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
         // Connect the MRNet tree.
-        // SKG Resume
-        mMRNFE.connect();
+        mConnectMRNetTree();
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

@@ -29,6 +29,7 @@ public:
         UI_TERM,
         UI_GUI
     };
+
     /**
      * Factory function that takes a UI type and args and produces a UI based on
      * the provided input. Throws GladiusException on failure.
