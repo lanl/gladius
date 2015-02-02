@@ -36,14 +36,14 @@ using namespace gladius::mrnet;
 
 namespace {
 // This component's name.
-static const std::string CNAME = "mrnetfe";
+const std::string CNAME = "mrnetfe";
 // CNAME's color code.
-static const std::string NAMEC =
+const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
-#define COMP_VCOUT(streamInsertions)                                           \
+#define VCOMP_COUT(streamInsertions)                                           \
 do {                                                                           \
     if (this->mBeVerbose) {                                                    \
         COMP_COUT << streamInsertions;                                         \
@@ -311,7 +311,7 @@ MRNetFE::init(
     string whatsWrong;
     try {
         mBeVerbose = beVerbose;
-        COMP_VCOUT("Initializing MRNet Front-End." << endl);
+        VCOMP_COUT("Initializing MRNet Front-End." << endl);
         if (!mDetermineAndSetPaths(whatsWrong)) {
             GLADIUS_THROW(whatsWrong);
         }
@@ -321,7 +321,7 @@ MRNetFE::init(
         mTopoFile = mSessionDir + utils::osPathSep
                   + utils::getHostname() + "-"
                   + std::to_string(getpid()) + "-" + CNAME + ".topo";
-        COMP_VCOUT("Topology Specification File: " << mTopoFile << endl);
+        VCOMP_COUT("Topology Specification File: " << mTopoFile << endl);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -359,7 +359,7 @@ MRNetFE::mDetermineAndSetPaths(
     using namespace std;
 
     whatsWrong = "";
-    COMP_VCOUT("Determining and Setting Paths." << std::endl);
+    VCOMP_COUT("Determining and Setting Paths." << std::endl);
     // Make sure that we can find mrnet_commnode. Really just to get the base
     // MRNet installation path. That way we can find the libraries that we need.
     string cnPath;
@@ -416,7 +416,7 @@ MRNetFE::createNetworkFE(
 ) {
     // First, create and populate MRNet network topology file.
     // TODO dynamic TopologyType based on job characteristics.
-    COMP_VCOUT("Creating and Populating MRNet Topology" << std::endl);
+    VCOMP_COUT("Creating and Populating MRNet Topology" << std::endl);
     // Stash the process table because we'll need this info later.
     mProcTab = procTab;
     //
@@ -500,7 +500,7 @@ MRNetFE::mCreateDaemonTIDMap(void)
         hostToMrnetRankMap[chn] = nodeRank;
     }
     // Now prepare info to be transfered to the remote daemons.
-    auto loopi = 0UL;
+    decltype(mNTreeNodes) loopi = 0;
     for (auto &host : hostTIDMap) {
         // Convenience TID vector reference.
         auto &tvf = host.second;
@@ -539,15 +539,15 @@ MRNetFE::connect(void)
 {
     using namespace std;
 
-    COMP_VCOUT("Trying to Connect..." << endl);
+    VCOMP_COUT("Trying to Connect..." << endl);
     try {
         if (mNumAppNodes == (size_t)MRNetFEGlobals::numCallbacks) {
             return GLADIUS_SUCCESS;
         }
         else {
-            COMP_VCOUT("Sill waiting for all daemons to report back..."
+            VCOMP_COUT("Sill waiting for all daemons to report back..."
                        << endl);
-            COMP_VCOUT("*** "
+            VCOMP_COUT("*** "
                        << setw(6) << setfill('0')
                        << MRNetFEGlobals::numCallbacks << " Out of "
                        << setw(6) << setfill('0')
