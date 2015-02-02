@@ -19,10 +19,19 @@ using namespace gladius;
 // Place for Gladius-specific environment variables.
 ////////////////////////////////////////////////////////////////////////////////
 namespace {
-static const std::vector<core::EnvironmentVar> gladiusEnvVars = {
+const std::vector<core::EnvironmentVar> gladiusEnvVars = {
     {GLADIUS_TOOL_FE_VERBOSE_STR, "Makes tools actions verbose when set."},
     {GLADIUS_NO_TERM_COLORS_STR, "Disables colorized terminal output when set."}
 };
+
+/**
+ *
+ */
+void
+registerComponents(core::Environment &theEnv) {
+    theEnv.addToRegistry(PACKAGE_NAME, gladiusEnvVars);
+
+}
 }
 
 /**
@@ -35,10 +44,10 @@ Gladius::Gladius(
   , mUI(ui::UIFactory::getUI(mArgs, ui::UIFactory::UI_TERM))
 {
     try {
+        registerComponents(mEnv);
         // Stash a copy of the args.
         mArgs = args;
         mUI.init(args);
-        mEnv.addToRegistry(PACKAGE_NAME, gladiusEnvVars);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

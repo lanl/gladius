@@ -77,6 +77,9 @@ public:
     //
     bool
     envSane(std::string &whatsWrong);
+    //
+    static void
+    registerComponent(void);
 };
 
 }

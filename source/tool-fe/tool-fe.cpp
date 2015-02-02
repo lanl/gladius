@@ -33,6 +33,18 @@ static const std::string NAMEC =
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 
+////////////////////////////////////////////////////////////////////////////////
+// Place for ToolFE-specific environment variables.
+////////////////////////////////////////////////////////////////////////////////
+#define ENV_VAR_CONNECT_TIMEOUT_IN_SEC "GLADIUS_TOOL_FE_CONNECT_TIMEOUT_S"
+#define ENV_VAR_CONNECT_MAX_RETRIES "GLADIUS_TOOL_FE_CONNECT_MAX_RETRIES"
+namespace {
+static const std::vector<core::EnvironmentVar> compEnvVars = {
+    {ENV_VAR_CONNECT_TIMEOUT_IN_SEC, "Connection timeout in seconds."},
+    {ENV_VAR_CONNECT_MAX_RETRIES, "Maximum number of connection retries."}
+};
+}
+
 /**
  *
  */
@@ -49,6 +61,20 @@ echoLaunchStart(const gladius::core::Args &args)
 }
 
 } // end namespace
+
+/**
+ * Component registration.
+ */
+void
+registerComponent(void)
+{
+    // Register this component's environment variables with the central
+    // registry.
+    core::Environment::TheEnvironment().addToRegistry(
+        "Tool Front-end",
+        compEnvVars
+    );
+}
 
 /**
  *
@@ -130,7 +156,7 @@ ToolFE::mInitializeToolInfrastructure(void)
         // First init LaunchMON
         mLMONFE.init(mBeVerbose);
         // Register function that is responsible for packing data for front-end
-        // to back-end transfers. The MRNetFE know how to do this.
+        // to back-end transfers. The MRNetFE knows how to do this.
         mLMONFE.regPackForFeToBe(mrnet::MRNetFE::getFEToBePackFun());
         // Then do the same for MRNet
         mMRNFE.init(mBeVerbose);
