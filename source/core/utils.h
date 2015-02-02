@@ -169,11 +169,13 @@ public:
         if (!envVarSet(envString)) {
             return GLADIUS_ENV_NOT_SET;
         }
+        // Else it's set, so grab its value.
+        auto envVal = getEnv(envString);
         if (is_same<T, int>::value) {
-            as = std::stoi(envString, 0, base);
+            as = std::stoi(envVal, 0, base);
         }
         else if (is_same<T, long>::value) {
-            as = std::stol(envString, 0, base);
+            as = std::stol(envVal, 0, base);
         }
         else {
             // Type not supported.

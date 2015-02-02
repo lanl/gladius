@@ -20,6 +20,8 @@
 #include "core/core.h"
 #include "tool-common/tool-common.h"
 
+#include <iomanip>
+
 using namespace gladius;
 using namespace gladius::toolfe;
 
@@ -364,8 +366,10 @@ LaunchMonFE::launchAndSpawnDaemons(
         GLADIUS_COUT_STAT << "Launcher PID: "
                           << mRMInfo.rm_launcher_pid
                           << std::endl;
-        GLADIUS_COUT_STAT << "Number of Spawned Daemons: "
+        GLADIUS_COUT_STAT << "Spawning "
+                          << setw(6) << setfill('0')
                           << hosts.nHosts()
+                          << " Daemons"
                           << std::endl;
         int jobidSize = 0;
         char jobid[PATH_MAX];
