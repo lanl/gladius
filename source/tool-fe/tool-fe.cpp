@@ -32,6 +32,13 @@ const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+// Output if this component is being verbose.
+#define VCOMP_COUT(streamInsertions)                                           \
+do {                                                                           \
+    if (this->mBeVerbose) {                                                    \
+        COMP_COUT << streamInsertions;                                         \
+    }                                                                          \
+} while (0)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Place for ToolFE-specific environment variables.
@@ -152,9 +159,7 @@ void
 ToolFE::mainLoop(
     const core::Args &args
 ) {
-    if (mBeVerbose) {
-        COMP_COUT << "Entering Main Loop." << std::endl;
-    }
+    VCOMP_COUT("Entering Main Loop." << std::endl);
     try {
         mAppArgs = args;
         // Make sure that all the required bits are
@@ -222,9 +227,7 @@ ToolFE::mConnectMRNetTree(void)
     // TODO add a timer here
     decltype(mMaxRetries) attempt = 1;
     do {
-        if (mBeVerbose) {
-            COMP_COUT << "Connection Attempt: " << attempt << std::endl;
-        }
+        VCOMP_COUT("Connection Attempt: " << attempt << std::endl);
         // Take a break and let things happen...
         sleep(1);
         // First make sure that the daemons are okay.
@@ -267,7 +270,7 @@ ToolFE::mInitiateToolLashUp(void)
         mMRNFE.createNetworkFE(mLMONFE.getProcTab());
         // Send info to daemons.
         mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
-        // Connect the MRNet tree.
+        // Wait for MRNet tree connections.
         mConnectMRNetTree();
     }
     catch (const std::exception &e) {

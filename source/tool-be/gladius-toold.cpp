@@ -4,6 +4,8 @@
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
+ *
+ * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  */
 
 #include "tool-be.h"
@@ -15,6 +17,24 @@
 
 #include <cstdlib>
 #include <string>
+
+// LMON Things /////////////////////////////////////////////////////////////////
+int
+unpackToolFEInfo(
+    void *buf,
+    int bufLen,
+    void *data
+) {
+    return 0;
+}
+namespace mLMONBE {
+
+void
+connect(void)
+{
+}
+
+}
 
 /**
  * Tool daemon main.
@@ -31,12 +51,17 @@ main(
 
     std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
     // TODO FIXME
-    freopen(fName.c_str(), "w", stdout);
+    FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
+    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen");
 
     try {
         auto lmonRC = LMON_be_init(LMON_VERSION, &argc, &argv);
         if (LMON_OK != lmonRC) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_init", lmonRC);
+        }
+        lmonRC = LMON_be_regUnpackForFeToBe(unpackToolFEInfo);
+        if (LMON_OK != lmonRC) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_regUnpackForFeToBe", lmonRC);
         }
         lmonRC = LMON_be_handshake(NULL);
         if (LMON_OK != lmonRC) {
@@ -70,6 +95,11 @@ main(
             mProcTab.dumpTo(std::cout);
         }
         ////////////////////////////////////////////////////////////////////////
+        mLMONBE::connect();
+
+
+
+
         int mLMONRank = 0;
         LMON_be_getMyRank(&mLMONRank);
         std::cout << "Hi from: " << mLMONRank << std::endl;

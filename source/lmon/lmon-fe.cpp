@@ -31,6 +31,13 @@ const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+// Output if this component is being verbose.
+#define VCOMP_COUT(streamInsertions)                                           \
+do {                                                                           \
+    if (this->mBeVerbose) {                                                    \
+        COMP_COUT << streamInsertions;                                         \
+    }                                                                          \
+} while (0)
 /// What to use for remote login
 const std::string REMOTE_LOGIN = "/usr/bin/ssh";
 // Global variable holding latest LaunchMON state (set by statusFuncCallback).
@@ -171,9 +178,7 @@ LaunchMonFE::mDetermineAndSetPaths(
     std::string &whatsWrong
 ) {
     whatsWrong = "";
-    if (mBeVerbose) {
-        COMP_COUT << "Determining and Setting Paths." << std::endl;
-    }
+    VCOMP_COUT("Determining and Setting Paths." << std::endl);
     // Make sure that our tool daemon is in our PATH.
     auto status = core::utils::which(sToolDName, mToolD);
     if (GLADIUS_SUCCESS != status) {
@@ -221,9 +226,7 @@ LaunchMonFE::init(
 ) {
     mBeVerbose = beVerbose;
     gBeVerbose = mBeVerbose;
-    if (mBeVerbose) {
-        COMP_COUT << "Initializing LaunchMon Front-End." << std::endl;
-    }
+    VCOMP_COUT("Initializing LaunchMon Front-End." << std::endl);
     std::string whatsWrong;
     if (!mDetermineAndSetPaths(whatsWrong)) {
         GLADIUS_THROW(whatsWrong);
@@ -386,9 +389,7 @@ void
 LaunchMonFE::sendDaemonInfo(
     const toolcommon::LeafInfo &leafInfo
 ) {
-    if (mBeVerbose) {
-        COMP_COUT << "Sending Daemon Info." << std::endl;
-    }
+    VCOMP_COUT("Sending Daemon Info." << std::endl);
     if (!mFEToBePackFn) {
         GLADIUS_THROW("Front-end to Back-end packing function not set.");
     }

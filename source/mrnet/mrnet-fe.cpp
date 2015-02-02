@@ -381,9 +381,7 @@ MRNetFE::finalize(void)
 {
     using namespace std;
     try {
-        if (mBeVerbose) {
-            COMP_COUT << "Finalizing MRNet Front-End." << endl;
-        }
+        VCOMP_COUT("Finalizing MRNet Front-End." << endl);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
