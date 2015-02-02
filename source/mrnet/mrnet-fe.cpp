@@ -42,6 +42,14 @@ static const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+// Output if this component is being verbose.
+#define COMP_VCOUT(streamInsertions)                                           \
+do {                                                                           \
+    if (this->mBeVerbose) {                                                    \
+        COMP_COUT << streamInsertions;                                         \
+    }                                                                          \
+} while (0)
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -303,9 +311,7 @@ MRNetFE::init(
     string whatsWrong;
     try {
         mBeVerbose = beVerbose;
-        if (mBeVerbose) {
-            COMP_COUT << "Initializing MRNet Front-End." << endl;
-        }
+        COMP_VCOUT("Initializing MRNet Front-End." << endl);
         if (!mDetermineAndSetPaths(whatsWrong)) {
             GLADIUS_THROW(whatsWrong);
         }
@@ -315,10 +321,7 @@ MRNetFE::init(
         mTopoFile = mSessionDir + utils::osPathSep
                   + utils::getHostname() + "-"
                   + std::to_string(getpid()) + "-" + CNAME + ".topo";
-        if (mBeVerbose) {
-            COMP_COUT << "Topology Specification File: "
-                      << mTopoFile << endl;
-        }
+        COMP_VCOUT("Topology Specification File: " << mTopoFile << endl);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -356,9 +359,7 @@ MRNetFE::mDetermineAndSetPaths(
     using namespace std;
 
     whatsWrong = "";
-    if (mBeVerbose) {
-        COMP_COUT << "Determining and Setting Paths." << std::endl;
-    }
+    COMP_VCOUT("Determining and Setting Paths." << std::endl);
     // Make sure that we can find mrnet_commnode. Really just to get the base
     // MRNet installation path. That way we can find the libraries that we need.
     string cnPath;
@@ -415,9 +416,7 @@ MRNetFE::createNetworkFE(
 ) {
     // First, create and populate MRNet network topology file.
     // TODO dynamic TopologyType based on job characteristics.
-    if (mBeVerbose) {
-        COMP_COUT << "Creating and Populating MRNet Topology" << std::endl;
-    }
+    COMP_VCOUT("Creating and Populating MRNet Topology" << std::endl);
     // Stash the process table because we'll need this info later.
     mProcTab = procTab;
     //
@@ -540,28 +539,25 @@ MRNetFE::connect(void)
 {
     using namespace std;
 
-    if (mBeVerbose) {
-        COMP_COUT << "Trying to Connect..." << endl;
-    }
+    COMP_VCOUT("Trying to Connect..." << endl);
     try {
         if (mNumAppNodes == (size_t)MRNetFEGlobals::numCallbacks) {
             return GLADIUS_SUCCESS;
         }
         else {
-            if (mBeVerbose) {
-                COMP_COUT << "Sill waiting for all daemons to report back..."
-                          << endl;
-                COMP_COUT << "*** "
-                          << setw(6) << setfill('0')
-                          << MRNetFEGlobals::numCallbacks << " Out of "
-                          << setw(6) << setfill('0')
-                          << mNumAppNodes << " Daemons Reporting."
-                          << endl;
-            }
+            COMP_VCOUT("Sill waiting for all daemons to report back..."
+                       << endl);
+            COMP_VCOUT("*** "
+                       << setw(6) << setfill('0')
+                       << MRNetFEGlobals::numCallbacks << " Out of "
+                       << setw(6) << setfill('0')
+                       << mNumAppNodes << " Daemons Reporting."
+                       << endl);
             return GLADIUS_NOT_CONNECTED;
         }
     }
     catch (const std::exception &e) {
+        // If we are being verbose, then show the error.
         if (mBeVerbose) {
             GLADIUS_CERR << e.what() << std::endl;
         }
