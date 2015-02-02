@@ -171,17 +171,22 @@ public:
         }
         // Else it's set, so grab its value.
         auto envVal = getEnv(envString);
-        if (is_same<T, int>::value) {
-            as = std::stoi(envVal, 0, base);
+        try {
+            if (is_same<T, int>::value) {
+                as = std::stoi(envVal, 0, base);
+            }
+            else if (is_same<T, long>::value) {
+                as = std::stol(envVal, 0, base);
+            }
+            else {
+                // Type not supported.
+                GLADIUS_THROW("Type case not implemented!");
+            }
+            return GLADIUS_SUCCESS;
         }
-        else if (is_same<T, long>::value) {
-            as = std::stol(envVal, 0, base);
+        catch (const std::exception &e) {
+            return GLADIUS_ERR;
         }
-        else {
-            // Type not supported.
-            GLADIUS_THROW("Type case not implemented!");
-        }
-        return GLADIUS_SUCCESS;
     }
 };
 
