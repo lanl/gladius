@@ -225,11 +225,24 @@ ToolFE::mConnectMRNetTree(void)
         if (mBeVerbose) {
             COMP_COUT << "Connection Attempt: " << attempt << std::endl;
         }
+        // Take a break and let things happen...
+        sleep(1);
+        // First make sure that the daemons are okay.
+        if (!WIFBESPAWNED(mLMONFE.getState())) {
+            GLADIUS_THROW("The Tool Daemons Have Exited");
+        }
+        // Try to connect.
         auto status = mMRNFE.connect();
+        // All done - Get outta here...
         if (GLADIUS_SUCCESS == status) break;
+        // Something bad happened.
+        else if (GLADIUS_NOT_CONNECTED != status) {
+            GLADIUS_THROW_CALL_FAILED_RC("MRNetFE::connect", status);
+        }
+        // Unlimited retries, so just continue.
         if (toolcommon::unlimitedRetries == mMaxRetries) continue;
         if (attempt++ >= mMaxRetries) {
-            GLADIUS_THROW("Max Retries Reached");
+            GLADIUS_THROW("Max Retries Reached! Giving Up...");
         }
     } while (true);
 }

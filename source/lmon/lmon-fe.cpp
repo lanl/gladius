@@ -240,7 +240,7 @@ LaunchMonFE::init(
  *
  */
 int
-getState(void)
+LaunchMonFE::getState(void)
 {
     return gLMONState;
 }

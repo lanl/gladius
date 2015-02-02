@@ -313,7 +313,7 @@ public:
      * Returns the number of hosts.
      */
     size_t
-    nHosts(void) {
+    nHosts(void) const {
         return mHostNames.size();
     }
 

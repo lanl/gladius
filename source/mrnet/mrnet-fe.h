@@ -17,7 +17,6 @@
 #include "tool-common/tool-common.h"
 
 #include <string>
-#include <atomic>
 #include <cstdint>
 
 namespace gladius {
@@ -69,8 +68,6 @@ class MRNetFE {
 private:
     //
     static const std::string sCommNodeName;
-    //
-    std::atomic<uint64_t> maNConnectedBEs;
     // Be verbose or not.
     bool mBeVerbose = false;
     // Base session directory.
@@ -83,6 +80,8 @@ private:
     std::string mPrefixPath;
     // The process table of our job.
     toolcommon::ProcessTable mProcTab;
+    // The number of nodes in our job.
+    size_t mNumAppNodes = 0;
     // The MRNet network instance.
     MRN::Network *mNetwork = nullptr;
     // The number of tree nodes in our topology.

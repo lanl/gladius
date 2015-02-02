@@ -25,6 +25,8 @@
 #include <map>
 #include <algorithm>
 #include <set>
+#include <mutex>
+#include <iomanip>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -105,6 +107,7 @@ MRNetTopology::mGenFlatTopo(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// MRNetFE
 ////////////////////////////////////////////////////////////////////////////////
 namespace {
 /**
@@ -224,6 +227,11 @@ feToBEPack(
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+namespace MRNetFEGlobals {
+int numCallbacks;
+}
+
 /**
  * Connection event callback.
  */
@@ -232,7 +240,13 @@ beConnectCbFn(
     MRN::Event *event,
     void *dummy
 ) {
-
+    GLADIUS_UNUSED(dummy);
+    std::mutex mtx;
+    if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
+        && MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
+        std::lock_guard<std::mutex> lock(mtx);
+        MRNetFEGlobals::numCallbacks++;
+    }
 }
 } // end namespace
 
@@ -243,8 +257,10 @@ const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
  */
 MRNetFE::MRNetFE(
     void
-) : maNConnectedBEs(0)
-  , mPrefixPath("") { ; }
+) : mPrefixPath("")
+{
+    MRNetFEGlobals::numCallbacks = 0;
+}
 
 /**
  * Destructor.
@@ -385,7 +401,7 @@ MRNetFE::mRegisterEventCallbacks(void)
                   Event::TOPOLOGY_EVENT,
                   TopologyEvent::TOPOL_ADD_BE,
                   beConnectCbFn,
-                  this
+                  NULL
               );
     if (!rc) GLADIUS_THROW_CALL_FAILED("register_EventCallback");
 }
@@ -406,6 +422,8 @@ MRNetFE::createNetworkFE(
     mProcTab = procTab;
     //
     const auto &hosts = toolcommon::Hosts(mProcTab);
+    // Set the number of target hosts
+    mNumAppNodes = hosts.nHosts();
     // Create the topology file.
     MRNetTopology topo(
         mTopoFile,
@@ -520,10 +538,28 @@ MRNetFE::mCreateDaemonTIDMap(void)
 int
 MRNetFE::connect(void)
 {
+    using namespace std;
+
     if (mBeVerbose) {
-        COMP_COUT << "Connecting" << std::endl;
+        COMP_COUT << "Trying to Connect..." << endl;
     }
     try {
+        if (mNumAppNodes == (size_t)MRNetFEGlobals::numCallbacks) {
+            return GLADIUS_SUCCESS;
+        }
+        else {
+            if (mBeVerbose) {
+                COMP_COUT << "Sill waiting for all daemons to report back..."
+                          << endl;
+                COMP_COUT << "*** "
+                          << setw(6) << setfill('0')
+                          << MRNetFEGlobals::numCallbacks << " Out of "
+                          << setw(6) << setfill('0')
+                          << mNumAppNodes << " Daemons Reporting."
+                          << endl;
+            }
+            return GLADIUS_NOT_CONNECTED;
+        }
     }
     catch (const std::exception &e) {
         if (mBeVerbose) {
@@ -531,5 +567,5 @@ MRNetFE::connect(void)
         }
         return GLADIUS_NOT_CONNECTED;
     }
-    return GLADIUS_SUCCESS;
+    return GLADIUS_ERR;
 }
