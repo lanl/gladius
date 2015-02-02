@@ -42,10 +42,14 @@ do {                                                                           \
 } while (0)
 /// What to use for remote login
 const std::string REMOTE_LOGIN = "/usr/bin/ssh";
-// Global variable holding latest LaunchMON state (set by statusFuncCallback).
-int gLMONState = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+namespace LaunchMonFEGlobals {
 // Global variable that indicates whether or not this component will be verbose.
-bool gBeVerbose = false;
+bool beVerbose = false;
+// Global variable holding latest LaunchMON state (set by statusFuncCallback).
+int lmonState = 0;
+}
 
 /**
  * LaunchMON status callback.
@@ -60,32 +64,32 @@ statusFuncCallback(
         GLADIUS_THROW_INVLD_ARG();
     }
     // Set global state.
-    gLMONState = *status;
-    if (gBeVerbose) {
+    LaunchMonFEGlobals::lmonState = *status;
+    if (LaunchMonFEGlobals::beVerbose) {
         //
-        if (WIFREGISTERED(gLMONState)) {
+        if (WIFREGISTERED(LaunchMonFEGlobals::lmonState)) {
             COMP_COUT << "* Session Registered" << endl;
         }
         else {
             COMP_COUT << "* Session Not Registered" << endl;
         }
-        if (WIFBESPAWNED(gLMONState)) {
+        if (WIFBESPAWNED(LaunchMonFEGlobals::lmonState)) {
             COMP_COUT << "* Back-End Daemons Spawned" << endl;
         }
         else {
             COMP_COUT << "* Back-End Daemons Not Spawned or Exited" << endl;
         }
-        if (WIFMWSPAWNED(gLMONState)) {
+        if (WIFMWSPAWNED(LaunchMonFEGlobals::lmonState)) {
             COMP_COUT << "* MW Daemons Spawned" << endl;
         }
         else {
             COMP_COUT << "* MW Daemons Not Spawned or Exited" << endl;
         }
-        if (WIFDETACHED(gLMONState)) {
+        if (WIFDETACHED(LaunchMonFEGlobals::lmonState)) {
             COMP_COUT << "* The Job is Detached" << endl;
         }
         else {
-            if (WIFKILLED(gLMONState)) {
+            if (WIFKILLED(LaunchMonFEGlobals::lmonState)) {
                 COMP_COUT << "* The Job is Killed" << endl;
             }
             else {
@@ -113,8 +117,8 @@ LaunchMonFE::LaunchMonFE(
   , mEnginePath("")
   , mRemoteLogin(REMOTE_LOGIN
 ) {
-    gLMONState = 0;
-    gBeVerbose = mBeVerbose;
+    LaunchMonFEGlobals::lmonState = 0;
+    LaunchMonFEGlobals::beVerbose = mBeVerbose;
 }
 
 /**
@@ -227,7 +231,7 @@ LaunchMonFE::init(
     bool beVerbose
 ) {
     mBeVerbose = beVerbose;
-    gBeVerbose = mBeVerbose;
+    LaunchMonFEGlobals::beVerbose = mBeVerbose;
     VCOMP_COUT("Initializing LaunchMon Front-End." << std::endl);
     std::string whatsWrong;
     if (!mDetermineAndSetPaths(whatsWrong)) {
@@ -247,7 +251,7 @@ LaunchMonFE::init(
 int
 LaunchMonFE::getState(void)
 {
-    return gLMONState;
+    return LaunchMonFEGlobals::lmonState;
 }
 
 /**
