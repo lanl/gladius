@@ -10,8 +10,7 @@ bin_PROGRAMS = \
 gladius-toold
 
 gladius_toold_SOURCES = \
-tool-be.h tool-be.cpp \
-gladius-toold.cpp
+tool-be.h tool-be.cpp
 
 gladius_toold_CFLAGS =
 
@@ -21,9 +20,12 @@ ${GLADIUS_TOOL_COMMON_CPPFLAGS} \
 ${LMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 
+# TODO Remove
 gladius_toold_LDFLAGS = \
 ${LMONBE_LDFLAGS}
 
 gladius_toold_LDADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
-${top_builddir}/source/tool-common/libGladiusToolCommon.la
+${top_builddir}/source/tool-common/libGladiusToolCommon.la \
+${top_builddir}/source/lmon/libGladiusLaunchMONBE.la \
+${top_builddir}/source/mrnet/libGladiusMRNetBE.la

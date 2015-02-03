@@ -9,8 +9,12 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
-libGladiusLaunchMONFE.la
+libGladiusLaunchMONFE.la \
+libGladiusLaunchMONBE.la
 
+################################################################################
+# Front-end
+################################################################################
 libGladiusLaunchMONFE_la_SOURCES = \
 lmon-fe.h lmon-fe.cpp
 
@@ -26,5 +30,27 @@ ${LMONFE_LDFLAGS} \
 -version-info ${LIBVINFO}
 
 libGladiusLaunchMONFE_la_LIBADD = \
+${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/tool-common/libGladiusToolCommon.la
+
+################################################################################
+# Back-end
+################################################################################
+
+libGladiusLaunchMONBE_la_SOURCES = \
+lmon-be.h lmon-be.cpp
+
+libGladiusLaunchMONBE_la_CFLAGS =
+
+libGladiusLaunchMONBE_la_CPPFLAGS = \
+-I${top_srcdir}/source \
+${GLADIUS_TOOL_COMMON_CPPFLAGS} \
+${LMON_CPPFLAGS}
+
+libGladiusLaunchMONBE_la_LDFLAGS = \
+${LMONBE_LDFLAGS} \
+-version-info ${LIBVINFO}
+
+libGladiusLaunchMONBE_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
 ${top_builddir}/source/tool-common/libGladiusToolCommon.la

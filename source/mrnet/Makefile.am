@@ -9,10 +9,13 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
-libGladiusMRNetFE.la
+libGladiusMRNetFE.la \
+libGladiusMRNetBE.la
 
+################################################################################
+# Front-end
+################################################################################
 libGladiusMRNetFE_la_SOURCES = \
-mrnet-paths.h \
 mrnet-fe.h mrnet-fe.cpp
 
 libGladiusMRNetFE_la_CFLAGS =
@@ -31,4 +34,28 @@ ${BOOST_LDFLAGS} -lboost_timer \
 -version-info ${LIBVINFO}
 
 libGladiusMRNetFE_la_LIBADD = \
+${top_builddir}/source/core/libGladiusCore.la
+
+################################################################################
+# Back-end
+################################################################################
+libGladiusMRNetBE_la_SOURCES = \
+mrnet-be.h mrnet-be.cpp
+
+libGladiusMRNetBE_la_CFLAGS =
+
+libGladiusMRNetBE_la_CXXFLAGS =
+
+libGladiusMRNetBE_la_CPPFLAGS = \
+-I${top_srcdir}/source \
+${GLADIUS_TOOL_COMMON_CPPFLAGS} \
+${MRNET_CPPFLAGS} \
+${BOOST_CPPFLAGS}
+
+libGladiusMRNetBE_la_LDFLAGS = \
+${MRNETBE_LDFLAGS} \
+${BOOST_LDFLAGS} -lboost_timer \
+-version-info ${LIBVINFO}
+
+libGladiusMRNetBE_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la

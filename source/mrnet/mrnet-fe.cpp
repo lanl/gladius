@@ -543,7 +543,7 @@ MRNetFE::connect(void)
             return GLADIUS_SUCCESS;
         }
         else {
-            VCOMP_COUT("Sill waiting for all daemons to report back..."
+            VCOMP_COUT("Sill Waiting for All Daemons to Report Back..."
                        << endl);
             VCOMP_COUT("*** "
                        << setw(6) << setfill('0')
