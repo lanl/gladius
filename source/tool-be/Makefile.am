@@ -10,6 +10,7 @@ bin_PROGRAMS = \
 gladius-toold
 
 gladius_toold_SOURCES = \
+gladius-toold.cpp \
 tool-be.h tool-be.cpp
 
 gladius_toold_CFLAGS =
