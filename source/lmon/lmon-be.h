@@ -37,6 +37,8 @@ class LaunchMonBE {
     core::Args mArgs;
     // A handle to the FE to BE function.
     FEToBEUnpackFnP mFEToBEUnpackFn = nullptr;
+    // My ID.
+    int mLID = 0;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
@@ -73,6 +75,9 @@ public:
     createAndPopulateProcTab(
         toolcommon::ProcessTable &procTab
     );
+    //
+    void
+    finalize(void);
 
 };
 

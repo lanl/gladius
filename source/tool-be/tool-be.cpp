@@ -77,6 +77,22 @@ ToolBE::~ToolBE(void)
  *
  */
 void
+ToolBE::mInitLMON(
+    const core::Args &args,
+    bool beVerbose
+) {
+    mLMONBE.init(args, beVerbose);
+    // We know how to do this, so let LMON know what to call.
+    mLMONBE.regUnpackForFEToBE(feToBeUnpack);
+    mLMONBE.handshake();
+    // Let LMON populate our process table.
+    mLMONBE.createAndPopulateProcTab(mProcTab);
+}
+
+/**
+ *
+ */
+void
 ToolBE::init(
     const core::Args &args,
     bool beVerbose
@@ -86,12 +102,7 @@ ToolBE::init(
         mArgs = args;
         VCOMP_COUT("Initializing Tool Back-End..." << std::endl);
         //
-        mLMONBE.init(mArgs, mBeVerbose);
-        // We know how to do this, so let LMON know what to call.
-        mLMONBE.regUnpackForFEToBE(feToBeUnpack);
-        mLMONBE.handshake();
-        // Let LMON populate our process table.
-        mLMONBE.createAndPopulateProcTab(mProcTab);
+        mInitLMON(mArgs, mBeVerbose);
         //
         mMRNBE.init(mBeVerbose);
     }
@@ -116,8 +127,25 @@ ToolBE::redirectOutputTo(
 /**
  *
  */
-lmonbe::FEToBEUnpackFnP
-ToolBE::getFEToBeUnpackFun(void)
+void
+ToolBE::connect(void)
 {
-    return feToBeUnpack;
+}
+
+/**
+ *
+ */
+void
+ToolBE::mainLoop(void)
+{
+    VCOMP_COUT("Entering Main Loop" << std::endl);
+}
+
+/**
+ *
+ */
+void
+ToolBE::finalize(void)
+{
+    mLMONBE.finalize();
 }

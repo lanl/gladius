@@ -35,6 +35,14 @@ private:
     mrnetbe::MRNetBE mMRNBE;
     // My process table (not the job one, but mine).
     toolcommon::ProcessTable mProcTab;
+    ////////////////////////////////////////////////////////////////////////////
+    // Private Functions
+    ////////////////////////////////////////////////////////////////////////////
+    void
+    mInitLMON(
+        const core::Args &args,
+        bool beVerbose
+    );
 
 public:
     //
@@ -48,11 +56,17 @@ public:
         bool beVerbose
     );
     //
+    void
+    connect(void);
+    //
     static void
     redirectOutputTo(const std::string &base);
     //
-    lmonbe::FEToBEUnpackFnP
-    getFEToBeUnpackFun(void);
+    void
+    mainLoop(void);
+    //
+    void
+    finalize(void);
 };
 
 } // end toolbe namespace

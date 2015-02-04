@@ -14,8 +14,6 @@
 #include "core/session.h"
 #include "tool-be/tool-be.h"
 
-#include "lmon_api/lmon_be.h"
-
 #include <cstdlib>
 #include <string>
 
@@ -31,7 +29,9 @@ main(
 ) {
     using namespace gladius;
     using namespace gladius::toolbe;
-
+    // Return status.
+    int rs = EXIT_SUCCESS;
+    //
     try {
         const auto beVerbose = true;
         // Turn off colors. They make logs look awful.
@@ -45,28 +45,13 @@ main(
         );
         toolbe::ToolBE toolBE;
         toolBE.init(args, beVerbose);
-        // FIXME
+        toolBE.connect();
+        toolBE.mainLoop();
+        toolBE.finalize();
     }
-
-#if 0
-        mLMONBE::connect();
-
-        int mLMONRank = 0;
-        LMON_be_getMyRank(&mLMONRank);
-        std::cout << "Hi from: " << mLMONRank << std::endl;
-
-        //lmonRC = LMON_be_recvUsrData(NULL);
-        //lmonRC = LMON_be_sendUsrData(NULL);
-        lmonRC = LMON_be_finalize();
-        if (LMON_OK != lmonRC) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);
-        }
-
-    }
-#endif
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;
-        exit(EXIT_FAILURE);
+        rs = EXIT_FAILURE;
     }
-    exit(EXIT_SUCCESS);
+    exit(rs);
 }

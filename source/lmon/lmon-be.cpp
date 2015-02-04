@@ -89,6 +89,7 @@ LaunchMonBE::init(
     if (LMON_OK != status) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_be_init", status);
     }
+    LMON_be_getMyRank(&mLID);
 }
 
 /**
@@ -159,6 +160,23 @@ LaunchMonBE::createAndPopulateProcTab(
         if (mBeVerbose) {
             std::cout << "Done Getting Process Table" << std::endl;
             procTab.dumpTo(std::cout);
+        }
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+}
+
+/**
+ *
+ */
+void
+LaunchMonBE::finalize(void)
+{
+    try {
+        auto lmonRC = LMON_be_finalize();
+        if (LMON_OK != lmonRC) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);
         }
     }
     catch (const std::exception &e) {
