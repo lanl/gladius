@@ -4,6 +4,8 @@
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
+ *
+ * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  */
 
 /**
@@ -25,6 +27,7 @@
 #include <ostream>
 #include <iostream>
 
+#include <limits.h>
 
 #include "lmon_api/lmon_proctab.h"
 #include "mrnet/MRNet.h"
@@ -330,6 +333,38 @@ public:
         return chn;
     }
 };
+
+}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+namespace gladius {
+namespace toolbecommon {
+
+extern "C" {
+/**
+ *
+ */
+typedef struct ToolLeafInfoT {
+    char hostName[HOST_NAME_MAX];
+    char parentHostName[HOST_NAME_MAX];
+    int rank;
+    int parentPort;
+    int parentRank;
+} ToolLeafInfoT;
+
+/**
+ *
+ */
+typedef struct ToolLeafInfoArrayT {
+    int size;
+    ToolLeafInfoT *leaves;
+} ToolLeafInfoArrayT;
+
+
+} // extern "C"
 
 }
 }

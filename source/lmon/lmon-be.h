@@ -77,8 +77,12 @@ public:
     );
     //
     void
+    recvConnectionInfo(
+        toolbecommon::ToolLeafInfoArrayT &lia
+    );
+    //
+    void
     finalize(void);
-
 };
 
 } // end lmonbe namespace

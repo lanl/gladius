@@ -232,7 +232,7 @@ ToolFE::mConnectMRNetTree(void)
         sleep(1);
         // First make sure that the daemons are okay.
         if (!WIFBESPAWNED(mLMONFE.getState())) {
-            GLADIUS_THROW("The Tool Daemons Have Exited");
+            GLADIUS_THROW("The Tool Daemons Have Exited.");
         }
         // Try to connect.
         auto status = mMRNFE.connect();

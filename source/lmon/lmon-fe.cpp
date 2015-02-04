@@ -341,7 +341,7 @@ LaunchMonFE::launchAndSpawnDaemons(
         ////////////////////////////////////////////////////////////////////////
         // New sesh...
         mStartSession();
-        GLADIUS_COUT_STAT << "Launching and Spawning Daemons" << std::endl;
+        GLADIUS_COUT_STAT << "Launching and Spawning Daemons." << std::endl;
         auto rc = LMON_fe_launchAndSpawnDaemons(
                       mSessionNum,
                       mHostname.c_str(),

@@ -171,6 +171,19 @@ LaunchMonBE::createAndPopulateProcTab(
  *
  */
 void
+LaunchMonBE::recvConnectionInfo(
+    toolbecommon::ToolLeafInfoArrayT &lia
+) {
+    auto status = LMON_be_recvUsrData((void *)&lia);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_recvUsrData", status);
+    }
+}
+
+/**
+ *
+ */
+void
 LaunchMonBE::finalize(void)
 {
     try {
