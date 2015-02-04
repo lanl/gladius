@@ -316,7 +316,7 @@ MRNetFE::init(
             GLADIUS_THROW(whatsWrong);
         }
         mSetEnvs();
-        mSessionDir = core::Session::TheSession().sessionDir();
+        mSessionDir = core::SessionFE::TheSession().sessionDir();
         // Create a unique name for the file.
         mTopoFile = mSessionDir + utils::osPathSep
                   + utils::getHostname() + "-"

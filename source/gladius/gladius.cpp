@@ -39,7 +39,7 @@ registerComponents(core::Environment &theEnv) {
  */
 Gladius::Gladius(
     const core::Args &args
-) : mCurrentSession(core::Session::TheSession())
+) : mCurrentSession(core::SessionFE::TheSession())
   , mEnv(core::Environment::TheEnvironment())
   , mUI(ui::UIFactory::getUI(mArgs, ui::UIFactory::UI_TERM))
 {

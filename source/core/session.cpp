@@ -20,16 +20,16 @@ using namespace gladius::core;
 /**
  * Name of the dot directory where session data are stored.
  */
-const std::string Session::sDotName = "." PACKAGE_NAME;
+const std::string SessionFE::sDotName = "." PACKAGE_NAME;
 
 /**
  * Access to the session singleton.
  */
-Session &
-Session::TheSession(void)
+SessionFE &
+SessionFE::TheSession(void)
 {
     static bool opened = false;
-    static Session singleton;
+    static SessionFE singleton;
     // Open the session once.
     if (!opened) {
         // Set this BEFORE and instance actions. Badness will happen if you move
@@ -43,10 +43,10 @@ Session::TheSession(void)
 /**
  * Just return the singleton.
  */
-Session &
-Session::operator=(const Session &other) {
+SessionFE &
+SessionFE::operator=(const SessionFE &other) {
     GLADIUS_UNUSED(other);
-    return Session::TheSession();
+    return SessionFE::TheSession();
 }
 
 /**
@@ -54,16 +54,16 @@ Session::operator=(const Session &other) {
  * A storm of stats will rain down... XXX Maybe we should protect against this.
  */
 void
-Session::mOpen(void)
+SessionFE::mOpen(void)
 {
     try {
         auto home = core::utils::getEnv("HOME");
-        mSessionDir = home + core::utils::osPathSep + sDotName;
+        mSessionFEDir = home + core::utils::osPathSep + sDotName;
         // if this doesn't exist, then create it.
-        if (!core::utils::fileExists(mSessionDir)) {
-            GLADIUS_COUT_STAT << "Creating " + mSessionDir << std::endl;
+        if (!core::utils::fileExists(mSessionFEDir)) {
+            GLADIUS_COUT_STAT << "Creating " + mSessionFEDir << std::endl;
             int errNo = 0;
-            auto status = core::utils::mkDir(mSessionDir, errNo);
+            auto status = core::utils::mkDir(mSessionFEDir, errNo);
             if (GLADIUS_SUCCESS != status) {
                 GLADIUS_CERR << "mkDir Failed: "
                              << core::utils::getStrError(errNo)
@@ -73,7 +73,7 @@ Session::mOpen(void)
         }
     }
     catch (const std::exception &e) {
-        GLADIUS_CERR_WARN << "Session creation failed: "
+        GLADIUS_CERR_WARN << "Session Creation Failed: "
                           << e.what() << std::endl;
     }
 }

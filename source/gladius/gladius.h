@@ -21,7 +21,7 @@ private:
     //
     core::Args mArgs;
     //
-    core::Session &mCurrentSession;
+    core::SessionFE &mCurrentSession;
     //
     core::Environment &mEnv;
     //

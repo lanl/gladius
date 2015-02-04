@@ -174,7 +174,7 @@ class Terminal : public UI {
     //
     static const std::string sHistFileName;
     //
-    core::Session &mSession;
+    core::SessionFE &mSession;
     //
     std::string mHistFile;
     //
@@ -186,7 +186,7 @@ class Terminal : public UI {
     //
     HistEvent mHistEvent;
     //
-    Terminal(void) : mSession(core::Session::TheSession()) { ; }
+    Terminal(void) : mSession(core::SessionFE::TheSession()) { ; }
     //
     ~Terminal(void);
     //

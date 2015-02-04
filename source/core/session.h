@@ -16,32 +16,32 @@ namespace core {
 /**
  *
  */
-class Session {
+class SessionFE {
     static const std::string sDotName;
     //
-    std::string mSessionDir;
+    std::string mSessionFEDir;
     //
-    Session(void) { ; }
+    SessionFE(void) { ; }
     //
     void
     mOpen(void);
     //
-    ~Session(void) { ; }
+    ~SessionFE(void) { ; }
 public:
     //
-    static Session &
+    static SessionFE &
     TheSession(void);
     //
     std::string
-    sessionDir(void) { return mSessionDir; }
+    sessionDir(void) { return mSessionFEDir; }
 
     /**
      * Disable copy constructor.
      */
-    Session(const Session &that) = delete;
+    SessionFE(const SessionFE &that) = delete;
     //
-    Session &
-    operator=(const Session &other);
+    SessionFE &
+    operator=(const SessionFE &other);
 };
 
 }
