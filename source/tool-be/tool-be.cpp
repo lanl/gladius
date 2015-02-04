@@ -69,6 +69,7 @@ ToolBE::init(
     try {
         mBeVerbose = beVerbose;
         mArgs = args;
+        VCOMP_COUT("Initializing Tool Back-End..." << std::endl);
         //
         mLMONBE.init(mArgs, mBeVerbose);
         //

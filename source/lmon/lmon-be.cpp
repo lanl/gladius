@@ -109,4 +109,40 @@ LaunchMonBE::init(
     if (LMON_OK != status) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", status);
     }
+    //
+    mCreateAndPopulateProcTab();
+}
+
+/**
+ *
+ */
+void
+LaunchMonBE::mCreateAndPopulateProcTab(void)
+{
+    try {
+        int numProcTabEntries = 0;
+        auto rc = LMON_be_getMyProctabSize(&numProcTabEntries);
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_getMyProctabSize", rc);
+        }
+        // Allocate room for the entries.
+        mProcTab = toolcommon::ProcessTable(numProcTabEntries);
+        // Now populate the thing...
+        int pSize = 0;
+        rc = LMON_be_getMyProctab(
+                 mProcTab.procTab(),
+                 &pSize,
+                 numProcTabEntries // Max Length
+             );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
+        }
+        if (true) {
+            std::cout << "Done Getting Process Table" << std::endl;
+            mProcTab.dumpTo(std::cout);
+        }
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
 }

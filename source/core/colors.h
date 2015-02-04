@@ -38,11 +38,13 @@ public:
         MAGENTA,
         DGRAY,
     };
+
     /**
      * Returns reference to the color instance.
      */
     static colors &
     color(void);
+
     /**
      * Disable copy constructor.
      */
@@ -50,6 +52,7 @@ public:
     //
     colors &
     operator=(const colors &other);
+
     /**
      *
      */
@@ -58,6 +61,7 @@ public:
         if (!mColorize || c > ColorCodeTab.size()) return "";
         return ColorCodeTab[c].second;
     }
+
     /**
      *
      */
@@ -65,6 +69,14 @@ public:
     ansiEndColor(void) {
         if (!mColorize) return "";
         return "\033[0m";
+    }
+
+    /**
+     *
+     */
+    void
+    colorize(bool colors) {
+        mColorize = colors;
     }
 private:
     //

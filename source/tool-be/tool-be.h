@@ -46,7 +46,7 @@ public:
         bool beVerbose
     );
     //
-    void
+    static void
     redirectOutputTo(const std::string &base);
 };
 

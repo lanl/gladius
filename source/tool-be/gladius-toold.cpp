@@ -11,12 +11,14 @@
 #include "tool-be.h"
 
 #include "core/core.h"
+#include "core/session.h"
 #include "tool-be/tool-be.h"
 
 #include "lmon_api/lmon_be.h"
 
 #include <cstdlib>
 #include <string>
+
 
 /**
  * Tool daemon main.
@@ -31,46 +33,22 @@ main(
     using namespace gladius::toolbe;
 
     try {
+        auto beVerbose = true;
+        // Turn off colors. They make logs look awful.
+        core::colors::color().colorize(false);
+        ToolBE::redirectOutputTo("/tmp");
         core::Args args(
             argc,
             const_cast<const char **>(argv),
             const_cast<const char **>(envp)
         );
         toolbe::ToolBE toolBE;
-        toolBE.init(args, true /* be verbose */);
+        toolBE.init(args, beVerbose);
         // FIXME
-        toolBE.redirectOutputTo("/tmp");
     }
 
 #if 0
-        ////////////////////////////////////////////////////////////////////////
-        toolcommon::ProcessTable mProcTab;
-        auto numProcTabEntries = 0;
-        auto rc = LMON_be_getMyProctabSize(&numProcTabEntries);
-        if (LMON_OK != rc) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_getMyProctabSize", rc);
-        }
-        // Allocate room for the entries.
-        mProcTab = toolcommon::ProcessTable(numProcTabEntries);
-        // Now populate the thing...
-        int pSize = 0;
-        rc = LMON_be_getMyProctab(
-                 mProcTab.procTab(),
-                 &pSize,
-                 numProcTabEntries // Max Length
-             );
-        if (LMON_OK != rc) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
-        }
-        if (true) {
-            std::cout << "Done Getting Process Table" << std::endl;
-            mProcTab.dumpTo(std::cout);
-        }
-        ////////////////////////////////////////////////////////////////////////
         mLMONBE::connect();
-
-
-
 
         int mLMONRank = 0;
         LMON_be_getMyRank(&mLMONRank);

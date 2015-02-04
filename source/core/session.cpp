@@ -50,7 +50,8 @@ Session::operator=(const Session &other) {
 }
 
 /**
- *
+ * NOTE: Be careful about using the session singleton from within a tool daemon!
+ * A storm of stats will rain down... XXX Maybe we should protect against this.
  */
 void
 Session::mOpen(void)
@@ -70,8 +71,6 @@ Session::mOpen(void)
                 return;
             }
         }
-        // Is colored output enabled?
-        mColorizeSession = !utils::envVarSet(GLADIUS_NO_TERM_COLORS_STR);
     }
     catch (const std::exception &e) {
         GLADIUS_CERR_WARN << "Session creation failed: "

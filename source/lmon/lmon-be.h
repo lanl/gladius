@@ -33,10 +33,15 @@ class LaunchMonBE {
     bool mBeVerbose = false;
     // A copy of the arguments passed during init.
     core::Args mArgs;
+    // My process table (not the job one, but mine).
+    toolcommon::ProcessTable mProcTab;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////
+    //
+    void
+    mCreateAndPopulateProcTab(void);
 
 public:
     //

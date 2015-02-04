@@ -8,7 +8,7 @@
 
 #include "core/colors.h"
 #include "core/utils.h"
-#include "core/session.h"
+#include "core/env.h"
 
 using namespace gladius::core;
 
@@ -31,7 +31,7 @@ colors::color(void) {
     static colors singleton;
     if (!initialized) {
         initialized = true;
-        singleton.mColorize = Session::TheSession().sessionColorized();
+        singleton.mColorize = !utils::envVarSet(GLADIUS_NO_TERM_COLORS_STR);
     }
     return singleton;
 }

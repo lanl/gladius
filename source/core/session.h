@@ -27,8 +27,6 @@ class Session {
     mOpen(void);
     //
     ~Session(void) { ; }
-    //
-    bool mColorizeSession = false;
 public:
     //
     static Session &
@@ -36,6 +34,7 @@ public:
     //
     std::string
     sessionDir(void) { return mSessionDir; }
+
     /**
      * Disable copy constructor.
      */
@@ -43,13 +42,6 @@ public:
     //
     Session &
     operator=(const Session &other);
-    /**
-     * Returns whether or not we are colorizing the current session.
-     */
-    bool
-    sessionColorized(void) {
-        return mColorizeSession;
-    }
 };
 
 }
