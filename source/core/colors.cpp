@@ -13,6 +13,7 @@
 using namespace gladius::core;
 
 std::vector< std::pair<colors::Color, std::string> > colors::ColorCodeTab = {
+    std::make_pair(colors::NONE,   ""),
     std::make_pair(colors::WHITE,  "\033[0;37m"),
     std::make_pair(colors::RED,    "\033[0;31m"),
     std::make_pair(colors::GREEN,  "\033[0;32m"),

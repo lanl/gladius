@@ -44,9 +44,9 @@ private:
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
     // Our LaunchMON front-end instance.
-    LaunchMonFE mLMONFE;
+    lmonfe::LaunchMonFE mLMONFE;
     // Our MRNet instance.
-    mrnet::MRNetFE mMRNFE;
+    mrnetfe::MRNetFE mMRNFE;
     // Target application arguments.
     core::Args mAppArgs;
     // Connection timeout (in seconds).

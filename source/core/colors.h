@@ -30,7 +30,8 @@ public:
      * ColorCodeTab.
      */
     enum Color {
-        WHITE = 0,
+        NONE = 0,
+        WHITE,
         RED,
         GREEN,
         YELLOW,

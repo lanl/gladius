@@ -24,14 +24,14 @@
 #include <iomanip>
 
 using namespace gladius;
-using namespace gladius::toolbe;
+using namespace gladius::lmonbe;
 
 namespace {
 // This component's name.
 const std::string CNAME = "lmon-be";
 // CNAME's color code.
 const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::GREEN);
+    core::colors::color().ansiBeginColor(core::colors::NONE);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
@@ -41,14 +41,72 @@ do {                                                                           \
         COMP_COUT << streamInsertions;                                         \
     }                                                                          \
 } while (0)
-/// What to use for remote login
-const std::string REMOTE_LOGIN = "/usr/bin/ssh";
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
-namespace LaunchMonFEGlobals {
-// Global variable that indicates whether or not this component will be verbose.
-bool beVerbose = false;
-// Global variable holding latest LaunchMON state (set by statusFuncCallback).
-int lmonState = 0;
+// LaunchMonBE
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+namespace LaunchMonBEGlobals {
+}
+
+namespace {
+int
+unpackToolFEInfo(
+    void *buf,
+    int bufLen,
+    void *data
+) {
+    return 0;
+}
+}
+
+/**
+ *
+ */
+LaunchMonBE::LaunchMonBE(
+    void
+) : mBeVerbose(false)
+{
+}
+
+/**
+ *
+ */
+LaunchMonBE::~LaunchMonBE(void)
+{
+}
+
+/**
+ *
+ */
+void
+LaunchMonBE::init(
+    const core::Args &args,
+    bool beVerbose
+)
+{
+    mBeVerbose = beVerbose;
+    mArgs = args;
+    //
+    auto argc = mArgs.argc();
+    auto **argv = mArgs.argv();
+    auto status = LMON_be_init(LMON_VERSION, &argc, &argv);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_init", status);
+    }
+    status = LMON_be_regUnpackForFeToBe(unpackToolFEInfo);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_regUnpackForFeToBe", status);
+    }
+    status = LMON_be_handshake(NULL);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_handshake", status);
+    }
+    status = LMON_be_ready(NULL);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", status);
+    }
 }

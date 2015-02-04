@@ -193,7 +193,7 @@ ToolFE::mInitializeToolInfrastructure(void)
         mLMONFE.init(mBeVerbose);
         // Register function that is responsible for packing data for front-end
         // to back-end transfers. The MRNetFE knows how to do this.
-        mLMONFE.regPackForFeToBe(mrnet::MRNetFE::getFEToBePackFun());
+        mLMONFE.regPackForFeToBe(mrnetfe::MRNetFE::getFEToBePackFun());
         // Then do the same for MRNet
         mMRNFE.init(mBeVerbose);
     }

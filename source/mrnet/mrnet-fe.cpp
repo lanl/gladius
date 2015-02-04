@@ -32,7 +32,7 @@
 #include <unistd.h>
 
 using namespace gladius;
-using namespace gladius::mrnet;
+using namespace gladius::mrnetfe;
 
 namespace {
 // This component's name.

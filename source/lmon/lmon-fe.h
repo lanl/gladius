@@ -26,7 +26,7 @@
 #include "lmon_api/lmon_proctab.h"
 
 namespace gladius {
-namespace toolfe {
+namespace lmonfe {
 
 class LaunchMonFE {
     // The name of the LaunchMon engine executable.
@@ -149,7 +149,7 @@ public:
     );
 };
 
-} // end toolfe namespace
+} // end lmonfe namespace
 } // end gladius namespace
 
 #endif

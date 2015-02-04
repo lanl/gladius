@@ -26,65 +26,17 @@
 #include "lmon_api/lmon_proctab.h"
 
 namespace gladius {
-namespace toolbe {
+namespace lmonbe {
 
 class LaunchMonBE {
-    // The name of the LaunchMon engine executable.
-    static const std::string sLaunchMONName;
-    // The name of the tool daemon.
-    static const std::string sToolDName;
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
-    // The PID of the target application launcher (srun, mpirun, aprun, etc.)
-    pid_t mLauncherPID = 0;
-    // LMON session number (handle).
-    int mSessionNum = 0;
-    //
-    bool mIsLaunched = false;
-    // The hostname of tool front-end.
-    std::string mHostname;
-    // The absolute path to our tool daemon.
-    std::string mToolD;
-    // Daemon option string
-    std::string mDaemonOpts;
-    // LaunchMON install prefix
-    std::string mPrefixPath;
-    // LaunchMON engine path.
-    std::string mEnginePath;
-    // What to use for remote login.
-    std::string mRemoteLogin;
-    // Resource manager info
-    lmon_rm_info_t mRMInfo;
-    // The process table of the active job.
-    toolcommon::ProcessTable mProcTab;
-    //
-    toolcommon::FEToBePackFnP mFEToBePackFn = nullptr;
+    // A copy of the arguments passed during init.
+    core::Args mArgs;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////
-    void
-    mSetEnvs(void);
-    //
-    void
-    mStartSession(void);
-    //
-    void
-    mEndSession(void);
-    //
-    void
-    mCreateAndPopulateProcTab(void);
-    //
-    void
-    mSetRMInfo(void);
-    //
-    bool
-    mDetermineAndSetPaths(std::string &whatsWrong);
-    //
-    std::string
-    mGetLmonPrefixFromEnginePath(
-        const std::string &whichString
-    );
 
 public:
     //
@@ -93,26 +45,10 @@ public:
     ~LaunchMonBE(void);
     //
     void
-    init(bool beVerbose = false);
-    //
-    void
-    launchAndSpawnDaemons(
-        const core::Args &appArgs
+    init(
+        const core::Args &args,
+        bool beVerbose = false
     );
-    // TODO
-    void
-    attachAndSpawnDaemons(pid_t launcherPID) {
-        GLADIUS_UNUSED(launcherPID);
-    }
-    //
-    int
-    getState(void);
-
-    /**
-     * Shuts down LaunchMON.
-     */
-    void
-    shutdown(void);
 
     /**
      * Sets whether or not LaunchMON operations will be verbose.
@@ -121,35 +57,9 @@ public:
     verbose(bool bVerbose) {
         mBeVerbose = bVerbose;
     }
-
-    /**
-     * Returns whether or not daemons have been launched.
-     */
-    bool
-    daemonsLaunched(void) const {
-        return mIsLaunched;
-    }
-    //
-    void
-    regPackForFeToBe(
-        toolcommon::FEToBePackFnP packFeBeFn
-    );
-
-    /**
-     *
-     */
-    const toolcommon::ProcessTable &
-    getProcTab(void) const {
-        return mProcTab;
-    }
-    //
-    void
-    sendDaemonInfo(
-        const toolcommon::LeafInfo &leafInfo
-    );
 };
 
-} // end toolfe namespace
+} // end lmonbe namespace
 } // end gladius namespace
 
 #endif

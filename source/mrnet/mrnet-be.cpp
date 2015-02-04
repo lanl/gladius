@@ -49,3 +49,13 @@ MRNetBE::MRNetBE(
 MRNetBE::~MRNetBE(void)
 {
 }
+
+/**
+ *
+ */
+void
+MRNetBE::init(
+    bool beVerbose
+) {
+    mBeVerbose = beVerbose;
+}

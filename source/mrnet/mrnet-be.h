@@ -22,15 +22,20 @@ namespace mrnetbe {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * Implements the MRNet interface for a tool front-end.
+ * Implements the MRNet interface for a tool back-end.
  */
 class MRNetBE {
 private:
+    // Flag indicating whether or not we'll be verbose about our actions.
+    bool mBeVerbose = false;
 
 public:
     MRNetBE(void);
     //
     ~MRNetBE(void);
+    //
+    void
+    init(bool beVerbose = false);
 };
 
 } // end mrnetbe namespace

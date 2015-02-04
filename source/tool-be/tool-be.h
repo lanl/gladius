@@ -15,16 +15,39 @@
 
 #include "core/core.h"
 #include "core/args.h"
+#include "lmon/lmon-be.h"
+#include "mrnet/mrnet-be.h"
+
+#include <string>
 
 namespace gladius {
 namespace toolbe {
 
 class ToolBE {
 private:
-    core::Args mAppArgs;
+    //
+    bool mBeVerbose = false;
+    //
+    core::Args mArgs;
+    // Our LaunchMON back-end instance.
+    lmonbe::LaunchMonBE mLMONBE;
+    // Our MRNet back-end instance.
+    mrnetbe::MRNetBE mMRNBE;
 
 public:
+    //
     ToolBE(void);
+    //
+    ~ToolBE(void);
+    //
+    void
+    init(
+        const core::Args &args,
+        bool beVerbose
+    );
+    //
+    void
+    redirectOutputTo(const std::string &base);
 };
 
 } // end toolbe namespace

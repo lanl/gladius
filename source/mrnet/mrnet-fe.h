@@ -20,7 +20,7 @@
 #include <cstdint>
 
 namespace gladius {
-namespace mrnet {
+namespace mrnetfe {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 class MRNetTopology {
@@ -144,7 +144,7 @@ public:
     connect(void);
 };
 
-} // end mrnet namespace
+} // end mrnetfe namespace
 } // end gladius namespace
 
 #endif
