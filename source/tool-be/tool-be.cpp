@@ -40,6 +40,21 @@ do {                                                                           \
         COMP_COUT << streamInsertions;                                         \
     }                                                                          \
 } while (0)
+
+/**
+ *
+ */
+int
+feToBeUnpack(
+    void *buf,
+    int bufLen,
+    void *data
+) {
+    GLADIUS_UNUSED(buf);
+    GLADIUS_UNUSED(bufLen);
+    GLADIUS_UNUSED(data);
+    return 0;
+}
 }
 
 /**
@@ -72,6 +87,11 @@ ToolBE::init(
         VCOMP_COUT("Initializing Tool Back-End..." << std::endl);
         //
         mLMONBE.init(mArgs, mBeVerbose);
+        // We know how to do this, so let LMON know what to call.
+        mLMONBE.regUnpackForFEToBE(feToBeUnpack);
+        mLMONBE.handshake();
+        // Let LMON populate our process table.
+        mLMONBE.createAndPopulateProcTab(mProcTab);
         //
         mMRNBE.init(mBeVerbose);
     }
@@ -91,4 +111,13 @@ ToolBE::redirectOutputTo(
     std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
     FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
     if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen");
+}
+
+/**
+ *
+ */
+lmonbe::FEToBEUnpackFnP
+ToolBE::getFEToBeUnpackFun(void)
+{
+    return feToBeUnpack;
 }

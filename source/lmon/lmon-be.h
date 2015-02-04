@@ -27,22 +27,20 @@
 
 namespace gladius {
 namespace lmonbe {
+// Type signature of the back-end unpacking routine.
+typedef int (*FEToBEUnpackFnP)(void *, int, void *);
 
 class LaunchMonBE {
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
     // A copy of the arguments passed during init.
     core::Args mArgs;
-    // My process table (not the job one, but mine).
-    toolcommon::ProcessTable mProcTab;
+    // A handle to the FE to BE function.
+    FEToBEUnpackFnP mFEToBEUnpackFn = nullptr;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////
-    //
-    void
-    mCreateAndPopulateProcTab(void);
-
 public:
     //
     LaunchMonBE(void);
@@ -54,6 +52,14 @@ public:
         const core::Args &args,
         bool beVerbose = false
     );
+    //
+    void
+    regUnpackForFEToBE(
+        lmonbe::FEToBEUnpackFnP funp
+    );
+    //
+    void
+    handshake(void);
 
     /**
      * Sets whether or not LaunchMON operations will be verbose.
@@ -62,6 +68,12 @@ public:
     verbose(bool bVerbose) {
         mBeVerbose = bVerbose;
     }
+    //
+    void
+    createAndPopulateProcTab(
+        toolcommon::ProcessTable &procTab
+    );
+
 };
 
 } // end lmonbe namespace

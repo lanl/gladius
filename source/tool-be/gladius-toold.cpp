@@ -33,9 +33,10 @@ main(
     using namespace gladius::toolbe;
 
     try {
-        auto beVerbose = true;
+        const auto beVerbose = true;
         // Turn off colors. They make logs look awful.
         core::colors::color().colorize(false);
+        // FIXME
         ToolBE::redirectOutputTo("/tmp");
         core::Args args(
             argc,

@@ -53,14 +53,6 @@ namespace LaunchMonBEGlobals {
 }
 
 namespace {
-int
-unpackToolFEInfo(
-    void *buf,
-    int bufLen,
-    void *data
-) {
-    return 0;
-}
 }
 
 /**
@@ -97,28 +89,55 @@ LaunchMonBE::init(
     if (LMON_OK != status) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_be_init", status);
     }
-    status = LMON_be_regUnpackForFeToBe(unpackToolFEInfo);
-    if (LMON_OK != status) {
-        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_regUnpackForFeToBe", status);
-    }
-    status = LMON_be_handshake(NULL);
-    if (LMON_OK != status) {
-        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_handshake", status);
-    }
-    status = LMON_be_ready(NULL);
-    if (LMON_OK != status) {
-        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", status);
-    }
-    //
-    mCreateAndPopulateProcTab();
 }
 
 /**
  *
  */
 void
-LaunchMonBE::mCreateAndPopulateProcTab(void)
+LaunchMonBE::regUnpackForFEToBE(
+    lmonbe::FEToBEUnpackFnP funp
+) {
+    try {
+        mFEToBEUnpackFn = funp;
+        auto status = LMON_be_regUnpackForFeToBe(mFEToBEUnpackFn);
+        if (LMON_OK != status) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_regUnpackForFeToBe", status);
+        }
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+}
+
+/**
+ *
+ */
+void
+LaunchMonBE::handshake(void)
 {
+    try {
+        auto status = LMON_be_handshake(NULL);
+        if (LMON_OK != status) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_handshake", status);
+        }
+        status = LMON_be_ready(NULL);
+        if (LMON_OK != status) {
+            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", status);
+        }
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+}
+
+/**
+ *
+ */
+void
+LaunchMonBE::createAndPopulateProcTab(
+    toolcommon::ProcessTable &procTab
+) {
     try {
         int numProcTabEntries = 0;
         auto rc = LMON_be_getMyProctabSize(&numProcTabEntries);
@@ -126,20 +145,20 @@ LaunchMonBE::mCreateAndPopulateProcTab(void)
             GLADIUS_THROW_CALL_FAILED_RC("LMON_be_getMyProctabSize", rc);
         }
         // Allocate room for the entries.
-        mProcTab = toolcommon::ProcessTable(numProcTabEntries);
+        procTab = toolcommon::ProcessTable(numProcTabEntries);
         // Now populate the thing...
         int pSize = 0;
         rc = LMON_be_getMyProctab(
-                 mProcTab.procTab(),
+                 procTab.procTab(),
                  &pSize,
                  numProcTabEntries // Max Length
              );
         if (LMON_OK != rc) {
             GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
         }
-        if (true) {
+        if (mBeVerbose) {
             std::cout << "Done Getting Process Table" << std::endl;
-            mProcTab.dumpTo(std::cout);
+            procTab.dumpTo(std::cout);
         }
     }
     catch (const std::exception &e) {

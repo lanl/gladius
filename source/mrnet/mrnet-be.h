@@ -36,6 +36,9 @@ public:
     //
     void
     init(bool beVerbose = false);
+    //
+    void
+    connect(void);
 };
 
 } // end mrnetbe namespace

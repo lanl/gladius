@@ -33,6 +33,8 @@ private:
     lmonbe::LaunchMonBE mLMONBE;
     // Our MRNet back-end instance.
     mrnetbe::MRNetBE mMRNBE;
+    // My process table (not the job one, but mine).
+    toolcommon::ProcessTable mProcTab;
 
 public:
     //
@@ -48,6 +50,9 @@ public:
     //
     static void
     redirectOutputTo(const std::string &base);
+    //
+    lmonbe::FEToBEUnpackFnP
+    getFEToBeUnpackFun(void);
 };
 
 } // end toolbe namespace
