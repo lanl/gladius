@@ -29,7 +29,9 @@ private:
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
     //
-    char mLocalIPBuff[512];
+    std::string mLocalIP;
+    //
+    std::string mHostName;
     //
     std::string mParentHostname;
     //
@@ -38,6 +40,8 @@ private:
     int mParentPort = 0;
     //
     int mParentRank = 0;
+    //
+    MRN::Network *mNetwork = nullptr;
 
 public:
     MRNetBE(void);
@@ -51,6 +55,9 @@ public:
     setPersonality(
         const toolbecommon::ToolLeafInfoArrayT &tlia
     );
+    //
+    void
+    connect(void);
 };
 
 } // end mrnetbe namespace

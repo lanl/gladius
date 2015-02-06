@@ -53,7 +53,7 @@ ${MRNET_CPPFLAGS} \
 ${BOOST_CPPFLAGS}
 
 libGladiusMRNetBE_la_LDFLAGS = \
-${MRNETBE_LDFLAGS} -lxplat \
+${MRNETBE_LDFLAGS} \
 ${BOOST_LDFLAGS} -lboost_timer \
 -version-info ${LIBVINFO}
 

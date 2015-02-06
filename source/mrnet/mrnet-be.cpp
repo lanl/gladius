@@ -29,11 +29,16 @@ using namespace gladius::mrnetbe;
 namespace {
 // This component's name.
 const std::string CNAME = "mrnetbe";
+// CNAME's color code.
+const std::string NAMEC =
+    core::colors::color().ansiBeginColor(core::colors::NONE);
+// Convenience macro to decorate this component's output.
+#define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
 #define VCOMP_COUT(streamInsertions)                                           \
 do {                                                                           \
     if (this->mBeVerbose) {                                                    \
-        std::cout << streamInsertions;                                         \
+        COMP_COUT << streamInsertions;                                         \
     }                                                                          \
 } while (0)
 
@@ -65,11 +70,12 @@ MRNetBE::init(
     bool beVerbose
 ) {
     mBeVerbose = beVerbose;
+    mHostName = core::utils::getHostname();
     //
     struct sockaddr_in *sinp = NULL;
     struct addrinfo *addinf = NULL;
     auto rc = getaddrinfo(
-                  core::utils::getHostname().c_str(),
+                  mHostName.c_str(),
                   NULL,
                   NULL,
                   &addinf
@@ -90,7 +96,8 @@ MRNetBE::init(
     if (!ntopRes) {
         GLADIUS_THROW_CALL_FAILED("inet_ntop");
     }
-    snprintf(mLocalIPBuff, sizeof(mLocalIPBuff), "%s", ntopRes);
+    mLocalIP = std::string(ntopRes);
+    if (addinf) freeaddrinfo(addinf);
 }
 
 /**
@@ -100,10 +107,9 @@ void
 MRNetBE::setPersonality(
     const toolbecommon::ToolLeafInfoArrayT &tlia
 ) {
-    VCOMP_COUT("Finding My MRNet Personality" << std::endl);
-    std::string localHost = core::utils::getHostname();
+    VCOMP_COUT("Finding My MRNet Personality." << std::endl);
     std::string prettyHost;
-    XPlat::NetUtils::GetHostName(localHost, prettyHost);
+    XPlat::NetUtils::GetHostName(mHostName, prettyHost);
 
     bool found = false;
     for (decltype(tlia.size) i = 0; i < tlia.size; i++) {
@@ -113,7 +119,7 @@ MRNetBE::setPersonality(
             leafPrettyHost
         );
         if (prettyHost == leafPrettyHost
-            || strcmp(leafPrettyHost.c_str(), mLocalIPBuff) == 0) {
+            || leafPrettyHost == mLocalIP) {
             found = true;
             mParentHostname = std::string(tlia.leaves[i].parentHostName);
             mParentPort = tlia.leaves[i].parentPort;
@@ -124,5 +130,33 @@ MRNetBE::setPersonality(
     }
     if (!found) {
         GLADIUS_THROW("Failed to Find MRNet Parent Info");
+    }
+}
+
+/**
+ *
+ */
+void
+MRNetBE::connect(void)
+{
+    VCOMP_COUT("Connecting to MRNet Network." << std::endl);
+    char parentPort[256];
+    char parentRank[256];
+    char rank[256];
+    snprintf(parentPort, sizeof(parentPort), "%d", mParentPort);
+    snprintf(parentRank, sizeof(parentRank), "%d", mParentRank);
+    snprintf(rank, sizeof(rank), "%d", mRank);
+    const int argc = 6;
+    char *argv[argc];
+    argv[0] = NULL;
+    argv[1] = (char *)mParentHostname.c_str();
+    argv[2] = parentPort;
+    argv[3] = parentRank;
+    argv[4] = (char *)mHostName.c_str();
+    argv[5] = rank;
+    //
+    mNetwork = MRN::Network::CreateNetworkBE(argc, argv);
+    if (!mNetwork) {
+        GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkBE");
     }
 }

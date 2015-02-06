@@ -55,7 +55,7 @@ else
     # The MRNet front-end libraries.
     mrnet_fe_link_libs="-lmrnet -lxplat"
     # The MRNet back-end libraries.
-    mrnet_be_link_libs=""
+    mrnet_be_link_libs="-lmrnet -lxplat"
     MRNET_CPPFLAGS="-I$ax_mrnet_path/$includesubdirs"
     MRNET_CPPFLAGS="$MRNET_CPPFLAGS -I$ax_mrnet_path/lib/xplat-4.0.0/include"
     MRNETFE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_fe_link_libs"

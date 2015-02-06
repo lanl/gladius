@@ -226,6 +226,7 @@ ToolFE::mConnectMRNetTree(void)
 {
     // TODO add a timer here
     decltype(mMaxRetries) attempt = 1;
+    bool connectSuccess = false;
     do {
         VCOMP_COUT("Connection Attempt: " << attempt << std::endl);
         // Take a break and let things happen...
@@ -237,7 +238,10 @@ ToolFE::mConnectMRNetTree(void)
         // Try to connect.
         auto status = mMRNFE.connect();
         // All done - Get outta here...
-        if (GLADIUS_SUCCESS == status) break;
+        if (GLADIUS_SUCCESS == status) {
+            connectSuccess = true;
+            break;
+        }
         // Something bad happened.
         else if (GLADIUS_NOT_CONNECTED != status) {
             GLADIUS_THROW_CALL_FAILED_RC("MRNetFE::connect", status);
@@ -248,6 +252,13 @@ ToolFE::mConnectMRNetTree(void)
             GLADIUS_THROW("Max Retries Reached! Giving Up...");
         }
     } while (true);
+    //
+    if (connectSuccess) {
+        GLADIUS_COUT_STAT << "MRNet Network Connected." << std::endl;
+    }
+    else {
+        GLADIUS_THROW("Could Not Setup MRNet Network.");
+    }
 }
 
 /**

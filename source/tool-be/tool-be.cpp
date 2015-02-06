@@ -28,7 +28,7 @@ using namespace gladius::toolbe;
 ////////////////////////////////////////////////////////////////////////////////
 namespace {
 // This component's name.
-const std::string CNAME = "toolbe";
+const std::string CNAME = "tool-be";
 // CNAME's color code.
 const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::NONE);
@@ -235,7 +235,9 @@ ToolBE::connect(void)
     );
     mMRNBE.setPersonality(lia);
     //
-    //mMRNBE.connect();
+    mMRNBE.connect();
+    //
+    free(lia.leaves);
 }
 
 /**
