@@ -615,6 +615,7 @@ MRNetFE::networkInit(void)
     mLoadCoreFilters();
 }
 
+// FIXME RM
 #include "mrnet/Types.h"
 
 /**
@@ -634,4 +635,11 @@ MRNetFE::handshake(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("MRNet Stream Flush");
     }
+    MRN::PacketPtr packet;
+    int proto = 101;
+    status = mBcastStream->recv(&proto, packet);
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("MRNet Network Recv");
+    }
+    VCOMP_COUT("Proto: " << proto << std::endl);
 }

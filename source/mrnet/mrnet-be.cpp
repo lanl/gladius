@@ -161,6 +161,10 @@ MRNetBE::connect(void)
     }
 }
 
+
+// FIXME RM
+#include "mrnet/Types.h"
+
 /**
  *
  */
@@ -181,4 +185,10 @@ MRNetBE::handshake(void)
     int fromFE = -1;
     packet->unpack("%d", &fromFE);
     VCOMP_COUT("Proto: " << proto << " GOT: " << fromFE << std::endl);
+    char *pong = (char *)"Pong";
+    status = stream->send(FirstApplicationTag, "%ac", pong, 5);
+    if (1 != status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+    }
+    VCOMP_COUT("Done with Send!" << std::endl);
 }
