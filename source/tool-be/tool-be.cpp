@@ -205,6 +205,8 @@ ToolBE::redirectOutputTo(
     std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
     FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
     if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen");
+    outRedirectFile = freopen(fName.c_str(), "w", stderr);
+    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen");
 }
 
 /**
@@ -228,13 +230,12 @@ ToolBE::connect(void)
     VCOMP_COUT("Broadcasting Connection Information to All Daemons."
                << std::endl
     );
-    auto status = LMON_be_broadcast(
-                      (void *)lia.leaves,
+    mLMONBE.broadcast((void *)lia.leaves,
                       lia.size * sizeof(toolbecommon::ToolLeafInfoT)
-                  );
-    if (LMON_OK != status) {
-        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_broadcast", status);
-    }
+    );
+    mMRNBE.setPersonality(lia);
+    //
+    //mMRNBE.connect();
 }
 
 /**

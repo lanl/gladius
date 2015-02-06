@@ -28,6 +28,16 @@ class MRNetBE {
 private:
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
+    //
+    char mLocalIPBuff[512];
+    //
+    std::string mParentHostname;
+    //
+    int mRank = 0;
+    //
+    int mParentPort = 0;
+    //
+    int mParentRank = 0;
 
 public:
     MRNetBE(void);
@@ -38,7 +48,9 @@ public:
     init(bool beVerbose = false);
     //
     void
-    connect(void);
+    setPersonality(
+        const toolbecommon::ToolLeafInfoArrayT &tlia
+    );
 };
 
 } // end mrnetbe namespace
