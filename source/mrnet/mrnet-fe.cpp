@@ -570,6 +570,40 @@ MRNetFE::connect(void)
  *
  */
 void
+MRNetFE::mLoadCoreFilters(void)
+{
+    VCOMP_COUT("Loading Core Filters." << std::endl);
+    //
+    static const auto ps = core::utils::osPathSep;
+    static const auto execPrefix = core::SessionFE::TheSession().execPrefix();
+    static const auto soPrefix = execPrefix + ps + "lib";
+    //
+    VCOMP_COUT("Looking For Core Filters in: " << soPrefix << std::endl);
+    //
+    static const std::string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
+    auto filterID = mNetwork->load_FilterFunc(
+                        coreFilterSOName.c_str(),
+                        "GladiusMRNetFilterInit"
+                    );
+    if (-1 == filterID) {
+        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: GladiusMRNetFilterInit");
+    }
+    //
+    mBcastStream = mNetwork->new_Stream(
+                       mBcastComm,
+                       MRN::TFILTER_SUM,
+                       MRN::SFILTER_WAITFORALL,
+                       filterID
+                   );
+    if (!mBcastStream) {
+        GLADIUS_THROW_CALL_FAILED("new_Stream");
+    }
+}
+
+/**
+ *
+ */
+void
 MRNetFE::networkInit(void)
 {
     VCOMP_COUT("Initializing Network." << std::endl);
@@ -579,16 +613,24 @@ MRNetFE::networkInit(void)
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
     }
     //
-    static const auto ps = core::utils::osPathSep;
-    static const auto execPrefix = core::SessionFE::TheSession().execPrefix();
-    static const auto soPrefix = execPrefix + ps + "lib";
-    VCOMP_COUT("Looking For Core Filters in: " << soPrefix << std::endl);
-    static const std::string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
-    auto filterID = mNetwork->load_FilterFunc(
-                        coreFilterSOName.c_str(),
-                        "GladiusMRNetFilterInit"
-                    );
-    if (-1 == filterID) {
-        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: GladiusMRNetFilterInit");
+    mLoadCoreFilters();
+}
+
+/**
+ *
+ */
+void
+MRNetFE::handshake(void)
+{
+    VCOMP_COUT("Handshaking." << std::endl);
+
+    int magicNum = 123;
+    auto status = mBcastStream->send(0, "%d", magicNum);
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("MRNet Stream Send");
+    }
+    status = mBcastStream->flush();
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("MRNet Stream Flush");
     }
 }

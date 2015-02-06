@@ -58,6 +58,9 @@ public:
     //
     void
     connect(void);
+    //
+    void
+    handshake(void);
 };
 
 } // end mrnetbe namespace

@@ -88,6 +88,8 @@ private:
     MRN::Network *mNetwork = nullptr;
     //
     MRN::Communicator *mBcastComm = nullptr;
+    //
+    MRN::Stream *mBcastStream = nullptr;
     // The number of tree nodes in our topology.
     unsigned int mNTreeNodes = 0;
     //
@@ -108,6 +110,9 @@ private:
     //
     void
     mCreateDaemonTIDMap(void);
+    //
+    void
+    mLoadCoreFilters(void);
 
 public:
     MRNetFE(void);
@@ -149,6 +154,9 @@ public:
     //
     void
     networkInit(void);
+    //
+    void
+    handshake(void);
 };
 
 } // end mrnetfe namespace

@@ -160,3 +160,22 @@ MRNetBE::connect(void)
         GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkBE");
     }
 }
+
+/**
+ *
+ */
+void
+MRNetBE::handshake(void)
+{
+    VCOMP_COUT("Handshaking." << std::endl);
+
+    int proto = -1;
+    MRN::PacketPtr packet;
+    MRN::Stream *stream = nullptr;
+    bool recvShouldBlock = true;
+    auto status = mNetwork->recv(&proto, packet, &stream, recvShouldBlock);
+    if (1 != status) {
+        GLADIUS_THROW_CALL_FAILED("Network::Recv");
+    }
+    VCOMP_COUT("Proto: " << proto << std::endl);
+}

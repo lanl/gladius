@@ -285,6 +285,10 @@ ToolFE::mInitiateToolLashUp(void)
         mConnectMRNetTree();
         // Setup connected MRNet network.
         mMRNFE.networkInit();
+        // Make sure that our core filters are working by performing a handshake
+        // between the tool front-end and all the tool leaves (where all
+        // communication is going through a set of core filters.
+        mMRNFE.handshake();
 
     }
     catch (const std::exception &e) {

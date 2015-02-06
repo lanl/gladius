@@ -236,6 +236,8 @@ ToolBE::connect(void)
     //
     mMRNBE.connect();
     //
+    mMRNBE.handshake();
+    //
     if (!mLMONBE.amMaster()) free(lia.leaves);
 }
 
