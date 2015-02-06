@@ -26,18 +26,21 @@ const std::string NAMEC =
  *
  */
 void
-ProcessTable::dumpTo(std::ostream &os) {
+ProcessTable::dumpTo(
+    std::ostream &os,
+    const std::string &outPrefix
+) {
     using namespace std;
-    os << "*** Process Table Dump ***" << endl;
+    os << outPrefix << "*** Process Table Dump ***" << endl;
     if (!mProcTab) {
-        os << "XXX Process Table Not Allocated XXX" << endl;
+        os << outPrefix << "XXX Process Table Not Allocated XXX" << endl;
         return;
     }
     for (decltype(mNEntries) i = 0; i < mNEntries; ++i) {
-        os << "Host Name: " << mProcTab[i].pd.host_name << endl;
-        os << "Executable Name: "
+        os << outPrefix << "Host Name: " << mProcTab[i].pd.host_name << endl;
+        os << outPrefix << "Executable Name: "
            << mProcTab[i].pd.executable_name << endl;
-        os << "PID: " << mProcTab[i].pd.pid << " "
+        os << outPrefix << "PID: " << mProcTab[i].pd.pid << " "
            // TID: "Task ID"
            << "TID: " << mProcTab[i].mpirank
            << endl;

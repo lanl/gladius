@@ -11,6 +11,7 @@ core \
 tool-common \
 lmon \
 mrnet \
+mrnet/filters \
 tool-fe \
 ui \
 ui/term \

@@ -283,6 +283,9 @@ ToolFE::mInitiateToolLashUp(void)
         mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
         // Wait for MRNet tree connections.
         mConnectMRNetTree();
+        // Setup connected MRNet network.
+        mMRNFE.networkInit();
+
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

@@ -252,12 +252,12 @@ public:
         mProcTab = dupMPIRProcDescExt(mNEntries, other.mProcTab);
         return *this;
     }
-
-    /**
-     *
-     */
+    //
     void
-    dumpTo(std::ostream &os);
+    dumpTo(
+        std::ostream &os,
+        const std::string &outPrefix = ""
+    );
 
     /**
      * Returns the number of entries in the process table.

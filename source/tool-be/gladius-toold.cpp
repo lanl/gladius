@@ -17,6 +17,15 @@
 #include <cstdlib>
 #include <string>
 
+namespace {
+// This component's name.
+const std::string CNAME = "*gtoold";
+// CNAME's color code.
+const std::string NAMEC =
+    gladius::core::colors::color().ansiBeginColor(gladius::core::colors::NONE);
+// Convenience macro to decorate this component's output.
+#define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+}
 
 /**
  * Tool daemon main.
@@ -34,10 +43,13 @@ main(
     //
     try {
         const auto beVerbose = true;
-        // Turn off colors. They make logs look awful.
+        // Turn off colors first. They make logs look awful.
         core::colors::color().colorize(false);
         // FIXME
         ToolBE::redirectOutputTo("/tmp");
+        // Let it begin!
+        COMP_COUT << "Tool Daemon Started." << std::endl;
+        //
         core::Args args(
             argc,
             const_cast<const char **>(argv),

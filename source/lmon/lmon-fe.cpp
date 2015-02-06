@@ -168,7 +168,7 @@ LaunchMonFE::mCreateAndPopulateProcTab(void)
         }
         if (mBeVerbose) {
             COMP_COUT << "Done Getting Process Table" << std::endl;
-            mProcTab.dumpTo(std::cout);
+            mProcTab.dumpTo(std::cout, "[" + CNAME + "] ");
         }
     }
     catch (const std::exception &e) {

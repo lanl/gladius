@@ -563,3 +563,18 @@ MRNetFE::connect(void)
     }
     return GLADIUS_ERR;
 }
+
+/**
+ *
+ */
+void
+MRNetFE::networkInit(void)
+{
+    VCOMP_COUT("Initializing Network." << std::endl);
+    // XXX We could dump the topology here for debugging.
+    mBcastComm = mNetwork->get_BroadcastCommunicator();
+    if (!mBcastComm) {
+        GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
+    }
+    //auto filterID = mNetwork->load_FilterFunc(
+}

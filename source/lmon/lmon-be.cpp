@@ -154,8 +154,8 @@ LaunchMonBE::createAndPopulateProcTab(
             GLADIUS_THROW_CALL_FAILED_RC("LMON_fe_getProctable", rc);
         }
         if (mBeVerbose) {
-            std::cout << "Done Getting Process Table" << std::endl;
-            procTab.dumpTo(std::cout);
+            COMP_COUT << "Done Getting Process Table" << std::endl;
+            procTab.dumpTo(std::cout, "[" + CNAME + "] ");
         }
     }
     catch (const std::exception &e) {

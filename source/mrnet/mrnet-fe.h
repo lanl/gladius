@@ -84,6 +84,8 @@ private:
     size_t mNumAppNodes = 0;
     // The MRNet network instance.
     MRN::Network *mNetwork = nullptr;
+    //
+    MRN::Communicator *mBcastComm = nullptr;
     // The number of tree nodes in our topology.
     unsigned int mNTreeNodes = 0;
     //
@@ -142,6 +144,9 @@ public:
     //
     int
     connect(void);
+    //
+    void
+    networkInit(void);
 };
 
 } // end mrnetfe namespace
