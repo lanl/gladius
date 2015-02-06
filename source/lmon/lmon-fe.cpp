@@ -383,7 +383,6 @@ LaunchMonFE::launchAndSpawnDaemons(
             &jobidSize,
             PATH_MAX
         );
-        // XXX Wait for back-ends here?
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

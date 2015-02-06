@@ -111,7 +111,7 @@ feToBeUnpack(
                     GLADIUS_THROW(errStr);
                     return -1;
                 }
-                /* Fill in the parent information */
+                // Fill in the parent information.
                 (void)strncpy((leafInfoArray->leaves)[daemon].parentHostName,
                                currentParent,
                                HOST_NAME_MAX);
@@ -141,20 +141,31 @@ feToBeUnpack(
 }
 
 /**
+ * TODO FIXME
+ */
+/* (static) */ void
+ToolBE::redirectOutputTo(
+    const std::string &base
+) {
+    GLADIUS_UNUSED(base);
+    std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
+    FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
+    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen stdout");
+    outRedirectFile = freopen(fName.c_str(), "w", stderr);
+    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen stderr");
+}
+
+/**
  * Constructor.
  */
 ToolBE::ToolBE(
     void
-) : mBeVerbose(false)
-{
-}
+) : mBeVerbose(false) { }
 
 /**
  * Destructor.
  */
-ToolBE::~ToolBE(void)
-{
-}
+ToolBE::~ToolBE(void) { }
 
 /**
  *
@@ -167,6 +178,7 @@ ToolBE::mInitLMON(
     mLMONBE.init(args, beVerbose);
     // We know how to do this, so let LMON know what to call.
     mLMONBE.regUnpackForFEToBE(feToBeUnpack);
+    //
     mLMONBE.handshake();
     // Let LMON populate our process table.
     mLMONBE.createAndPopulateProcTab(mProcTab);
@@ -180,10 +192,10 @@ ToolBE::init(
     const core::Args &args,
     bool beVerbose
 ) {
+    VCOMP_COUT("Initializing Tool Back-End..." << std::endl);
     try {
         mBeVerbose = beVerbose;
         mArgs = args;
-        VCOMP_COUT("Initializing Tool Back-End..." << std::endl);
         //
         mInitLMON(mArgs, mBeVerbose);
         //
@@ -192,21 +204,6 @@ ToolBE::init(
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
-}
-
-/**
- * TODO FIXME
- */
-void
-ToolBE::redirectOutputTo(
-    const std::string &base
-) {
-    GLADIUS_UNUSED(base);
-    std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
-    FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
-    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen");
-    outRedirectFile = freopen(fName.c_str(), "w", stderr);
-    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen");
 }
 
 /**
@@ -220,24 +217,26 @@ ToolBE::connect(void)
     toolbecommon::ToolLeafInfoArrayT lia;
     mLMONBE.recvConnectionInfo(lia);
     //
-    mLMONBE.broadcast((void *)&(lia.size), sizeof(int));
+    mLMONBE.broadcast((void *)&lia.size, sizeof(int));
     // Non-masters allocate space for the MRNet connection info.
     if (!mLMONBE.amMaster()) {
         lia.leaves = (toolbecommon::ToolLeafInfoT *)
             calloc(lia.size, sizeof(toolbecommon::ToolLeafInfoT));
         if (!lia.leaves) GLADIUS_THROW_OOR();
     }
-    VCOMP_COUT("Broadcasting Connection Information to All Daemons."
-               << std::endl
+    VCOMP_COUT(
+        "Broadcasting Connection Information to All Daemons." << std::endl
     );
-    mLMONBE.broadcast((void *)lia.leaves,
-                      lia.size * sizeof(toolbecommon::ToolLeafInfoT)
+    mLMONBE.broadcast(
+        (void *)lia.leaves,
+        lia.size * sizeof(toolbecommon::ToolLeafInfoT)
     );
+    //
     mMRNBE.setPersonality(lia);
     //
     mMRNBE.connect();
     //
-    free(lia.leaves);
+    if (!mLMONBE.amMaster()) free(lia.leaves);
 }
 
 /**

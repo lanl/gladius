@@ -87,13 +87,15 @@ LaunchMonBE::init(
     //
     auto argc = mArgs.argc();
     auto **argv = mArgs.argv();
+    //
     auto status = LMON_be_init(LMON_VERSION, &argc, &argv);
     if (LMON_OK != status) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_be_init", status);
     }
+    //
     LMON_be_getMyRank(&mLID);
-    status = LMON_be_amIMaster();
-    mAmMaster = LMON_NO != status;
+    //
+    mAmMaster = LMON_NO != LMON_be_amIMaster();
 }
 
 /**
@@ -103,15 +105,10 @@ void
 LaunchMonBE::regUnpackForFEToBE(
     lmonbe::FEToBEUnpackFnP funp
 ) {
-    try {
-        mFEToBEUnpackFn = funp;
-        auto status = LMON_be_regUnpackForFeToBe(mFEToBEUnpackFn);
-        if (LMON_OK != status) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_regUnpackForFeToBe", status);
-        }
-    }
-    catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    mFEToBEUnpackFn = funp;
+    auto status = LMON_be_regUnpackForFeToBe(mFEToBEUnpackFn);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_regUnpackForFeToBe", status);
     }
 }
 
@@ -121,18 +118,13 @@ LaunchMonBE::regUnpackForFEToBE(
 void
 LaunchMonBE::handshake(void)
 {
-    try {
-        auto status = LMON_be_handshake(NULL);
-        if (LMON_OK != status) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_handshake", status);
-        }
-        status = LMON_be_ready(NULL);
-        if (LMON_OK != status) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", status);
-        }
+    auto status = LMON_be_handshake(NULL);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_handshake", status);
     }
-    catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    status = LMON_be_ready(NULL);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", status);
     }
 }
 
@@ -204,13 +196,8 @@ LaunchMonBE::broadcast(
 void
 LaunchMonBE::finalize(void)
 {
-    try {
-        auto lmonRC = LMON_be_finalize();
-        if (LMON_OK != lmonRC) {
-            GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);
-        }
-    }
-    catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    auto lmonRC = LMON_be_finalize();
+    if (LMON_OK != lmonRC) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_ready", lmonRC);
     }
 }

@@ -49,9 +49,8 @@ do {                                                                           \
 /**
  * Constructor.
  */
-MRNetBE::MRNetBE(
-    void
-) {
+MRNetBE::MRNetBE(void)
+{
     ;
 }
 
@@ -60,6 +59,7 @@ MRNetBE::MRNetBE(
  */
 MRNetBE::~MRNetBE(void)
 {
+    ;
 }
 
 /**
