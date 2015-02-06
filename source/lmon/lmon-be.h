@@ -39,6 +39,8 @@ class LaunchMonBE {
     FEToBEUnpackFnP mFEToBEUnpackFn = nullptr;
     // My ID.
     int mLID = 0;
+    // Flag indicating whether or not I'm the LMON master.
+    bool mAmMaster = false;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
@@ -54,6 +56,22 @@ public:
         const core::Args &args,
         bool beVerbose = false
     );
+
+    /**
+     * Returns whether or not I am the "master."
+     */
+    bool
+    amMaster(void) {
+        return mAmMaster;
+    }
+
+    /**
+     * ID assigned by LaunchMON.
+     */
+    int
+    lid(void) {
+        return mLID;
+    }
     //
     void
     regUnpackForFEToBE(
@@ -79,6 +97,12 @@ public:
     void
     recvConnectionInfo(
         toolbecommon::ToolLeafInfoArrayT &lia
+    );
+    //
+    void
+    broadcast(
+        void *buf,
+        int numByte
     );
     //
     void

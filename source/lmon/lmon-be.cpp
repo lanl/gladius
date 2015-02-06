@@ -61,6 +61,8 @@ namespace {
 LaunchMonBE::LaunchMonBE(
     void
 ) : mBeVerbose(false)
+  , mLID(0)
+  , mAmMaster(false)
 {
 }
 
@@ -90,6 +92,8 @@ LaunchMonBE::init(
         GLADIUS_THROW_CALL_FAILED_RC("LMON_be_init", status);
     }
     LMON_be_getMyRank(&mLID);
+    status = LMON_be_amIMaster();
+    mAmMaster = LMON_NO != status;
 }
 
 /**
@@ -177,6 +181,20 @@ LaunchMonBE::recvConnectionInfo(
     auto status = LMON_be_recvUsrData((void *)&lia);
     if (LMON_OK != status) {
         GLADIUS_THROW_CALL_FAILED_RC("LMON_be_recvUsrData", status);
+    }
+}
+
+/**
+ *
+ */
+void
+LaunchMonBE::broadcast(
+    void *buf,
+    int numByte
+) {
+    auto status = LMON_be_broadcast(buf, numByte);
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_broadcast", status);
     }
 }
 

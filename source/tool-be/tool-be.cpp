@@ -217,6 +217,24 @@ ToolBE::connect(void)
     VCOMP_COUT("Receiving Tool Leaf Information." << std::endl);
     toolbecommon::ToolLeafInfoArrayT lia;
     mLMONBE.recvConnectionInfo(lia);
+    //
+    mLMONBE.broadcast((void *)&(lia.size), sizeof(int));
+    // Non-masters allocate space for the MRNet connection info.
+    if (!mLMONBE.amMaster()) {
+        lia.leaves = (toolbecommon::ToolLeafInfoT *)
+            calloc(lia.size, sizeof(toolbecommon::ToolLeafInfoT));
+        if (!lia.leaves) GLADIUS_THROW_OOR();
+    }
+    VCOMP_COUT("Broadcasting Connection Information to All Daemons."
+               << std::endl
+    );
+    auto status = LMON_be_broadcast(
+                      (void *)lia.leaves,
+                      lia.size * sizeof(toolbecommon::ToolLeafInfoT)
+                  );
+    if (LMON_OK != status) {
+        GLADIUS_THROW_CALL_FAILED_RC("LMON_be_broadcast", status);
+    }
 }
 
 /**
