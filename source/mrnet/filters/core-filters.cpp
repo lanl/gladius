@@ -36,6 +36,7 @@ GladiusMRNetFilterInit(
     void **,
     PacketPtr &params
 ) {
+    std::cout << "FILTER!!!" << std::endl;
     int data = -1;
     params->unpack("%d", &data);
     std::cout << "FILTER GOT: " << data << std::endl;

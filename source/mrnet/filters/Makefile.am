@@ -6,8 +6,6 @@
 # top-level directory of this distribution.
 #
 
-LIBVINFO = "1:0:0"
-
 lib_LTLIBRARIES = \
 libGladiusMRNetCoreFilters.la
 
@@ -25,6 +23,6 @@ libGladiusMRNetCoreFilters_la_CPPFLAGS = \
 ${MRNET_CPPFLAGS}
 
 libGladiusMRNetCoreFilters_la_LDFLAGS = \
--version-info ${LIBVINFO}
+-module -avoid-version
 
 libGladiusMRNetCoreFilters_la_LIBADD =

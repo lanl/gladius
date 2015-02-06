@@ -174,8 +174,11 @@ MRNetBE::handshake(void)
     MRN::Stream *stream = nullptr;
     bool recvShouldBlock = true;
     auto status = mNetwork->recv(&proto, packet, &stream, recvShouldBlock);
+    VCOMP_COUT("Recv!." << std::endl);
     if (1 != status) {
         GLADIUS_THROW_CALL_FAILED("Network::Recv");
     }
-    VCOMP_COUT("Proto: " << proto << std::endl);
+    int fromFE = -1;
+    packet->unpack("%d", &fromFE);
+    VCOMP_COUT("Proto: " << proto << " GOT: " << fromFE << std::endl);
 }

@@ -591,7 +591,6 @@ MRNetFE::mLoadCoreFilters(void)
     //
     mBcastStream = mNetwork->new_Stream(
                        mBcastComm,
-                       MRN::TFILTER_SUM,
                        MRN::SFILTER_WAITFORALL,
                        filterID
                    );
@@ -616,6 +615,8 @@ MRNetFE::networkInit(void)
     mLoadCoreFilters();
 }
 
+#include "mrnet/Types.h"
+
 /**
  *
  */
@@ -625,7 +626,7 @@ MRNetFE::handshake(void)
     VCOMP_COUT("Handshaking." << std::endl);
 
     int magicNum = 123;
-    auto status = mBcastStream->send(0, "%d", magicNum);
+    auto status = mBcastStream->send(FirstApplicationTag, "%d", magicNum);
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("MRNet Stream Send");
     }
