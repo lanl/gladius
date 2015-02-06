@@ -17,7 +17,11 @@ namespace core {
  *
  */
 class SessionFE {
+    // The name of our user-specific session directory where we stash some of
+    // our stuff.
     static const std::string sDotName;
+    // The installation prefix of the tool front-end.
+    std::string mExecPrefix;
     //
     std::string mSessionFEDir;
     //
@@ -25,6 +29,12 @@ class SessionFE {
     //
     void
     mOpen(void);
+    //
+    void
+    init(void);
+    //
+    void
+    mSetExecPrefix(void);
     //
     ~SessionFE(void) { ; }
 public:
@@ -42,6 +52,14 @@ public:
     //
     SessionFE &
     operator=(const SessionFE &other);
+
+    /**
+     *
+     */
+    std::string
+    execPrefix(void) {
+        return mExecPrefix;
+    }
 };
 
 }

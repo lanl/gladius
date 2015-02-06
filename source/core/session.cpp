@@ -36,6 +36,7 @@ SessionFE::TheSession(void)
         // this. Don't do it.
         opened = true;
         singleton.mOpen();
+        singleton.init();
     }
     return singleton;
 }
@@ -73,7 +74,43 @@ SessionFE::mOpen(void)
         }
     }
     catch (const std::exception &e) {
-        GLADIUS_CERR_WARN << "Session Creation Failed: "
-                          << e.what() << std::endl;
+        auto errs = "Session Creation Failed: " + std::string(e.what());
+        GLADIUS_THROW_CALL_FAILED(errs);
     }
+}
+
+/**
+ *
+ */
+void
+SessionFE::mSetExecPrefix(void)
+{
+    std::string selfPath;
+    int errNo = 0;
+    auto rc = core::utils::getSelfPath(selfPath, errNo);
+    if (GLADIUS_SUCCESS != rc) {
+        const auto errs = "getSelfPath: " + core::utils::getStrError(errNo);
+        GLADIUS_THROW_CALL_FAILED_RC(errs, rc);
+    }
+    // Looking for something like: [prefix]/bin/gladius. All we want is to know
+    // what [prefix] is.
+    std::string badness = "Could not determine " PACKAGE_NAME "'s installation "
+                          "prefix by inspecting the following path:"
+                          "'" + selfPath + "'";
+    std::string last = "/bin/" PACKAGE_NAME;
+    auto found = selfPath.rfind(last);
+    // Not found, so something is wrong.
+    if (std::string::npos == found) {
+        GLADIUS_THROW(badness);
+    }
+    mExecPrefix = selfPath.substr(0, found);
+}
+
+/**
+ *
+ */
+void
+SessionFE::init(void)
+{
+    mSetExecPrefix();
 }

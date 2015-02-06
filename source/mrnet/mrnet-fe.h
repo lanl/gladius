@@ -68,6 +68,8 @@ class MRNetFE {
 private:
     //
     static const std::string sCommNodeName;
+    //
+    static const std::string sCoreFiltersSO;
     // Be verbose or not.
     bool mBeVerbose = false;
     // Base session directory.

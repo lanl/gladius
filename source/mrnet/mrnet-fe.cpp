@@ -259,6 +259,8 @@ beConnectCbFn(
 } // end namespace
 
 const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
+// If filter shared object names change, then update this.
+const std::string MRNetFE::sCoreFiltersSO = "libGladiusMRNetCoreFilters.so";
 
 /**
  * Constructor.
@@ -576,5 +578,17 @@ MRNetFE::networkInit(void)
     if (!mBcastComm) {
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
     }
-    //auto filterID = mNetwork->load_FilterFunc(
+    //
+    static const auto ps = core::utils::osPathSep;
+    static const auto execPrefix = core::SessionFE::TheSession().execPrefix();
+    static const auto soPrefix = execPrefix + ps + "lib";
+    VCOMP_COUT("Looking For Core Filters in: " << soPrefix << std::endl);
+    static const std::string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
+    auto filterID = mNetwork->load_FilterFunc(
+                        coreFilterSOName.c_str(),
+                        "GladiusMRNetFilterInit"
+                    );
+    if (-1 == filterID) {
+        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: GladiusMRNetFilterInit");
+    }
 }
