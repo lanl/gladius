@@ -9,6 +9,7 @@
  */
 
 #include "mrnet/mrnet-fe.h"
+#include "mrnet/filters/core-filters.h"
 
 #include "core/core.h"
 #include "core/utils.h"
@@ -616,9 +617,6 @@ MRNetFE::networkInit(void)
     mLoadCoreFilters();
 }
 
-// FIXME RM
-#include "mrnet/Types.h"
-
 /**
  *
  */
@@ -627,22 +625,32 @@ MRNetFE::handshake(void)
 {
     VCOMP_COUT("Handshaking." << std::endl);
 
-    int magicNum = 123;
-    auto status = mBcastStream->send(FirstApplicationTag, "%d", magicNum);
+    auto status = mBcastStream->send(
+                      FirstApplicationTag,
+                      "%d",
+                      GladiusMRNetFilterInitMagic
+                  );
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("MRNet Stream Send");
+        GLADIUS_THROW_CALL_FAILED("Stream::Send");
     }
     status = mBcastStream->flush();
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("MRNet Stream Flush");
+        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
     MRN::PacketPtr packet;
-    int proto = 101;
-    status = mBcastStream->recv(&proto, packet);
+    int tag = 0;
+    status = mBcastStream->recv(&tag, packet);
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("MRNet Network Recv");
+        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
     }
-    int data = -2;
-    packet->unpack("%d", &data);
-    VCOMP_COUT("Proto: " << proto << " Data: " << data << std::endl);
+    int data = 0;
+    status = packet->unpack("%d", &data);
+    if (0 != status) {
+        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+    }
+    if (data != -GladiusMRNetFilterInitMagic) {
+        GLADIUS_THROW("Received Invalid Data From Tool Back-End");
+    }
+
+    VCOMP_COUT("Done with Handshake." << std::endl);
 }

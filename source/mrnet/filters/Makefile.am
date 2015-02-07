@@ -13,7 +13,7 @@ libGladiusMRNetCoreFilters.la
 # GladiusMRNetCoreFilters
 ################################################################################
 libGladiusMRNetCoreFilters_la_SOURCES = \
-core-filters.cpp
+core-filters.h core-filters.cpp
 
 libGladiusMRNetCoreFilters_la_CFLAGS =
 

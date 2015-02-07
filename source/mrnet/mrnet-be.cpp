@@ -9,6 +9,7 @@
  */
 
 #include "mrnet/mrnet-be.h"
+#include "mrnet/filters/core-filters.h"
 
 #include "core/core.h"
 #include "core/utils.h"
@@ -162,9 +163,6 @@ MRNetBE::connect(void)
 }
 
 
-// FIXME RM
-#include "mrnet/Types.h"
-
 /**
  *
  */
@@ -173,23 +171,25 @@ MRNetBE::handshake(void)
 {
     VCOMP_COUT("Handshaking." << std::endl);
 
-    int proto = -1;
     MRN::PacketPtr packet;
     MRN::Stream *stream = nullptr;
-    bool recvShouldBlock = true;
-    auto status = mNetwork->recv(&proto, packet, &stream, recvShouldBlock);
-    VCOMP_COUT("Recv!." << std::endl);
+    const bool recvShouldBlock = true;
+    int tag = 0;
+    auto status = mNetwork->recv(&tag, packet, &stream, recvShouldBlock);
     if (1 != status) {
         GLADIUS_THROW_CALL_FAILED("Network::Recv");
     }
-    int fromFE = -1;
-    packet->unpack("%d", &fromFE);
-    VCOMP_COUT("Proto: " << proto << " GOT: " << fromFE << std::endl);
-    int pong = 456;
-    status = stream->send(proto, "%d", pong);
+    int ping = -1;
+    packet->unpack("%d", &ping);
+    if (ping != GladiusMRNetFilterInitMagic) {
+        GLADIUS_THROW("Received Invalid Data From Tool Front-End");
+    }
+    int pong = -ping;
+    status = stream->send(tag, "%d", pong);
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Send");
     }
     stream->flush();
-    VCOMP_COUT("Done with Send!" << std::endl);
+
+    VCOMP_COUT("Done with Handshake." << std::endl);
 }

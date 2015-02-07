@@ -8,7 +8,7 @@
  * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  */
 
-#include "tool-be.h"
+#include "tool-be/tool-be.h"
 
 #include "core/core.h"
 #include "core/colors.h"

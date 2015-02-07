@@ -15,6 +15,7 @@
 #include "tool-be/tool-be.h"
 
 #include <cstdlib>
+#include <cstdio>
 #include <string>
 
 namespace {
@@ -42,6 +43,8 @@ main(
     int rs = EXIT_SUCCESS;
     //
     try {
+        // No stdout buffering.
+        setbuf(stdout, NULL);
         const auto beVerbose = true;
         // Turn off colors first. They make logs look awful.
         core::colors::color().colorize(false);
