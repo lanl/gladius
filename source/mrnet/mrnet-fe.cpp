@@ -238,7 +238,8 @@ feToBEPack(
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace MRNetFEGlobals {
-int numCallbacks;
+// The number of back-ends that have reported back to us.
+int numBEsReporting = 0;
 }
 
 /**
@@ -253,7 +254,7 @@ beConnectCbFn(
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
         && MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
         std::lock_guard<std::mutex> lock(mtx);
-        MRNetFEGlobals::numCallbacks++;
+        MRNetFEGlobals::numBEsReporting++;
     }
 }
 
@@ -268,7 +269,9 @@ nodeLostCbFn(
     std::mutex mtx;
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
         && MRN::TopologyEvent::TOPOL_REMOVE_NODE == event->get_Type()) {
-        assert(false && "A Node Loss Was Detected! Implement Recovery.");
+        std::lock_guard<std::mutex> lock(mtx);
+        COMP_COUT << "A Node Loss Was Detected! Implement Recovery."
+                  << std::endl << std::flush;
     }
 }
 } // end namespace
@@ -284,7 +287,7 @@ MRNetFE::MRNetFE(
     void
 ) : mPrefixPath("")
 {
-    MRNetFEGlobals::numCallbacks = 0;
+    MRNetFEGlobals::numBEsReporting = 0;
 }
 
 /**
@@ -563,7 +566,7 @@ MRNetFE::connect(void)
 
     VCOMP_COUT("Trying to Connect..." << endl);
     try {
-        if (mNumAppNodes == (size_t)MRNetFEGlobals::numCallbacks) {
+        if (mNumAppNodes == (size_t)MRNetFEGlobals::numBEsReporting) {
             return GLADIUS_SUCCESS;
         }
         else {
@@ -571,7 +574,7 @@ MRNetFE::connect(void)
                        << endl);
             VCOMP_COUT("*** "
                        << setw(6) << setfill('0')
-                       << MRNetFEGlobals::numCallbacks << " Out of "
+                       << MRNetFEGlobals::numBEsReporting << " Out of "
                        << setw(6) << setfill('0')
                        << mNumAppNodes << " Daemons Reporting."
                        << endl);

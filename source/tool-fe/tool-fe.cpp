@@ -170,10 +170,11 @@ ToolFE::mainLoop(
             return;
         }
         // If we are here, then our environment is sane enough to start...
-        // FIXME dup stdout?
+        // FIXME dup stdout/stdin?
         mInitializeToolInfrastructure();
         // Start lash-up thread.
         mStartToolLashUpThread();
+        //
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
@@ -287,7 +288,7 @@ ToolFE::mInitiateToolLashUp(void)
         mMRNFE.networkInit();
         // Make sure that our core filters are working by performing a handshake
         // between the tool front-end and all the tool leaves (where all
-        // communication is going through a set of core filters.
+        // communication is going through a set of core filters).
         mMRNFE.handshake();
     }
     catch (const std::exception &e) {

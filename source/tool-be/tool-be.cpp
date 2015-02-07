@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <string>
 #include <limits.h>
+#include <signal.h>
 
 using namespace gladius;
 using namespace gladius::toolbe;
@@ -231,6 +232,13 @@ ToolBE::connect(void)
         (void *)lia.leaves,
         lia.size * sizeof(toolbecommon::ToolLeafInfoT)
     );
+    // FIXME
+    // Since we started our tool daemons under debugger control, we must send a
+    // continue signal to them.
+    auto *pt = mProcTab.procTab();
+    for (decltype(mProcTab.nEntries()) p = 0; p < mProcTab.nEntries() ; ++p) {
+        kill(pt[p].pd.pid, SIGCONT);
+    }
     //
     mMRNBE.setPersonality(lia);
     //
@@ -238,8 +246,15 @@ ToolBE::connect(void)
     //
     mMRNBE.handshake();
     //
-    if (!mLMONBE.amMaster()) free(lia.leaves);
+    free(lia.leaves);
 }
+
+// FIXME RM
+#include <sys/ptrace.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 
 /**
  *
@@ -248,6 +263,19 @@ void
 ToolBE::mainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
+    auto *pt = mProcTab.procTab();
+    for (auto process = 0UL; process < mProcTab.nEntries(); ++process) {
+        COMP_COUT << "SIG PID: " << pt[process].pd.pid << std::endl;
+#if 0
+        if (-1 == ptrace(PTRACE_CONT, pt[process].pd.pid, NULL, NULL)) {
+            auto err = errno;
+            auto errs = core::utils::getStrError(err);
+            GLADIUS_CERR_WARN << "Failed: " + errs << std::endl;
+        }
+#endif
+        //kill(pt[process].pd.pid, SIGCONT);
+    }
+    sleep(1000);
 }
 
 /**

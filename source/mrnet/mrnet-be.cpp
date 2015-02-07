@@ -141,11 +141,15 @@ void
 MRNetBE::connect(void)
 {
     VCOMP_COUT("Connecting to MRNet Network." << std::endl);
-    char parentPort[256];
-    char parentRank[256];
-    char rank[256];
+
+    char parentPort[512];
+    memset(parentPort, 0, sizeof(parentPort));
     snprintf(parentPort, sizeof(parentPort), "%d", mParentPort);
+    char parentRank[512];
+    memset(parentRank, 0, sizeof(parentRank));
     snprintf(parentRank, sizeof(parentRank), "%d", mParentRank);
+    char rank[512];
+    memset(rank, 0, sizeof(rank));
     snprintf(rank, sizeof(rank), "%d", mRank);
     const int argc = 6;
     char *argv[argc];
@@ -161,7 +165,6 @@ MRNetBE::connect(void)
         GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkBE");
     }
 }
-
 
 /**
  *
@@ -180,7 +183,10 @@ MRNetBE::handshake(void)
         GLADIUS_THROW_CALL_FAILED("Network::Recv");
     }
     int ping = -1;
-    packet->unpack("%d", &ping);
+    status = packet->unpack("%d", &ping);
+    if (0 != status) {
+        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+    }
     if (ping != GladiusMRNetFilterInitMagic) {
         GLADIUS_THROW("Received Invalid Data From Tool Front-End");
     }

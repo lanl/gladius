@@ -13,7 +13,7 @@ source
 
 EXTRA_DIST = \
 LICENSE.txt README.md RUN.md TODO.md THANKS HACK.md BUILD.md \
-LT-VERSION-SCHEME.txt
+LT-VERSION-SCHEME.txt debugging.md
 
 AM_CFLAGS =
 

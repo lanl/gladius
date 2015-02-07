@@ -18,6 +18,10 @@
 #include <cstdio>
 #include <string>
 
+#include <sys/types.h>
+#include <unistd.h>
+
+
 namespace {
 // This component's name.
 const std::string CNAME = "*gtoold";
@@ -45,6 +49,7 @@ main(
     try {
         // No stdout buffering.
         setbuf(stdout, NULL);
+        //
         const auto beVerbose = true;
         // Turn off colors first. They make logs look awful.
         core::colors::color().colorize(false);
@@ -53,6 +58,7 @@ main(
         // Let it begin!
         COMP_COUT << "Tool Daemon Started." << std::endl;
         //
+        COMP_COUT << "*** PID: " << getpid() << std::endl;
         core::Args args(
             argc,
             const_cast<const char **>(argv),
