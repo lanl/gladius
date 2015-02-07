@@ -247,14 +247,28 @@ int numCallbacks;
 void
 beConnectCbFn(
     MRN::Event *event,
-    void *dummy
+    void *
 ) {
-    GLADIUS_UNUSED(dummy);
     std::mutex mtx;
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
         && MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
         std::lock_guard<std::mutex> lock(mtx);
         MRNetFEGlobals::numCallbacks++;
+    }
+}
+
+/**
+ * Node lost callback.
+ */
+void
+nodeLostCbFn(
+    MRN::Event *event,
+    void *
+) {
+    std::mutex mtx;
+    if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
+        && MRN::TopologyEvent::TOPOL_REMOVE_NODE == event->get_Type()) {
+        assert(false && "A Node Loss Was Detected! Implement Recovery.");
     }
 }
 } // end namespace
@@ -406,6 +420,13 @@ MRNetFE::mRegisterEventCallbacks(void)
                   NULL
               );
     if (!rc) GLADIUS_THROW_CALL_FAILED("register_EventCallback");
+    //
+    rc = mNetwork->register_EventCallback(
+             Event::TOPOLOGY_EVENT,
+             TopologyEvent::TOPOL_REMOVE_NODE,
+             nodeLostCbFn,
+             NULL
+         );
 }
 
 /**
@@ -607,8 +628,8 @@ void
 MRNetFE::networkInit(void)
 {
     VCOMP_COUT("Initializing Network." << std::endl);
-    // FIXME
-    //mLeafInfo.networkTopology->print_TopologyFile("/tmp/TOPO.txt");
+    // NOTE: Can print topology file from:
+    // mLeafInfo.networkTopology->print_TopologyFile();
     mBcastComm = mNetwork->get_BroadcastCommunicator();
     if (!mBcastComm) {
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
