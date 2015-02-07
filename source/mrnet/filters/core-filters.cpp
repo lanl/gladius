@@ -22,7 +22,7 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 // Filter Init
 ////////////////////////////////////////////////////////////////////////////////
-const char *GladiusMRNetFilterInit_format_string = "%ac";
+const char *GladiusMRNetFilterInit_format_string = "%d";
 
 // FIXME Add const TopologyLocalInfo &topology to end of sig.
 /**
@@ -34,7 +34,7 @@ GladiusMRNetFilterInit(
     vector<PacketPtr> &outputPackets,
     vector<PacketPtr> &,
     void **,
-    PacketPtr &params
+    PacketPtr &
 ) {
     std::cout << "FILTER!!!" << std::endl;
     std::cout << "FILTER DONE!!!" << std::endl;

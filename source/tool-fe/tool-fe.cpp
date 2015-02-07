@@ -289,7 +289,6 @@ ToolFE::mInitiateToolLashUp(void)
         // between the tool front-end and all the tool leaves (where all
         // communication is going through a set of core filters.
         mMRNFE.handshake();
-
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;

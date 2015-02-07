@@ -606,7 +606,8 @@ void
 MRNetFE::networkInit(void)
 {
     VCOMP_COUT("Initializing Network." << std::endl);
-    // XXX We could dump the topology here for debugging.
+    // FIXME
+    //mLeafInfo.networkTopology->print_TopologyFile("/tmp/TOPO.txt");
     mBcastComm = mNetwork->get_BroadcastCommunicator();
     if (!mBcastComm) {
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
@@ -641,5 +642,7 @@ MRNetFE::handshake(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("MRNet Network Recv");
     }
-    VCOMP_COUT("Proto: " << proto << std::endl);
+    int data = -2;
+    packet->unpack("%d", &data);
+    VCOMP_COUT("Proto: " << proto << " Data: " << data << std::endl);
 }
