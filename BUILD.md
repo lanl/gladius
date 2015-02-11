@@ -4,9 +4,8 @@
 - C++11-capable C++ compiler
 - libelf (http://directory.fsf.org/wiki/Libelf)
 - libiberty (https://gcc.gnu.org/onlinedocs/libiberty/)
-- LLDB (http://lldb.llvm.org/)
-    - swig (http://www.swig.org/)
-    - libedit (http://thrysoee.dk/editline/)
+- libmigdb (http://libmigdb.sourceforge.net/)
+- libedit (http://thrysoee.dk/editline/)
 - LaunchMON (https://github.com/scalability-llnl/LaunchMON)
     - libgcrypt (http://www.gnu.org/software/libgcrypt/)
     - MPI Library (Open MPI or MPICH)
@@ -15,16 +14,12 @@
     - flex (http://flex.sourceforge.net/)
 - GNU Autotools (m4, autoconf, automake, libtool)
 
-## Building LLDB (see: http://lldb.llvm.org/build.html)
+## Building libmigdb (see: http://libmigdb.sourceforge.net/)
 ```bash
-export LLVM_PREFIX=$HOME/local/lldb
-svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
-cd llvm/tools
-svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
-svn co http://llvm.org/svn/llvm-project/lldb/trunk lldb
-cd .. && mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=$LLVM_PREFIX ../
-make && make install
+export MIGDB_PREFIX=$HOME/local/migdb
+git clone git@github.com:samuelkgutierrez/libmigdb.git
+cd libmigdb
+make install prefix=$MIGDB_PREFIX
 ```
 
 ## Building LaunchMON
@@ -64,6 +59,7 @@ make -j4 && make install
 ```bash
 ./configure \
 --prefix=$HOME/local/gladius \
+--with-migdb=$MIGDB_PREFIX \
 --with-lmon=$LMON_PREFIX \
 --with-mrnet=$MRNET_PREFIX
 ```

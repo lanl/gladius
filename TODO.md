@@ -1,5 +1,7 @@
 # Gladius TODO
 
+- Can we use the "Scalable Binary Deployment system?"
+- What does LMON_fe_putToBeDaemonEnv do? This may be useful.
 - Implement component registry scheme.
 - Register timeout and retry environment variabes to tool FE.
 - Automatically push PATH to remote hosts.

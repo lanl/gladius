@@ -249,13 +249,6 @@ ToolBE::connect(void)
     free(lia.leaves);
 }
 
-// FIXME RM
-#include <sys/ptrace.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-
 /**
  *
  */
@@ -266,14 +259,7 @@ ToolBE::mainLoop(void)
     auto *pt = mProcTab.procTab();
     for (auto process = 0UL; process < mProcTab.nEntries(); ++process) {
         COMP_COUT << "SIG PID: " << pt[process].pd.pid << std::endl;
-#if 0
-        if (-1 == ptrace(PTRACE_CONT, pt[process].pd.pid, NULL, NULL)) {
-            auto err = errno;
-            auto errs = core::utils::getStrError(err);
-            GLADIUS_CERR_WARN << "Failed: " + errs << std::endl;
-        }
-#endif
-        //kill(pt[process].pd.pid, SIGCONT);
+        // XXX TODO
     }
     sleep(1000);
 }

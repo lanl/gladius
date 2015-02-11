@@ -649,6 +649,7 @@ MRNetFE::handshake(void)
 {
     VCOMP_COUT("Handshaking." << std::endl);
 
+    // Ping!
     auto status = mBcastStream->send(
                       FirstApplicationTag,
                       "%d",
@@ -661,6 +662,7 @@ MRNetFE::handshake(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
+    // Pong!
     MRN::PacketPtr packet;
     int tag = 0;
     status = mBcastStream->recv(&tag, packet);

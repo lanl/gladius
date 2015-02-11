@@ -62,16 +62,12 @@ LaunchMonBE::LaunchMonBE(
     void
 ) : mBeVerbose(false)
   , mLID(0)
-  , mAmMaster(false)
-{
-}
+  , mAmMaster(false) { }
 
 /**
  *
  */
-LaunchMonBE::~LaunchMonBE(void)
-{
-}
+LaunchMonBE::~LaunchMonBE(void) { }
 
 /**
  *

@@ -9,7 +9,7 @@
  */
 
 /**
- * Implements LaunchMON actions shim.
+ * Implements LaunchMON actions shim for the tool front-end.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -397,6 +397,7 @@ LaunchMonFE::sendDaemonInfo(
     const toolcommon::LeafInfo &leafInfo
 ) {
     VCOMP_COUT("Sending Daemon Info." << std::endl);
+
     if (!mFEToBePackFn) {
         GLADIUS_THROW("Front-end to Back-end packing function not set.");
     }
