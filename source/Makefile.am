@@ -9,6 +9,7 @@
 SUBDIRS = \
 core \
 tool-common \
+dmi \
 lmon \
 mrnet \
 mrnet/filters \

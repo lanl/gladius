@@ -140,6 +140,7 @@ AC_CONFIG_FILES([
     source/Makefile
     source/core/Makefile
     source/tool-common/Makefile
+    source/dmi/Makefile
     source/lmon/Makefile
     source/mrnet/Makefile
     source/mrnet/filters/Makefile
