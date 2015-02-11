@@ -13,13 +13,14 @@
     - boost (http://www.boost.org/)
     - flex (http://flex.sourceforge.net/)
 - GNU Autotools (m4, autoconf, automake, libtool)
+- MI-capable GDB or LLDB (TODO)
 
 ## Building libmigdb (see: http://libmigdb.sourceforge.net/)
 ```bash
 export MIGDB_PREFIX=$HOME/local/migdb
 git clone git@github.com:samuelkgutierrez/libmigdb.git
 cd libmigdb
-make install prefix=$MIGDB_PREFIX
+make && make install prefix=$MIGDB_PREFIX
 ```
 
 ## Building LaunchMON
