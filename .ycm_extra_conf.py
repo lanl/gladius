@@ -83,7 +83,7 @@ flags = [
 '-isystem',
 '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
 '-I./source',
-'-I' + home + '/local/lldb/include',
+'-I' + home + '/local/migdb/include',
 '-I' + home + '/local/mrnet/include',
 '-I' + home + '/local/lldb/include',
 '-I' + home + '/local/mrnet/include',

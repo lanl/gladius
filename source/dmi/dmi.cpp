@@ -7,7 +7,7 @@
  */
 
 /**
- * Implements a thin shim over libmigdb.
+ * Implements the DMI.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -15,3 +15,21 @@
 #endif
 
 #include "dmi/dmi.h"
+
+#include <cassert>
+
+using namespace gladius;
+using namespace gladius::dmi;
+
+/**
+ *
+ */
+DMI::DMI(void)
+{
+}
+
+/**
+ *
+ */
+DMI::~DMI(void) {
+}

@@ -13,6 +13,7 @@
 #include "core/core.h"
 #include "core/colors.h"
 #include "tool-common/tool-common.h"
+#include "dmi/dmi.h"
 
 #include "lmon_api/lmon_be.h"
 
@@ -104,12 +105,13 @@ feToBeUnpack(
             for (decltype(nChildren) child = 0; child < nChildren; child++) {
                 daemon++;
                 if (daemon >= leafInfoArray->size) {
-                    auto errStr = "Failed to Unpack Info From the Front-End. "
-                                  "Expecting "
+                    auto errStr = "Failed to Unpack Info From "
+                                  "the Front-End. Expecting "
                                 + std::to_string(leafInfoArray->size)
                                 + "Daemons, but Received "
                                 + std::to_string(daemon) + ".";
                     GLADIUS_THROW(errStr);
+                    // Never reached.
                     return -1;
                 }
                 // Fill in the parent information.
@@ -232,13 +234,6 @@ ToolBE::connect(void)
         (void *)lia.leaves,
         lia.size * sizeof(toolbecommon::ToolLeafInfoT)
     );
-    // FIXME
-    // Since we started our tool daemons under debugger control, we must send a
-    // continue signal to them.
-    auto *pt = mProcTab.procTab();
-    for (decltype(mProcTab.nEntries()) p = 0; p < mProcTab.nEntries() ; ++p) {
-        kill(pt[p].pd.pid, SIGCONT);
-    }
     //
     mMRNBE.setPersonality(lia);
     //
@@ -256,11 +251,31 @@ void
 ToolBE::mainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
+#if 0
     auto *pt = mProcTab.procTab();
+    //dmi::DMI d;
     for (auto process = 0UL; process < mProcTab.nEntries(); ++process) {
-        COMP_COUT << "SIG PID: " << pt[process].pd.pid << std::endl;
-        // XXX TODO
+        VCOMP_COUT("Attaching to (PID: " << pt[process].pd.pid << ") : "
+                   << pt[process].pd.executable_name << std::endl);
+        //auto *ret = gmi_target_attach(d.mH, pt[process].pd.pid);
+        //assert(ret && "Attach Failed");
+        //sleep(1);
     }
+    //std::cout << "RUN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+    //gmi_exec_continue(d.mH);
+    //gmi_exec_run(d.mH);
+    //wait_for_stop(d.mH);
+    // XXX RM
+#endif
+    // FIXME
+    // Since we started our tool daemons under debugger control, we must send a
+    // continue signal to them.
+#if 1
+    auto *pt = mProcTab.procTab();
+    for (decltype(mProcTab.nEntries()) p = 0; p < mProcTab.nEntries() ; ++p) {
+        kill(pt[p].pd.pid, SIGCONT);
+    }
+#endif
     sleep(1000);
 }
 

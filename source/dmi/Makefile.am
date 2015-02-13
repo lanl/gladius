@@ -1,5 +1,5 @@
 #
-# Copyright (c)      2015 Los Alamos National Security, LLC
+# Copyright (c) 2015      Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -18,8 +18,12 @@ dmi.h dmi.cpp
 libGladiusDMI_la_CFLAGS =
 
 libGladiusDMI_la_CPPFLAGS = \
--I${top_srcdir}/source
+-I${top_srcdir}/source \
+${MIGDB_CPPFLAGS}
 
-libGladiusDMI_la_LDFLAGS = -version-info ${LIBVINFO}
+libGladiusDMI_la_LDFLAGS = \
+${MIGDB_LDFLAGS} \
+-version-info ${LIBVINFO}
 
-libGladiusDMI_la_LIBADD =
+libGladiusDMI_la_LIBADD = \
+${top_builddir}/source/core/libGladiusCore.la

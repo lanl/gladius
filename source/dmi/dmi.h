@@ -13,8 +13,21 @@
 #ifndef GLADIUS_DMI_DMI_H_INCLUDED
 #define GLADIUS_DMI_DMI_H_INCLUDED
 
+#include "mi_gdb.h"
+
 namespace gladius {
 namespace dmi {
+
+/**
+ * Debugger Machine Interface.
+ */
+class DMI {
+public:
+    //
+    DMI(void);
+    //
+    ~DMI(void);
+};
 
 
 } // end dmi namespace
