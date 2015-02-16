@@ -1,5 +1,7 @@
 # Gladius TODO
 
+- Set environment/runtime variables for parallel debugging
+  (e.g. -mca debugger mpirx).
 - Can we use the "Scalable Binary Deployment system?"
 - What does LMON_fe_putToBeDaemonEnv do? This may be useful.
 - Implement component registry scheme.

@@ -256,7 +256,8 @@ public:
     void
     dumpTo(
         std::ostream &os,
-        const std::string &outPrefix = ""
+        const std::string &outPrefix = "",
+        core::colors::Color color = core::colors::Color::NONE
     );
 
     /**

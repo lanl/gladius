@@ -57,7 +57,9 @@ public:
      *
      */
     std::string
-    ansiBeginColor(Color c) {
+    ansiBeginColor(
+        Color c
+    ) const {
         if (!mColorize || c > ColorCodeTab.size()) return "";
         return ColorCodeTab[c].second;
     }
@@ -66,7 +68,9 @@ public:
      *
      */
     std::string
-    ansiEndColor(void) {
+    ansiEndColor(
+        void
+    ) const {
         if (!mColorize) return "";
         return "\033[0m";
     }

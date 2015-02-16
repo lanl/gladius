@@ -28,19 +28,30 @@ const std::string NAMEC =
 void
 ProcessTable::dumpTo(
     std::ostream &os,
-    const std::string &outPrefix
+    const std::string &outPrefix,
+    core::colors::Color color
 ) {
     using namespace std;
-    os << outPrefix << "*** Process Table Dump ***" << endl;
+    using namespace core;
+
+    std::string outp;
+    if (core::colors::Color::NONE != color) {
+        const auto &cr = core::colors::color();
+        outp = cr.ansiBeginColor(color) + outPrefix + cr.ansiEndColor();
+    }
+    else {
+        outp = outPrefix;
+    }
+    os << outp << "*** Process Table Dump ***" << endl;
     if (!mProcTab) {
-        os << outPrefix << "XXX Process Table Not Allocated XXX" << endl;
+        os << outp << "XXX Process Table Not Allocated XXX" << endl;
         return;
     }
     for (decltype(mNEntries) i = 0; i < mNEntries; ++i) {
-        os << outPrefix << "Host Name: " << mProcTab[i].pd.host_name << endl;
-        os << outPrefix << "Executable Name: "
+        os << outp << "Host Name: " << mProcTab[i].pd.host_name << endl;
+        os << outp << "Executable Name: "
            << mProcTab[i].pd.executable_name << endl;
-        os << outPrefix << "PID: " << mProcTab[i].pd.pid << " "
+        os << outp << "PID: " << mProcTab[i].pd.pid << " "
            // TID: "Task ID"
            << "TID: " << mProcTab[i].mpirank
            << endl;
