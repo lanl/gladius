@@ -89,10 +89,11 @@ MRNetBE::init(
         GLADIUS_THROW("Cannot Get addinf->ai_addr");
     }
     char abuf[INET_ADDRSTRLEN];
-    const char *ntopRes = inet_ntop(AF_INET,
-                                    &sinp->sin_addr,
-                                    abuf,
-                                    INET_ADDRSTRLEN
+    const char *ntopRes = inet_ntop(
+                              AF_INET,
+                              &sinp->sin_addr,
+                              abuf,
+                              INET_ADDRSTRLEN
                           );
     if (!ntopRes) {
         GLADIUS_THROW_CALL_FAILED("inet_ntop");
@@ -172,7 +173,7 @@ MRNetBE::connect(void)
 void
 MRNetBE::handshake(void)
 {
-    VCOMP_COUT("Handshaking." << std::endl);
+    VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
 
     MRN::PacketPtr packet;
     MRN::Stream *stream = nullptr;
@@ -200,5 +201,5 @@ MRNetBE::handshake(void)
     }
     stream->flush();
 
-    VCOMP_COUT("Done with Handshake." << std::endl);
+    VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
 }

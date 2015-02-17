@@ -52,7 +52,11 @@ const retry_t unlimitedRetries = -1;
 // MRNet Tags for Core Components
 enum MRNetCoreTags {
     // Tag for initial lash-up handshake.
-    InitHandshake = FirstApplicationTag
+    InitHandshake = FirstApplicationTag,
+    // Shutdown tag.
+    Shutdown,
+    // The first tag a plugin can use.
+    FirstPluginTag
 };
 
 ////////////////////////////////////////////////////////////////////////////////

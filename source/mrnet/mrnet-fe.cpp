@@ -647,7 +647,7 @@ MRNetFE::networkInit(void)
 void
 MRNetFE::handshake(void)
 {
-    VCOMP_COUT("Handshaking." << std::endl);
+    VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
 
     // Ping!
     auto status = mBcastStream->send(
@@ -681,5 +681,5 @@ MRNetFE::handshake(void)
         GLADIUS_THROW("Received Invalid Data From Tool Back-End");
     }
 
-    VCOMP_COUT("Done with Handshake." << std::endl);
+    VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
 }

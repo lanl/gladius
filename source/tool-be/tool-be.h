@@ -63,7 +63,7 @@ public:
     redirectOutputTo(const std::string &base);
     //
     void
-    mainLoop(void);
+    enterDomain(void);
     //
     void
     finalize(void);

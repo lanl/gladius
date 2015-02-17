@@ -66,8 +66,11 @@ main(
         );
         toolbe::ToolBE toolBE;
         toolBE.init(args, beVerbose);
+        //
         toolBE.connect();
-        toolBE.mainLoop();
+        //
+        toolBE.enterDomain();
+        //
         toolBE.finalize();
     }
     catch (const std::exception &e) {

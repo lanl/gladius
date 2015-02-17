@@ -248,18 +248,16 @@ ToolBE::connect(void)
  *
  */
 void
-ToolBE::mainLoop(void)
+ToolBE::enterDomain(void)
 {
-    VCOMP_COUT("Entering Main Loop." << std::endl);
+    VCOMP_COUT("Entering Domain." << std::endl);
     // FIXME
     // Since we started our tool daemons under debugger control, we must send a
     // continue signal to them.
-#if 1
     auto *pt = mProcTab.procTab();
     for (decltype(mProcTab.nEntries()) p = 0; p < mProcTab.nEntries() ; ++p) {
         kill(pt[p].pd.pid, SIGCONT);
     }
-#endif
     sleep(1000);
 }
 
