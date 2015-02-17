@@ -47,8 +47,14 @@ do {                                                                           \
 #define ENV_VAR_CONNECT_MAX_RETRIES "GLADIUS_TOOL_FE_CONNECT_MAX_RETRIES"
 namespace {
 static const std::vector<core::EnvironmentVar> compEnvVars = {
-    {ENV_VAR_CONNECT_TIMEOUT_IN_SEC, "Connection timeout in seconds."},
-    {ENV_VAR_CONNECT_MAX_RETRIES, "Maximum number of connection retries."}
+    {ENV_VAR_CONNECT_TIMEOUT_IN_SEC,
+     "Connection timeout in seconds. Default: " +
+      std::to_string(ToolFE::sDefaultTimeout) + "."
+    },
+    {ENV_VAR_CONNECT_MAX_RETRIES,
+     "Maximum number of connection retries. Default: " +
+     std::to_string(ToolFE::sDefaultMaxRetries) + "."
+    }
 };
 }
 
@@ -81,7 +87,7 @@ ToolFE::registerComponent(void)
     // Register this component's environment variables with the central
     // registry.
     core::Environment::TheEnvironment().addToRegistry(
-        "Tool Front-end",
+        CNAME,
         compEnvVars
     );
 }

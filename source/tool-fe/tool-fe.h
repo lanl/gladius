@@ -37,10 +37,6 @@ private:
     //
     std::atomic<int> maStatus;
     ////////////////////////////////////////////////////////////////////////////
-    // Default timeout (in seconds)
-    static const toolcommon::timeout_t sDefaultTimeout;
-    // Default max number of retry attempts.
-    static const toolcommon::retry_t sDefaultMaxRetries;
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
     // Our LaunchMON front-end instance.
@@ -67,6 +63,10 @@ private:
     mInitiateToolLashUp(void);
 
 public:
+    // Default timeout (in seconds)
+    static const toolcommon::timeout_t sDefaultTimeout;
+    // Default max number of retry attempts.
+    static const toolcommon::retry_t sDefaultMaxRetries;
     //
     ToolFE(void);
     //
