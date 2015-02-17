@@ -22,7 +22,6 @@
 #include "core/args.h"
 #include "core/session.h"
 #include "ui/ui.h"
-#include "tool-fe/tool-fe.h"
 
 #include <string>
 #include <vector>
@@ -218,10 +217,12 @@ public:
     //
     static Terminal &
     TheTerminal(void);
+
     /**
      * Disable copy constructor.
      */
     Terminal(const Terminal &that) = delete;
+
     /**
      * Just return the singleton.
      */
@@ -230,22 +231,34 @@ public:
         GLADIUS_UNUSED(other);
         return Terminal::TheTerminal();
     }
-    //
+
+    /**
+     *
+     */
     EditLine *
     getEditLine(void) {
         return mEditLine;
     }
-    //
+
+    /**
+     *
+     */
     History *
     getHistory(void) {
         return mHist;
     }
-    //
+
+    /**
+     *
+     */
     HistEvent &
     getHistEvent(void) {
         return mHistEvent;
     }
-    //
+
+    /**
+     *
+     */
     const TermCommands &
     getTermCommands (void) const {
         return sTermCommands;

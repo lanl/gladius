@@ -622,6 +622,8 @@ MRNetFE::mLoadCoreFilters(void)
     if (!mBcastStream) {
         GLADIUS_THROW_CALL_FAILED("new_Stream");
     }
+    //
+    VCOMP_COUT("Done Loading Core Filters." << std::endl);
 }
 
 /**
@@ -631,6 +633,7 @@ void
 MRNetFE::networkInit(void)
 {
     VCOMP_COUT("Initializing Network." << std::endl);
+
     // NOTE: Can print topology file from:
     // mLeafInfo.networkTopology->print_TopologyFile();
     mBcastComm = mNetwork->get_BroadcastCommunicator();
@@ -639,6 +642,8 @@ MRNetFE::networkInit(void)
     }
     //
     mLoadCoreFilters();
+
+    VCOMP_COUT("Done Initializing Network." << std::endl);
 }
 
 /**

@@ -12,6 +12,7 @@
 
 #include "term.h"
 #include "core/core.h"
+#include "tool-fe/tool-fe.h"
 #include "term-cmds.h"
 
 #include <string>
@@ -154,7 +155,7 @@ TermCommands Terminal::sTermCommands {
 };
 
 /**
-*
+ *
  */
 Terminal &
 Terminal::TheTerminal(void)

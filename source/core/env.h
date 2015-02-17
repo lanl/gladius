@@ -39,6 +39,11 @@
  */
 #define GLADIUS_ENV_PLUGIN_PATH_NAME "GLADIUS_PLUGIN_PATH"
 
+/**
+ * Name of the session's default "domain mode" (i.e. domain plugin).
+ */
+#define GLADIUS_ENV_DOMAIN_MODE_NAME "GLADIUS_DOMAIN_MODE"
+
 namespace gladius {
 namespace core {
 /**

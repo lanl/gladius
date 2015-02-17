@@ -76,7 +76,7 @@ const toolcommon::retry_t ToolFE::sDefaultMaxRetries = 8;
  * Component registration.
  */
 void
-registerComponent(void)
+ToolFE::registerComponent(void)
 {
     // Register this component's environment variables with the central
     // registry.

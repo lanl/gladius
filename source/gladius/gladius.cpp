@@ -9,6 +9,7 @@
 #include "gladius.h"
 
 #include "core/core.h"
+#include "tool-fe/tool-fe.h"
 #include "ui/ui-factory.h"
 
 #include <string>
@@ -28,6 +29,9 @@ const std::vector<core::EnvironmentVar> gladiusEnvVars = {
     },
     {GLADIUS_ENV_PLUGIN_PATH_NAME,
      "A colon-delimited list of paths to search for Gladius plugins."
+    },
+    {GLADIUS_ENV_DOMAIN_MODE_NAME,
+     "Name of the session's default domain mode."
     }
 };
 }
@@ -65,6 +69,7 @@ void
 Gladius::mCoreComponentRegistration(void)
 {
     mEnv.addToRegistry(PACKAGE_NAME, gladiusEnvVars);
+    toolfe::ToolFE::registerComponent();
 }
 
 /**
