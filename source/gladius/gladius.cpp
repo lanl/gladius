@@ -25,6 +25,9 @@ const std::vector<core::EnvironmentVar> gladiusEnvVars = {
     },
     {GLADIUS_ENV_NO_TERM_COLORS_NAME,
      "Disables colorized terminal output when set."
+    },
+    {GLADIUS_ENV_PLUGIN_PATH_NAME,
+     "A colon-delimited list of paths to search for Gladius plugins."
     }
 };
 }
