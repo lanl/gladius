@@ -17,7 +17,37 @@ namespace gladius {
 namespace dspa {
 
 /**
- * Domain-Specific Plugin Architecture (DSPA). 
+ * Update when breaking plugin ABI.
+ */
+#define GLADIUS_DSPI_ABI 0
+
+/**
+ * The Domain-Specific Plugin Interface (DSPI) that plugins must adhere to.
+ */
+class DSPI {
+public:
+    /**
+     *
+     */
+    DSPI(void) { ; }
+
+    /**
+     *
+     */
+    virtual ~DSPI(void) { ; }
+    //
+    virtual void
+    activate(void) = 0;
+    //
+    virtual void
+    mainLoop(void) = 0;
+    //
+    virtual void
+    destroy(void) = 0;
+};
+
+/**
+ * Domain-Specific Plugin manager.
  */
 class DSPA {
 public:

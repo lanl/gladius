@@ -10,18 +10,33 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
-libGladiusDSPA.la
+libGladiusDSPI.la \
+libGladiusDSPManager.la
 
-libGladiusDSPA_la_SOURCES = \
-dspa.h dspa.cpp
+libGladiusDSPI_la_SOURCES = \
+dspi.h dspi.cpp
 
-libGladiusDSPA_la_CFLAGS =
+libGladiusDSPI_la_CFLAGS =
 
-libGladiusDSPA_la_CPPFLAGS = \
+libGladiusDSPI_la_CPPFLAGS = \
 -I${top_srcdir}/source
 
-libGladiusDSPA_la_LDFLAGS = \
+libGladiusDSPI_la_LDFLAGS = \
 -version-info ${LIBVINFO}
 
-libGladiusDSPA_la_LIBADD = \
+libGladiusDSPI_la_LIBADD =
+
+################################################################################
+libGladiusDSPManager_la_SOURCES = \
+dsp-manager.h dsp-manager.cpp
+
+libGladiusDSPManager_la_CFLAGS =
+
+libGladiusDSPManager_la_CPPFLAGS = \
+-I${top_srcdir}/source
+
+libGladiusDSPManager_la_LDFLAGS = \
+-version-info ${LIBVINFO}
+
+libGladiusDSPManager_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la
