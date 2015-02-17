@@ -251,22 +251,6 @@ void
 ToolBE::mainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
-#if 0
-    auto *pt = mProcTab.procTab();
-    //dmi::DMI d;
-    for (auto process = 0UL; process < mProcTab.nEntries(); ++process) {
-        VCOMP_COUT("Attaching to (PID: " << pt[process].pd.pid << ") : "
-                   << pt[process].pd.executable_name << std::endl);
-        //auto *ret = gmi_target_attach(d.mH, pt[process].pd.pid);
-        //assert(ret && "Attach Failed");
-        //sleep(1);
-    }
-    //std::cout << "RUN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-    //gmi_exec_continue(d.mH);
-    //gmi_exec_run(d.mH);
-    //wait_for_stop(d.mH);
-    // XXX RM
-#endif
     // FIXME
     // Since we started our tool daemons under debugger control, we must send a
     // continue signal to them.

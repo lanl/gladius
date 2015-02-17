@@ -187,6 +187,9 @@ MRNetBE::handshake(void)
     if (0 != status) {
         GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
     }
+    if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
+        GLADIUS_THROW("Received Invalid Tag From Tool Front-End");
+    }
     if (ping != GladiusMRNetFilterInitMagic) {
         GLADIUS_THROW("Received Invalid Data From Tool Front-End");
     }

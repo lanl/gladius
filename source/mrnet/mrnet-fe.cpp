@@ -642,7 +642,7 @@ MRNetFE::networkInit(void)
 }
 
 /**
- *
+ * Initial FE to BE handshake.
  */
 void
 MRNetFE::handshake(void)
@@ -651,7 +651,7 @@ MRNetFE::handshake(void)
 
     // Ping!
     auto status = mBcastStream->send(
-                      FirstApplicationTag,
+                      toolcommon::MRNetCoreTags::InitHandshake,
                       "%d",
                       GladiusMRNetFilterInitMagic
                   );
@@ -668,6 +668,9 @@ MRNetFE::handshake(void)
     status = mBcastStream->recv(&tag, packet);
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Recv");
+    }
+    if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
+        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
     }
     int data = 0;
     status = packet->unpack("%d", &data);
