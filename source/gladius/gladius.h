@@ -28,6 +28,9 @@ private:
     ui::UI &mUI;
     //
     Gladius(void);
+    //
+    void
+    mCoreComponentRegistration(void);
 
 public:
     /**
