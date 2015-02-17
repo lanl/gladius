@@ -18,16 +18,26 @@
 #include <map>
 
 /**
+ * NOTE: Environment Variable Naming Convention:
+ * GLADIUS_ENV_X_NAME
+ */
+
+/**
  * If this environment variable is set, then the tool front-end will be verbose
  * about its actions.
  */
-#define GLADIUS_TOOL_FE_VERBOSE_STR "GLADIUS_TOOL_FE_VERBOSE"
+#define GLADIUS_ENV_TOOL_FE_VERBOSE_NAME "GLADIUS_TOOL_FE_VERBOSE"
 
 /**
  * If this environment variable is set, then the tool will not colorize its
  * terminal output.
  */
-#define GLADIUS_NO_TERM_COLORS_STR "GLADIUS_NO_TERM_COLORS"
+#define GLADIUS_ENV_NO_TERM_COLORS_NAME "GLADIUS_NO_TERM_COLORS"
+
+/**
+ * A colon-delimited list of paths to search for Gladius plugins.
+ */
+#define GLADIUS_ENV_PLUGIN_PATH_NAME "GLADIUS_PLUGIN_PATH"
 
 namespace gladius {
 namespace core {
@@ -53,6 +63,7 @@ class Environment {
     Environment(void) { ; }
     //
     ~Environment(void) { ; }
+
 public:
     //
     static Environment &

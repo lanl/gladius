@@ -92,7 +92,7 @@ registerComponent(void)
 void
 ToolFE::mGetStateFromEnvs(void)
 {
-    if (core::utils::envVarSet(GLADIUS_TOOL_FE_VERBOSE_STR)) {
+    if (core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME)) {
         mBeVerbose = true;
     }
     else {

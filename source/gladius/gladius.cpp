@@ -20,8 +20,12 @@ using namespace gladius;
 ////////////////////////////////////////////////////////////////////////////////
 namespace {
 const std::vector<core::EnvironmentVar> gladiusEnvVars = {
-    {GLADIUS_TOOL_FE_VERBOSE_STR, "Makes tools actions verbose when set."},
-    {GLADIUS_NO_TERM_COLORS_STR, "Disables colorized terminal output when set."}
+    {GLADIUS_ENV_TOOL_FE_VERBOSE_NAME,
+     "Makes tools actions verbose when set."
+    },
+    {GLADIUS_ENV_NO_TERM_COLORS_NAME,
+     "Disables colorized terminal output when set."
+    }
 };
 }
 

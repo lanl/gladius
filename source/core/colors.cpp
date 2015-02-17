@@ -31,7 +31,7 @@ colors::color(void) {
     static colors singleton;
     if (!initialized) {
         initialized = true;
-        singleton.mColorize = !utils::envVarSet(GLADIUS_NO_TERM_COLORS_STR);
+        singleton.mColorize = !utils::envVarSet(GLADIUS_ENV_NO_TERM_COLORS_NAME);
     }
     return singleton;
 }
