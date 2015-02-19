@@ -1,5 +1,6 @@
 # Gladius TODO
 
+- Install gladius plugin headers so external plugins can be built.
 - Set environment/runtime variables for parallel debugging
   (e.g. -mca debugger mpirx).
 - Can we use the "Scalable Binary Deployment system?"
