@@ -151,8 +151,8 @@ AC_CONFIG_FILES([
     source/ui/Makefile
     source/ui/term/Makefile
     source/tool-fe/Makefile
-    source/tool-be/Makefile
     source/gladius/Makefile
+    source/tool-be/Makefile
 ])
 
 AC_OUTPUT

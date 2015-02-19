@@ -14,7 +14,7 @@ libGladiusDSPI.la \
 libGladiusDSPManager.la
 
 libGladiusDSPI_la_SOURCES = \
-dspi.h dspi.cpp
+dspi.h
 
 libGladiusDSPI_la_CFLAGS =
 

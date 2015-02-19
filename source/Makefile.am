@@ -17,5 +17,5 @@ mrnet/filters \
 tool-fe \
 ui \
 ui/term \
-tool-be \
-gladius
+gladius \
+tool-be

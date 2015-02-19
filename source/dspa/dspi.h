@@ -7,11 +7,13 @@
  */
 
 /**
- * The Domain-Specific Plugin Architecture. 
+ * The Domain-Specific Plugin (DSP) interface.
  */
 
-#ifndef GLADIUS_DSPA_DSPA_H_INCLUDED
-#define GLADIUS_DSPA_DSPA_H_INCLUDED
+#ifndef GLADIUS_DSPA_DSPI_H_INCLUDED
+#define GLADIUS_DSPA_DSPI_H_INCLUDED
+
+#include <functional>
 
 namespace gladius {
 namespace dspa {
@@ -19,22 +21,38 @@ namespace dspa {
 /**
  * Update when breaking plugin ABI.
  */
-#define GLADIUS_DSPI_ABI 0
+#define GLADIUS_DSP_ABI 0
+
+#define GLADIUS_PLUGIN(pluginImpl, pluginName, pluginVersion)                  \
+extern "C" {                                                                   \
+gladius::dspa::DomainSpecificPlugin *                                          \
+constructPlugin(void) {                                                        \
+    static pluginImpl singleton;                                               \
+    return &singleton;                                                         \
+}                                                                              \
+                                                                               \
+gladius::dspa::DomainSpecificPluginInfo GladiusDomainSpecificPlugin = {        \
+    GLADIUS_DSP_ABI,                                                           \
+    pluginName,                                                                \
+    pluginVersion,                                                             \
+    constructPlugin                                                            \
+};                                                                             \
+}
 
 /**
- * The Domain-Specific Plugin Interface (DSPI) that plugins must adhere to.
+ * The Domain-Specific Plugin (DSP) interface that plugins must adhere to.
  */
-class DSPI {
+class DomainSpecificPlugin {
 public:
     /**
      *
      */
-    DSPI(void) { ; }
+    DomainSpecificPlugin(void) { ; }
 
     /**
      *
      */
-    virtual ~DSPI(void) { ; }
+    virtual ~DomainSpecificPlugin(void) { ; }
     //
     virtual void
     activate(void) = 0;
@@ -47,16 +65,18 @@ public:
 };
 
 /**
- * Domain-Specific Plugin manager.
+ * Exposes plugin info.
  */
-class DSPA {
-public:
-    //
-    DSPA(void);
-    //
-    ~DSPA(void);
+struct DomainSpecificPluginInfo {
+    // Plugin ABI.
+    int pluginABI = 0;
+    // Plugin name.
+    const char *pluginName = nullptr;
+    // Plugin version string.
+    const char *pluginVersion = nullptr;
+    // Plugin activation.
+    std::function<void()> pluginConstruct = nullptr;
 };
-
 
 } // end dspa namespace
 } // end gladius namespace
