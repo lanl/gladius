@@ -142,7 +142,7 @@ AC_CONFIG_FILES([
     Makefile
     source/Makefile
     source/core/Makefile
-    source/dspa/Makefile
+    source/dspa/core/Makefile
     source/tool-common/Makefile
     source/dmi/Makefile
     source/lmon/Makefile

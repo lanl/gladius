@@ -10,4 +10,4 @@
  * Implements the DSPA.
  */
 
-#include "dspa/dsp-manager.h"
+#include "dspa/core/dsp-manager.h"

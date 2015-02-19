@@ -8,7 +8,7 @@
 
 SUBDIRS = \
 core \
-dspa \
+dspa/core \
 tool-common \
 dmi \
 lmon \
