@@ -26,6 +26,7 @@ libGladiusToolFE_la_LDFLAGS =
 
 libGladiusToolFE_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/dspa/core/libGladiusDSPManager.la \
 ${top_builddir}/source/tool-common/libGladiusToolCommon.la \
 ${top_builddir}/source/lmon/libGladiusLaunchMONFE.la \
 ${top_builddir}/source/mrnet/libGladiusMRNetFE.la

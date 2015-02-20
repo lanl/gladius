@@ -156,7 +156,10 @@ public:
         std::string &maybeRes,
         int &errnoIfNotSuccess
     );
-    //
+
+    /**
+     *
+     */
     template <typename T>
     static int
     getEnvAs(
@@ -188,6 +191,12 @@ public:
             return GLADIUS_ERR;
         }
     }
+    //
+    static std::vector<std::string>
+    strTok(
+        const std::string &theString,
+        const std::string &theDelimiters
+    );
 };
 
 } // end core namespace

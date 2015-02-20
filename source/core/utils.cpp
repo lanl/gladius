@@ -201,3 +201,26 @@ utils::mkDir(
     }
     return GLADIUS_SUCCESS;
 }
+
+/**
+ *
+ */
+std::vector<std::string>
+utils::strTok(
+    const std::string &theString,
+    const std::string &theDelimiters
+) {
+    using namespace std;
+
+    vector<string> theResult;
+    auto *cStr = (char *)theString.c_str();
+    auto *cDel = theDelimiters.c_str();
+
+    auto *pch = strtok(cStr, cDel);
+    while (pch) {
+        theResult.push_back(pch);
+        pch = strtok(NULL, cDel);
+    }
+
+    return theResult;
+}

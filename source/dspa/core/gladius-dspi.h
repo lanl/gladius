@@ -32,7 +32,7 @@ constructPlugin(void) {                                                        \
     return &singleton;                                                         \
 }                                                                              \
                                                                                \
-gladius::dspi::DomainSpecificPluginInfo GladiusDomainSpecificPlugin = {        \
+gladius::dspi::DomainSpecificPluginInfo GladiusDomainSpecificPluginInfo = {    \
     GLADIUS_DSP_ABI,                                                           \
     pluginName,                                                                \
     pluginVersion,                                                             \

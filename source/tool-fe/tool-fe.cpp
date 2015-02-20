@@ -8,7 +8,9 @@
 
 #include "tool-fe.h"
 #include "core/utils.h"
+#include "core/env.h"
 #include "tool-be/tool-be.h"
+#include "dspa/core/dsp-manager.h"
 
 #include <string>
 
@@ -152,14 +154,51 @@ ToolFE::ToolFE(
 bool
 ToolFE::envSane(std::string &whatsWrong)
 {
-    GLADIUS_UNUSED(whatsWrong);
-    bool sane = true;
-    return sane;
+    auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
+    if (!core::utils::envVarSet(envMode)) {
+        whatsWrong = "Cannot determine current mode.\nPlease set '"
+                   + std::string(envMode) +  "' and try again.";
+        return false;
+    }
+    auto modeName = core::utils::getEnv(envMode);
+    dspa::DSPManager mDSPMan(modeName, mBeVerbose);
+    if (!mDSPMan.pluginPackAvailable()) {
+        // TODO Make better. Provide an example.
+        whatsWrong = "Cannot find a usable plugin pack for '"
+                   + modeName + "'.\nPlease make sure that the directory "
+                     "where this plugin pack lives is in "
+                     GLADIUS_ENV_DOMAIN_MODE_NAME ".";
+        return false;
+    }
+    return true;
 }
 
+#if 0
 // TODO MOVE
 #include <dlfcn.h>
 #include "dspa/core/gladius-dspi.h"
+// TODO MOVE
+auto *soHandle = dlopen(
+    "/home/samuel/local/gladius/lib/pstep/PluginFrontEnd.so",
+    RTLD_LAZY
+);
+if (!soHandle) {
+    fprintf(stderr, "%s\n", dlerror());
+}
+// Clear errors.
+dlerror();
+dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
+pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
+    soHandle,
+    "GladiusDomainSpecificPluginInfo"
+);
+char *dlError = nullptr;
+if (NULL != (dlError= dlerror()))  {
+    fprintf(stderr, "%s\n", dlError);
+}
+auto *thePlugin = pluginInfoHandle->pluginConstruct();
+thePlugin->activate();
+#endif
 
 /**
  * Responsible for running the tool front-end instance. This is the tool-fe
@@ -184,27 +223,6 @@ ToolFE::mainLoop(
         mInitializeToolInfrastructure();
         // Start lash-up thread.
         mStartToolLashUpThread();
-        // TODO MOVE
-        auto *soHandle = dlopen(
-            "/home/samuel/local/gladius/lib/pstep/PluginFrontEnd.so",
-            RTLD_LAZY
-        );
-        if (!soHandle) {
-            fprintf(stderr, "%s\n", dlerror());
-        }
-        // Clear errors.
-        dlerror();
-        dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
-        pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
-            soHandle,
-            "GladiusDomainSpecificPlugin"
-        );
-        char *dlError = nullptr;
-        if (NULL != (dlError= dlerror()))  {
-            fprintf(stderr, "%s\n", dlError);
-        }
-        auto *thePlugin = pluginInfoHandle->pluginConstruct();
-        thePlugin->activate();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.

@@ -106,7 +106,7 @@ TermCommands Terminal::sTermCommands {
     TermCommand(
         "launch",
         "l",
-        "launch [OPTIONS...] executable [args...]",
+        "launch <launcher> [launcher-args...] executable [exec-args...]",
         "launch Help",
         launchCMDCallback
     ),
