@@ -56,13 +56,13 @@ public:
      *
      */
     virtual ~DomainSpecificPlugin(void) { ; }
-    //
+    // XXX do we need this?
     virtual void
     activate(void) = 0;
     // TODO should pass all the things here... args, env, infra, etc.
     virtual void
     mainLoop(void) = 0;
-    //
+    // XXX and this?
     virtual void
     destroy(void) = 0;
 };

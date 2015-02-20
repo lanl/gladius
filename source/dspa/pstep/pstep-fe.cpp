@@ -16,6 +16,8 @@
 
 #include "gladius-dspi.h"
 
+#include <iostream>
+
 using namespace gladius::dspi;
 
 class PStep : public DomainSpecificPlugin {
@@ -43,6 +45,7 @@ GLADIUS_PLUGIN(PStep, "pstep", "0.0.1");
 void
 PStep::activate(void)
 {
+    std::cout << "activation" << std::endl;
 }
 
 /**

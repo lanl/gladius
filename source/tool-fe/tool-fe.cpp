@@ -157,6 +157,10 @@ ToolFE::envSane(std::string &whatsWrong)
     return sane;
 }
 
+// TODO MOVE
+#include <dlfcn.h>
+#include "dspa/core/gladius-dspi.h"
+
 /**
  * Responsible for running the tool front-end instance. This is the tool-fe
  * entry point from a caller's perspective.
@@ -180,7 +184,27 @@ ToolFE::mainLoop(
         mInitializeToolInfrastructure();
         // Start lash-up thread.
         mStartToolLashUpThread();
-        //
+        // TODO MOVE
+        auto *soHandle = dlopen(
+            "/home/samuel/local/gladius/lib/pstep/PluginFrontEnd.so",
+            RTLD_LAZY
+        );
+        if (!soHandle) {
+            fprintf(stderr, "%s\n", dlerror());
+        }
+        // Clear errors.
+        dlerror();
+        dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
+        pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
+            soHandle,
+            "GladiusDomainSpecificPlugin"
+        );
+        char *dlError = nullptr;
+        if (NULL != (dlError= dlerror()))  {
+            fprintf(stderr, "%s\n", dlError);
+        }
+        auto *thePlugin = pluginInfoHandle->pluginConstruct();
+        thePlugin->activate();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
