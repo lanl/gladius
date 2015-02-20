@@ -13,8 +13,11 @@ lib_LTLIBRARIES = \
 libGladiusDSPI.la \
 libGladiusDSPManager.la
 
+include_HEADERS = \
+gladius-dspi.h
+
 libGladiusDSPI_la_SOURCES = \
-dspi.h
+gladius-dspi.h
 
 libGladiusDSPI_la_CFLAGS =
 

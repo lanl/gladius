@@ -7,8 +7,10 @@
 #
 
 # Notice the name. The first bit is the plugin name. MODIFY THIS FOR YOUR NEEDS.
-# The last bit must be "libdir". Use the $(libdir)[plugin-name] convention for
-# its value.
+# The last bit must be "libdir". For plugins packaged with Gladius, please use
+# the $(libdir)[plugin-name] convention for its value. External plugins can be
+# installed anywhere, but external paths must be included in
+# GLADIUS_PLUGIN_PATH.
 psteplibdir = $(libdir)/pstep
 
 # And here, notice the [plugin-name]lib_LTLIBRARIES. MODIFY THIS FOR YOUR NEEDS.
@@ -23,7 +25,8 @@ pstep-fe.cpp
 PluginFrontEnd_la_CFLAGS =
 
 PluginFrontEnd_la_CPPFLAGS = \
--I${top_srcdir}/source
+-I${top_srcdir}/source \
+-I${top_srcdir}/source/dspa/core
 
 PluginFrontEnd_la_LDFLAGS = \
 -module -avoid-version

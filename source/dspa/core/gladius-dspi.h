@@ -10,13 +10,13 @@
  * The Domain-Specific Plugin (DSP) interface.
  */
 
-#ifndef GLADIUS_DSPA_DSPI_H_INCLUDED
-#define GLADIUS_DSPA_DSPI_H_INCLUDED
+#ifndef GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
+#define GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
 
 #include <functional>
 
 namespace gladius {
-namespace dspa {
+namespace dspi {
 
 /**
  * Update when breaking plugin ABI.
@@ -25,22 +25,25 @@ namespace dspa {
 
 #define GLADIUS_PLUGIN(pluginImpl, pluginName, pluginVersion)                  \
 extern "C" {                                                                   \
-gladius::dspa::DomainSpecificPlugin *                                          \
+                                                                               \
+gladius::dspi::DomainSpecificPlugin *                                          \
 constructPlugin(void) {                                                        \
     static pluginImpl singleton;                                               \
     return &singleton;                                                         \
 }                                                                              \
                                                                                \
-gladius::dspa::DomainSpecificPluginInfo GladiusDomainSpecificPlugin = {        \
+gladius::dspi::DomainSpecificPluginInfo GladiusDomainSpecificPlugin = {        \
     GLADIUS_DSP_ABI,                                                           \
     pluginName,                                                                \
     pluginVersion,                                                             \
     constructPlugin                                                            \
 };                                                                             \
+                                                                               \
 }
 
 /**
- * The Domain-Specific Plugin (DSP) interface that plugins must adhere to.
+ * The Domain-Specific Plugin Interface (DSPI) interface that plugins must
+ * adhere to.
  */
 class DomainSpecificPlugin {
 public:
@@ -56,7 +59,7 @@ public:
     //
     virtual void
     activate(void) = 0;
-    //
+    // TODO should pass all the things here... args, env, infra, etc.
     virtual void
     mainLoop(void) = 0;
     //
@@ -69,16 +72,32 @@ public:
  */
 struct DomainSpecificPluginInfo {
     // Plugin ABI.
-    int pluginABI = 0;
+    int pluginABI;
     // Plugin name.
-    const char *pluginName = nullptr;
+    const char *pluginName;
     // Plugin version string.
-    const char *pluginVersion = nullptr;
+    const char *pluginVersion;
     // Plugin activation.
-    std::function<void()> pluginConstruct = nullptr;
+    std::function<DomainSpecificPlugin *(void)> pluginConstruct;
+    //
+    DomainSpecificPluginInfo(void)
+        : pluginABI(0)
+        , pluginName(nullptr)
+        , pluginVersion(nullptr)
+        , pluginConstruct(nullptr) { ; }
+    //
+    DomainSpecificPluginInfo(
+        int pabi,
+        const char *pname,
+        const char *pver,
+        const std::function<DomainSpecificPlugin *(void)> &pconst
+    )   : pluginABI(pabi)
+        , pluginName(pname)
+        , pluginVersion(pver)
+        , pluginConstruct(pconst) { ; }
 };
 
-} // end dspa namespace
+} // end dspi namespace
 } // end gladius namespace
 
 #endif

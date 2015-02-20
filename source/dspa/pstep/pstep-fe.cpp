@@ -13,3 +13,50 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#include "gladius-dspi.h"
+
+using namespace gladius::dspi;
+
+class PStep : public DomainSpecificPlugin {
+public:
+    //
+    PStep(void) { ; }
+    //
+    ~PStep(void) { ; }
+    //
+    virtual void
+    activate(void);
+    //
+    virtual void
+    mainLoop(void);
+    //
+    virtual void
+    destroy(void);
+};
+
+GLADIUS_PLUGIN(PStep, "pstep", "0.0.1");
+
+/**
+ *
+ */
+void
+PStep::activate(void)
+{
+}
+
+/**
+ *
+ */
+void
+PStep::mainLoop(void)
+{
+}
+
+/**
+ *
+ */
+void
+PStep::destroy(void)
+{
+}
