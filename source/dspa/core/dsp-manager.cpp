@@ -7,7 +7,7 @@
  */
 
 /**
- * Implements the DSPA.
+ * Implements the Domain-specific plugin manager.
  */
 
 #include "dspa/core/dsp-manager.h"
@@ -15,6 +15,9 @@
 #include "core/utils.h"
 #include "core/session.h"
 #include "core/env.h"
+
+#include <cassert>
+#include <dlfcn.h>
 
 using namespace gladius;
 using namespace gladius::core;
@@ -38,12 +41,22 @@ do {                                                                           \
 } while (0)
 } // end namespace
 
+// TODO ADD "PluginBackEnd.so"
+const std::map<uint8_t, std::string> DSPluginPack::sRequiredPlugins = {
+    {PluginFE, "PluginFrontEnd.so"}
+};
+
+const std::map<uint8_t, std::string> DSPluginPack::sOptionalPlugins = {
+    {PluginFilter, "PluginFilters.so"}
+};
+
 /**
  *
  */
 bool
-DSPManager::pluginPackAvailable(void)
-{
+DSPManager::pluginPackAvailable(
+    std::string &pathToPluginPackIfAvail
+) {
     using namespace std;
 
     VCOMP_COUT("Checking for Availability of " + mTargetModeName + "." << endl);
@@ -75,15 +88,13 @@ DSPManager::pluginPackAvailable(void)
     }
     //
     bool pluginBaseFound = false;
+    std::string fullPackPathIfFound;
     for (const auto &basePath : searchPaths) {
         VCOMP_COUT(
             "Looking for " + mTargetModeName + " in: " + basePath << endl
         );
-        pluginBaseFound = utils::fileExists(
-                              basePath
-                              + utils::osPathSep
-                              + mTargetModeName
-                          );
+        fullPackPathIfFound = basePath + utils::osPathSep + mTargetModeName;
+        pluginBaseFound = utils::fileExists(fullPackPathIfFound);
         if (pluginBaseFound) break;
     }
     //
@@ -91,5 +102,97 @@ DSPManager::pluginPackAvailable(void)
         mTargetModeName + " Found: "
         + (pluginBaseFound ? "Yes" : "No") << endl
     );
-    return pluginBaseFound;
+    // If we found the base directory, now let's check for the usability of the
+    // plugin pack directory. Make sure that all the files we care about exist
+    // and are actually plugins.
+    if (pluginBaseFound) {
+        bool looksGood = mPluginPackLooksGood(fullPackPathIfFound);
+        // If things look good, then return the path to the plugin pack.
+        if (looksGood) pathToPluginPackIfAvail = fullPackPathIfFound;
+        return looksGood;
+    }
+    // Otherwise, it's no use.
+    else return false;
+}
+
+/**
+ *
+ */
+bool
+DSPManager::mPluginPackLooksGood(
+    const std::string &pathToPackBase
+) {
+    using namespace std;
+
+    VCOMP_COUT(
+        "Making Sure " + pathToPackBase + " Holds Usable Plugin Pack." << endl;
+    );
+    // Developer sanity...
+    assert(utils::fileExists(pathToPackBase) && "Bogus Path!");
+    //
+    // We are looking for a few things here.
+    // 1. PluginFrontEnd.so - the front-end plugin.
+    // 2. PluginBackEnd.so - the back-end plugin.
+    // 3. (Optionally) PluginFilters.so - the MRNet filter plugins.
+    //
+    for (const auto &mapItem : DSPluginPack::sRequiredPlugins) {
+        auto exists = utils::fileExists(
+            pathToPackBase + utils::osPathSep + mapItem.second
+        );
+        if (!exists) {
+            GLADIUS_CERR << "Cannot find required plugin, " + mapItem.second
+                         << ", in " + pathToPackBase + "." << endl;
+            return false;
+        }
+    }
+    // TODO add check for optional plugins and note whether or not they exist.
+    VCOMP_COUT("Yup. Looks good!" << endl);
+    return true;
+}
+
+/**
+ *
+ */
+DSPluginPack
+DSPManager::getPluginPackFrom(
+    const std::string &validPluginPackPath
+) {
+    DSPluginPack pluginPack;
+
+    // For each required plugin, pull required info and store in plugin pack.
+    for (auto &reqPluginMapItem : DSPluginPack::sRequiredPlugins) {
+        auto pluginPathStr = validPluginPackPath
+                           + utils::osPathSep
+                           + reqPluginMapItem.second;
+        // Developer sanity...
+        assert(utils::fileExists(pluginPathStr) && "Bogus Path!");
+        //
+        auto *soHandle = dlopen(
+            pluginPathStr.c_str(),
+            RTLD_LAZY
+        );
+        if (!soHandle) {
+            auto dlerrs = std::string(dlerror());
+            auto errs = "dlopen Failed to Open " + pluginPathStr + "." + dlerrs;
+            GLADIUS_THROW(errs);
+        }
+        // Clear errors.
+        dlerror();
+        //
+        dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
+        pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
+            soHandle,
+            GLADIUS_PLUGIN_ENTRY_POINT_NAME
+        );
+        char *dlError = nullptr;
+        if (NULL != (dlError= dlerror()))  {
+            auto errs = "dlsym Failed While Processing "
+                      + pluginPathStr + "." + std::string(dlError);
+            GLADIUS_THROW(errs);
+        }
+        // Now stash in plugin pack.
+        pluginPack.pluginInfo[reqPluginMapItem.first] = pluginInfoHandle;
+        // TODO close handles! Add function to close plugin pack.
+    }
+    return pluginPack;
 }

@@ -10,7 +10,6 @@
 #include "core/utils.h"
 #include "core/env.h"
 #include "tool-be/tool-be.h"
-#include "dspa/core/dsp-manager.h"
 
 #include <string>
 
@@ -144,6 +143,7 @@ ToolFE::ToolFE(
 ) : mBeVerbose(false)
   , mConnectionTimeoutInSec(toolcommon::unlimitedTimeout)
   , mMaxRetries(toolcommon::unlimitedRetries)
+  , mPathToPluginPack("")
 {
     mGetStateFromEnvs();
 }
@@ -161,44 +161,23 @@ ToolFE::envSane(std::string &whatsWrong)
         return false;
     }
     auto modeName = core::utils::getEnv(envMode);
-    dspa::DSPManager mDSPMan(modeName, mBeVerbose);
-    if (!mDSPMan.pluginPackAvailable()) {
+    // Initialize the DSP manager.
+    mDSPManager = dspa::DSPManager(modeName, mBeVerbose);
+    // The path to the plugin pack if we find a usable one.
+    std::string pathToPluginPackIfAvail;
+    if (!mDSPManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
         // TODO Make better. Provide an example.
         whatsWrong = "Cannot find a usable plugin pack for '"
                    + modeName + "'.\nPlease make sure that the directory "
                      "where this plugin pack lives is in "
-                     GLADIUS_ENV_DOMAIN_MODE_NAME ".";
+                     GLADIUS_ENV_DOMAIN_MODE_NAME " and all required plugins "
+                     "are installed." ;
         return false;
     }
+    // Set member, so we can get the plugin pack later...
+    mPathToPluginPack = pathToPluginPackIfAvail;
     return true;
 }
-
-#if 0
-// TODO MOVE
-#include <dlfcn.h>
-#include "dspa/core/gladius-dspi.h"
-// TODO MOVE
-auto *soHandle = dlopen(
-    "/home/samuel/local/gladius/lib/pstep/PluginFrontEnd.so",
-    RTLD_LAZY
-);
-if (!soHandle) {
-    fprintf(stderr, "%s\n", dlerror());
-}
-// Clear errors.
-dlerror();
-dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
-pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
-    soHandle,
-    "GladiusDomainSpecificPluginInfo"
-);
-char *dlError = nullptr;
-if (NULL != (dlError= dlerror()))  {
-    fprintf(stderr, "%s\n", dlError);
-}
-auto *thePlugin = pluginInfoHandle->pluginConstruct();
-thePlugin->activate();
-#endif
 
 /**
  * Responsible for running the tool front-end instance. This is the tool-fe
@@ -223,6 +202,13 @@ ToolFE::mainLoop(
         mInitializeToolInfrastructure();
         // Start lash-up thread.
         mStartToolLashUpThread();
+        // Now that the base infrastructure is up, now load the user-specified
+        // plugin pack.
+        mPluginPack = mDSPManager.getPluginPackFrom(mPathToPluginPack);
+        auto *fePluginInfo =
+            mPluginPack.pluginInfo[dspa::DSPluginPack::PluginFE];
+        auto *fePlugin = fePluginInfo->pluginConstruct();
+        fePlugin->activate();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.

@@ -17,6 +17,12 @@
 #include "core/colors.h"
 
 /**
+ * Convenience macro used for stringification.
+ */
+#define GLADIUS_STRINGIFY(x) #x
+#define GLADIUS_TOSTRING(x)  GLADIUS_STRINGIFY(x)
+
+/**
  * Convenience macro used to silence warnings about unused variables.
  */
 #define GLADIUS_UNUSED(x)                                                      \

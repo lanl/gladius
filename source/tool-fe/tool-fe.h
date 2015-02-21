@@ -17,6 +17,7 @@
 #include "tool-common/tool-common.h"
 #include "lmon/lmon-fe.h"
 #include "mrnet/mrnet-fe.h"
+#include "dspa/core/dsp-manager.h"
 
 #include <string>
 #include <thread>
@@ -43,12 +44,19 @@ private:
     lmonfe::LaunchMonFE mLMONFE;
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
+    // The plugin manager.
+    dspa::DSPManager mDSPManager;
     // Target application arguments.
     core::Args mAppArgs;
     // Connection timeout (in seconds).
     toolcommon::timeout_t mConnectionTimeoutInSec;
     // Max number of connection retries.
     toolcommon::retry_t mMaxRetries;
+    // The path to a valid plugin pack.
+    std::string
+    mPathToPluginPack;
+    // The plugin pack for our current session.
+    dspa::DSPluginPack mPluginPack;
     //
     void
     mGetStateFromEnvs(void);

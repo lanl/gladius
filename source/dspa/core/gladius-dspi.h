@@ -13,6 +13,8 @@
 #ifndef GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
 #define GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
 
+#include "core/macros.h"
+
 #include <functional>
 
 namespace gladius {
@@ -23,6 +25,17 @@ namespace dspi {
  */
 #define GLADIUS_DSP_ABI 0
 
+/**
+ * The plugin entry poing (symbol name).
+ */
+#define GLADIUS_PLUGIN_ENTRY_POINT GladiusDomainSpecificPluginInfo
+
+/**
+ * The name of the plugin entry point.
+ */
+#define GLADIUS_PLUGIN_ENTRY_POINT_NAME                                        \
+GLADIUS_TOSTRING(GLADIUS_PLUGIN_ENTRY_POINT)
+
 #define GLADIUS_PLUGIN(pluginImpl, pluginName, pluginVersion)                  \
 extern "C" {                                                                   \
                                                                                \
@@ -32,7 +45,7 @@ constructPlugin(void) {                                                        \
     return &singleton;                                                         \
 }                                                                              \
                                                                                \
-gladius::dspi::DomainSpecificPluginInfo GladiusDomainSpecificPluginInfo = {    \
+gladius::dspi::DomainSpecificPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {         \
     GLADIUS_DSP_ABI,                                                           \
     pluginName,                                                                \
     pluginVersion,                                                             \
