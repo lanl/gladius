@@ -74,6 +74,7 @@ public:
     //
     virtual void
     pluginMain(
+        const std::string &myHome,
         const gladius::core::Args &appArgs,
         const gladius::toolcommon::ProcessTable &procTab,
         MRN::Network &mrnetNetwork

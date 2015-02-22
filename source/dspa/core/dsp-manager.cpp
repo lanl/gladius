@@ -149,49 +149,53 @@ DSPManager::mPluginPackLooksGood(
  */
 DSPluginPack
 DSPManager::getPluginPackFrom(
+    DSPluginPack::PluginPackType pluginPackType,
     const std::string &validPluginPackPath
 ) {
     DSPluginPack pluginPack;
 
-    // For each required plugin, pull required info and store in plugin pack.
-    for (auto &reqPluginMapItem : DSPluginPack::sRequiredPlugins) {
-        auto pluginPathStr = validPluginPackPath
-                           + utils::osPathSep
-                           + reqPluginMapItem.second;
-        // Developer sanity...
-        assert(utils::fileExists(pluginPathStr) && "Bogus Path!");
-        //
-        auto *soHandle = dlopen(
-            pluginPathStr.c_str(),
-            RTLD_LAZY
-        );
-        if (!soHandle) {
-            auto dlerrs = std::string(dlerror());
-            auto errs = "dlopen Failed to Open " + pluginPathStr + "." + dlerrs;
-            GLADIUS_THROW(errs);
-        }
-        // Clear errors.
-        dlerror();
-        //
-        dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
-        pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
-            soHandle,
-            GLADIUS_PLUGIN_ENTRY_POINT_NAME
-        );
-        char *dlError = nullptr;
-        if (NULL != (dlError= dlerror()))  {
-            auto errs = "dlsym Failed While Processing "
-                      + pluginPathStr + "." + std::string(dlError);
-            GLADIUS_THROW(errs);
-        }
-        // Make sure that we are dealing with the correct ABI.
-        if (pluginInfoHandle->pluginABI != GLADIUS_DSP_ABI) {
-            auto errs = "Plugin ABI Mismatch. Please "
-                        "Recompile & Relink Your Plugin.";
-            GLADIUS_THROW(errs);
-        }
-        // Now stash in plugin pack.
-        pluginPack.pluginInfo[reqPluginMapItem.first] = pluginInfoHandle;
+    auto mapI = DSPluginPack::sRequiredPlugins.find(pluginPackType);
+    //
+    assert(mapI != DSPluginPack::sRequiredPlugins.end() && "Bogus Request!");
+    // Get the target plugin name.
+    auto pluginName = mapI->second;
+    // Full path to target plugin.
+    auto pluginPathStr = validPluginPackPath
+                       + utils::osPathSep
+                       + pluginName;
+    // Developer sanity...
+    assert(utils::fileExists(pluginPathStr) && "Bogus Path!");
+    //
+    auto *soHandle = dlopen(
+        pluginPathStr.c_str(),
+        RTLD_LAZY
+    );
+    if (!soHandle) {
+        auto dlerrs = std::string(dlerror());
+        auto errs = "dlopen Failed to Open " + pluginPathStr + "." + dlerrs;
+        GLADIUS_THROW(errs);
     }
+    // Clear errors.
+    dlerror();
+    //
+    dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
+    pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
+        soHandle,
+        GLADIUS_PLUGIN_ENTRY_POINT_NAME
+    );
+    char *dlError = nullptr;
+    if (NULL != (dlError= dlerror()))  {
+        auto errs = "dlsym Failed While Processing "
+                  + pluginPathStr + "." + std::string(dlError);
+        GLADIUS_THROW(errs);
+    }
+    // Make sure that we are dealing with the correct ABI.
+    if (pluginInfoHandle->pluginABI != GLADIUS_DSP_ABI) {
+        auto errs = "Plugin ABI Mismatch. Please "
+                    "Recompile & Relink Your Plugin.";
+        GLADIUS_THROW(errs);
+    }
+    // Now stash in plugin pack.
+    pluginPack.pluginInfo = pluginInfoHandle;
     return pluginPack;
 }

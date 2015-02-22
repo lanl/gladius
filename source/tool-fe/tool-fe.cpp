@@ -205,6 +205,8 @@ ToolFE::mainLoop(
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         mLoadPlugins();
+        // Now turn it over to the plugin.
+        mEnterPluginMain();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
@@ -340,16 +342,40 @@ ToolFE::mLoadPlugins(void)
     using namespace std;
 
     VCOMP_COUT("Loading Plugins." << std::endl);
-
-    mPluginPack = mDSPManager.getPluginPackFrom(mPathToPluginPack);
-    auto *fePluginInfo = mPluginPack.pluginInfo[dspa::DSPluginPack::PluginFE];
+    // Get the front-end plugin pack.
+    mPluginPack = mDSPManager.getPluginPackFrom(
+                      dspa::DSPluginPack::PluginFE,
+                      mPathToPluginPack
+                  );
+    auto *fePluginInfo = mPluginPack.pluginInfo;
     GLADIUS_COUT_STAT << "Front-End Plugin Info:" << endl;
     GLADIUS_COUT_STAT << "*Name      : " << fePluginInfo->pluginName << endl;
     GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
-    auto *fePlugin = fePluginInfo->pluginConstruct();
-    // TODO MOVE
-    fePlugin->pluginMain(mAppArgs, mLMONFE.getProcTab(), *mMRNFE.getNetwork());
+    mFEPlugin = fePluginInfo->pluginConstruct();
 
     VCOMP_COUT("Done Loading Plugins." << std::endl);
+}
+
+/**
+ *
+ */
+void
+ToolFE::mEnterPluginMain(void)
+{
+    VCOMP_COUT("Entering Plugin Main." << std::endl);
+
+    try {
+        mFEPlugin->pluginMain(
+            mPathToPluginPack,
+            mAppArgs,
+            mLMONFE.getProcTab(),
+            *mMRNFE.getNetwork()
+        );
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+
+    VCOMP_COUT("Exited Plugin Main." << std::endl);
 }

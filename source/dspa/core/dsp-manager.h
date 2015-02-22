@@ -26,15 +26,15 @@ namespace dspa {
  *
  */
 struct DSPluginPack {
-    // ID to name map of required plugins.
-    static const std::map<uint8_t, std::string> sRequiredPlugins;
-    //
-    enum RequiredPluginID {
+    // IDs of the different kinds of plugin packs that can be returned.
+    enum PluginPackType {
         PluginFE = 0,
         PluginBE,
     };
+    // ID to name map of required plugins.
+    static const std::map<uint8_t, std::string> sRequiredPlugins;
     //
-    std::map<uint8_t, dspi::DomainSpecificPluginInfo *> pluginInfo;
+    dspi::DomainSpecificPluginInfo * pluginInfo = nullptr;
 };
 
 /**
@@ -69,6 +69,7 @@ public:
     //
     DSPluginPack
     getPluginPackFrom(
+        DSPluginPack::PluginPackType pluginPackType,
         const std::string &validPluginPackPath
     );
     // TODO close handles! Add function to close plugin pack.

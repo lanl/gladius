@@ -18,6 +18,7 @@
 #include "lmon/lmon-fe.h"
 #include "mrnet/mrnet-fe.h"
 #include "dspa/core/dsp-manager.h"
+#include "dspa/core/gladius-dspi.h"
 
 #include <string>
 #include <thread>
@@ -46,6 +47,8 @@ private:
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
     dspa::DSPManager mDSPManager;
+    // The plugin instance pointer.
+    dspi::DomainSpecificPlugin *mFEPlugin = nullptr;
     // Target application arguments.
     core::Args mAppArgs;
     // Connection timeout (in seconds).
@@ -72,6 +75,9 @@ private:
     //
     void
     mLoadPlugins(void);
+    //
+    void
+    mEnterPluginMain(void);
 
 public:
     // Default timeout (in seconds)
