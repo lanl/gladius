@@ -148,15 +148,15 @@ feToBEPack(
         stdDevFanout
     );
     // Show off the fresh stats.
-    COMP_COUT << "::: MRNet Tree Statistics ::::::::::::::::::::::::::::::::::";
+    GLADIUS_COUT_STAT << "::: MRNet Tree Statistics ::::::::::::::::::::::::::";
     cout      << endl;
-    COMP_COUT << "Number of Nodes : " << nNodes << endl;
-    COMP_COUT << "Depth           : " << depth << endl;
-    COMP_COUT << "Minimum Fanout  : " << minFanout << endl;
-    COMP_COUT << "Maximum Fanout  : " << maxFanout << endl;
-    COMP_COUT << "Average Fanout  : " << averageFanout << endl;
-    COMP_COUT << "Sigma Fanout    : " << stdDevFanout << endl;
-    COMP_COUT << "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
+    GLADIUS_COUT_STAT << "Number of Nodes : " << nNodes << endl;
+    GLADIUS_COUT_STAT << "Depth           : " << depth << endl;
+    GLADIUS_COUT_STAT << "Minimum Fanout  : " << minFanout << endl;
+    GLADIUS_COUT_STAT << "Maximum Fanout  : " << maxFanout << endl;
+    GLADIUS_COUT_STAT << "Average Fanout  : " << averageFanout << endl;
+    GLADIUS_COUT_STAT << "Sigma Fanout    : " << stdDevFanout << endl;
+    GLADIUS_COUT_STAT << "::::::::::::::::::::::::::::::::::::::::::::::::::::";
     cout      << endl;
 
     char *ptr = (char *)buf;

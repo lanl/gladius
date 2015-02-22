@@ -28,16 +28,10 @@ namespace dspa {
 struct DSPluginPack {
     // ID to name map of required plugins.
     static const std::map<uint8_t, std::string> sRequiredPlugins;
-    // ID to name map of optional plugins.
-    static const std::map<uint8_t, std::string> sOptionalPlugins;
     //
     enum RequiredPluginID {
         PluginFE = 0,
         PluginBE,
-    };
-    //
-    enum OptionalPluginID {
-        PluginFilter = 0
     };
     //
     std::map<uint8_t, dspi::DomainSpecificPluginInfo *> pluginInfo;
@@ -77,6 +71,7 @@ public:
     getPluginPackFrom(
         const std::string &validPluginPackPath
     );
+    // TODO close handles! Add function to close plugin pack.
 };
 
 } // end dspa namespace

@@ -209,6 +209,8 @@ ToolFE::mainLoop(
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
     catch (const std::exception &e) {
+        // TODO - gracefully shutdown things. We may need to tear down a bunch
+        // of infrastructure.
         GLADIUS_CERR << e.what() << std::endl;
     }
 }
@@ -335,13 +337,19 @@ ToolFE::mInitiateToolLashUp(void)
 void
 ToolFE::mLoadPlugins(void)
 {
+    using namespace std;
+
     VCOMP_COUT("Loading Plugins." << std::endl);
 
     mPluginPack = mDSPManager.getPluginPackFrom(mPathToPluginPack);
     auto *fePluginInfo = mPluginPack.pluginInfo[dspa::DSPluginPack::PluginFE];
+    GLADIUS_COUT_STAT << "Front-End Plugin Info:" << endl;
+    GLADIUS_COUT_STAT << "*Name      : " << fePluginInfo->pluginName << endl;
+    GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
+    GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
     auto *fePlugin = fePluginInfo->pluginConstruct();
     // TODO MOVE
-    fePlugin->pluginMain(mAppArgs, mLMONFE.getProcTab());
+    fePlugin->pluginMain(mAppArgs, mLMONFE.getProcTab(), *mMRNFE.getNetwork());
 
     VCOMP_COUT("Done Loading Plugins." << std::endl);
 }

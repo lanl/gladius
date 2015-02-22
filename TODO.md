@@ -1,5 +1,6 @@
 # Gladius TODO
 
+- Add package config to get plugin flags.
 - Make some libraries internal and others usable by external plugins.
 - Install gladius plugin headers so external plugins can be built.
 - Set environment/runtime variables for parallel debugging

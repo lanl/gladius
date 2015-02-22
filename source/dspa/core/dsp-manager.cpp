@@ -46,10 +46,6 @@ const std::map<uint8_t, std::string> DSPluginPack::sRequiredPlugins = {
     {PluginFE, "PluginFrontEnd.so"}
 };
 
-const std::map<uint8_t, std::string> DSPluginPack::sOptionalPlugins = {
-    {PluginFilter, "PluginFilters.so"}
-};
-
 /**
  *
  */
@@ -130,10 +126,9 @@ DSPManager::mPluginPackLooksGood(
     // Developer sanity...
     assert(utils::fileExists(pathToPackBase) && "Bogus Path!");
     //
-    // We are looking for a few things here.
+    // We are looking for a couple things here.
     // 1. PluginFrontEnd.so - the front-end plugin.
     // 2. PluginBackEnd.so - the back-end plugin.
-    // 3. (Optionally) PluginFilters.so - the MRNet filter plugins.
     //
     for (const auto &mapItem : DSPluginPack::sRequiredPlugins) {
         auto exists = utils::fileExists(
@@ -145,7 +140,6 @@ DSPManager::mPluginPackLooksGood(
             return false;
         }
     }
-    // TODO add check for optional plugins and note whether or not they exist.
     VCOMP_COUT("Yup. Looks good!" << endl);
     return true;
 }
@@ -190,9 +184,14 @@ DSPManager::getPluginPackFrom(
                       + pluginPathStr + "." + std::string(dlError);
             GLADIUS_THROW(errs);
         }
+        // Make sure that we are dealing with the correct ABI.
+        if (pluginInfoHandle->pluginABI != GLADIUS_DSP_ABI) {
+            auto errs = "Plugin ABI Mismatch. Please "
+                        "Recompile & Relink Your Plugin.";
+            GLADIUS_THROW(errs);
+        }
         // Now stash in plugin pack.
         pluginPack.pluginInfo[reqPluginMapItem.first] = pluginInfoHandle;
-        // TODO close handles! Add function to close plugin pack.
     }
     return pluginPack;
 }

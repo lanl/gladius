@@ -40,7 +40,7 @@ GLADIUS_TOSTRING(GLADIUS_PLUGIN_ENTRY_POINT)
 
 #define GLADIUS_PLUGIN(pluginImpl, pluginName, pluginVersion)                  \
 extern "C" {                                                                   \
-                                                                               \
+/* Return pointer here because of C linkage... Sigh... */                      \
 gladius::dspi::DomainSpecificPlugin *                                          \
 constructPlugin(void) {                                                        \
     static pluginImpl singleton;                                               \
@@ -75,7 +75,8 @@ public:
     virtual void
     pluginMain(
         const gladius::core::Args &appArgs,
-        const gladius::toolcommon::ProcessTable &procTab
+        const gladius::toolcommon::ProcessTable &procTab,
+        MRN::Network &mrnetNetwork
     ) = 0;
 };
 

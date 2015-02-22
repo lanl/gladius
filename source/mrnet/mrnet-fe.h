@@ -148,6 +148,14 @@ public:
     getLeafInfo(void) const {
         return mLeafInfo;
     }
+
+    /**
+     *
+     */
+    MRN::Network *
+    getNetwork(void) {
+        return mNetwork;
+    }
     //
     int
     connect(void);

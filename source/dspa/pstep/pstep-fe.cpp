@@ -50,7 +50,8 @@ public:
     virtual void
     pluginMain(
         const core::Args &appArgs,
-        const toolcommon::ProcessTable &procTab
+        const toolcommon::ProcessTable &procTab,
+        MRN::Network &mrnetNetwork
     );
 };
 
@@ -65,9 +66,24 @@ GLADIUS_PLUGIN(PStepFE, "pstep", "0.0.1");
 void
 PStepFE::pluginMain(
     const core::Args &appArgs,
-    const toolcommon::ProcessTable &procTab
+    const toolcommon::ProcessTable &procTab,
+    MRN::Network &mrnetNetwork
 ) {
     mBeVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME);
     VCOMP_COUT("Entering Main" << std::endl);
     procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
+
+    auto *mBcastComm = mrnetNetwork.get_BroadcastCommunicator();
+    if (!mBcastComm) {
+        GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
+    }
+
+    auto *mBcastStream = mrnetNetwork.new_Stream(
+                       mBcastComm,
+                       MRN::SFILTER_WAITFORALL,
+                       0 /* TODO */
+                   );
+    if (!mBcastStream) {
+        GLADIUS_THROW_CALL_FAILED("new_Stream");
+    }
 }
