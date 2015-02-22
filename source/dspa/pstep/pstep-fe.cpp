@@ -7,59 +7,68 @@
  */
 
 /**
- *
+ * The Parallel Step (pstep) plugin front-end.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "dspa/core/gladius-dspi.h"
 
-#include "gladius-dspi.h"
+#include "core/utils.h"
+#include "core/colors.h"
+#include "core/env.h"
 
 #include <iostream>
 
+using namespace gladius;
 using namespace gladius::dspi;
 
-class PStep : public DomainSpecificPlugin {
+namespace {
+// This component's name.
+const std::string CNAME = "pstepfe";
+//
+const auto COMPC = core::colors::MAGENTA;
+// CNAME's color code.
+const std::string NAMEC = core::colors::color().ansiBeginColor(COMPC);
+// Convenience macro to decorate this component's output.
+#define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
+// Output if this component is being verbose.
+#define VCOMP_COUT(streamInsertions)                                           \
+do {                                                                           \
+    if (this->mBeVerbose) {                                                    \
+        COMP_COUT << streamInsertions;                                         \
+    }                                                                          \
+} while (0)
+} // end namespace
+
+class PStepFE : public DomainSpecificPlugin {
+    bool mBeVerbose = false;
 public:
     //
-    PStep(void) { ; }
+    PStepFE(void) { ; }
     //
-    ~PStep(void) { ; }
-    //
-    virtual void
-    activate(void);
+    ~PStepFE(void) { ; }
     //
     virtual void
-    mainLoop(void);
-    //
-    virtual void
-    destroy(void);
+    pluginMain(
+        const core::Args &appArgs,
+        const toolcommon::ProcessTable &procTab
+    );
 };
 
-GLADIUS_PLUGIN(PStep, "pstep", "0.0.1");
+/**
+ * Plugin registration.
+ */
+GLADIUS_PLUGIN(PStepFE, "pstep", "0.0.1");
 
 /**
- *
+ * Plugin Main.
  */
 void
-PStep::activate(void)
-{
-    std::cout << "activation" << std::endl;
+PStepFE::pluginMain(
+    const core::Args &appArgs,
+    const toolcommon::ProcessTable &procTab
+) {
+    mBeVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME);
+    VCOMP_COUT("Entering Main" << std::endl);
+    procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
 }
 
-/**
- *
- */
-void
-PStep::mainLoop(void)
-{
-}
-
-/**
- *
- */
-void
-PStep::destroy(void)
-{
-}

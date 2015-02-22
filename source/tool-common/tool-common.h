@@ -239,8 +239,9 @@ public:
     /**
      * Copy constructor.
      */
-    ProcessTable(const ProcessTable &other)
-    {
+    ProcessTable(
+        const ProcessTable &other
+    ) {
         mNEntries = other.mNEntries;
         mProcTab = dupMPIRProcDescExt(mNEntries, other.mProcTab);
     }
@@ -256,8 +257,9 @@ public:
      *
      */
     ProcessTable &
-    operator=(const ProcessTable &other)
-    {
+    operator=(
+        const ProcessTable &other
+    ) {
         mNEntries = other.mNEntries;
         mProcTab = dupMPIRProcDescExt(mNEntries, other.mProcTab);
         return *this;
@@ -268,7 +270,7 @@ public:
         std::ostream &os,
         const std::string &outPrefix = "",
         core::colors::Color color = core::colors::Color::NONE
-    );
+    ) const;
 
     /**
      * Returns the number of entries in the process table.

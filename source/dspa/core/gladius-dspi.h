@@ -13,7 +13,9 @@
 #ifndef GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
 #define GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
 
+#include "core/args.h"
 #include "core/macros.h"
+#include "tool-common/tool-common.h"
 
 #include <functional>
 
@@ -69,19 +71,16 @@ public:
      *
      */
     virtual ~DomainSpecificPlugin(void) { ; }
-    // XXX do we need this?
+    //
     virtual void
-    activate(void) = 0;
-    // TODO should pass all the things here... args, env, infra, etc.
-    virtual void
-    mainLoop(void) = 0;
-    // XXX and this?
-    virtual void
-    destroy(void) = 0;
+    pluginMain(
+        const gladius::core::Args &appArgs,
+        const gladius::toolcommon::ProcessTable &procTab
+    ) = 0;
 };
 
 /**
- * Exposes plugin info.
+ * Exposes plugin info and plugin entry point.
  */
 struct DomainSpecificPluginInfo {
     // Plugin ABI.

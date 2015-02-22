@@ -204,11 +204,7 @@ ToolFE::mainLoop(
         mStartToolLashUpThread();
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
-        mPluginPack = mDSPManager.getPluginPackFrom(mPathToPluginPack);
-        auto *fePluginInfo =
-            mPluginPack.pluginInfo[dspa::DSPluginPack::PluginFE];
-        auto *fePlugin = fePluginInfo->pluginConstruct();
-        fePlugin->activate();
+        mLoadPlugins();
     }
     // If something went south, just print the haps and return to the top-level
     // REPL. Insulate the caller by catching things and handling them here.
@@ -331,4 +327,21 @@ ToolFE::mInitiateToolLashUp(void)
     }
     // Notify main thread unconditionally.
     mtLashUpComplete.notify_one();
+}
+
+/**
+ *
+ */
+void
+ToolFE::mLoadPlugins(void)
+{
+    VCOMP_COUT("Loading Plugins." << std::endl);
+
+    mPluginPack = mDSPManager.getPluginPackFrom(mPathToPluginPack);
+    auto *fePluginInfo = mPluginPack.pluginInfo[dspa::DSPluginPack::PluginFE];
+    auto *fePlugin = fePluginInfo->pluginConstruct();
+    // TODO MOVE
+    fePlugin->pluginMain(mAppArgs, mLMONFE.getProcTab());
+
+    VCOMP_COUT("Done Loading Plugins." << std::endl);
 }

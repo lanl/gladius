@@ -106,6 +106,11 @@ GLADIUS_TOOL_COMMON_CPPFLAGS="${LMON_CPPFLAGS} ${MRNET_CPPFLAGS}"
 AC_SUBST(GLADIUS_TOOL_COMMON_CPPFLAGS)
 
 ################################################################################
+# Do a similar things for plugin flags.
+GLADIUS_PLUGIN_CPPFLAGS=${GLADIUS_TOOL_COMMON_CPPFLAGS}
+AC_SUBST(GLADIUS_PLUGIN_CPPFLAGS)
+
+################################################################################
 # Checks for header files.
 ################################################################################
 AC_CHECK_HEADERS([\

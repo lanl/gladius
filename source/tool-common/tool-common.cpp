@@ -20,7 +20,7 @@ ProcessTable::dumpTo(
     std::ostream &os,
     const std::string &outPrefix,
     core::colors::Color color
-) {
+) const {
     using namespace std;
     using namespace core;
 

@@ -1,15 +1,16 @@
 # Gladius TODO
 
+- Make some libraries internal and others usable by external plugins.
 - Install gladius plugin headers so external plugins can be built.
 - Set environment/runtime variables for parallel debugging
   (e.g. -mca debugger mpirx).
 - Can we use the "Scalable Binary Deployment system?"
-- What does LMON_fe_putToBeDaemonEnv do? This may be useful.
 - Implement component registry scheme.
 - Register timeout and retry environment variabes to tool FE.
 - Automatically push PATH to remote hosts.
   Now, we are relying on paths to the base infrastructure to be in .rcs that get
-  sourced during remote login.
+  sourced during remote login. What does LMON_fe_putToBeDaemonEnv do? This may
+  be useful.
 - Add logging support in terminal.
 - Add verbosity levels.
 - Populate help strings in term-cmds.

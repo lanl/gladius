@@ -28,10 +28,10 @@ using namespace gladius::lmonfe;
 namespace {
 // This component's name.
 const std::string CNAME = "lmon-fe";
+//
 const auto COMPC = core::colors::GREEN;
 // CNAME's color code.
-const std::string NAMEC =
-    core::colors::color().ansiBeginColor(COMPC);
+const std::string NAMEC = core::colors::color().ansiBeginColor(COMPC);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.

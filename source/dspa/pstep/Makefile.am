@@ -26,7 +26,8 @@ PluginFrontEnd_la_CFLAGS =
 
 PluginFrontEnd_la_CPPFLAGS = \
 -I${top_srcdir}/source \
--I${top_srcdir}/source/dspa/core
+-I${top_srcdir}/source/dspa/core \
+${GLADIUS_PLUGIN_CPPFLAGS}
 
 PluginFrontEnd_la_LDFLAGS = \
 -module -avoid-version

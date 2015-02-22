@@ -69,6 +69,9 @@ private:
     //
     void
     mInitiateToolLashUp(void);
+    //
+    void
+    mLoadPlugins(void);
 
 public:
     // Default timeout (in seconds)

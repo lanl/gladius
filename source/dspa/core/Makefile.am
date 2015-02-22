@@ -22,7 +22,8 @@ gladius-dspi.h
 libGladiusDSPI_la_CFLAGS =
 
 libGladiusDSPI_la_CPPFLAGS = \
--I${top_srcdir}/source
+-I${top_srcdir}/source \
+${GLADIUS_PLUGIN_CPPFLAGS}
 
 libGladiusDSPI_la_LDFLAGS = \
 -version-info ${LIBVINFO}
@@ -36,7 +37,8 @@ dsp-manager.h dsp-manager.cpp
 libGladiusDSPManager_la_CFLAGS =
 
 libGladiusDSPManager_la_CPPFLAGS = \
--I${top_srcdir}/source
+-I${top_srcdir}/source \
+${GLADIUS_PLUGIN_CPPFLAGS}
 
 libGladiusDSPManager_la_LDFLAGS = \
 -version-info ${LIBVINFO}
