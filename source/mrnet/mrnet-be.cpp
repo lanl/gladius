@@ -110,6 +110,7 @@ MRNetBE::setPersonality(
     const toolbecommon::ToolLeafInfoArrayT &tlia
 ) {
     VCOMP_COUT("Finding My MRNet Personality." << std::endl);
+
     std::string prettyHost;
     XPlat::NetUtils::GetHostName(mHostName, prettyHost);
 
@@ -133,6 +134,8 @@ MRNetBE::setPersonality(
     if (!found) {
         GLADIUS_THROW("Failed to Find MRNet Parent Info");
     }
+
+    VCOMP_COUT("Done Finding My MRNet Personality." << std::endl);
 }
 
 /**
@@ -143,13 +146,14 @@ MRNetBE::connect(void)
 {
     VCOMP_COUT("Connecting to MRNet Network." << std::endl);
 
-    char parentPort[512];
+    static const int bufSize = 1024;
+    char parentPort[bufSize];
     memset(parentPort, 0, sizeof(parentPort));
     snprintf(parentPort, sizeof(parentPort), "%d", mParentPort);
-    char parentRank[512];
+    char parentRank[bufSize];
     memset(parentRank, 0, sizeof(parentRank));
     snprintf(parentRank, sizeof(parentRank), "%d", mParentRank);
-    char rank[512];
+    char rank[bufSize];
     memset(rank, 0, sizeof(rank));
     snprintf(rank, sizeof(rank), "%d", mRank);
     const int argc = 6;

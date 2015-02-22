@@ -71,4 +71,3 @@ PStepFE::pluginMain(
     VCOMP_COUT("Entering Main" << std::endl);
     procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
 }
-
