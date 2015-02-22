@@ -366,12 +366,13 @@ ToolFE::mEnterPluginMain(void)
     VCOMP_COUT("Entering Plugin Main." << std::endl);
 
     try {
-        mFEPlugin->pluginMain(
+        dspi::DSPluginArgs pluginArgs(
             mPathToPluginPack,
             mAppArgs,
             mLMONFE.getProcTab(),
             *mMRNFE.getNetwork()
         );
+        mFEPlugin->pluginMain(pluginArgs);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

@@ -20,6 +20,7 @@
 #include <map>
 
 namespace gladius {
+// The "Domain-Specific Plugin Architecture (DSPA) " namespace.
 namespace dspa {
 
 /**
@@ -34,7 +35,7 @@ struct DSPluginPack {
     // ID to name map of required plugins.
     static const std::map<uint8_t, std::string> sRequiredPlugins;
     //
-    dspi::DomainSpecificPluginInfo * pluginInfo = nullptr;
+    dspi::DomainSpecificPluginInfo *pluginInfo = nullptr;
 };
 
 /**

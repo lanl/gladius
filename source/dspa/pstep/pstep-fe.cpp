@@ -44,14 +44,10 @@ do {                                                                           \
  *
  */
 class PStepFE : public DomainSpecificPlugin {
-    // Where I was found. The base of my plugin pack.
-    std::string mHome;
-    // The process table of this job.
-    toolcommon::ProcessTable mProcTab;
     //
     bool mBeVerbose = false;
-    // MRNet network instance pointer.
-    MRN::Network *mNetwork = nullptr;
+    //
+    DSPluginArgs mDSPluginArgs;
     //
     MRN::Communicator *mBcastComm = nullptr;
     //
@@ -68,10 +64,7 @@ public:
     //
     virtual void
     pluginMain(
-        const std::string &myHome,
-        const core::Args &appArgs,
-        const toolcommon::ProcessTable &procTab,
-        MRN::Network &mrnetNetwork
+        DSPluginArgs &pluginArgs
     );
 };
 
@@ -90,10 +83,7 @@ GLADIUS_PLUGIN(PStepFE, PLUGIN_NAME, PLUGIN_VERSION);
  */
 void
 PStepFE::pluginMain(
-    const std::string &myHome,
-    const core::Args & /* Application Args */,
-    const toolcommon::ProcessTable &procTab,
-    MRN::Network &mrnetNetwork
+    DSPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
     mBeVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME);
@@ -102,12 +92,10 @@ PStepFE::pluginMain(
     COMP_COUT << "::" << std::endl;
     // And so it begins...
     try {
-        mHome = myHome;
-        mProcTab = procTab;
-        mNetwork = &mrnetNetwork;
-        VCOMP_COUT("Home: " << mHome << std::endl);
+        mDSPluginArgs = pluginArgs;
+        VCOMP_COUT("Home: " << mDSPluginArgs.myHome << std::endl);
         if (mBeVerbose) {
-            procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
+            mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
         // Setup network.
         mNetworkSetup();
@@ -126,12 +114,12 @@ PStepFE::mNetworkSetup(void)
 {
     VCOMP_COUT("Starting Network Setup." << std::endl);
 
-    mBcastComm = mNetwork->get_BroadcastCommunicator();
+    mBcastComm = mDSPluginArgs.network->get_BroadcastCommunicator();
     if (!mBcastComm) {
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
     }
 
-    mBcastStream = mNetwork->new_Stream(
+    mBcastStream = mDSPluginArgs.network->new_Stream(
                        mBcastComm,
                        MRN::SFILTER_WAITFORALL,
                        0 /* TODO */

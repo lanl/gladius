@@ -7,7 +7,7 @@
  */
 
 /**
- * The Domain-Specific Plugin (DSP) interface.
+ * The Domain-Specific Plugin Interface (DSPI).
  */
 
 #ifndef GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
@@ -57,6 +57,34 @@ gladius::dspi::DomainSpecificPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {         \
 }
 
 /**
+ * A structure that hold arguments that are passed to pluginMain.
+ */
+struct DSPluginArgs {
+    //
+    std::string myHome;
+    //
+    gladius::core::Args appArgs;
+    //
+    gladius::toolcommon::ProcessTable procTab;
+    //
+    MRN::Network *network= nullptr;
+    //
+    DSPluginArgs(void) { ; }
+    //
+    DSPluginArgs(
+        const std::string &home,
+        const gladius::core::Args &args,
+        const gladius::toolcommon::ProcessTable &pTab,
+        MRN::Network &mrnetNet
+    ) : myHome(home)
+      , appArgs(args)
+      , procTab(pTab)
+      , network(&mrnetNet) { ; }
+    //
+    ~DSPluginArgs(void) { ; }
+};
+
+/**
  * The Domain-Specific Plugin Interface (DSPI) interface that plugins must
  * adhere to.
  */
@@ -74,10 +102,7 @@ public:
     //
     virtual void
     pluginMain(
-        const std::string &myHome,
-        const gladius::core::Args &appArgs,
-        const gladius::toolcommon::ProcessTable &procTab,
-        MRN::Network &mrnetNetwork
+        DSPluginArgs &pluginArgs
     ) = 0;
 };
 
