@@ -16,7 +16,7 @@
 - MI-capable GDB or LLDB (TODO)
 
 ## Building libmigdb (see: http://libmigdb.sourceforge.net/)
-```bash
+```
 export MIGDB_PREFIX=$HOME/local/migdb
 git clone git@github.com:samuelkgutierrez/libmigdb.git
 cd libmigdb
@@ -24,7 +24,7 @@ make && make install prefix=$MIGDB_PREFIX
 ```
 
 ## Building LaunchMON
-```bash
+```
 export LMON_PREFIX=$HOME/local/lmon
 git clone git@github.com:scalability-llnl/LaunchMON.git
 cd LaunchMON
@@ -45,7 +45,8 @@ testName List
 
 ## Building MRNet
 Download source distribution from http://www.paradyn.org/mrnet
-```bash
+
+```
 export MRNET_PREFIX=$HOME/local/mrnet
 ./configure CXX=g++ --prefix=$MRNET_PREFIX
 cd build/<ARCH>
@@ -53,11 +54,12 @@ make -j4 && make install
 ```
 
 ## Building Gladius
-```bash
+```
 # If NOT building from a distribution, autogen first.
 ./autogen
 ```
-```bash
+
+```
 ./configure \
 --prefix=$HOME/local/gladius \
 --with-migdb=$MIGDB_PREFIX \
