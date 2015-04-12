@@ -20,21 +20,22 @@ using namespace MRN;
 extern "C" {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Filter Init
+// Filter Init & Tool FE <--> Tool BE Protocol Filter
 ////////////////////////////////////////////////////////////////////////////////
-const char *GladiusMRNetFilterInit_format_string = "%d";
+const char *GladiusMRNetProtoFilter_format_string = "%d";
 
 /**
  *
  */
 void
-GladiusMRNetFilterInit(
+GladiusMRNetProtoFilter(
     vector<PacketPtr> &inputPackets,
     vector<PacketPtr> &outputPackets,
     vector<PacketPtr> &,
     void **,
     PacketPtr &
 ) {
+    //
     outputPackets.push_back(inputPackets[0]);
 }
 

@@ -608,18 +608,18 @@ MRNetFE::mLoadCoreFilters(void)
     static const std::string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
     auto filterID = mNetwork->load_FilterFunc(
                         coreFilterSOName.c_str(),
-                        "GladiusMRNetFilterInit"
+                        "GladiusMRNetProtoFilter"
                     );
     if (-1 == filterID) {
-        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: GladiusMRNetFilterInit");
+        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: GladiusMRNetProtoFilter");
     }
     //
-    mBcastStream = mNetwork->new_Stream(
+    mProtoStream = mNetwork->new_Stream(
                        mBcastComm,
                        MRN::SFILTER_WAITFORALL,
                        filterID
                    );
-    if (!mBcastStream) {
+    if (!mProtoStream) {
         GLADIUS_THROW_CALL_FAILED("new_Stream");
     }
     //
@@ -655,22 +655,22 @@ MRNetFE::handshake(void)
     VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
 
     // Ping!
-    auto status = mBcastStream->send(
+    auto status = mProtoStream->send(
                       toolcommon::MRNetCoreTags::InitHandshake,
                       "%d",
-                      GladiusMRNetFilterInitMagic
+                      GladiusMRNetProtoFilterMagic
                   );
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Send");
     }
-    status = mBcastStream->flush();
+    status = mProtoStream->flush();
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
     // Pong!
     MRN::PacketPtr packet;
     int tag = 0;
-    status = mBcastStream->recv(&tag, packet);
+    status = mProtoStream->recv(&tag, packet);
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Recv");
     }
@@ -682,7 +682,8 @@ MRNetFE::handshake(void)
     if (0 != status) {
         GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
     }
-    if (data != -GladiusMRNetFilterInitMagic) {
+    // Notice the negative here...
+    if (data != -GladiusMRNetProtoFilterMagic) {
         GLADIUS_THROW("Received Invalid Data From Tool Back-End");
     }
 

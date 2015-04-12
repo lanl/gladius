@@ -89,7 +89,7 @@ private:
     //
     MRN::Communicator *mBcastComm = nullptr;
     //
-    MRN::Stream *mBcastStream = nullptr;
+    MRN::Stream *mProtoStream = nullptr;
     // The number of tree nodes in our topology.
     unsigned int mNTreeNodes = 0;
     //
@@ -155,6 +155,13 @@ public:
     MRN::Network *
     getNetwork(void) {
         return mNetwork;
+    }
+    /**
+     *
+     */
+    MRN::Stream *
+    getProtoStream(void) {
+        return mProtoStream;
     }
     //
     int

@@ -10,6 +10,6 @@
 
 #include "mrnet/Types.h"
 
-#define GladiusMRNetFilterInitMagic 87560
+#define GladiusMRNetProtoFilterMagic 87560
 
 #endif

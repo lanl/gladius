@@ -99,12 +99,19 @@ PStepFE::pluginMain(
         }
         // Setup network.
         mNetworkSetup();
+        //
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
+    //
     VCOMP_COUT("Exiting Plugin." << std::endl);
 }
+
+/**
+ * TODO: the tool FE should provide a usable stream to the plugin. This stream
+ * needs to be a protocol stream.
+ */
 
 /**
  *
@@ -114,11 +121,31 @@ PStepFE::mNetworkSetup(void)
 {
     VCOMP_COUT("Starting Network Setup." << std::endl);
 
+    VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
+    //
+    // Now wait for all the plugin backends to report that they are ready to
+    // proceed.
+    MRN::PacketPtr packet;
+    int tag = 0;
+    auto status = mDSPluginArgs.protoStream->recv(&tag, packet);
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
+    }
+    if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
+        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
+    }
+    int data = 0;
+    status = packet->unpack("%d", &data);
+    if (0 != status) {
+        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+    }
+    VCOMP_COUT("Done Waiting for Back-Ends..." << std::endl);
+#if 0
     mBcastComm = mDSPluginArgs.network->get_BroadcastCommunicator();
     if (!mBcastComm) {
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
     }
-
+    //
     mBcastStream = mDSPluginArgs.network->new_Stream(
                        mBcastComm,
                        MRN::SFILTER_WAITFORALL,
@@ -127,6 +154,7 @@ PStepFE::mNetworkSetup(void)
     if (!mBcastStream) {
         GLADIUS_THROW_CALL_FAILED("new_Stream");
     }
+#endif
 
     VCOMP_COUT("Done With Network Setup." << std::endl);
 }

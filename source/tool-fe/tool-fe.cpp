@@ -370,9 +370,15 @@ ToolFE::mEnterPluginMain(void)
             mPathToPluginPack,
             mAppArgs,
             mLMONFE.getProcTab(),
+            *mMRNFE.getProtoStream(),
             *mMRNFE.getNetwork()
         );
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        // Front-end Plugin Entry Point.
         mFEPlugin->pluginMain(pluginArgs);
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

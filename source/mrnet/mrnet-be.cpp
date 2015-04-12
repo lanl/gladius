@@ -195,7 +195,7 @@ MRNetBE::handshake(void)
     if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
         GLADIUS_THROW("Received Invalid Tag From Tool Front-End");
     }
-    if (ping != GladiusMRNetFilterInitMagic) {
+    if (ping != GladiusMRNetProtoFilterMagic) {
         GLADIUS_THROW("Received Invalid Data From Tool Front-End");
     }
     int pong = -ping;
