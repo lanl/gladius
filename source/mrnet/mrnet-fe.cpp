@@ -653,7 +653,6 @@ void
 MRNetFE::handshake(void)
 {
     VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
-
     // Ping!
     auto status = mProtoStream->send(
                       toolcommon::MRNetCoreTags::InitHandshake,
@@ -686,6 +685,38 @@ MRNetFE::handshake(void)
     if (data != -GladiusMRNetProtoFilterMagic) {
         GLADIUS_THROW("Received Invalid Data From Tool Back-End");
     }
-
+    //
     VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
+}
+
+/**
+ * Sends plugin name and path to BEs.
+ */
+void
+MRNetFE::pluginInfoBCast(
+    const std::string &validPluginName,
+    const std::string &pathToValidPlugin
+)
+{
+    VCOMP_COUT("Sending Plugin Info to Back-Ends." << std::endl);
+    //
+    const char *pluginName = validPluginName.c_str();
+    const char *pluginPath = pathToValidPlugin.c_str();
+    // NOTE: The filters aren't setup to receive string data, so don't do
+    // that with this particular stream and filter combo.
+    auto status = mProtoStream->send(
+                      toolcommon::MRNetCoreTags::PluginNameInfo,
+                      "%s %s",
+                      pluginName,
+                      pluginPath
+                  );
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+    }
+    status = mProtoStream->flush();
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+    }
+    //
+    VCOMP_COUT("Done Sending Plugin Info to Back-Ends." << std::endl);
 }

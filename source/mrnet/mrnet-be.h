@@ -61,6 +61,12 @@ public:
     //
     void
     handshake(void);
+    //
+    void
+    pluginInfoRecv(
+        std::string &validPluginName,
+        std::string &pathToValidPlugin
+    );
 };
 
 } // end mrnetbe namespace

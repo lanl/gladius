@@ -17,6 +17,8 @@
 #include "core/args.h"
 #include "lmon/lmon-be.h"
 #include "mrnet/mrnet-be.h"
+#include "dspa/core/dsp-manager.h"
+#include "dspa/core/gladius-dspi.h"
 
 #include <string>
 
@@ -35,6 +37,14 @@ private:
     mrnetbe::MRNetBE mMRNBE;
     // My process table (not the job one, but mine).
     toolcommon::ProcessTable mProcTab;
+    // The name of the target plugin. 
+    std::string mPluginName;
+    // The path to the plugin pack.
+    std::string mPathToPluginPack;
+    // The plugin manager.
+    dspa::DSPManager mDSPManager;
+    // The plugin pack for our current session.
+    dspa::DSPluginPack mPluginPack;
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////
@@ -43,6 +53,9 @@ private:
         const core::Args &args,
         bool beVerbose
     );
+    //
+    void
+    mLoadPlugins(void);
 
 public:
     //

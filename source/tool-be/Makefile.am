@@ -26,6 +26,7 @@ gladius_toold_LDFLAGS =
 
 gladius_toold_LDADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/dspa/core/libGladiusDSPManager.la \
 ${top_builddir}/source/tool-common/libGladiusToolCommon.la \
 ${top_builddir}/source/dmi/libGladiusDMI.la \
 ${top_builddir}/source/lmon/libGladiusLaunchMONBE.la \

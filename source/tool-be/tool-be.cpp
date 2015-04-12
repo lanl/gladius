@@ -241,7 +241,41 @@ ToolBE::connect(void)
     //
     mMRNBE.handshake();
     //
+    mLoadPlugins();
+    //
     free(lia.leaves);
+}
+
+/**
+ *
+ */
+void
+ToolBE::mLoadPlugins(void)
+{
+    using namespace std;
+
+    VCOMP_COUT("Loading Plugins." << std::endl);
+    // We need to first get the info from the FE. The FE is responsible for
+    // making sure that the requested plugin is valid, so we minimize the amount
+    // of validation that we have to do on our end. We also rely on the FE to
+    // find the path to the plugin pack. We don't want N (N = # of daemons) to
+    // be statting around looking for plugins.
+    mMRNBE.pluginInfoRecv(mPluginName, mPathToPluginPack);
+    // Okay, now we know what to load. So, do that now.
+    VCOMP_COUT("Loading Plugins." << std::endl);
+    // Get the front-end plugin pack.
+    mPluginPack = mDSPManager.getPluginPackFrom(
+                      dspa::DSPluginPack::PluginBE,
+                      mPathToPluginPack
+                  );
+    auto *fePluginInfo = mPluginPack.pluginInfo;
+    GLADIUS_COUT_STAT << "Back-End Plugin Info:" << endl;
+    GLADIUS_COUT_STAT << "*Name      : " << fePluginInfo->pluginName << endl;
+    GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
+    GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
+    //mFEPlugin = fePluginInfo->pluginConstruct();
+
+    VCOMP_COUT("Done Loading Plugins." << std::endl);
 }
 
 /**

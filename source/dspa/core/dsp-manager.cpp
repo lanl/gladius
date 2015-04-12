@@ -41,9 +41,9 @@ do {                                                                           \
 } while (0)
 } // end namespace
 
-// TODO ADD "PluginBackEnd.so"
 const std::map<uint8_t, std::string> DSPluginPack::sRequiredPlugins = {
-    {PluginFE, "PluginFrontEnd.so"}
+    {PluginFE, "PluginFrontEnd.so"},
+    {PluginBE, "PluginBackEnd.so"}
 };
 
 /**

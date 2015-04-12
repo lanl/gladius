@@ -207,3 +207,44 @@ MRNetBE::handshake(void)
 
     VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
 }
+
+/**
+ * Receives valid plugin name and path from FE.
+ */
+void
+MRNetBE::pluginInfoRecv(
+    std::string &validPluginName,
+    std::string &pathToValidPlugin
+)
+{
+    VCOMP_COUT("Receiving Plugin Info from Front-End." << std::endl);
+    //
+    MRN::PacketPtr packet;
+    MRN::Stream *stream = nullptr;
+    const bool recvShouldBlock = true;
+    int tag = 0;
+    auto status = mNetwork->recv(&tag, packet, &stream, recvShouldBlock);
+    if (1 != status) {
+        GLADIUS_THROW_CALL_FAILED("Network::Recv");
+    }
+    // Make sure that we are dealing with a tag that we are expecting...
+    if (toolcommon::MRNetCoreTags::PluginNameInfo != tag) {
+        GLADIUS_THROW("Received Invalid Tag From Tool Front-End");
+    }
+    char *pluginName = nullptr;
+    char *pluginPath = nullptr;
+    status = packet->unpack("%s %s", &pluginName, &pluginPath);
+    if (0 != status) {
+        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+    }
+    // Set returns.
+    validPluginName = std::string(pluginName);
+    pathToValidPlugin= std::string(pluginPath);
+    VCOMP_COUT(
+        "Loading the Following Plugin:" << std::endl <<
+        " * Name: " << validPluginName << std::endl <<
+        " * Path: " << pathToValidPlugin << std::endl
+    );
+    //
+    VCOMP_COUT("Done Receiving Plugin Info from Front-End." << std::endl);
+}

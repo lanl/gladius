@@ -77,6 +77,9 @@ private:
     mLoadPlugins(void);
     //
     void
+    mSendPluginInfoToBEs(void);
+    //
+    void
     mEnterPluginMain(void);
 
 public:

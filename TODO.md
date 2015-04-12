@@ -1,5 +1,7 @@
 # Gladius TODO
 
+- Add higher-level send/recv abstraction that can be used by all infrastructure.
+- On BE failure, make sure that we can determine which node failed.
 - Add package config to get plugin flags.
 - Make some libraries internal and others usable by external plugins.
 - Install gladius plugin headers so external plugins can be built.

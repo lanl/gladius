@@ -53,6 +53,8 @@ const retry_t unlimitedRetries = -1;
 enum MRNetCoreTags {
     // Tag for initial lash-up handshake.
     InitHandshake = FirstApplicationTag,
+    // Tag for sending plugin info.
+    PluginNameInfo,
     // Shutdown tag.
     Shutdown,
     // The first tag a plugin can use.

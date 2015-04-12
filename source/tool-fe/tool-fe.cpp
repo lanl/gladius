@@ -170,7 +170,7 @@ ToolFE::envSane(std::string &whatsWrong)
         whatsWrong = "Cannot find a usable plugin pack for '"
                    + modeName + "'.\nPlease make sure that the directory "
                      "where this plugin pack lives is in "
-                     GLADIUS_ENV_DOMAIN_MODE_NAME " and all required plugins "
+                     GLADIUS_ENV_PLUGIN_PATH_NAME " and all required plugins "
                      "are installed." ;
         return false;
     }
@@ -188,6 +188,7 @@ ToolFE::mainLoop(
     const core::Args &args
 ) {
     VCOMP_COUT("Entering Main Loop." << std::endl);
+    //
     try {
         mAppArgs = args;
         // Make sure that all the required bits are
@@ -205,6 +206,8 @@ ToolFE::mainLoop(
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         mLoadPlugins();
+        // Let the BEs know what plugins they are loading.
+        mSendPluginInfoToBEs();
         // Now turn it over to the plugin.
         mEnterPluginMain();
     }
@@ -355,6 +358,20 @@ ToolFE::mLoadPlugins(void)
     mFEPlugin = fePluginInfo->pluginConstruct();
 
     VCOMP_COUT("Done Loading Plugins." << std::endl);
+}
+
+/**
+ *
+ */
+void
+ToolFE::mSendPluginInfoToBEs(void)
+{
+    VCOMP_COUT("Sending Plugin Info to Backends." << std::endl);
+    // MRNet knows how to do this...
+    mMRNFE.pluginInfoBCast(
+        std::string(mPluginPack.pluginInfo->pluginName),
+        mPathToPluginPack
+    );
 }
 
 /**
