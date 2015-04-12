@@ -366,7 +366,7 @@ ToolFE::mLoadPlugins(void)
 void
 ToolFE::mSendPluginInfoToBEs(void)
 {
-    VCOMP_COUT("Sending Plugin Info to Backends." << std::endl);
+    VCOMP_COUT("Sending Plugin Info to Back-Ends." << std::endl);
     // MRNet knows how to do this...
     mMRNFE.pluginInfoBCast(
         std::string(mPluginPack.pluginInfo->pluginName),

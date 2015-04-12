@@ -16,9 +16,12 @@ psteplibdir = $(libdir)/pstep
 # And here, notice the [plugin-name]lib_LTLIBRARIES. MODIFY THIS FOR YOUR NEEDS.
 # Don't change the names of the .las. Gladius expects these naming conventions.
 psteplib_LTLIBRARIES = \
-PluginFrontEnd.la
+PluginFrontEnd.la \
+PluginBackEnd.la
 
+################################################################################
 # Add your tool front-end sources here.
+################################################################################
 PluginFrontEnd_la_SOURCES = \
 pstep-fe.cpp
 
@@ -33,3 +36,21 @@ PluginFrontEnd_la_LDFLAGS = \
 -module -avoid-version
 
 PluginFrontEnd_la_LIBADD =
+
+################################################################################
+# Add your tool back-end sources here.
+################################################################################
+PluginBackEnd_la_SOURCES = \
+pstep-be.cpp
+
+PluginBackEnd_la_CFLAGS =
+
+PluginBackEnd_la_CPPFLAGS = \
+-I${top_srcdir}/source \
+-I${top_srcdir}/source/dspa/core \
+${GLADIUS_PLUGIN_CPPFLAGS}
+
+PluginBackEnd_la_LDFLAGS = \
+-module -avoid-version
+
+PluginBackEnd_la_LIBADD =

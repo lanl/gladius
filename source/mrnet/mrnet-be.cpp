@@ -240,11 +240,9 @@ MRNetBE::pluginInfoRecv(
     // Set returns.
     validPluginName = std::string(pluginName);
     pathToValidPlugin= std::string(pluginPath);
-    VCOMP_COUT(
-        "Loading the Following Plugin:" << std::endl <<
-        " * Name: " << validPluginName << std::endl <<
-        " * Path: " << pathToValidPlugin << std::endl
-    );
+    VCOMP_COUT("Front-End Plugin Info:" << std::endl);
+    VCOMP_COUT("*Name: " << validPluginName << std::endl);
+    VCOMP_COUT("*Path: " << pathToValidPlugin << std::endl);
     //
     VCOMP_COUT("Done Receiving Plugin Info from Front-End." << std::endl);
 }
