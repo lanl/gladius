@@ -78,13 +78,13 @@ struct DSPluginArgs {
         const std::string &home,
         const gladius::core::Args &args,
         const gladius::toolcommon::ProcessTable &pTab,
-        MRN::Stream &protoStream,
-        MRN::Network &mrnetNet
+        MRN::Stream *protoStream,
+        MRN::Network *mrnetNet
     ) : myHome(home)
       , appArgs(args)
       , procTab(pTab)
-      , protoStream(&protoStream)
-      , network(&mrnetNet) { ; }
+      , protoStream(protoStream)
+      , network(mrnetNet) { ; }
     //
     ~DSPluginArgs(void) { ; }
 };

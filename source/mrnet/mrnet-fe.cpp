@@ -678,6 +678,7 @@ MRNetFE::handshake(void)
     }
     int data = 0;
     status = packet->unpack("%d", &data);
+    // Once we are here, then we know that all the back-ends have reported back.
     if (0 != status) {
         GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
     }

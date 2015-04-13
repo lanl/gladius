@@ -55,6 +55,13 @@ public:
     setPersonality(
         const toolbecommon::ToolLeafInfoArrayT &tlia
     );
+    /**
+     *
+     */
+    MRN::Network *
+    getNetwork(void) {
+        return mNetwork;
+    }
     //
     void
     connect(void);

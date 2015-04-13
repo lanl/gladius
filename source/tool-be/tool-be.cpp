@@ -273,11 +273,45 @@ ToolBE::mLoadPlugins(void)
     GLADIUS_COUT_STAT << "*Name      : " << fePluginInfo->pluginName << endl;
     GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
-    //mFEPlugin = fePluginInfo->pluginConstruct();
+    mBEPlugin = fePluginInfo->pluginConstruct();
     //
     VCOMP_COUT("Done Loading Plugins." << std::endl);
 }
 
+/**
+ *
+ */
+void
+ToolBE::enterPluginMain(void)
+{
+    VCOMP_COUT("Entering Plugin Main." << std::endl);
+    //
+    try {
+        const char *dummyArgv[] = {"dummy", nullptr};
+        int dummyArgc = 1;
+        gladius::core::Args dummyAppArgs(dummyArgc, dummyArgv, dummyArgv);
+        dspi::DSPluginArgs pluginArgs(
+            mPathToPluginPack,
+            dummyAppArgs,
+            mProcTab,
+            nullptr,
+            mMRNBE.getNetwork()
+        );
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        // Back-end Plugin Entry Point.
+        mBEPlugin->pluginMain(pluginArgs);
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+    //
+    VCOMP_COUT("Exited Plugin Main." << std::endl);
+}
+
+#if 0
 /**
  *
  */
@@ -295,6 +329,7 @@ ToolBE::enterDomain(void)
     }
     sleep(1000);
 }
+#endif
 
 /**
  *

@@ -108,6 +108,7 @@ PStepBE::pluginMain(
     }
     //
     VCOMP_COUT("Exiting Plugin." << std::endl);
+    sleep(1000);
 }
 
 /**

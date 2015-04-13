@@ -45,6 +45,8 @@ private:
     dspa::DSPManager mDSPManager;
     // The plugin pack for our current session.
     dspa::DSPluginPack mPluginPack;
+    // The plugin instance pointer.
+    dspi::DomainSpecificPlugin *mBEPlugin = nullptr;
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////
@@ -76,7 +78,7 @@ public:
     redirectOutputTo(const std::string &base);
     //
     void
-    enterDomain(void);
+    enterPluginMain(void);
     //
     void
     finalize(void);

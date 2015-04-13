@@ -69,7 +69,7 @@ main(
         //
         toolBE.connect();
         //
-        toolBE.enterDomain();
+        toolBE.enterPluginMain();
         //
         toolBE.finalize();
     }

@@ -387,8 +387,8 @@ ToolFE::mEnterPluginMain(void)
             mPathToPluginPack,
             mAppArgs,
             mLMONFE.getProcTab(),
-            *mMRNFE.getProtoStream(),
-            *mMRNFE.getNetwork()
+            mMRNFE.getProtoStream(),
+            mMRNFE.getNetwork()
         );
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
