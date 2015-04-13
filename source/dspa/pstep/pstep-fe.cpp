@@ -10,6 +10,8 @@
  * The Parallel Step (pstep) plugin front-end.
  */
 
+#include "dspa/pstep/pstep-common.h"
+
 #include "dspa/core/gladius-dspi.h"
 
 #include "core/gladius-exception.h"
@@ -67,11 +69,6 @@ public:
         DSPluginArgs &pluginArgs
     );
 };
-
-// The plugin's name.
-#define PLUGIN_NAME "pstep"
-// The plugin's version string.
-#define PLUGIN_VERSION "0.0.1"
 
 /**
  * Plugin registration.

@@ -23,7 +23,7 @@ PluginBackEnd.la
 # Add your tool front-end sources here.
 ################################################################################
 PluginFrontEnd_la_SOURCES = \
-pstep-fe.cpp
+pstep-fe.cpp pstep-common.h
 
 PluginFrontEnd_la_CFLAGS =
 
@@ -41,7 +41,7 @@ PluginFrontEnd_la_LIBADD =
 # Add your tool back-end sources here.
 ################################################################################
 PluginBackEnd_la_SOURCES = \
-pstep-be.cpp
+pstep-be.cpp pstep-common.h
 
 PluginBackEnd_la_CFLAGS =
 
