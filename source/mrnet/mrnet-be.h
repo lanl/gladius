@@ -42,6 +42,8 @@ private:
     int mParentRank = 0;
     //
     MRN::Network *mNetwork = nullptr;
+    //
+    MRN::Stream *mProtoStream = nullptr;
 
 public:
     MRNetBE(void);
@@ -61,6 +63,13 @@ public:
     MRN::Network *
     getNetwork(void) {
         return mNetwork;
+    }
+    /**
+     *
+     */
+    MRN::Stream *
+    getProtoStream(void) {
+        return mProtoStream;
     }
     //
     void

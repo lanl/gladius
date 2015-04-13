@@ -180,10 +180,10 @@ MRNetBE::handshake(void)
     VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
 
     MRN::PacketPtr packet;
-    MRN::Stream *stream = nullptr;
     const bool recvShouldBlock = true;
     int tag = 0;
-    auto status = mNetwork->recv(&tag, packet, &stream, recvShouldBlock);
+    // This will setup the protocol stream.
+    auto status = mNetwork->recv(&tag, packet, &mProtoStream, recvShouldBlock);
     if (1 != status) {
         GLADIUS_THROW_CALL_FAILED("Network::Recv");
     }
@@ -199,11 +199,11 @@ MRNetBE::handshake(void)
         GLADIUS_THROW("Received Invalid Data From Tool Front-End");
     }
     int pong = -ping;
-    status = stream->send(tag, "%d", pong);
+    status = mProtoStream->send(tag, "%d", pong);
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Send");
     }
-    stream->flush();
+    mProtoStream->flush();
 
     VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
 }

@@ -84,6 +84,7 @@ PStepBE::pluginMain(
 ) {
     // Set our verbosity level.
     mBeVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME);
+    mBeVerbose = true; // TODO FIXME
     COMP_COUT << "::" << std::endl;
     COMP_COUT << ":: " PLUGIN_NAME " " PLUGIN_VERSION << std::endl;
     COMP_COUT << "::" << std::endl;
@@ -118,6 +119,14 @@ void
 PStepBE::mNetworkSetup(void)
 {
     VCOMP_COUT("Starting Network Setup." << std::endl);
+    int pong = -1;
+    int tag = toolcommon::InitHandshake;
+    auto status = mDSPluginArgs.protoStream->send(tag, "%d", pong);
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+    }
+    mDSPluginArgs.protoStream->flush();
+
 #if 0
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
     //

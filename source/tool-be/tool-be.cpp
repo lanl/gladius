@@ -287,14 +287,14 @@ ToolBE::enterPluginMain(void)
     VCOMP_COUT("Entering Plugin Main." << std::endl);
     //
     try {
-        const char *dummyArgv[] = {"dummy", nullptr};
+        const char *dummyArgv[] = {"dummy-arg-0", nullptr};
         int dummyArgc = 1;
         gladius::core::Args dummyAppArgs(dummyArgc, dummyArgv, dummyArgv);
         dspi::DSPluginArgs pluginArgs(
             mPathToPluginPack,
             dummyAppArgs,
             mProcTab,
-            nullptr,
+            mMRNBE.getProtoStream(),
             mMRNBE.getNetwork()
         );
         ////////////////////////////////////////////////////////////////////////

@@ -197,5 +197,6 @@ DSPManager::getPluginPackFrom(
     }
     // Now stash in plugin pack.
     pluginPack.pluginInfo = pluginInfoHandle;
+    //
     return pluginPack;
 }
