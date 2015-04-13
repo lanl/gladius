@@ -703,7 +703,7 @@ MRNetFE::pluginInfoBCast(
     const char *pluginName = validPluginName.c_str();
     const char *pluginPath = pathToValidPlugin.c_str();
     // NOTE: The filters aren't setup to receive string data, so don't do
-    // that with this particular stream and filter combo.
+    // that with this particular stream and filter combo. Sending is fine.
     auto status = mProtoStream->send(
                       toolcommon::MRNetCoreTags::PluginNameInfo,
                       "%s %s",

@@ -43,7 +43,7 @@ do {                                                                           \
 
 const std::map<uint8_t, std::string> DSPluginPack::sRequiredPlugins = {
     {PluginFE, "PluginFrontEnd.so"},
-    {PluginBE, "PluginBackEnd.so"}
+    {PluginBE, "PluginBackEnd.so" }
 };
 
 /**

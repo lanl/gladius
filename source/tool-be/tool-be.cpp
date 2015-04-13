@@ -274,7 +274,7 @@ ToolBE::mLoadPlugins(void)
     GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
     //mFEPlugin = fePluginInfo->pluginConstruct();
-
+    //
     VCOMP_COUT("Done Loading Plugins." << std::endl);
 }
 
