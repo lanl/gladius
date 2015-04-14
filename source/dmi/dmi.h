@@ -22,11 +22,22 @@ namespace dmi {
  * Debugger Machine Interface.
  */
 class DMI {
+private:
+    //
+    bool mBeVerbose = false;
+
 public:
+    // TODO make private. Figuring out interface, so I want it public for now.
+    mi_h *mMI = nullptr;
     //
     DMI(void);
     //
     ~DMI(void);
+    //
+    void
+    init(
+        bool beVerbose
+    );
 };
 
 

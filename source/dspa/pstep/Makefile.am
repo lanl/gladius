@@ -48,9 +48,11 @@ PluginBackEnd_la_CFLAGS =
 PluginBackEnd_la_CPPFLAGS = \
 -I${top_srcdir}/source \
 -I${top_srcdir}/source/dspa/core \
+${MIGDB_CPPFLAGS} \
 ${GLADIUS_PLUGIN_CPPFLAGS}
 
 PluginBackEnd_la_LDFLAGS = \
+${MIGDB_LDFLAGS} \
 -module -avoid-version
 
 PluginBackEnd_la_LIBADD =

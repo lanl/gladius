@@ -280,9 +280,9 @@ public:
      * Returns the number of entries in the process table.
      */
     size_t
-    nEntries(void) {
+    nEntries(void) const {
         return mNEntries;
-    }
+    };
 
     /**
      * Returns pointer to the process table.
@@ -352,7 +352,7 @@ public:
 };
 
 /**
- *
+ * Block until every back-end calls beReady;
  */
 static inline void
 feWaitForBEs(

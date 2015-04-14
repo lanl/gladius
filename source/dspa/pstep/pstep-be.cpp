@@ -19,7 +19,11 @@
 #include "core/colors.h"
 #include "core/env.h"
 
+// TODO any use for DMI?
+#include "mi_gdb.h"
+
 #include <iostream>
+#include <cstdlib>
 
 using namespace gladius;
 using namespace gladius::dspi;
@@ -49,7 +53,12 @@ class PStepBE : public DomainSpecificPlugin {
     //
     bool mBeVerbose = false;
     //
+    MIDebugger debugger;
+    //
     DSPluginArgs mDSPluginArgs;
+    //
+    void
+    mAttachToTarget(void);
     //
     void
     mEnterMainLoop(void);
@@ -94,7 +103,9 @@ PStepBE::pluginMain(
         if (mBeVerbose) {
             mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
-        // Setup network.
+        //
+        mAttachToTarget();
+        // Enter FE-driven main loop.
         mEnterMainLoop();
         //
     }
@@ -103,7 +114,121 @@ PStepBE::pluginMain(
     }
     //
     VCOMP_COUT("Exiting Plugin." << std::endl);
-    sleep(1000); // TODO RM
+}
+
+namespace dmi {
+
+/**
+ *
+ */
+void
+consoleCBFun(
+    const char *str,
+    void *data
+) {
+    GLADIUS_UNUSED(data);
+    //printf("CONSOLE>> %s\n", str);
+}
+
+/**
+ *
+ */
+void
+targetCBFun(
+    const char *str,
+    void *data
+) {
+    GLADIUS_UNUSED(data);
+    //printf("TARGET>> %s\n", str);
+}
+
+/**
+ *
+ */
+void
+logCBFun(
+    const char *str,
+    void *data
+) {
+    GLADIUS_UNUSED(data);
+    //printf("LOG>> %s\n", str);
+}
+
+volatile int async_c = 0;
+
+/**
+ *
+ */
+void
+asyncCBFun(
+    mi_output *o, void *data
+) {
+    GLADIUS_UNUSED(o);
+    GLADIUS_UNUSED(data);
+    //printf("ASYNC\n");
+    async_c++;
+}
+
+/**
+ *
+ */
+void
+toCBFun(
+    const char *str,
+    void *data
+) {
+    GLADIUS_UNUSED(data);
+    //printf(">> %s\n", str);
+}
+
+
+/**
+ *
+ */
+void
+fromCBFun(
+    const char *str,
+    void *data
+) {
+    GLADIUS_UNUSED(data);
+    //printf("<< %s\n", str);
+}
+
+} // end namespace debugger
+
+/**
+ *
+ */
+void
+PStepBE::mAttachToTarget(void)
+{
+    using namespace dmi;
+    VCOMP_COUT("Attaching." << std::endl);
+    //
+    assert(debugger.Connect());
+    //
+    debugger.SetConsoleCB(consoleCBFun);
+    debugger.SetTargetCB(targetCBFun);
+    debugger.SetLogCB(logCBFun);
+    debugger.SetAsyncCB(asyncCBFun);
+    debugger.SetToGDBCB(toCBFun);
+    debugger.SetFromGDBCB(fromCBFun);
+    //
+    auto &pTab = mDSPluginArgs.procTab;
+    auto *pt = pTab.procTab();
+    for (decltype(pTab.nEntries()) p = 0; p < pTab.nEntries(); ++p) {
+        std::cout << "toold: " << getpid() << " XXXX Attaching to " << pt[p].pd.pid << std::endl;
+        std::cout << "Exec Name: " << pt[p].pd.executable_name << std::endl;
+        auto *miFrames = debugger.SelectTargetPID(pt[p].pd.executable_name, pt[p].pd.pid);
+        if (!miFrames) {
+            mi_get_error_str();
+            //assert(false);
+        }
+        //std::cout << "Stopped At: " << miFrames->func << std::endl;
+    }
+    sleep(1000);
+    //
+    VCOMP_COUT("Done Attaching." << std::endl);
 }
 
 /**
@@ -114,7 +239,7 @@ PStepBE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     //
-    toolcommon::beReady(mDSPluginArgs.protoStream);
+    //toolcommon::beReady(mDSPluginArgs.protoStream);
     //
     MRN::PacketPtr packet;
     const bool recvShouldBlock = true;
