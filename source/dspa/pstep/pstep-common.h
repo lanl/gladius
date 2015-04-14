@@ -13,10 +13,22 @@
 #ifndef GLADIUS_PLUGIN_PSTEP_COMMON_H_INCLUDED
 #define GLADIUS_PLUGIN_PSTEP_COMMON_H_INCLUDED
 
+#include "tool-common/tool-common.h"
+
 // The plugin's name.
 #define PLUGIN_NAME "pstep"
 // The plugin's version string.
 #define PLUGIN_VERSION "0.0.1"
 
-#endif
+namespace pstep {
+//
+enum PStepProtoTags {
+    // Notice where we start here. ALL plugins MUST start with this tag value.
+    SetBreakPoint = gladius::toolcommon::FirstPluginTag,
+    Run,
+    Step,
+    Exit
+};
+} // end pstep namesapce.
 
+#endif

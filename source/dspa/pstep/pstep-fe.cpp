@@ -107,7 +107,7 @@ PStepFE::pluginMain(
 }
 
 /**
- *
+ * TODO Move to MRNet.
  */
 void
 PStepFE::mWaitForBEs(void)
@@ -130,11 +130,17 @@ PStepFE::mWaitForBEs(void)
     if (0 != status) {
         GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
     }
+    //
     VCOMP_COUT("Done Waiting for Back-Ends..." << std::endl);
 }
 
 /**
- *
+ * TODO
+ * Make a "proper REPL" with help and all that jive.
+ */
+
+/**
+ * The front-end REPL that drives the back-end actions.
  */
 void
 PStepFE::mEnterMainLoop(void)
@@ -142,6 +148,23 @@ PStepFE::mEnterMainLoop(void)
     VCOMP_COUT("Entering Main Loop." << std::endl);
     // TODO add timeout?
     mWaitForBEs();
+    //
+    // At this point all our back-ends have reported that they are ready to go.
+    // At this point, all the back-ends are in their main loop and ready to
+    // accept commands from us.
+    //
+    // Convenience pointer to protocol stream.
+    auto *protoStream = mDSPluginArgs.protoStream;
+    auto status = protoStream->send(pstep::SetBreakPoint, "");
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+    }
+    status = protoStream->flush();
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+    }
+    status = protoStream->send(pstep::Step, "");
+    status = protoStream->send(pstep::Exit, "");
     //
     VCOMP_COUT("Done with Main Loop." << std::endl);
 }

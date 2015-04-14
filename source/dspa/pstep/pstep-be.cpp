@@ -107,7 +107,7 @@ PStepBE::pluginMain(
 }
 
 /**
- *
+ * TODO Move to MRNet.
  */
 void
 PStepBE::mBEReady(void)
@@ -118,7 +118,10 @@ PStepBE::mBEReady(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Send");
     }
-    mDSPluginArgs.protoStream->flush();
+    status = mDSPluginArgs.protoStream->flush();
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+    }
 }
 
 /**
@@ -130,43 +133,42 @@ PStepBE::mEnterMainLoop(void)
     VCOMP_COUT("Entering Main Loop." << std::endl);
     //
     mBEReady();
-
-#if 0
-    VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
     //
-    // Now wait for all the plugin backends to report that they are ready to
-    // proceed.
     MRN::PacketPtr packet;
-    int tag = 0;
-    auto status = mDSPluginArgs.protoStream->recv(&tag, packet);
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
-    }
-    if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
-        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
-    }
-    int data = 0;
-    status = packet->unpack("%d", &data);
-    if (0 != status) {
-        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
-    }
-    VCOMP_COUT("Done Waiting for Back-Ends..." << std::endl);
-#if 0
-    mBcastComm = mDSPluginArgs.network->get_BroadcastCommunicator();
-    if (!mBcastComm) {
-        GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
-    }
-    //
-    mBcastStream = mDSPluginArgs.network->new_Stream(
-                       mBcastComm,
-                       MRN::SFILTER_WAITFORALL,
-                       0 /* TODO */
-                   );
-    if (!mBcastStream) {
-        GLADIUS_THROW_CALL_FAILED("new_Stream");
-    }
-#endif
-#endif
+    const bool recvShouldBlock = true;
+    int action = 0;
+    // Convenience pointer to network.
+    auto *network = mDSPluginArgs.network;
+    MRN::Stream *protoStream = nullptr;
+    int status = 0;
+    // Do Until the FE Says So...
+    do {
+        // What action is next FE?
+        status = network->recv(&action, packet, &protoStream, recvShouldBlock);
+        if (1 != status) GLADIUS_THROW_CALL_FAILED("Network::Recv");
+        //
+        switch (action) {
+            case pstep::SetBreakPoint: {
+                VCOMP_COUT("Action: SetBreakPoint" << std::endl);
+                break;
+            }
+            case pstep::Step: {
+                VCOMP_COUT("Action: Step" << std::endl);
+                break;
+            }
+            case pstep::Run: {
+                VCOMP_COUT("Action: Run" << std::endl);
+                break;
+            }
+            case pstep::Exit: {
+                VCOMP_COUT("Action: Exit" << std::endl);
+                break;
+            }
+            default:
+                GLADIUS_CERR << "Received Invalid Action from Front-End!" << std::endl;
+                action = pstep::Exit;
+        }
+    } while (action != pstep::Exit);
 
     VCOMP_COUT("Done with Main Loop." << std::endl);
 }

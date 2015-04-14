@@ -260,7 +260,7 @@ public:
      *
      */
     const TermCommands &
-    getTermCommands (void) const {
+    getTermCommands(void) const {
         return sTermCommands;
     }
     //
