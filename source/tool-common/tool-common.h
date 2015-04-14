@@ -55,6 +55,8 @@ enum MRNetCoreTags {
     InitHandshake = FirstApplicationTag,
     // Tag for sending plugin info.
     PluginNameInfo,
+    // Back-end plugins ready.
+    BackEndPluginsReady,
     // Shutdown tag.
     Shutdown,
     // The first tag a plugin can use.

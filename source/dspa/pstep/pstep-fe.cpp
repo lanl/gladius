@@ -51,12 +51,11 @@ class PStepFE : public DomainSpecificPlugin {
     //
     DSPluginArgs mDSPluginArgs;
     //
-    MRN::Communicator *mBcastComm = nullptr;
-    //
-    MRN::Stream *mBcastStream = nullptr;
+    void
+    mEnterMainLoop(void);
     //
     void
-    mNetworkSetup(void);
+    mWaitForBEs(void);
 
 public:
     //
@@ -97,7 +96,7 @@ PStepFE::pluginMain(
             mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
         // Setup network.
-        mNetworkSetup();
+        mEnterMainLoop();
         //
     }
     catch (const std::exception &e) {
@@ -108,18 +107,11 @@ PStepFE::pluginMain(
 }
 
 /**
- * TODO: the tool FE should provide a usable stream to the plugin. This stream
- * needs to be a protocol stream.
- */
-
-/**
  *
  */
 void
-PStepFE::mNetworkSetup(void)
+PStepFE::mWaitForBEs(void)
 {
-    VCOMP_COUT("Starting Network Setup." << std::endl);
-
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
     //
     // Now wait for all the plugin backends to report that they are ready to
@@ -130,7 +122,7 @@ PStepFE::mNetworkSetup(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Recv");
     }
-    if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
+    if (toolcommon::MRNetCoreTags::BackEndPluginsReady != tag) {
         GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
     }
     int data = 0;
@@ -139,21 +131,17 @@ PStepFE::mNetworkSetup(void)
         GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
     }
     VCOMP_COUT("Done Waiting for Back-Ends..." << std::endl);
-#if 0
-    mBcastComm = mDSPluginArgs.network->get_BroadcastCommunicator();
-    if (!mBcastComm) {
-        GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
-    }
-    //
-    mBcastStream = mDSPluginArgs.network->new_Stream(
-                       mBcastComm,
-                       MRN::SFILTER_WAITFORALL,
-                       0 /* TODO */
-                   );
-    if (!mBcastStream) {
-        GLADIUS_THROW_CALL_FAILED("new_Stream");
-    }
-#endif
+}
 
-    VCOMP_COUT("Done With Network Setup." << std::endl);
+/**
+ *
+ */
+void
+PStepFE::mEnterMainLoop(void)
+{
+    VCOMP_COUT("Entering Main Loop." << std::endl);
+    // TODO add timeout?
+    mWaitForBEs();
+    //
+    VCOMP_COUT("Done with Main Loop." << std::endl);
 }

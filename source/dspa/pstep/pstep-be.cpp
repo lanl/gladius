@@ -51,12 +51,11 @@ class PStepBE : public DomainSpecificPlugin {
     //
     DSPluginArgs mDSPluginArgs;
     //
-    MRN::Communicator *mBcastComm = nullptr;
-    //
-    MRN::Stream *mBcastStream = nullptr;
+    void
+    mEnterMainLoop(void);
     //
     void
-    mNetworkSetup(void);
+    mBEReady(void);
 
 public:
     //
@@ -96,7 +95,7 @@ PStepBE::pluginMain(
             mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
         // Setup network.
-        mNetworkSetup();
+        mEnterMainLoop();
         //
     }
     catch (const std::exception &e) {
@@ -104,28 +103,33 @@ PStepBE::pluginMain(
     }
     //
     VCOMP_COUT("Exiting Plugin." << std::endl);
-    sleep(1000);
+    sleep(1000); // TODO RM
 }
-
-/**
- * TODO: the tool FE should provide a usable stream to the plugin. This stream
- * needs to be a protocol stream.
- */
 
 /**
  *
  */
 void
-PStepBE::mNetworkSetup(void)
+PStepBE::mBEReady(void)
 {
-    VCOMP_COUT("Starting Network Setup." << std::endl);
-    int pong = -1;
-    int tag = toolcommon::InitHandshake;
-    auto status = mDSPluginArgs.protoStream->send(tag, "%d", pong);
+    static const int tag = toolcommon::BackEndPluginsReady;
+    int ready = 1;
+    auto status = mDSPluginArgs.protoStream->send(tag, "%d", ready);
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Send");
     }
     mDSPluginArgs.protoStream->flush();
+}
+
+/**
+ *
+ */
+void
+PStepBE::mEnterMainLoop(void)
+{
+    VCOMP_COUT("Entering Main Loop." << std::endl);
+    //
+    mBEReady();
 
 #if 0
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
@@ -164,5 +168,5 @@ PStepBE::mNetworkSetup(void)
 #endif
 #endif
 
-    VCOMP_COUT("Done With Network Setup." << std::endl);
+    VCOMP_COUT("Done with Main Loop." << std::endl);
 }
