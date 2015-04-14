@@ -107,34 +107,6 @@ PStepFE::pluginMain(
 }
 
 /**
- * TODO Move to MRNet.
- */
-void
-PStepFE::mWaitForBEs(void)
-{
-    VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
-    //
-    // Now wait for all the plugin backends to report that they are ready to
-    // proceed.
-    MRN::PacketPtr packet;
-    int tag = 0;
-    auto status = mDSPluginArgs.protoStream->recv(&tag, packet);
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
-    }
-    if (toolcommon::MRNetCoreTags::BackEndPluginsReady != tag) {
-        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
-    }
-    int data = 0;
-    status = packet->unpack("%d", &data);
-    if (0 != status) {
-        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
-    }
-    //
-    VCOMP_COUT("Done Waiting for Back-Ends..." << std::endl);
-}
-
-/**
  * TODO
  * Make a "proper REPL" with help and all that jive.
  */
@@ -147,7 +119,9 @@ PStepFE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     // TODO add timeout?
-    mWaitForBEs();
+    VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
+    toolcommon::feWaitForBEs(mDSPluginArgs.protoStream);
+    VCOMP_COUT("Done Waiting for Back-Ends..." << std::endl);
     //
     // At this point all our back-ends have reported that they are ready to go.
     // At this point, all the back-ends are in their main loop and ready to

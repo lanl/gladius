@@ -107,24 +107,6 @@ PStepBE::pluginMain(
 }
 
 /**
- * TODO Move to MRNet.
- */
-void
-PStepBE::mBEReady(void)
-{
-    static const int tag = toolcommon::BackEndPluginsReady;
-    int ready = 1;
-    auto status = mDSPluginArgs.protoStream->send(tag, "%d", ready);
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Send");
-    }
-    status = mDSPluginArgs.protoStream->flush();
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
-    }
-}
-
-/**
  *
  */
 void
@@ -132,7 +114,7 @@ PStepBE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     //
-    mBEReady();
+    toolcommon::beReady(mDSPluginArgs.protoStream);
     //
     MRN::PacketPtr packet;
     const bool recvShouldBlock = true;

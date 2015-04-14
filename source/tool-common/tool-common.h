@@ -351,8 +351,54 @@ public:
     }
 };
 
+/**
+ *
+ */
+static inline void
+feWaitForBEs(
+    MRN::Stream *protoStream
+) {
+    //
+    // Now wait for all the plugin backends to report that they are ready to
+    // proceed.
+    MRN::PacketPtr packet;
+    int tag = 0;
+    auto status = protoStream->recv(&tag, packet);
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
+    }
+    if (toolcommon::MRNetCoreTags::BackEndPluginsReady != tag) {
+        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
+    }
+    int data = 0;
+    status = packet->unpack("%d", &data);
+    if (0 != status) {
+        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+    }
 }
+
+/**
+ *
+ */
+static inline void
+beReady(
+    MRN::Stream *protoStream
+) {
+    static const int tag = toolcommon::BackEndPluginsReady;
+    int ready = 1;
+    auto status = protoStream->send(tag, "%d", ready);
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+    }
+    status = protoStream->flush();
+    if (-1 == status) {
+        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+    }
 }
+
+
+} // end namespace
+} // end namespace
 
 ////////////////////////////////////////////////////////////////////////////////
 //
