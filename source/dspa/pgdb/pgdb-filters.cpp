@@ -21,13 +21,13 @@ extern "C" {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-const char *PStepGDBStringsFilter_format_string = "%s";
+const char *PGDBGDBStringsFilter_format_string = "%s";
 
 /**
  *
  */
 void
-PStepGDBStringsFilter(
+PGDBGDBStringsFilter(
     vector<PacketPtr> &inputPackets,
     vector<PacketPtr> &outputPackets,
     vector<PacketPtr> &,

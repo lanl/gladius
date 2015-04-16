@@ -7,10 +7,10 @@
  */
 
 /**
- * The Parallel Step (pstep) plugin front-end.
+ * The Parallel GDB (pgdb) plugin front-end.
  */
 
-#include "dspa/pstep/pstep-common.h"
+#include "dspa/pgdb/pgdb-common.h"
 
 #include "dspa/core/gladius-dspi.h"
 
@@ -26,7 +26,7 @@ using namespace gladius::dspi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "pstepfe";
+const std::string CNAME = "***pgdb";
 //
 const auto COMPC = core::colors::MAGENTA;
 // CNAME's color code.
@@ -45,7 +45,7 @@ do {                                                                           \
 /**
  *
  */
-class PStepFE : public DomainSpecificPlugin {
+class PGDBFE : public DomainSpecificPlugin {
     //
     bool mBeVerbose = false;
     //
@@ -64,9 +64,9 @@ class PStepFE : public DomainSpecificPlugin {
 
 public:
     //
-    PStepFE(void) { ; }
+    PGDBFE(void) { ; }
     //
-    ~PStepFE(void) { ; }
+    ~PGDBFE(void) { ; }
     //
     virtual void
     pluginMain(
@@ -77,7 +77,7 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(PStepFE, PLUGIN_NAME, PLUGIN_VERSION);
+GLADIUS_PLUGIN(PGDBFE, PLUGIN_NAME, PLUGIN_VERSION);
 
 /**
  * Plugin Main.
@@ -85,7 +85,7 @@ GLADIUS_PLUGIN(PStepFE, PLUGIN_NAME, PLUGIN_VERSION);
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
-PStepFE::pluginMain(
+PGDBFE::pluginMain(
     DSPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
@@ -117,7 +117,7 @@ PStepFE::pluginMain(
  *
  */
 void
-PStepFE::mLoadFilters(void)
+PGDBFE::mLoadFilters(void)
 {
     VCOMP_COUT("Loading Filters From: " << mDSPluginArgs.myHome << std::endl);
     // This is the absolute path where this plugin was found.
@@ -129,7 +129,7 @@ PStepFE::mLoadFilters(void)
     auto *network = mDSPluginArgs.network;
     auto filterID = network->load_FilterFunc(
                         filterSOName.c_str(),
-                        "PStepGDBStringsFilter"
+                        "PGDBGDBStringsFilter"
                     );
     if (-1 == filterID) {
         GLADIUS_THROW_CALL_FAILED("load_FilterFunc: " + filterSOName);
@@ -156,7 +156,7 @@ PStepFE::mLoadFilters(void)
  * The front-end REPL that drives the back-end actions.
  */
 void
-PStepFE::mEnterMainLoop(void)
+PGDBFE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     // TODO add timeout?
@@ -173,7 +173,7 @@ PStepFE::mEnterMainLoop(void)
     for (std::string line; std::getline(std::cin, line) ; ) {
         if ("Q" == line || "q" == line) {
             std::cout << "Shutting Down..." << std::endl;
-            status = mStream->send(pstep::Exit, "");
+            status = mStream->send(pgdb::Exit, "");
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Send");
             }
@@ -184,7 +184,7 @@ PStepFE::mEnterMainLoop(void)
             break;
         }
         else {
-            status = mStream->send(pstep::ExecCommand, "%s", line.c_str());
+            status = mStream->send(pgdb::ExecCommand, "%s", line.c_str());
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Send");
             }

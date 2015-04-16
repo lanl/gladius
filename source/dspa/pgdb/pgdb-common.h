@@ -7,7 +7,7 @@
  */
 
 /**
- * Common stuff (FE/BE) for the Parallel Step (pstep) plugin.
+ * Common stuff (FE/BE) for the Parallel Step (pgdb) plugin.
  */
 
 #ifndef GLADIUS_PLUGIN_PSTEP_COMMON_H_INCLUDED
@@ -16,13 +16,13 @@
 #include "tool-common/tool-common.h"
 
 // The plugin's name.
-#define PLUGIN_NAME "pstep"
+#define PLUGIN_NAME "pgdb"
 // The plugin's version string.
 #define PLUGIN_VERSION "0.0.1"
 
-namespace pstep {
+namespace pgdb {
 //
-enum PStepProtoTags {
+enum PGDBProtoTags {
     // Notice where we start here. ALL plugins MUST start with this tag value.
     SetBreakPoint = gladius::toolcommon::FirstPluginTag,
     ExecCommand,
@@ -30,6 +30,6 @@ enum PStepProtoTags {
     Step,
     Exit
 };
-} // end pstep namesapce.
+} // end pgdb namesapce.
 
 #endif

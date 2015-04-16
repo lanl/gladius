@@ -7,10 +7,10 @@
  */
 
 /**
- * The Parallel Step (pstep) plugin back-end.
+ * The Parallel GDB (pgdb) plugin back-end.
  */
 
-#include "dspa/pstep/pstep-common.h"
+#include "dspa/pgdb/pgdb-common.h"
 
 #include "dspa/core/gladius-dspi.h"
 
@@ -31,7 +31,7 @@ using namespace gladius::dspi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "pstepbe";
+const std::string CNAME = "*pgdbbe";
 //
 const auto COMPC = core::colors::MAGENTA;
 // CNAME's color code.
@@ -50,7 +50,7 @@ do {                                                                           \
 /**
  *
  */
-class PStepBE : public DomainSpecificPlugin {
+class PGDBBE : public DomainSpecificPlugin {
     //
     bool mBeVerbose = false;
     //
@@ -69,9 +69,9 @@ class PStepBE : public DomainSpecificPlugin {
 
 public:
     //
-    PStepBE(void) { ; }
+    PGDBBE(void) { ; }
     //
-    ~PStepBE(void) { ; }
+    ~PGDBBE(void) { ; }
     //
     virtual void
     pluginMain(
@@ -82,13 +82,13 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(PStepBE, PLUGIN_NAME, PLUGIN_VERSION);
+GLADIUS_PLUGIN(PGDBBE, PLUGIN_NAME, PLUGIN_VERSION);
 
 /**
  * Plugin Main.
  */
 void
-PStepBE::pluginMain(
+PGDBBE::pluginMain(
     DSPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
@@ -121,7 +121,7 @@ PStepBE::pluginMain(
  *
  */
 void
-PStepBE::mAttachToTarget(void)
+PGDBBE::mAttachToTarget(void)
 {
     VCOMP_COUT("Attaching." << std::endl);
     //
@@ -146,7 +146,7 @@ PStepBE::mAttachToTarget(void)
  *
  */
 void
-PStepBE::mEnterMainLoop(void)
+PGDBBE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     //
@@ -168,7 +168,7 @@ PStepBE::mEnterMainLoop(void)
         if (1 != status) GLADIUS_THROW_CALL_FAILED("Network::Recv");
         //
         switch (action) {
-            case pstep::ExecCommand: {
+            case pgdb::ExecCommand: {
                 VCOMP_COUT("Action: ExecCommand" << std::endl);
                 char *cmd = nullptr;
                 status = packet->unpack("%s", &cmd);
@@ -188,15 +188,15 @@ PStepBE::mEnterMainLoop(void)
                 }
                 break;
             }
-            case pstep::Exit: {
+            case pgdb::Exit: {
                 VCOMP_COUT("Action: Exit" << std::endl);
                 break;
             }
             default:
                 GLADIUS_CERR << "Received Invalid Action from Front-End!" << std::endl;
-                action = pstep::Exit;
+                action = pgdb::Exit;
         }
-    } while (action != pstep::Exit);
+    } while (action != pgdb::Exit);
 
     VCOMP_COUT("Done with Main Loop." << std::endl);
 }
