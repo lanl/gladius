@@ -199,15 +199,19 @@ ToolFE::mainLoop(
             return;
         }
         // If we are here, then our environment is sane enough to start...
-        // FIXME Why? Hack.
+        // Dup here before we start tool infrastructure lash-up. Someone in
+        // there makes stdio act funny. This is a workaround to fix that.
         mStdInCopy = dup(STDIN_FILENO);
-        // FIXME cleanup in destructor.
         if (-1 == mStdInCopy) {
             GLADIUS_THROW_CALL_FAILED(
                 "dup(2): " + core::utils::getStrError(errno)
             );
         }
-        close(STDIN_FILENO);
+        if (-1 == close(STDIN_FILENO)) {
+            GLADIUS_THROW_CALL_FAILED(
+                "close(2): " + core::utils::getStrError(errno)
+            );
+        }
         //
         mInitializeToolInfrastructure();
         // Start lash-up thread.

@@ -169,9 +169,10 @@ PStepFE::mEnterMainLoop(void)
     // accept commands from us.
     //
     int status = 0;
-    std::cout << "(gdb) " << std::flush;
+    std::cout << "(" + CNAME + ") " << std::flush;
     for (std::string line; std::getline(std::cin, line) ; ) {
-        if (false && "Q" == line) {
+        if ("Q" == line || "q" == line) {
+            std::cout << "Shutting Down..." << std::endl;
             status = mStream->send(pstep::Exit, "");
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Send");
@@ -202,7 +203,7 @@ PStepFE::mEnterMainLoop(void)
             std::cout << out << std::endl;
             free(out);
         }
-        std::cout << "(gdb) " << std::flush;
+        std::cout << "(" + CNAME + ") " << std::flush;
     }
     //
     VCOMP_COUT("Done with Main Loop." << std::endl);
