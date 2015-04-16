@@ -25,6 +25,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 
 using namespace gladius;
 using namespace gladius::dmi;
@@ -130,15 +131,27 @@ DMI::init(
     close(mFromGDB[1]);
     // TODO add error checks
     mTo = fdopen(mToGDB[1], "w");
+    // TODO not sure this is needed.
     mFrom = fdopen(mFromGDB[0], "r");
-    // TODO FIXME Throw away
-    mGetGDBRespLine();
-    // Should be the GDB prompt.
-    mGetGDBRespLine();
+    //
+    mWaitForPrompt();
     //
     assert(std::string(mFromGDBLineBuf) == "(gdb) ");
     //
     VCOMP_COUT("Done Initializing the DMI..." << std::endl);
+}
+
+/**
+ *
+ */
+void
+DMI::mWaitForPrompt(void)
+{
+    (void)memset(mFromGDBLineBuf, '\0', sizeof(mFromGDBLineBuf));
+    // TODO add max iters? Timeout? Something?
+    while (0 != strcmp(mFromGDBLineBuf, "(gdb) ")) {
+        mGetGDBRespLine();
+    }
 }
 
 
@@ -158,6 +171,19 @@ DMI::mGetGDBRespLine(void)
     return nRead;
 }
 
+std::string
+DMI::mDrainToString(void)
+{
+    std::string result = "";
+    (void)memset(mFromGDBLineBuf, '\0', sizeof(mFromGDBLineBuf));
+    while (0 != strcmp(mFromGDBLineBuf, "(gdb) ")) {
+        mGetGDBRespLine();
+        result += mFromGDBLineBuf;
+        result += "\n";
+    }
+    return result;
+}
+
 /**
  *
  */
@@ -173,4 +199,13 @@ DMI::attach(pid_t targetPID)
     fputs(cmd.c_str(), mTo);
     fflush(mTo);
     VCOMP_COUT("Attached!" << std::endl;);
+    kill(targetPID, SIGCONT);
+    auto res = mDrainToString();
+    std::cout << res;
+    //
+    cmd = "continue\n";
+    fputs(cmd.c_str(), mTo);
+    fflush(mTo);
+    res = mDrainToString();
+    std::cout << res;
 }

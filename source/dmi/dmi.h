@@ -46,7 +46,12 @@ private:
     //
     size_t
     mGetGDBRespLine(void);
-
+    //
+    void
+    mWaitForPrompt(void);
+    //
+    std::string
+    mDrainToString(void);
 
 public:
     //

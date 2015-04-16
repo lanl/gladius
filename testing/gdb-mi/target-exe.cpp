@@ -21,5 +21,6 @@ main(void)
     while (!done) {
         sleep(1);
     }
+    std::cout << "thanks! i needed that." << std::endl;
     return EXIT_SUCCESS;
 }

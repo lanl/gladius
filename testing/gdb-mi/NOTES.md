@@ -4,4 +4,7 @@
 
 ```
 gdb --interpreter=mi -q
+(gdb) attach [PID]
+(gdb) set var done=1
+(gdb) continue
 ```
