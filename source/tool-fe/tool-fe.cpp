@@ -199,10 +199,22 @@ ToolFE::mainLoop(
             return;
         }
         // If we are here, then our environment is sane enough to start...
-        // FIXME dup stdout/stdin?
+        // FIXME Why? Hack.
+        mStdInCopy = dup(STDIN_FILENO);
+        // FIXME cleanup in destructor.
+        if (-1 == mStdInCopy) {
+            GLADIUS_THROW_CALL_FAILED(
+                "dup(2): " + core::utils::getStrError(errno)
+            );
+        }
+        close(STDIN_FILENO);
+        //
         mInitializeToolInfrastructure();
         // Start lash-up thread.
         mStartToolLashUpThread();
+        //
+        dup2(mStdInCopy, STDIN_FILENO);
+        close(mStdInCopy);
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         mLoadPlugins();

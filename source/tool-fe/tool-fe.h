@@ -41,6 +41,8 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
+    // stdin copy
+    int mStdInCopy = 0;
     // Our LaunchMON front-end instance.
     lmonfe::LaunchMonFE mLMONFE;
     // Our MRNet instance.

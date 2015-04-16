@@ -159,6 +159,8 @@ PStepBE::mEnterMainLoop(void)
     auto *network = mDSPluginArgs.network;
     MRN::Stream *protoStream = nullptr;
     int status = 0;
+    // TODO FIXME Show. Just throw away for now...
+    { std::string tmp; debugger.recvResp(tmp); }
     // Do Until the FE Says So...
     do {
         // What action is next FE?
@@ -180,7 +182,10 @@ PStepBE::mEnterMainLoop(void)
                 if (-1 == status) {
                     GLADIUS_THROW_CALL_FAILED("Stream::Send");
                 }
-                protoStream->flush();
+                status = protoStream->flush();
+                if (-1 == status) {
+                    GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+                }
                 break;
             }
             case pstep::Exit: {

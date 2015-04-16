@@ -168,17 +168,15 @@ PStepFE::mEnterMainLoop(void)
     // At this point, all the back-ends are in their main loop and ready to
     // accept commands from us.
     //
-    // Convenience pointer to protocol stream.
-    auto *protoStream = mDSPluginArgs.protoStream;
     int status = 0;
     std::cout << "(gdb) " << std::flush;
     for (std::string line; std::getline(std::cin, line) ; ) {
-        if ("Q" == line) {
-            status = protoStream->send(pstep::Exit, "");
+        if (false && "Q" == line) {
+            status = mStream->send(pstep::Exit, "");
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Send");
             }
-            status = protoStream->flush();
+            status = mStream->flush();
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Flush");
             }
