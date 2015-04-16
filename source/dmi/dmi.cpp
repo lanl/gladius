@@ -200,12 +200,27 @@ DMI::attach(pid_t targetPID)
     fflush(mTo);
     VCOMP_COUT("Attached!" << std::endl;);
     kill(targetPID, SIGCONT);
-    auto res = mDrainToString();
-    std::cout << res;
-    //
-    cmd = "continue\n";
-    fputs(cmd.c_str(), mTo);
+}
+
+/**
+ *
+ */
+int
+DMI::sendCommand(
+    const std::string &rawCMD
+) {
+    fputs(std::string(rawCMD + "\n").c_str(), mTo);
     fflush(mTo);
-    res = mDrainToString();
-    std::cout << res;
+    return GLADIUS_SUCCESS;
+}
+
+/**
+ *
+ */
+int
+DMI::recvResp(
+    std::string &outputIfSuccess
+) {
+    outputIfSuccess = mDrainToString();
+    return GLADIUS_SUCCESS;
 }

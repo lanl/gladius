@@ -129,16 +129,32 @@ PStepFE::mEnterMainLoop(void)
     //
     // Convenience pointer to protocol stream.
     auto *protoStream = mDSPluginArgs.protoStream;
-    auto status = protoStream->send(pstep::SetBreakPoint, "");
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+    int status = 0;
+    std::cout << "(gdb) " << std::flush;
+    for (std::string line; std::getline(std::cin, line) ; ) {
+        if ("Q" == line) {
+            status = protoStream->send(pstep::Exit, "");
+            if (-1 == status) {
+                GLADIUS_THROW_CALL_FAILED("Stream::Send");
+            }
+            status = protoStream->flush();
+            if (-1 == status) {
+                GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+            }
+            break;
+        }
+        else {
+            status = protoStream->send(pstep::ExecCommand, "%s", line.c_str());
+            if (-1 == status) {
+                GLADIUS_THROW_CALL_FAILED("Stream::Send");
+            }
+            status = protoStream->flush();
+            if (-1 == status) {
+                GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+            }
+        }
+        std::cout << "(gdb) " << std::flush;
     }
-    status = protoStream->flush();
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
-    }
-    status = protoStream->send(pstep::Step, "");
-    status = protoStream->send(pstep::Exit, "");
     //
     VCOMP_COUT("Done with Main Loop." << std::endl);
 }

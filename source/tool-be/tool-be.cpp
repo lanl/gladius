@@ -311,26 +311,6 @@ ToolBE::enterPluginMain(void)
     VCOMP_COUT("Exited Plugin Main." << std::endl);
 }
 
-#if 0
-/**
- *
- */
-void
-ToolBE::enterDomain(void)
-{
-    VCOMP_COUT("Entering Domain." << std::endl);
-    // FIXME
-    // Since we started our tool daemons under debugger control, we must send a
-    // continue signal to them.
-    // TODO the FE and BE need to sync.
-    auto *pt = mProcTab.procTab();
-    for (decltype(mProcTab.nEntries()) p = 0; p < mProcTab.nEntries(); ++p) {
-        kill(pt[p].pd.pid, SIGCONT);
-    }
-    sleep(1000);
-}
-#endif
-
 /**
  *
  */

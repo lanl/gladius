@@ -25,6 +25,7 @@ namespace pstep {
 enum PStepProtoTags {
     // Notice where we start here. ALL plugins MUST start with this tag value.
     SetBreakPoint = gladius::toolcommon::FirstPluginTag,
+    ExecCommand,
     Run,
     Step,
     Exit

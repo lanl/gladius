@@ -123,7 +123,6 @@ PStepBE::pluginMain(
 void
 PStepBE::mAttachToTarget(void)
 {
-    using namespace dmi;
     VCOMP_COUT("Attaching." << std::endl);
     //
     debugger.init(mBeVerbose);
@@ -133,18 +132,12 @@ PStepBE::mAttachToTarget(void)
     // TODO Deal with gdb of multiple processes! Do we care? Legion will only
     // have one? But MPI apps will care. PGDB has an example (I think).
     for (decltype(pTab.nEntries()) p = 0; p < pTab.nEntries(); ++p) {
-        std::cout << "toold: " << getpid()
-                  << " XXXX Attaching to " << pt[p].pd.pid << std::endl;
-        std::cout << "Exec Name: " << pt[p].pd.executable_name << std::endl;
-        //
         // Attach to PID
         debugger.attach(pt[p].pd.pid);
         //
         //kill(pt[p].pd.pid, SIGCONT);
         //
-        //std::cout << "Stopped At: " << miFrames->func << std::endl;
     }
-    sleep(1000);
     //
     VCOMP_COUT("Done Attaching." << std::endl);
 }
@@ -173,8 +166,12 @@ PStepBE::mEnterMainLoop(void)
         if (1 != status) GLADIUS_THROW_CALL_FAILED("Network::Recv");
         //
         switch (action) {
-            case pstep::SetBreakPoint: {
-                VCOMP_COUT("Action: SetBreakPoint" << std::endl);
+            case pstep::ExecCommand: {
+                VCOMP_COUT("Action: ExecCommand" << std::endl);
+                char *cmd = nullptr;
+                status = packet->unpack("%s", &cmd);
+                std::cout << cmd << std::endl;
+                free(cmd);
                 break;
             }
             case pstep::Step: {

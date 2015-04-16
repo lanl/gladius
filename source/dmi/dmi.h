@@ -66,6 +66,16 @@ public:
     //
     void
     attach(pid_t targetPID);
+    //
+    int
+    sendCommand(
+        const std::string &rawCMD
+    );
+    //
+    int
+    recvResp(
+        std::string &outputIfSuccess
+    );
 };
 
 
