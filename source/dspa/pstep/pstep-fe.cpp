@@ -56,6 +56,11 @@ class PStepFE : public DomainSpecificPlugin {
     //
     void
     mWaitForBEs(void);
+    //
+    void
+    mLoadFilters(void);
+    // TODO rename
+    MRN::Stream *mStream = nullptr;
 
 public:
     //
@@ -95,6 +100,8 @@ PStepFE::pluginMain(
         if (mBeVerbose) {
             mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
+        // Load our filters.
+        mLoadFilters();
         // Setup network.
         mEnterMainLoop();
         //
@@ -104,6 +111,40 @@ PStepFE::pluginMain(
     }
     //
     VCOMP_COUT("Exiting Plugin." << std::endl);
+}
+
+/**
+ *
+ */
+void
+PStepFE::mLoadFilters(void)
+{
+    VCOMP_COUT("Loading Filters From: " << mDSPluginArgs.myHome << std::endl);
+    // This is the absolute path where this plugin was found.
+    static const auto home = mDSPluginArgs.myHome;
+    // Path separator.
+    static const auto ps = core::utils::osPathSep;
+    // FIXME
+    static const std::string filterSOName = home + ps + "PluginFilters.so";
+    auto *network = mDSPluginArgs.network;
+    auto filterID = network->load_FilterFunc(
+                        filterSOName.c_str(),
+                        "PStepGDBStringsFilter"
+                    );
+    if (-1 == filterID) {
+        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: " + filterSOName);
+    }
+    //
+    mStream = network->new_Stream(
+                  mDSPluginArgs.network->get_BroadcastCommunicator(),
+                  MRN::SFILTER_WAITFORALL,
+                  filterID
+              );
+    if (!mStream) {
+        GLADIUS_THROW_CALL_FAILED("new_Stream");
+    }
+    //
+    VCOMP_COUT("Done Loading Filters." << std::endl);
 }
 
 /**
@@ -144,14 +185,24 @@ PStepFE::mEnterMainLoop(void)
             break;
         }
         else {
-            status = protoStream->send(pstep::ExecCommand, "%s", line.c_str());
+            status = mStream->send(pstep::ExecCommand, "%s", line.c_str());
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Send");
             }
-            status = protoStream->flush();
+            status = mStream->flush();
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Flush");
             }
+            int tag;
+            MRN::PacketPtr packet;
+            status = mStream->recv(&tag, packet);
+            if (-1 == status) {
+                GLADIUS_THROW_CALL_FAILED("Stream::Recv");
+            }
+            char *out = nullptr;
+            status = packet->unpack("%s", &out);
+            std::cout << out << std::endl;
+            free(out);
         }
         std::cout << "(gdb) " << std::flush;
     }

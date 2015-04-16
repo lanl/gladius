@@ -6,11 +6,9 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_MRNET_FILTERS_CORE_FILTERS_H_INCLUDED
-#define GLADIUS_MRNET_FILTERS_CORE_FILTERS_H_INCLUDED
+#ifndef GLADIUS_PLUGIN_PSTEP_FILTERS_H_INCLUDED
+#define GLADIUS_PLUGIN_PSTEP_FILTERS_H_INCLUDED
 
 #include "mrnet/Types.h"
-
-#define GladiusMRNetProtoFilterMagic 87560
 
 #endif

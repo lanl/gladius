@@ -17,7 +17,8 @@ psteplibdir = $(libdir)/pstep
 # Don't change the names of the .las. Gladius expects these naming conventions.
 psteplib_LTLIBRARIES = \
 PluginFrontEnd.la \
-PluginBackEnd.la
+PluginBackEnd.la \
+PluginFilters.la
 
 ################################################################################
 # Add your tool front-end sources here.
@@ -56,3 +57,21 @@ ${MIGDB_LDFLAGS} \
 -module -avoid-version
 
 PluginBackEnd_la_LIBADD =
+
+################################################################################
+# Add your tool filters here (optional).
+################################################################################
+PluginFilters_la_SOURCES = \
+pstep-filters.h pstep-filters.cpp
+
+PluginFilters_la_CFLAGS =
+
+PluginFilters_la_CXXFLAGS =
+
+PluginFilters_la_CPPFLAGS = \
+${MRNET_CPPFLAGS}
+
+PluginFilters_la_LDFLAGS = \
+-module -avoid-version
+
+PluginFilters_la_LIBADD =

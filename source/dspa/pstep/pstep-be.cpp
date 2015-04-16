@@ -171,15 +171,16 @@ PStepBE::mEnterMainLoop(void)
                 char *cmd = nullptr;
                 status = packet->unpack("%s", &cmd);
                 std::cout << cmd << std::endl;
+                debugger.sendCommand(cmd);
                 free(cmd);
-                break;
-            }
-            case pstep::Step: {
-                VCOMP_COUT("Action: Step" << std::endl);
-                break;
-            }
-            case pstep::Run: {
-                VCOMP_COUT("Action: Run" << std::endl);
+                //
+                std::string out;
+                debugger.recvResp(out);
+                status = protoStream->send(action, "%s", out.c_str());
+                if (-1 == status) {
+                    GLADIUS_THROW_CALL_FAILED("Stream::Send");
+                }
+                protoStream->flush();
                 break;
             }
             case pstep::Exit: {
