@@ -19,6 +19,7 @@
 
 #include "dmi/dmi.h"
 
+#include <cstdio>
 #include <cassert>
 #include <iostream>
 
@@ -60,6 +61,8 @@ DMI::DMI(void)
 DMI::~DMI(void)
 {
     // TODO close pipes.
+    fclose(mTo);
+    fclose(mFrom);
 }
 
 /**
@@ -121,33 +124,53 @@ DMI::init(
     ////////////////////////////////////////////////////////////////////////////
     // Parent.
     ////////////////////////////////////////////////////////////////////////////
+    // TODO check for running child.
+    // Close unused.
     close(mToGDB[0]);
     close(mFromGDB[1]);
-    // TODO check for running child.
-    char charBuf;
-    std::cout << "GOT: " << mFromGDBLineBuf << std::endl;
-    // TODO FIXME
-    int32_t bCount = 0;
-    bool skip = true;
-    while (1 == read(mFromGDB[0], &charBuf, 1)) {
-        if (charBuf == '=' && skip) {
-            while (1 == read(mFromGDB[0], &charBuf, 1)) {
-                if (charBuf == '\n') {
-                    skip = false;
-                    break;
-                }
-            }
-        }
-        else {
-            mFromGDBLineBuf[bCount] = charBuf;
-            if (charBuf == '\n') {
-                mFromGDBLineBuf[bCount] = '\0';
-                break;
-            }
-            ++bCount;
-        }
-    }
-    assert(std::string(mFromGDBLineBuf) == "(gdb)");
+    // TODO add error checks
+    mTo = fdopen(mToGDB[1], "w");
+    mFrom = fdopen(mFromGDB[0], "r");
+    // TODO FIXME Throw away
+    mGetGDBRespLine();
+    // Should be the GDB prompt.
+    mGetGDBRespLine();
+    //
+    assert(std::string(mFromGDBLineBuf) == "(gdb) ");
     //
     VCOMP_COUT("Done Initializing the DMI..." << std::endl);
+}
+
+
+size_t
+DMI::mGetGDBRespLine(void)
+{
+    char charBuf = '\0';
+    size_t nRead = 0;
+    while (1 == read(mFromGDB[0], &charBuf, 1)) {
+        mFromGDBLineBuf[nRead] = charBuf;
+        if (charBuf == '\n') {
+            mFromGDBLineBuf[nRead] = '\0';
+            break;
+        }
+        ++nRead;
+    }
+    return nRead;
+}
+
+/**
+ *
+ */
+void
+DMI::attach(pid_t targetPID)
+{
+    VCOMP_COUT(
+        "GDB PID: " << mGDBPID <<
+        " Attaching to Target PID: " << targetPID << std::endl
+    );
+    //
+    std::string cmd = "attach " + std::to_string(targetPID) + "\n";
+    fputs(cmd.c_str(), mTo);
+    fflush(mTo);
+    VCOMP_COUT("Attached!" << std::endl;);
 }

@@ -138,8 +138,9 @@ PStepBE::mAttachToTarget(void)
         std::cout << "Exec Name: " << pt[p].pd.executable_name << std::endl;
         //
         // Attach to PID
+        debugger.attach(pt[p].pd.pid);
         //
-        kill(pt[p].pd.pid, SIGCONT);
+        //kill(pt[p].pd.pid, SIGCONT);
         //
         //std::cout << "Stopped At: " << miFrames->func << std::endl;
     }

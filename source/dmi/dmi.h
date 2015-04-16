@@ -37,6 +37,16 @@ private:
     pid_t mGDBPID = 0;
     // TODO will have to be dynamically sized.
     char mFromGDBLineBuf[4096];
+    //
+    pid_t mTargetPID = 0;
+    //
+    FILE *mTo = nullptr;
+    //
+    FILE *mFrom = nullptr;
+    //
+    size_t
+    mGetGDBRespLine(void);
+
 
 public:
     //
@@ -48,6 +58,9 @@ public:
     init(
         bool beVerbose
     );
+    //
+    void
+    attach(pid_t targetPID);
 };
 
 
