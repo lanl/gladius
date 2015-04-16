@@ -13,7 +13,9 @@
 #ifndef GLADIUS_DMI_DMI_H_INCLUDED
 #define GLADIUS_DMI_DMI_H_INCLUDED
 
-#include "mi_gdb.h"
+#include <string>
+
+#include <unistd.h>
 
 namespace gladius {
 namespace dmi {
@@ -25,10 +27,18 @@ class DMI {
 private:
     //
     bool mBeVerbose = false;
+    //
+    std::string mPathToGDB;
+    //
+    int mToGDB[2];
+    //
+    int mFromGDB[2];
+    // PID of GDB process.
+    pid_t mGDBPID = 0;
+    // TODO will have to be dynamically sized.
+    char mFromGDBLineBuf[4096];
 
 public:
-    // TODO make private. Figuring out interface, so I want it public for now.
-    mi_h *mMI = nullptr;
     //
     DMI(void);
     //

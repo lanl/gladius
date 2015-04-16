@@ -22,6 +22,9 @@
 #include <cassert>
 #include <iostream>
 
+#include <errno.h>
+#include <string.h>
+
 using namespace gladius;
 using namespace gladius::dmi;
 
@@ -46,12 +49,18 @@ do {                                                                           \
 /**
  *
  */
-DMI::DMI(void) { }
+DMI::DMI(void)
+{
+    (void)memset(mFromGDBLineBuf, '\0', sizeof(mFromGDBLineBuf));
+}
 
 /**
  *
  */
-DMI::~DMI(void) { }
+DMI::~DMI(void)
+{
+    // TODO close pipes.
+}
 
 /**
  *
@@ -63,8 +72,82 @@ DMI::init(
     mBeVerbose = beVerbose;
     //
     VCOMP_COUT("Initializing the DMI..." << std::endl);
-    mMI = mi_connect_local();
-    if (!mMI) GLADIUS_THROW_CALL_FAILED("mi_connect_local");
+    // Get GDB's path.
+    auto status =  core::utils::which("gdb", mPathToGDB);
+    if (GLADIUS_SUCCESS != status) {
+        GLADIUS_THROW(
+            "It appears as if GDB is either "
+            "not installed or not in your $PATH. "
+            " Please fix this and try again."
+        );
+    }
+    if (-1 == pipe(mToGDB) || -1 == pipe(mFromGDB)) {
+        auto errs = core::utils::getStrError(errno);
+        GLADIUS_THROW("pipe(2): " + errs);
+    }
+    // TODO set O_NONBLOCK?
+    // Create new process for GDB.
+    mGDBPID = fork();
+    ////////////////////////////////////////////////////////////////////////////
+    // Child. Don't throw here.
+    ////////////////////////////////////////////////////////////////////////////
+    if (0 == mGDBPID) {
+        close(mToGDB[1]);
+        close(mFromGDB[0]);
+        // Connect stdin and stdout
+        if (-1 == dup2(mToGDB[0], STDIN_FILENO) ||
+            -1 == dup2(mFromGDB[1], STDOUT_FILENO)) {
+            auto errs = core::utils::getStrError(errno);
+            GLADIUS_CERR << "dup2(2): " + errs << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        // Build the argv for execvp
+        char *argv[4] = {
+            (char *)mPathToGDB.c_str(),
+            (char *)"--interpreter=mi",
+            (char *)"--quiet",
+            nullptr
+        };
+        //
+        execvp(argv[0], argv);
+        // Reached only on execvp failure.
+        _exit(127);
+    }
+    // Fork failure.
+    else if (-1 == mGDBPID) {
+        auto errs = core::utils::getStrError(errno);
+        GLADIUS_THROW("Cannot Create GDB Process: " + errs);
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    // Parent.
+    ////////////////////////////////////////////////////////////////////////////
+    close(mToGDB[0]);
+    close(mFromGDB[1]);
+    // TODO check for running child.
+    char charBuf;
+    std::cout << "GOT: " << mFromGDBLineBuf << std::endl;
+    // TODO FIXME
+    int32_t bCount = 0;
+    bool skip = true;
+    while (1 == read(mFromGDB[0], &charBuf, 1)) {
+        if (charBuf == '=' && skip) {
+            while (1 == read(mFromGDB[0], &charBuf, 1)) {
+                if (charBuf == '\n') {
+                    skip = false;
+                    break;
+                }
+            }
+        }
+        else {
+            mFromGDBLineBuf[bCount] = charBuf;
+            if (charBuf == '\n') {
+                mFromGDBLineBuf[bCount] = '\0';
+                break;
+            }
+            ++bCount;
+        }
+    }
+    assert(std::string(mFromGDBLineBuf) == "(gdb)");
     //
     VCOMP_COUT("Done Initializing the DMI..." << std::endl);
 }
