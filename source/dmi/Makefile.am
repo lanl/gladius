@@ -18,11 +18,9 @@ dmi.h dmi.cpp
 libGladiusDMI_la_CFLAGS =
 
 libGladiusDMI_la_CPPFLAGS = \
--I${top_srcdir}/source \
-${MIGDB_CPPFLAGS}
+-I${top_srcdir}/source
 
 libGladiusDMI_la_LDFLAGS = \
-${MIGDB_LDFLAGS} \
 -version-info ${LIBVINFO}
 
 libGladiusDMI_la_LIBADD = \

@@ -154,7 +154,9 @@ DMI::mWaitForPrompt(void)
     }
 }
 
-
+/**
+ *
+ */
 size_t
 DMI::mGetGDBRespLine(void)
 {
@@ -171,6 +173,9 @@ DMI::mGetGDBRespLine(void)
     return nRead;
 }
 
+/**
+ *
+ */
 std::string
 DMI::mDrainToString(void)
 {

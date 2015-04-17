@@ -154,7 +154,7 @@ ToolFE::ToolFE(
 bool
 ToolFE::envSane(std::string &whatsWrong)
 {
-    auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
+    static const auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
     if (!core::utils::envVarSet(envMode)) {
         whatsWrong = "Cannot determine current mode.\nPlease set '"
                    + std::string(envMode) +  "' and try again.";
