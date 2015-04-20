@@ -86,7 +86,8 @@ DMI::init(
         );
     }
     if (-1 == pipe(mToGDB) || -1 == pipe(mFromGDB)) {
-        auto errs = core::utils::getStrError(errno);
+        int err = errno;
+        auto errs = core::utils::getStrError(err);
         GLADIUS_THROW("pipe(2): " + errs);
     }
     // TODO set O_NONBLOCK?
@@ -101,7 +102,8 @@ DMI::init(
         // Connect stdin and stdout
         if (-1 == dup2(mToGDB[0], STDIN_FILENO) ||
             -1 == dup2(mFromGDB[1], STDOUT_FILENO)) {
-            auto errs = core::utils::getStrError(errno);
+            int err = errno;
+            auto errs = core::utils::getStrError(err);
             GLADIUS_CERR << "dup2(2): " + errs << std::endl;
             exit(EXIT_FAILURE);
         }
@@ -119,7 +121,8 @@ DMI::init(
     }
     // Fork failure.
     else if (-1 == mGDBPID) {
-        auto errs = core::utils::getStrError(errno);
+        int err = errno;
+        auto errs = core::utils::getStrError(err);
         GLADIUS_THROW("Cannot Create GDB Process: " + errs);
     }
     ////////////////////////////////////////////////////////////////////////////

@@ -67,7 +67,13 @@ private:
     mGetStateFromEnvs(void);
     //
     void
+    mPreToolInitActons(void);
+    //
+    void
     mInitializeToolInfrastructure(void);
+    //
+    void
+    mPostToolInitActons(void);
     //
     void
     mStartToolLashUpThread(void);

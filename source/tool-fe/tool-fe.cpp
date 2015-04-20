@@ -180,6 +180,45 @@ ToolFE::envSane(std::string &whatsWrong)
 }
 
 /**
+ *
+ */
+void
+ToolFE::mPreToolInitActons(void)
+{
+    // Dup here before we start tool infrastructure lash-up. Someone in
+    // there makes stdio act funny. This is a workaround to fix that.
+    mStdInCopy = dup(STDIN_FILENO);
+    if (-1 == mStdInCopy) {
+        int err = errno;
+        GLADIUS_THROW_CALL_FAILED(
+            "dup(2): " + core::utils::getStrError(err)
+        );
+    }
+    if (-1 == close(STDIN_FILENO)) {
+        int err = errno;
+        GLADIUS_THROW_CALL_FAILED(
+            "close(2): " + core::utils::getStrError(err)
+        );
+    }
+}
+
+/**
+ *
+ */
+void
+ToolFE::mPostToolInitActons(void)
+{
+    // This is part of the workaround mentioned in mPreToolInitActons.
+    if (-1 == dup2(mStdInCopy, STDIN_FILENO)) {
+        int err = errno;
+        GLADIUS_THROW_CALL_FAILED(
+            "dup2(2): " + core::utils::getStrError(err)
+        );
+    }
+    close(mStdInCopy);
+}
+
+/**
  * Responsible for running the tool front-end instance. This is the tool-fe
  * entry point from a caller's perspective.
  */
@@ -199,26 +238,13 @@ ToolFE::mainLoop(
             return;
         }
         // If we are here, then our environment is sane enough to start...
-        // Dup here before we start tool infrastructure lash-up. Someone in
-        // there makes stdio act funny. This is a workaround to fix that.
-        mStdInCopy = dup(STDIN_FILENO);
-        if (-1 == mStdInCopy) {
-            GLADIUS_THROW_CALL_FAILED(
-                "dup(2): " + core::utils::getStrError(errno)
-            );
-        }
-        if (-1 == close(STDIN_FILENO)) {
-            GLADIUS_THROW_CALL_FAILED(
-                "close(2): " + core::utils::getStrError(errno)
-            );
-        }
+        mPreToolInitActons();
         //
         mInitializeToolInfrastructure();
         // Start lash-up thread.
         mStartToolLashUpThread();
         //
-        dup2(mStdInCopy, STDIN_FILENO);
-        close(mStdInCopy);
+        mPostToolInitActons();
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         mLoadPlugins();
