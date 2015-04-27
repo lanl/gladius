@@ -27,6 +27,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
+
 
 #include <iostream>
 
@@ -197,6 +199,18 @@ public:
         const std::string &theString,
         const std::string &theDelimiters
     );
+    
+    /**
+     *
+     */
+    static int
+    sendSignal(
+        pid_t target,
+        int signal
+    ) {
+        return kill(target, signal);
+    }
+
 };
 
 } // end core namespace

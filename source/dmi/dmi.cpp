@@ -49,11 +49,24 @@ do {                                                                           \
 } // end namespace
 
 /**
+ * The initial size of the output buffer.
+ */
+const size_t DMI::sInitBufSize = 1024 * 16;
+
+/**
+ *
+ */
+const std::string DMI::sPromptString = "(gdb) ";
+
+/**
  *
  */
 DMI::DMI(void)
 {
-    (void)memset(mFromGDBLineBuf, '\0', sizeof(mFromGDBLineBuf));
+    mCurLineBufSize = sInitBufSize;
+    // TODO Move to init
+    mFromGDBLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromGDBLineBuf));
+    if (!mFromGDBLineBuf) GLADIUS_THROW_OOR();
 }
 
 /**
@@ -64,6 +77,7 @@ DMI::~DMI(void)
     // TODO close pipes.
     fclose(mTo);
     fclose(mFrom);
+    if (mFromGDBLineBuf) free(mFromGDBLineBuf);
 }
 
 /**
@@ -139,7 +153,7 @@ DMI::init(
     //
     mWaitForPrompt();
     //
-    assert(std::string(mFromGDBLineBuf) == "(gdb) ");
+    assert(std::string(mFromGDBLineBuf) == sPromptString);
     //
     VCOMP_COUT("Done Initializing the DMI..." << std::endl);
 }
@@ -150,9 +164,8 @@ DMI::init(
 void
 DMI::mWaitForPrompt(void)
 {
-    (void)memset(mFromGDBLineBuf, '\0', sizeof(mFromGDBLineBuf));
     // TODO add max iters? Timeout? Something?
-    while (0 != strcmp(mFromGDBLineBuf, "(gdb) ")) {
+    while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str())) {
         mGetGDBRespLine();
     }
 }
@@ -166,9 +179,17 @@ DMI::mGetGDBRespLine(void)
     char charBuf = '\0';
     size_t nRead = 0;
     while (1 == read(mFromGDB[0], &charBuf, 1)) {
+        // Need more memory.
+        if (nRead == mCurLineBufSize) {
+            // Double the size.
+            mCurLineBufSize *= 2;
+            mFromGDBLineBuf = (char *)realloc(mFromGDBLineBuf, mCurLineBufSize);
+            if (!mFromGDBLineBuf) GLADIUS_THROW_OOR();
+        }
         mFromGDBLineBuf[nRead] = charBuf;
         if (charBuf == '\n') {
-            mFromGDBLineBuf[nRead] = '\0';
+            // Update nRead before we break.
+            mFromGDBLineBuf[nRead++] = '\0';
             break;
         }
         ++nRead;
@@ -183,10 +204,9 @@ std::string
 DMI::mDrainToString(void)
 {
     std::string result = "";
-    (void)memset(mFromGDBLineBuf, '\0', sizeof(mFromGDBLineBuf));
-    while (0 != strcmp(mFromGDBLineBuf, "(gdb) ")) {
+    while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str())) {
         mGetGDBRespLine();
-        result += mFromGDBLineBuf;
+        result += std::string(mFromGDBLineBuf);
         result += "\n";
     }
     return result;
@@ -207,7 +227,11 @@ DMI::attach(pid_t targetPID)
     fputs(cmd.c_str(), mTo);
     fflush(mTo);
     VCOMP_COUT("Attached!" << std::endl;);
-    kill(targetPID, SIGCONT);
+    if (0 != core::utils::sendSignal(targetPID, SIGCONT)) {
+        int err = errno;
+        auto errs = core::utils::getStrError(err);
+        GLADIUS_THROW("Signal delivery failed: " + errs);
+    }
 }
 
 /**

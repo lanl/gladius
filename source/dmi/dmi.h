@@ -25,6 +25,11 @@ namespace dmi {
  */
 class DMI {
 private:
+    static const std::string sPromptString;
+    //
+    static const size_t sInitBufSize;
+    //
+    size_t mCurLineBufSize = 0;
     //
     bool mBeVerbose = false;
     //
@@ -35,8 +40,8 @@ private:
     int mFromGDB[2];
     // PID of GDB process.
     pid_t mGDBPID = 0;
-    // TODO will have to be dynamically sized.
-    char mFromGDBLineBuf[4096];
+    //
+    char *mFromGDBLineBuf = nullptr;
     //
     pid_t mTargetPID = 0;
     //

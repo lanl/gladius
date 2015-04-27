@@ -208,7 +208,8 @@ ToolFE::mPreToolInitActons(void)
 void
 ToolFE::mPostToolInitActons(void)
 {
-    // This is part of the workaround mentioned in mPreToolInitActons.
+    // Restore stdin. This is the counterpart to the workaround in
+    // mPreToolInitActons.
     if (-1 == dup2(mStdInCopy, STDIN_FILENO)) {
         int err = errno;
         GLADIUS_THROW_CALL_FAILED(

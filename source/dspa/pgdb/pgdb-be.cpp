@@ -134,9 +134,6 @@ PGDBBE::mAttachToTarget(void)
     for (decltype(pTab.nEntries()) p = 0; p < pTab.nEntries(); ++p) {
         // Attach to PID
         debugger.attach(pt[p].pd.pid);
-        //
-        //kill(pt[p].pd.pid, SIGCONT);
-        //
     }
     //
     VCOMP_COUT("Done Attaching." << std::endl);
@@ -168,7 +165,8 @@ PGDBBE::mEnterMainLoop(void)
         if (1 != status) GLADIUS_THROW_CALL_FAILED("Network::Recv");
         //
         switch (action) {
-            case pgdb::ExecCommand: {
+            case pgdb::ExecCommand:
+            {
                 VCOMP_COUT("Action: ExecCommand" << std::endl);
                 char *cmd = nullptr;
                 status = packet->unpack("%s", &cmd);
@@ -188,13 +186,17 @@ PGDBBE::mEnterMainLoop(void)
                 }
                 break;
             }
-            case pgdb::Exit: {
+            case pgdb::Exit:
+            {
                 VCOMP_COUT("Action: Exit" << std::endl);
                 break;
             }
             default:
-                GLADIUS_CERR << "Received Invalid Action from Front-End!" << std::endl;
+            {
+                GLADIUS_CERR << "Received Invalid Action from Front-End!"
+                             << std::endl;
                 action = pgdb::Exit;
+            }
         }
     } while (action != pgdb::Exit);
 
