@@ -49,7 +49,7 @@ do {                                                                           \
 } // end namespace
 
 /**
- * The initial size of the output buffer.
+ * The initial size of the output buffer. 16k should be plenty.
  */
 const size_t DMI::sInitBufSize = 1024 * 16;
 
@@ -164,7 +164,6 @@ DMI::init(
 void
 DMI::mWaitForPrompt(void)
 {
-    // TODO add max iters? Timeout? Something?
     while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str())) {
         mGetGDBRespLine();
     }
@@ -206,7 +205,7 @@ DMI::mDrainToString(void)
     std::string result = "";
     do {
         mGetGDBRespLine();
-        result += std::string(mFromGDBLineBuf) += "\n";
+        result += std::string(mFromGDBLineBuf) + "\n";
     } while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str()));
 
     return result;
