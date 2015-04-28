@@ -204,11 +204,11 @@ std::string
 DMI::mDrainToString(void)
 {
     std::string result = "";
-    while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str())) {
+    do {
         mGetGDBRespLine();
-        result += std::string(mFromGDBLineBuf);
-        result += "\n";
-    }
+        result += std::string(mFromGDBLineBuf) += "\n";
+    } while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str()));
+
     return result;
 }
 
@@ -226,7 +226,7 @@ DMI::attach(pid_t targetPID)
     std::string cmd = "attach " + std::to_string(targetPID) + "\n";
     fputs(cmd.c_str(), mTo);
     fflush(mTo);
-    VCOMP_COUT("Attached!" << std::endl;);
+    VCOMP_COUT("Attached!" << std::endl);
     if (0 != core::utils::sendSignal(targetPID, SIGCONT)) {
         int err = errno;
         auto errs = core::utils::getStrError(err);

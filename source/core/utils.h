@@ -199,7 +199,7 @@ public:
         const std::string &theString,
         const std::string &theDelimiters
     );
-    
+
     /**
      *
      */
