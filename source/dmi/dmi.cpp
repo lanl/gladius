@@ -26,6 +26,9 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 
 using namespace gladius;
 using namespace gladius::dmi;
@@ -64,9 +67,6 @@ const std::string DMI::sPromptString = "(gdb) ";
 DMI::DMI(void)
 {
     mCurLineBufSize = sInitBufSize;
-    // TODO Move to init
-    mFromGDBLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromGDBLineBuf));
-    if (!mFromGDBLineBuf) GLADIUS_THROW_OOR();
 }
 
 /**
@@ -74,9 +74,37 @@ DMI::DMI(void)
  */
 DMI::~DMI(void)
 {
-    // TODO close pipes.
+    using namespace std;
+    // Wait for GDB (child)
+    pid_t w;
+    int status;
+    do {
+        w = waitpid(mGDBPID, &status, WUNTRACED | WCONTINUED);
+        if (w == -1) {
+            int err = errno;
+            auto errs = core::utils::getStrError(err);
+            GLADIUS_THROW("pipe(2): " + errs);
+        }
+        if (WIFEXITED(status)) {
+            VCOMP_COUT("GDB Exited Status: " << WEXITSTATUS(status) << endl);
+        }
+        else if (WIFSIGNALED(status)) {
+            VCOMP_COUT("GDB Killed By Signal: " << WTERMSIG(status) << endl);
+        }
+        else if (WIFSTOPPED(status)) {
+            VCOMP_COUT("GDB Stopped By Signal: " << WSTOPSIG(status) << endl);
+        }
+        else if (WIFCONTINUED(status)) {
+            VCOMP_COUT("GDB Continued..." << endl);
+        }
+    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    // Other cleanup.
     fclose(mTo);
     fclose(mFrom);
+    //
+    close(mToGDB[1]);
+    close(mFromGDB[0]);
+    //
     if (mFromGDBLineBuf) free(mFromGDBLineBuf);
 }
 
@@ -99,6 +127,10 @@ DMI::init(
             " Please fix this and try again."
         );
     }
+    // Allocate initial string buffer.
+    mFromGDBLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromGDBLineBuf));
+    if (!mFromGDBLineBuf) GLADIUS_THROW_OOR();
+    //
     if (-1 == pipe(mToGDB) || -1 == pipe(mFromGDB)) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
@@ -187,7 +219,7 @@ DMI::mGetGDBRespLine(void)
         }
         mFromGDBLineBuf[nRead] = charBuf;
         if (charBuf == '\n') {
-            // Update nRead before we break.
+            // Don't forget to update nRead before we break.
             mFromGDBLineBuf[nRead++] = '\0';
             break;
         }
