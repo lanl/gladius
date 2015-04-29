@@ -22,7 +22,10 @@ using namespace gladius;
 namespace {
 const std::vector<core::EnvironmentVar> gladiusEnvVars = {
     {GLADIUS_ENV_TOOL_FE_VERBOSE_NAME,
-     "Makes tools actions verbose when set."
+     "Makes tool front-end actions verbose when set."
+    },
+    {GLADIUS_ENV_TOOL_BE_VERBOSE_NAME,
+     "Makes tool back-end actions verbose when set."
     },
     {GLADIUS_ENV_NO_TERM_COLORS_NAME,
      "Disables colorized terminal output when set."

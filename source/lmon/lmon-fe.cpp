@@ -265,6 +265,16 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
+#if 1
+    lmon_daemon_env_t daemonEnvs[2];
+    daemonEnvs[0].envName  = (char *)"SAM1";
+    daemonEnvs[0].envValue = (char *)"SAM1VAL";
+    daemonEnvs[0].next = nullptr;
+    daemonEnvs[1].envName  = (char *)"SAM2";
+    daemonEnvs[1].envValue = (char *)"SAM2VAL";
+    daemonEnvs[1].next = nullptr;
+    LMON_fe_putToBeDaemonEnv(mSessionNum, daemonEnvs, 2);
+#endif
     //
     rc = LMON_fe_regPackForFeToBe(mSessionNum, mFEToBePackFn);
     if (LMON_OK != rc) {
@@ -349,7 +359,7 @@ LaunchMonFE::launchAndSpawnDaemons(
                       launcherPath.c_str(), // launcher absolute path
                       launcherArgv,         // all of the launch command
                       mToolD.c_str(),       // tool daemon's absolute path
-                      NULL,
+                      NULL,                 // Daemon Options TODO Pass ENVS
                       NULL,
                       NULL
                   );
@@ -376,6 +386,7 @@ LaunchMonFE::launchAndSpawnDaemons(
                           << hosts.nHosts()
                           << " Daemons"
                           << std::endl;
+        //
         int jobidSize = 0;
         char jobid[PATH_MAX];
         LMON_fe_getResourceHandle(

@@ -29,6 +29,12 @@
 #define GLADIUS_ENV_TOOL_FE_VERBOSE_NAME "GLADIUS_TOOL_FE_VERBOSE"
 
 /**
+ * If this environment variable is set, then the tool back-end will be verbose
+ * about its actions.
+ */
+#define GLADIUS_ENV_TOOL_BE_VERBOSE_NAME "GLADIUS_TOOL_BE_VERBOSE"
+
+/**
  * If this environment variable is set, then the tool will not colorize its
  * terminal output.
  */

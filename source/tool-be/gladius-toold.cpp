@@ -21,7 +21,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-
 namespace {
 // This component's name.
 const std::string CNAME = "*gtoold";
@@ -55,6 +54,8 @@ main(
         core::colors::color().colorize(false);
         // FIXME
         ToolBE::redirectOutputTo("/tmp");
+        std::string val = core::utils::getEnv("SAM1");
+        std::cout << "GOT: " << val << std::endl;
         // Let it begin!
         COMP_COUT << "Tool Daemon Started." << std::endl;
         //
