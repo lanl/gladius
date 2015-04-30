@@ -26,7 +26,7 @@ using namespace gladius::dspi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "***pgdb";
+const std::string CNAME = "pgdb";
 //
 const auto COMPC = core::colors::MAGENTA;
 // CNAME's color code.
@@ -97,9 +97,11 @@ PGDBFE::pluginMain(
     try {
         mDSPluginArgs = pluginArgs;
         VCOMP_COUT("Home: " << mDSPluginArgs.myHome << std::endl);
+#if 0 // Nice Debug
         if (mBeVerbose) {
             mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
+#endif
         // Load our filters.
         mLoadFilters();
         // Setup network.

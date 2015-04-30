@@ -268,11 +268,13 @@ ToolBE::mLoadPlugins(void)
                       dspa::DSPluginPack::PluginBE,
                       mPathToPluginPack
                   );
+    //
     auto *fePluginInfo = mPluginPack.pluginInfo;
     GLADIUS_COUT_STAT << "Back-End Plugin Info:" << endl;
     GLADIUS_COUT_STAT << "*Name      : " << fePluginInfo->pluginName << endl;
     GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
+    //
     mBEPlugin = fePluginInfo->pluginConstruct();
     //
     VCOMP_COUT("Done Loading Plugins." << std::endl);
