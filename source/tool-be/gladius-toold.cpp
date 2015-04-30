@@ -24,9 +24,10 @@
 namespace {
 // This component's name.
 const std::string CNAME = "*gtoold";
+//
+const auto COMPC = gladius::core::colors::NONE;
 // CNAME's color code.
-const std::string NAMEC =
-    gladius::core::colors::color().ansiBeginColor(gladius::core::colors::NONE);
+const std::string NAMEC = gladius::core::colors::color().ansiBeginColor(COMPC);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 }
@@ -52,10 +53,8 @@ main(
         const auto beVerbose = true;
         // Turn off colors first. They make logs look awful.
         core::colors::color().colorize(false);
-        // FIXME
+        // FIXME - Get useful env vars from ENV.
         ToolBE::redirectOutputTo("/tmp");
-        std::string val = core::utils::getEnv("SAM1");
-        std::cout << "GOT: " << val << std::endl;
         // Let it begin!
         COMP_COUT << "Tool Daemon Started." << std::endl;
         //

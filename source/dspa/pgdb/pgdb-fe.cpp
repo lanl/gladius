@@ -172,7 +172,7 @@ PGDBFE::mEnterMainLoop(void)
     std::cout << "(" + CNAME + ") " << std::flush;
     for (std::string line; std::getline(std::cin, line) ; ) {
         if ("Q" == line || "q" == line) {
-            std::cout << "Shutting Down..." << std::endl;
+            COMP_COUT << "Shutting Down..." << std::endl;
             status = mStream->send(pgdb::Exit, "");
             if (-1 == status) {
                 GLADIUS_THROW_CALL_FAILED("Stream::Send");

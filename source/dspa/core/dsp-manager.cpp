@@ -63,7 +63,7 @@ DSPManager::pluginPackAvailable(
     const auto packagePluginBase = SessionFE::TheSession().execPrefix()
                                  + utils::osPathSep
                                  + "lib";
-    // Alwasy first!
+    // Alwasy first! We search here first...
     searchPaths.push_back(packagePluginBase);
     // Now get vector of path strings from GLADIUS_PLUGIN_PATH.
     if (!utils::envVarSet(GLADIUS_ENV_PLUGIN_PATH_NAME)) {

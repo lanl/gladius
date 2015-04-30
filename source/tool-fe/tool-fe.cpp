@@ -28,9 +28,10 @@ using namespace gladius::toolfe;
 namespace {
 // This component's name.
 const std::string CNAME = "tool-fe";
+//
+const auto COMPC = core::colors::GREEN;
 // CNAME's color code.
-const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::GREEN);
+const std::string NAMEC = core::colors::color().ansiBeginColor(COMPC);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
@@ -44,8 +45,11 @@ do {                                                                           \
 ////////////////////////////////////////////////////////////////////////////////
 // Place for ToolFE-specific environment variables.
 ////////////////////////////////////////////////////////////////////////////////
+//
 #define ENV_VAR_CONNECT_TIMEOUT_IN_SEC "GLADIUS_TOOL_FE_CONNECT_TIMEOUT_S"
+//
 #define ENV_VAR_CONNECT_MAX_RETRIES "GLADIUS_TOOL_FE_CONNECT_MAX_RETRIES"
+
 namespace {
 static const std::vector<core::EnvironmentVar> compEnvVars = {
     {ENV_VAR_CONNECT_TIMEOUT_IN_SEC,

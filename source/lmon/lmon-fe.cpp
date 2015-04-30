@@ -265,7 +265,10 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
-#if 1
+    // TODO
+    // Create a central place where the tool-fe knows what env vars to forward
+    // and where the toold knows what to read.
+#if 0
     lmon_daemon_env_t daemonEnvs[2];
     daemonEnvs[0].envName  = (char *)"SAM1";
     daemonEnvs[0].envValue = (char *)"SAM1VAL";

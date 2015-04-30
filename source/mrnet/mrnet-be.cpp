@@ -169,6 +169,8 @@ MRNetBE::connect(void)
     if (!mNetwork) {
         GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkBE");
     }
+
+    VCOMP_COUT("Done Connecting to MRNet Network." << std::endl);
 }
 
 /**
