@@ -12,6 +12,7 @@
 
 #include "core/core.h"
 #include "core/colors.h"
+#include "core/env.h"
 #include "tool-common/tool-common.h"
 #include "dmi/dmi.h"
 
@@ -21,6 +22,7 @@
 #include <string>
 #include <limits.h>
 #include <signal.h>
+#include <errno.h>
 
 using namespace gladius;
 using namespace gladius::toolbe;
@@ -53,13 +55,18 @@ feToBeUnpack(
     int bufLen,
     void *data
 ) {
+    using namespace std;
     using namespace toolbecommon;
 
     GLADIUS_UNUSED(bufLen);
 
-    COMP_COUT << "###############################################" << std::endl;
-    COMP_COUT << "# Unpacking FE to BE Data #####################" << std::endl;
-    COMP_COUT << "###############################################" << std::endl;
+    bool beVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_BE_VERBOSE_NAME);
+
+    if (beVerbose) {
+        COMP_COUT << "###############################################" << endl;
+        COMP_COUT << "# Unpacking FE to BE Data #####################" << endl;
+        COMP_COUT << "###############################################" << endl;
+    }
 
     try {
         int currentParentPort, currentParentRank;
@@ -84,22 +91,31 @@ feToBeUnpack(
         int daemon = -1;
         for (decltype(nParents) parent = 0; parent < nParents; ++parent) {
             int nChildren = 0;
-            COMP_COUT << "Parent: " << parent << std::endl;
+            if (beVerbose) COMP_COUT << "Parent: " << parent << std::endl;
             // Get the parent host name, port, rank and child count.
             strncpy(currentParent, ptr, HOST_NAME_MAX);
-            COMP_COUT << "*** Host Name: " << currentParent << std::endl;
+            if (beVerbose) {
+                COMP_COUT << "*** Host Name: " << currentParent << std::endl;
+            }
             ptr += strlen(currentParent) + 1;
             //
             (void)memcpy(&currentParentPort, ptr, sizeof(int));
-            COMP_COUT << "*** Port: " << currentParentPort << std::endl;
+            if (beVerbose) {
+                COMP_COUT << "*** Port: " << currentParentPort << std::endl;
+            }
             ptr += sizeof(int);
             //
             memcpy(&currentParentRank, ptr, sizeof(int));
-            COMP_COUT << "*** Rank: " << currentParentRank << std::endl;
+            if (beVerbose) {
+                COMP_COUT << "*** Rank: " << currentParentRank << std::endl;
+            }
             ptr += sizeof(int);
             //
             (void)memcpy(&nChildren, ptr, sizeof(int));
-            COMP_COUT << "*** Number of Children: " << nChildren << std::endl;
+            if (beVerbose) {
+                COMP_COUT << "*** Number of Children: "
+                          << nChildren << std::endl;
+            }
             ptr += sizeof(int);
             // Iterate over this parent's children.
             for (decltype(nChildren) child = 0; child < nChildren; child++) {
@@ -136,26 +152,42 @@ feToBeUnpack(
         return -1;
     }
 
-    COMP_COUT << "###############################################" << std::endl;
-    COMP_COUT << "# Done Unpacking FE to BE Data ################" << std::endl;
-    COMP_COUT << "###############################################" << std::endl;
+    if (beVerbose) {
+        COMP_COUT << "###############################################" << endl;
+        COMP_COUT << "# Done Unpacking FE to BE Data ################" << endl;
+        COMP_COUT << "###############################################" << endl;
+    }
     return 0;
 }
 }
 
 /**
- * TODO FIXME
+ * Redirects stdout and stderr to a base directory with (hopefully) a unique
+ * name. It is assumed that the base directory already exists.
  */
 /* (static) */ void
 ToolBE::redirectOutputTo(
     const std::string &base
 ) {
-    GLADIUS_UNUSED(base);
-    std::string fName = "/tmp/BE-" + std::to_string(getpid()) + ".txt";
+    static const auto pathSep = core::utils::osPathSep;
+    std::string fName = base + pathSep
+                      + PACKAGE + "-"
+                      + core::utils::getHostname() + "-"
+                      + std::to_string(getpid()) + ".txt";
+    //
     FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
-    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen stdout");
+    if (!outRedirectFile) {
+        int err = errno;
+        auto errs = core::utils::getStrError(err);
+        GLADIUS_THROW_CALL_FAILED_RC("freopen(3): " + errs, err);
+    }
+    //
     outRedirectFile = freopen(fName.c_str(), "w", stderr);
-    if (!outRedirectFile) GLADIUS_THROW_CALL_FAILED("freopen stderr");
+    if (!outRedirectFile) {
+        int err = errno;
+        auto errs = core::utils::getStrError(err);
+        GLADIUS_THROW_CALL_FAILED_RC("freopen(3): " + errs, err);
+    }
 }
 
 /**

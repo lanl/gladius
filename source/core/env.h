@@ -35,6 +35,14 @@
 #define GLADIUS_ENV_TOOL_BE_VERBOSE_NAME "GLADIUS_TOOL_BE_VERBOSE"
 
 /**
+ * If this environment variable is set, then the tool back-ends will log their
+ * output to the specified path. This assumes that all tool processes can reach
+ * the specified path and that the path exists and is usable by each process.
+ */
+#define GLADIUS_ENV_TOOL_BE_LOG_DIR_NAME "GLADIUS_TOOL_BE_LOG_DIR"
+
+
+/**
  * If this environment variable is set, then the tool will not colorize its
  * terminal output.
  */

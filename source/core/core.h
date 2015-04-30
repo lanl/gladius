@@ -9,6 +9,10 @@
 #ifndef GLADIUS_CORE_CORE_H_INCLUDED
 #define GLADIUS_CORE_CORE_H_INCLUDED
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "core/ret-codes.h"
 #include "core/env.h"
 

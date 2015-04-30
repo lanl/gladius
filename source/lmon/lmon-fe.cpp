@@ -125,7 +125,10 @@ LaunchMonFE::LaunchMonFE(
 /**
  * Destructor.
  */
-LaunchMonFE::~LaunchMonFE(void) { ; }
+LaunchMonFE::~LaunchMonFE(void)
+{
+    if (mDaemonEnvs) delete[] mDaemonEnvs;
+}
 
 /**
  * Sets some environment variables that impact the behavior of LaunchMON.
@@ -136,6 +139,49 @@ LaunchMonFE::mSetEnvs(void)
     core::utils::setEnv("LMON_PREFIX", mPrefixPath);
     core::utils::setEnv("LMON_LAUNCHMON_ENGINE_PATH", mEnginePath);
     core::utils::setEnv("LMON_REMOTE_LOGIN", mRemoteLogin);
+}
+
+/**
+ * Populates mDaemonEnvs with environment variables that we wish to forward to
+ * the tool daemons. When adding a new environment variable, please also update
+ * the code in gladius-toold.cpp.
+ */
+void
+LaunchMonFE::mPopulateDaemonEnvs(void)
+{
+    using namespace std;
+    //
+    vector <pair<string, string> > envTups = {
+        make_pair(GLADIUS_ENV_TOOL_BE_LOG_DIR_NAME, ""),
+        make_pair(GLADIUS_ENV_TOOL_BE_VERBOSE_NAME, "")
+    };
+    // If the environment variable is set, then capture its value. Those that
+    // are not set will contain an empty string for their value.
+    for (auto &envTup : envTups) {
+        if (core::utils::envVarSet(envTup.first)) {
+            envTup.second = core::utils::getEnv(envTup.first);
+            ++mNumForwardedEnvVars;
+        }
+    }
+    // Done if we don't have anything to forward...
+    if (mNumForwardedEnvVars == 0) {
+        return;
+    }
+    // Allocate memory for the structure now that we know how many we have.
+    mDaemonEnvs = new lmon_daemon_env_t[mNumForwardedEnvVars];
+    if (!mDaemonEnvs) GLADIUS_THROW_OOR();
+    //
+    size_t envIndex = 0;
+    for (const auto &envTup : envTups) {
+        // Skip those that are not set...
+        if (envTup.second == "") {
+            continue;
+        }
+        mDaemonEnvs[envIndex].envName  = (char *)envTup.first.c_str();
+        mDaemonEnvs[envIndex].envValue = (char *)envTup.second.c_str();
+        mDaemonEnvs[envIndex].next     = nullptr;
+        ++envIndex;
+    }
 }
 
 /**
@@ -265,19 +311,19 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
-    // TODO
-    // Create a central place where the tool-fe knows what env vars to forward
-    // and where the toold knows what to read.
-#if 0
-    lmon_daemon_env_t daemonEnvs[2];
-    daemonEnvs[0].envName  = (char *)"SAM1";
-    daemonEnvs[0].envValue = (char *)"SAM1VAL";
-    daemonEnvs[0].next = nullptr;
-    daemonEnvs[1].envName  = (char *)"SAM2";
-    daemonEnvs[1].envValue = (char *)"SAM2VAL";
-    daemonEnvs[1].next = nullptr;
-    LMON_fe_putToBeDaemonEnv(mSessionNum, daemonEnvs, 2);
-#endif
+    //
+    mPopulateDaemonEnvs();
+    // Only makes sense to do this if we actually have something to forward.
+    if (nullptr != mDaemonEnvs) {
+        rc = LMON_fe_putToBeDaemonEnv(
+                 mSessionNum,
+                 mDaemonEnvs,
+                 mNumForwardedEnvVars
+             );
+        if (LMON_OK != rc) {
+            GLADIUS_THROW_CALL_FAILED("LMON_fe_putToBeDaemonEnv");
+        }
+    }
     //
     rc = LMON_fe_regPackForFeToBe(mSessionNum, mFEToBePackFn);
     if (LMON_OK != rc) {
@@ -362,7 +408,7 @@ LaunchMonFE::launchAndSpawnDaemons(
                       launcherPath.c_str(), // launcher absolute path
                       launcherArgv,         // all of the launch command
                       mToolD.c_str(),       // tool daemon's absolute path
-                      NULL,                 // Daemon Options TODO Pass ENVS
+                      NULL,                 // Daemon Options
                       NULL,
                       NULL
                   );

@@ -33,6 +33,9 @@ class LaunchMonFE {
     static const std::string sLaunchMONName;
     // The name of the tool daemon.
     static const std::string sToolDName;
+    // The number of environment variables that we are going to forward to the
+    // tool daemons.
+    size_t mNumForwardedEnvVars = 0;
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
     // The PID of the target application launcher (srun, mpirun, aprun, etc.)
@@ -59,6 +62,10 @@ class LaunchMonFE {
     toolcommon::ProcessTable mProcTab;
     //
     toolcommon::FEToBePackFnP mFEToBePackFn = nullptr;
+    // The structure that holds the environment tuples (name, value) that we
+    // will populate. The values in this structure are forwarded to all back-end
+    // tool daemons.
+    lmon_daemon_env_t *mDaemonEnvs = nullptr;
 
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
@@ -85,6 +92,9 @@ class LaunchMonFE {
     mGetLmonPrefixFromEnginePath(
         const std::string &whichString
     );
+    //
+    void
+    mPopulateDaemonEnvs(void);
 
 public:
     //

@@ -358,8 +358,7 @@ static inline void
 feWaitForBEs(
     MRN::Stream *protoStream
 ) {
-    //
-    // Now wait for all the plugin backends to report that they are ready to
+    // Wait for all the plugin backends to report that they are ready to
     // proceed.
     MRN::PacketPtr packet;
     int tag = 0;
@@ -395,7 +394,6 @@ beReady(
         GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
 }
-
 
 } // end namespace
 } // end namespace
