@@ -172,9 +172,13 @@ Terminal::init(
     const core::Args &args
 ) {
     mArgs = args;
+    //
     setLocale();
+    //
     disableBuffering();
+    //
     installSignalHandlers();
+    //
     if (NULL == (mHist = history_init())) {
         GLADIUS_THROW_CALL_FAILED("history_init");
     }
@@ -408,6 +412,15 @@ Terminal::installSignalHandlers(void)
     (void)signal(SIGHUP, sigHandler);
     (void)signal(SIGTERM, sigHandler);
 #endif
+}
+
+/**
+ *
+ */
+void
+Terminal::uninstallSignalHandlers(void)
+{
+    (void)signal(SIGINT, SIG_DFL);
 }
 
 /**

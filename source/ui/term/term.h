@@ -190,9 +190,6 @@ class Terminal : public UI {
     ~Terminal(void);
     //
     void
-    installSignalHandlers(void);
-    //
-    void
     evaluateInput(
         int ac,
         const char **argv,
@@ -275,6 +272,12 @@ public:
     //
     std::vector< std::pair<std::string, std::string> >
     cmdPairs(void) const;
+    //
+    void
+    installSignalHandlers(void);
+    //
+    void
+    uninstallSignalHandlers(void);
 private:
     static TermCommands sTermCommands;
 };

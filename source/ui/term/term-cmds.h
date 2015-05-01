@@ -13,6 +13,7 @@
 #include "core/core.h"
 #include "core/colors.h"
 #include "core/env.h"
+#include "tool-fe/tool-fe.h"
 
 #include <string>
 #include <iostream>
@@ -195,10 +196,14 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     // the argv that we are gonig to pass to the toolfe by removing the launch
     // command string and adjusting the arg count.
     core::Args launchArgs(args.argc - 1, (const char **)args.argv + 1);
+    //
+    args.terminal->TheTerminal().uninstallSignalHandlers();
     // A new instance every time we are here.
     toolfe::ToolFE toolFE;
     // Enter the tool's main loop.
     toolFE.mainLoop(launchArgs);
+    //
+    args.terminal->TheTerminal().installSignalHandlers();
     // Continue REPL
     return true;
 }
