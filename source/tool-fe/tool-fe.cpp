@@ -385,8 +385,7 @@ ToolFE::mInitiateToolLashUp(void)
     try {
         maStatus = GLADIUS_SUCCESS;
         echoLaunchStart(mAppArgs);
-        // Let LaunchMON know what environment variables we would like to
-        // forward to the remote environments.
+        // Setup environment variable forwarding to the remote environments.
         mForwardEnvsToBEsIfSetOnFE();
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs);
