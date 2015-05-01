@@ -348,6 +348,34 @@ ToolFE::mConnectMRNetTree(void)
 }
 
 /**
+ * Let LaunchMON know what environment variables we would like to forward to the
+ * remote environments. When adding a new environment variable, please also
+ * update the code in gladius-toold.cpp.
+ */
+void
+ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
+{
+    using namespace std;
+    // Environment variable forwarding to daemons. Note that this is a complete
+    // list of environment variables that we would forward if they are set
+    // within the tool front-end's environment.
+    static const vector<string> envVars = {
+        GLADIUS_ENV_TOOL_BE_LOG_DIR_NAME,
+        GLADIUS_ENV_TOOL_BE_VERBOSE_NAME
+    };
+    //
+    vector <pair<string, string> > envTups;
+    // If the environment variable is set, then capture its value.
+    for (auto &envVar : envVars) {
+        // Filter out those that are not set.
+        if (core::utils::envVarSet(envVar)) {
+            envTups.push_back(make_pair(envVar, core::utils::getEnv(envVar)));
+        }
+    }
+    mLMONFE.forwardEnvsToBEs(envTups);
+}
+
+/**
  * The thread that initiates the tool lash-up.  This is NOT the main thread, so
  * this is why we don't throw in the exceptional case.
  */
@@ -357,6 +385,9 @@ ToolFE::mInitiateToolLashUp(void)
     try {
         maStatus = GLADIUS_SUCCESS;
         echoLaunchStart(mAppArgs);
+        // Let LaunchMON know what environment variables we would like to
+        // forward to the remote environments.
+        mForwardEnvsToBEsIfSetOnFE();
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs);
         // Make sure that the tool daemons launched.

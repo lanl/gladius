@@ -18,6 +18,8 @@
 #include "tool-common/tool-common.h"
 
 #include <string>
+#include <vector>
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -62,6 +64,8 @@ class LaunchMonFE {
     toolcommon::ProcessTable mProcTab;
     //
     toolcommon::FEToBePackFnP mFEToBePackFn = nullptr;
+    // Environment tuples that will be forwarded to the BEs.
+    std::vector< std::pair<std::string, std::string> > mEnvTups;
     // The structure that holds the environment tuples (name, value) that we
     // will populate. The values in this structure are forwarded to all back-end
     // tool daemons.
@@ -92,9 +96,6 @@ class LaunchMonFE {
     mGetLmonPrefixFromEnginePath(
         const std::string &whichString
     );
-    //
-    void
-    mPopulateDaemonEnvs(void);
 
 public:
     //
@@ -104,6 +105,11 @@ public:
     //
     void
     init(bool beVerbose = false);
+    //
+    void
+    forwardEnvsToBEs(
+        const std::vector< std::pair<std::string, std::string> > &envTups
+    );
     //
     void
     launchAndSpawnDaemons(

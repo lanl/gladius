@@ -70,6 +70,9 @@ private:
     mPreToolInitActons(void);
     //
     void
+    mForwardEnvsToBEsIfSetOnFE(void);
+    //
+    void
     mInitializeToolInfrastructure(void);
     //
     void

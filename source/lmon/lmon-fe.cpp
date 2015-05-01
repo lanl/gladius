@@ -143,45 +143,41 @@ LaunchMonFE::mSetEnvs(void)
 
 /**
  * Populates mDaemonEnvs with environment variables that we wish to forward to
- * the tool daemons. When adding a new environment variable, please also update
- * the code in gladius-toold.cpp.
+ * the tool daemons.
  */
 void
-LaunchMonFE::mPopulateDaemonEnvs(void)
-{
+LaunchMonFE::forwardEnvsToBEs(
+    const std::vector< std::pair<std::string, std::string> > &envTups
+) {
     using namespace std;
+    // A prior call already allocated memory for these structure. Free and then
+    // build a new one later (if needed).
+    if (mDaemonEnvs) {
+        delete[] mDaemonEnvs;
+        mDaemonEnvs = nullptr;
+        // Also clear this, because this memory is where the strings are stored
+        // and must persist for subsequent calls to LMON_fe_putToBeDaemonEnv.
+        mEnvTups.clear();
+    }
     //
-    vector <pair<string, string> > envTups = {
-        make_pair(GLADIUS_ENV_TOOL_BE_LOG_DIR_NAME, ""),
-        make_pair(GLADIUS_ENV_TOOL_BE_VERBOSE_NAME, "")
-    };
-    // If the environment variable is set, then capture its value. Those that
-    // are not set will contain an empty string for their value.
-    for (auto &envTup : envTups) {
-        if (core::utils::envVarSet(envTup.first)) {
-            envTup.second = core::utils::getEnv(envTup.first);
-            ++mNumForwardedEnvVars;
-        }
-    }
-    // Done if we don't have anything to forward...
-    if (mNumForwardedEnvVars == 0) {
-        return;
-    }
+    mNumForwardedEnvVars = envTups.size();
+    // Nothing to do.
+    if (0 == mNumForwardedEnvVars) return;
+    // If we are here, then we have work to do...
+    // Copy passed envTups to member so tuple memory persists.
+    mEnvTups = envTups;
     // Allocate memory for the structure now that we know how many we have.
     mDaemonEnvs = new lmon_daemon_env_t[mNumForwardedEnvVars];
     if (!mDaemonEnvs) GLADIUS_THROW_OOR();
     //
     size_t envIndex = 0;
-    for (const auto &envTup : envTups) {
-        // Skip those that are not set...
-        if (envTup.second == "") {
-            continue;
-        }
+    for (const auto &envTup : mEnvTups) {
         mDaemonEnvs[envIndex].envName  = (char *)envTup.first.c_str();
         mDaemonEnvs[envIndex].envValue = (char *)envTup.second.c_str();
         mDaemonEnvs[envIndex].next     = nullptr;
         ++envIndex;
     }
+    assert(mNumForwardedEnvVars == envIndex);
 }
 
 /**
@@ -311,9 +307,8 @@ LaunchMonFE::mStartSession(void)
     if (LMON_OK != rc) {
         GLADIUS_THROW_CALL_FAILED("LMON_fe_createSession");
     }
-    //
-    mPopulateDaemonEnvs();
     // Only makes sense to do this if we actually have something to forward.
+    // These things are set by an (optional) call to forwardEnvsToBEs.
     if (nullptr != mDaemonEnvs) {
         rc = LMON_fe_putToBeDaemonEnv(
                  mSessionNum,
