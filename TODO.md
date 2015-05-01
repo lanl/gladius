@@ -1,6 +1,7 @@
 # Gladius TODO
 
 - Fix hand in terminal UI when tool launch fails due to launcher (e.g. mpirun) failure.
+    - It appears as if LMON_fe_launchAndSpawnDaemons is not returning on error.
 - Add higher-level send/recv abstraction that can be used by all infrastructure.
 - On BE failure, make sure that we can determine which node failed.
 - Add package config to get plugin flags.
