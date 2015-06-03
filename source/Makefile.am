@@ -9,6 +9,7 @@
 SUBDIRS = \
 core \
 dspa/core \
+dspa/hello \
 dspa/pgdb \
 tool-common \
 dmi \

@@ -145,6 +145,7 @@ AC_CONFIG_FILES([
     source/Makefile
     source/core/Makefile
     source/dspa/core/Makefile
+    source/dspa/hello/Makefile
     source/dspa/pgdb/Makefile
     source/tool-common/Makefile
     source/dmi/Makefile
