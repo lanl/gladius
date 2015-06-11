@@ -18,7 +18,6 @@ gladius_toold_CFLAGS =
 gladius_toold_CPPFLAGS = \
 -I${top_srcdir}/source \
 ${GLADIUS_TOOL_COMMON_CPPFLAGS} \
-${MIGDB_CPPFLAGS} \
 ${LMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 

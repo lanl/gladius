@@ -15,14 +15,6 @@
 - GNU Autotools (m4, autoconf, automake, libtool)
 - MI-capable GDB or LLDB (TODO)
 
-## Building libmigdb (see: http://libmigdb.sourceforge.net/)
-```
-export MIGDB_PREFIX=$HOME/local/migdb
-git clone git@github.com:samuelkgutierrez/libmigdb.git
-cd libmigdb
-make && make install prefix=$MIGDB_PREFIX
-```
-
 ## Building LaunchMON
 ```
 export LMON_PREFIX=$HOME/local/lmon
@@ -62,7 +54,6 @@ make -j4 && make install
 ```
 ./configure \
 --prefix=$HOME/local/gladius \
---with-migdb=$MIGDB_PREFIX \
 --with-lmon=$LMON_PREFIX \
 --with-mrnet=$MRNET_PREFIX
 ```
