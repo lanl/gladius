@@ -54,7 +54,8 @@ ${GLADIUS_PLUGIN_CPPFLAGS}
 PluginBackEnd_la_LDFLAGS = \
 -module -avoid-version
 
-PluginBackEnd_la_LIBADD =
+PluginBackEnd_la_LIBADD = \
+${top_builddir}/source/dmi/libGladiusDMI.la
 
 ################################################################################
 # Add your tool filters here (optional).

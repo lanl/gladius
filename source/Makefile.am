@@ -9,15 +9,15 @@
 SUBDIRS = \
 core \
 dspa/core \
-dspa/hello \
-dspa/pgdb \
 tool-common \
 dmi \
 lmon \
 mrnet \
 mrnet/filters \
 tool-fe \
+tool-be \
 ui \
 ui/term \
 gladius \
-tool-be
+dspa/hello \
+dspa/pgdb
