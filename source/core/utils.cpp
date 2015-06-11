@@ -144,7 +144,8 @@ utils::which(std::string execName,
     // Else capture the output. Should either be the path or nothing on
     // first line.
     char lineBuff[PATH_MAX];
-    fgets(lineBuff, sizeof(lineBuff), fp);
+    char *fgres = fgets(lineBuff, sizeof(lineBuff), fp);
+    if (!fgres) return GLADIUS_ERR;
     auto pcrc = pclose(fp);
     // The exit status of this will tell us whether or not our command
     // succeeded or not. If success, then finish prepping the answer.

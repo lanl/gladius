@@ -89,7 +89,7 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(PGDBBE, PLUGIN_NAME, PLUGIN_VERSION);
+GLADIUS_PLUGIN(PGDBBE, PLUGIN_NAME, PLUGIN_VERSION)
 
 /**
  * Plugin Main.

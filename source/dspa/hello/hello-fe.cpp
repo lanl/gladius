@@ -77,7 +77,7 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(HelloFE, PLUGIN_NAME, PLUGIN_VERSION);
+GLADIUS_PLUGIN(HelloFE, PLUGIN_NAME, PLUGIN_VERSION)
 
 /**
  *
