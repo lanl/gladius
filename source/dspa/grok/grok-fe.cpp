@@ -7,10 +7,10 @@
  */
 
 /**
- * The "hello world" plugin front-end.
+ * grok
  */
 
-#include "dspa/hello/hello-common.h"
+#include "dspa/grok/grok-common.h"
 
 #include "dspa/core/gladius-dspi.h"
 
@@ -26,7 +26,7 @@ using namespace gladius::dspi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "hello";
+const std::string CNAME = "grok";
 //
 const auto COMPC = core::colors::MAGENTA;
 // CNAME's color code.
@@ -45,7 +45,7 @@ do {                                                                           \
 /**
  *
  */
-class HelloFE : public DomainSpecificPlugin {
+class GrokFE : public DomainSpecificPlugin {
     //
     bool mBeVerbose = false;
     //
@@ -61,9 +61,9 @@ class HelloFE : public DomainSpecificPlugin {
 
 public:
     //
-    HelloFE(void) { ; }
+    GrokFE(void) { ; }
     //
-    ~HelloFE(void) { ; }
+    ~GrokFE(void) { ; }
     //
     virtual void
     pluginMain(
@@ -77,13 +77,13 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(HelloFE, PLUGIN_NAME, PLUGIN_VERSION)
+GLADIUS_PLUGIN(GrokFE, PLUGIN_NAME, PLUGIN_VERSION)
 
 /**
  *
  */
 void
-HelloFE::mLoadFilters(void)
+GrokFE::mLoadFilters(void)
 {
     VCOMP_COUT("Loading Filters From: " << mDSPluginArgs.myHome << std::endl);
     // This is the absolute path where this plugin was found.
@@ -95,7 +95,7 @@ HelloFE::mLoadFilters(void)
     auto *network = mDSPluginArgs.network;
     auto filterID = network->load_FilterFunc(
                         filterSOName.c_str(),
-                        "HelloStringsFilter"
+                        "PGDBGDBStringsFilter"
                     );
     if (-1 == filterID) {
         GLADIUS_THROW_CALL_FAILED("load_FilterFunc: " + filterSOName);
@@ -119,7 +119,7 @@ HelloFE::mLoadFilters(void)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
-HelloFE::pluginMain(
+GrokFE::pluginMain(
     DSPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
@@ -147,7 +147,7 @@ HelloFE::pluginMain(
  * The front-end REPL that drives the back-end actions.
  */
 void
-HelloFE::mEnterMainLoop(void)
+GrokFE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
     toolcommon::feWaitForBEs(mDSPluginArgs.protoStream);
@@ -159,29 +159,8 @@ HelloFE::mEnterMainLoop(void)
     //
     int status = 0;
     try {
-        std::cout << "(" + CNAME + ") say hello, back-ends!" << std::endl;
-        status = mStream->send(hello::SayHello, "");
-        if (-1 == status) {
-            GLADIUS_THROW_CALL_FAILED("Stream::Send");
-        }
-        status = mStream->flush();
-        if (-1 == status) {
-            GLADIUS_THROW_CALL_FAILED("Stream::Flush");
-        }
-        //
-        int tag;
-        MRN::PacketPtr packet;
-        status = mStream->recv(&tag, packet);
-        if (-1 == status) {
-            GLADIUS_THROW_CALL_FAILED("Stream::Recv");
-        }
-        char *out = nullptr;
-        status = packet->unpack("%s", &out);
-        std::cout << out << std::endl;
-        free(out);
-        //
         std::cout << "(" + CNAME + ") say goodbye, back-ends!" << std::endl;
-        status = mStream->send(hello::Shutdown, "");
+        status = mStream->send(grok::Shutdown, "");
         if (-1 == status) {
             GLADIUS_THROW_CALL_FAILED("Stream::Send");
         }

@@ -7,26 +7,25 @@
  */
 
 /**
- * Common stuff (FE/BE) for the Parallel Step (hello) plugin.
+ * Common FE/BE stuff for grok.
  */
 
-#ifndef GLADIUS_PLUGIN_HELLO_COMMON_H_INCLUDED
-#define GLADIUS_PLUGIN_HELLO_COMMON_H_INCLUDED
+#ifndef GLADIUS_PLUGIN_GROK_COMMON_H_INCLUDED
+#define GLADIUS_PLUGIN_GROK_COMMON_H_INCLUDED
 
 #include "tool-common/tool-common.h"
 
 // The plugin's name.
-#define PLUGIN_NAME "hello"
+#define PLUGIN_NAME "grok"
 // The plugin's version string.
 #define PLUGIN_VERSION "0.0.1"
 
-namespace hello {
+namespace grok {
 //
-enum HelloProtoTags {
+enum GrokProtoTags {
     // Notice where we start here. ALL plugins MUST start with this tag value.
-    SayHello = gladius::toolcommon::FirstPluginTag,
-    Shutdown
+    Shutdown = gladius::toolcommon::FirstPluginTag
 };
-} // end hello namesapce.
+} // end grok namesapce.
 
 #endif

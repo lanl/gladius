@@ -10,8 +10,8 @@
  * Common stuff (FE/BE) for the Parallel Step (pgdb) plugin.
  */
 
-#ifndef GLADIUS_PLUGIN_PSTEP_COMMON_H_INCLUDED
-#define GLADIUS_PLUGIN_PSTEP_COMMON_H_INCLUDED
+#ifndef GLADIUS_PLUGIN_PGDB_COMMON_H_INCLUDED
+#define GLADIUS_PLUGIN_PGDB_COMMON_H_INCLUDED
 
 #include "tool-common/tool-common.h"
 

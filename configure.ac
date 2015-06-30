@@ -145,8 +145,6 @@ AC_CONFIG_FILES([
     source/Makefile
     source/core/Makefile
     source/dspa/core/Makefile
-    source/dspa/hello/Makefile
-    source/dspa/pgdb/Makefile
     source/tool-common/Makefile
     source/dmi/Makefile
     source/lmon/Makefile
@@ -157,6 +155,9 @@ AC_CONFIG_FILES([
     source/tool-fe/Makefile
     source/gladius/Makefile
     source/tool-be/Makefile
+    source/dspa/hello/Makefile
+    source/dspa/pgdb/Makefile
+    source/dspa/grok/Makefile
 ])
 
 AC_OUTPUT

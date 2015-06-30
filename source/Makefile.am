@@ -20,4 +20,5 @@ ui \
 ui/term \
 gladius \
 dspa/hello \
-dspa/pgdb
+dspa/pgdb \
+dspa/grok
