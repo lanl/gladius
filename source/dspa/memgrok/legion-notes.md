@@ -1,0 +1,5 @@
+# Legion Debug Notes
+
+See:
+- REALM_PROFILE_MEMORY_USAGE
+- LEGION_PROF

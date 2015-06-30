@@ -7,10 +7,10 @@
  */
 
 /**
- * grok
+ * The memgrok plugin front-end.
  */
 
-#include "dspa/grok/grok-common.h"
+#include "dspa/memgrok/memgrok-common.h"
 
 #include "dspa/core/gladius-dspi.h"
 
@@ -26,7 +26,7 @@ using namespace gladius::dspi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "grok";
+const std::string CNAME = "memgrok";
 //
 const auto COMPC = core::colors::MAGENTA;
 // CNAME's color code.
@@ -45,7 +45,7 @@ do {                                                                           \
 /**
  *
  */
-class GrokFE : public DomainSpecificPlugin {
+class MemGrokFE : public DomainSpecificPlugin {
     //
     bool mBeVerbose = false;
     //
@@ -61,9 +61,9 @@ class GrokFE : public DomainSpecificPlugin {
 
 public:
     //
-    GrokFE(void) { ; }
+    MemGrokFE(void) { ; }
     //
-    ~GrokFE(void) { ; }
+    ~MemGrokFE(void) { ; }
     //
     virtual void
     pluginMain(
@@ -77,13 +77,13 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(GrokFE, PLUGIN_NAME, PLUGIN_VERSION)
+GLADIUS_PLUGIN(MemGrokFE, PLUGIN_NAME, PLUGIN_VERSION)
 
 /**
  *
  */
 void
-GrokFE::mLoadFilters(void)
+MemGrokFE::mLoadFilters(void)
 {
     VCOMP_COUT("Loading Filters From: " << mDSPluginArgs.myHome << std::endl);
     // This is the absolute path where this plugin was found.
@@ -95,7 +95,7 @@ GrokFE::mLoadFilters(void)
     auto *network = mDSPluginArgs.network;
     auto filterID = network->load_FilterFunc(
                         filterSOName.c_str(),
-                        "PGDBGDBStringsFilter"
+                        "MemGrokStringsFilter"
                     );
     if (-1 == filterID) {
         GLADIUS_THROW_CALL_FAILED("load_FilterFunc: " + filterSOName);
@@ -119,7 +119,7 @@ GrokFE::mLoadFilters(void)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
-GrokFE::pluginMain(
+MemGrokFE::pluginMain(
     DSPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
@@ -147,7 +147,7 @@ GrokFE::pluginMain(
  * The front-end REPL that drives the back-end actions.
  */
 void
-GrokFE::mEnterMainLoop(void)
+MemGrokFE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
     toolcommon::feWaitForBEs(mDSPluginArgs.protoStream);
@@ -159,8 +159,29 @@ GrokFE::mEnterMainLoop(void)
     //
     int status = 0;
     try {
+        std::cout << "(" + CNAME + ") say memgrok, back-ends!" << std::endl;
+        status = mStream->send(memgrok::SayMemGrok, "");
+        if (-1 == status) {
+            GLADIUS_THROW_CALL_FAILED("Stream::Send");
+        }
+        status = mStream->flush();
+        if (-1 == status) {
+            GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+        }
+        //
+        int tag;
+        MRN::PacketPtr packet;
+        status = mStream->recv(&tag, packet);
+        if (-1 == status) {
+            GLADIUS_THROW_CALL_FAILED("Stream::Recv");
+        }
+        char *out = nullptr;
+        status = packet->unpack("%s", &out);
+        std::cout << out << std::endl;
+        free(out);
+        //
         std::cout << "(" + CNAME + ") say goodbye, back-ends!" << std::endl;
-        status = mStream->send(grok::Shutdown, "");
+        status = mStream->send(memgrok::Shutdown, "");
         if (-1 == status) {
             GLADIUS_THROW_CALL_FAILED("Stream::Send");
         }

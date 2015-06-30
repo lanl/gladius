@@ -157,7 +157,7 @@ AC_CONFIG_FILES([
     source/tool-be/Makefile
     source/dspa/hello/Makefile
     source/dspa/pgdb/Makefile
-    source/dspa/grok/Makefile
+    source/dspa/memgrok/Makefile
 ])
 
 AC_OUTPUT

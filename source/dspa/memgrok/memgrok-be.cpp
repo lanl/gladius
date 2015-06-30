@@ -7,10 +7,10 @@
  */
 
 /**
- * grok plugin back-end.
+ * The memgrok plugin back-end.
  */
 
-#include "dspa/grok/grok-common.h"
+#include "dspa/memgrok/memgrok-common.h"
 
 #include "dspa/core/gladius-dspi.h"
 
@@ -30,7 +30,7 @@ using namespace gladius::dspi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "grokbe";
+const std::string CNAME = "memgrokbe";
 //
 const auto COMPC = core::colors::MAGENTA;
 // CNAME's color code.
@@ -49,7 +49,7 @@ do {                                                                           \
 /**
  *
  */
-class GrokBE : public DomainSpecificPlugin {
+class MemGrokBE : public DomainSpecificPlugin {
     //
     bool mBeVerbose = false;
     //
@@ -67,9 +67,9 @@ class GrokBE : public DomainSpecificPlugin {
 
 public:
     //
-    GrokBE(void) { ; }
+    MemGrokBE(void) { ; }
     //
-    ~GrokBE(void) { ; }
+    ~MemGrokBE(void) { ; }
     //
     virtual void
     pluginMain(
@@ -80,13 +80,13 @@ public:
 /**
  * Plugin registration.
  */
-GLADIUS_PLUGIN(GrokBE, PLUGIN_NAME, PLUGIN_VERSION);
+GLADIUS_PLUGIN(MemGrokBE, PLUGIN_NAME, PLUGIN_VERSION);
 
 /**
  * Plugin Main.
  */
 void
-GrokBE::pluginMain(
+MemGrokBE::pluginMain(
     DSPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
@@ -116,7 +116,7 @@ GrokBE::pluginMain(
  *
  */
 void
-GrokBE::mEnterMainLoop(void)
+MemGrokBE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     //
@@ -136,13 +136,26 @@ GrokBE::mEnterMainLoop(void)
         status = network->recv(&action, packet, &protoStream, recvShouldBlock);
         if (1 != status) GLADIUS_THROW_CALL_FAILED("Network::Recv");
         switch (action) {
-            case grok::Shutdown: {
+            case memgrok::SayMemGrok:
+            {
+                const char *memgrok = "memgrok";
+                status = protoStream->send(action, "%s", memgrok); 
+                if (-1 == status) {
+                    GLADIUS_THROW_CALL_FAILED("Stream::Send");
+                }
+                status = protoStream->flush();
+                if (-1 == status) {
+                    GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+                }
+                break;
+            }
+            case memgrok::Shutdown: {
                 for (decltype(pTab.nEntries()) p = 0; p < pTab.nEntries(); ++p) {
                     core::utils::sendSignal(pTab.procTab()[p].pd.pid, SIGCONT);
                 }
                 break;
             }
         }
-    } while (action != grok::Shutdown);
+    } while (action != memgrok::Shutdown);
     VCOMP_COUT("Done with Main Loop." << std::endl);
 }

@@ -11,11 +11,11 @@
 # the $(libdir)[plugin-name] convention for its value. External plugins can be
 # installed anywhere, but external paths must be included in
 # GLADIUS_PLUGIN_PATH.
-groklibdir = $(libdir)/grok
+memgroklibdir = $(libdir)/memgrok
 
 # And here, notice the [plugin-name]lib_LTLIBRARIES. MODIFY THIS FOR YOUR NEEDS.
 # Don't change the names of the .las. Gladius expects these naming conventions.
-groklib_LTLIBRARIES = \
+memgroklib_LTLIBRARIES = \
 PluginFrontEnd.la \
 PluginBackEnd.la \
 PluginFilters.la
@@ -24,7 +24,7 @@ PluginFilters.la
 # Add your tool front-end sources here.
 ################################################################################
 PluginFrontEnd_la_SOURCES = \
-grok-fe.cpp grok-common.h
+memgrok-fe.cpp memgrok-common.h
 
 PluginFrontEnd_la_CFLAGS =
 
@@ -42,7 +42,7 @@ PluginFrontEnd_la_LIBADD =
 # Add your tool back-end sources here.
 ################################################################################
 PluginBackEnd_la_SOURCES = \
-grok-be.cpp grok-common.h
+memgrok-be.cpp memgrok-common.h
 
 PluginBackEnd_la_CFLAGS =
 
@@ -60,7 +60,7 @@ PluginBackEnd_la_LIBADD =
 # Add your tool filters here (optional).
 ################################################################################
 PluginFilters_la_SOURCES = \
-grok-filters.h grok-filters.cpp
+memgrok-filters.h memgrok-filters.cpp
 
 PluginFilters_la_CFLAGS =
 

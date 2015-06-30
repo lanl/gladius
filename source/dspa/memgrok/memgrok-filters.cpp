@@ -21,13 +21,13 @@ extern "C" {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-const char *PGDBGDBStringsFilter_format_string = "%s";
+const char *MemGrokStringsFilter_format_string = "%s";
 
 /**
  *
  */
 void
-PGDBGDBStringsFilter(
+MemGrokStringsFilter(
     vector<PacketPtr> &inputPackets,
     vector<PacketPtr> &outputPackets,
     vector<PacketPtr> &,
