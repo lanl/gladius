@@ -8,6 +8,7 @@
 
 SUBDIRS = \
 core \
+pbnj \
 dspa/core \
 tool-common \
 dmi \

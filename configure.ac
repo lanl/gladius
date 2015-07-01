@@ -22,14 +22,15 @@ AM_INIT_AUTOMAKE([1.14 -Wall -Werror foreign])
 # Check If AM_SILENT_RULES Rule Are Supported
 # If So, Build Using AM_SILENT_RULES
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
-AM_PROG_CC_C_O
-AM_PROG_AR
 
 ################################################################################
 # Checks for programs.
 ################################################################################
 AC_PROG_CXX([clang++ g++])
 AC_PROG_CC([clang gcc])
+AM_PROG_CC_C_O
+AC_PROG_CC_C99
+AM_PROG_AR
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
@@ -144,6 +145,7 @@ AC_CONFIG_FILES([
     Makefile
     source/Makefile
     source/core/Makefile
+    source/pbnj/Makefile
     source/dspa/core/Makefile
     source/tool-common/Makefile
     source/dmi/Makefile
