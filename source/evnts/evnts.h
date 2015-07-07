@@ -6,18 +6,32 @@
  * top-level directory of this distribution.
  */
 
-#ifndef PBNJ_H_INCLUDED
-#define PBNJ_H_INCLUDED
+#ifndef EVNTS_H_INCLUDED
+#define EVNTS_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int
-PBNJInit(void);
+/* In case you need this... */
+#define LIBEVNTS 1
 
-/* in case you need this */
-#define LIBPBNJ 1
+enum {
+    EVNTS_SUCCESS = 0,
+    EVNTS_FAILURE
+};
+
+/**
+ *
+ */
+int
+EVNTSInit(void);
+
+/**
+ *
+ */
+int
+EVNTSFinalize(void);
 
 #ifdef __cplusplus
 }

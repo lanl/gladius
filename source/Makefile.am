@@ -8,7 +8,7 @@
 
 SUBDIRS = \
 core \
-pbnj \
+evnts \
 dspa/core \
 tool-common \
 dmi \

@@ -6,8 +6,16 @@
  * top-level directory of this distribution.
  */
 
+#include "evnts.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 int
-PBNJInit(void) {
-    return 0;
+EVNTSInit(void) {
+    return EVNTS_SUCCESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int
+EVNTSFinalize(void) {
+    return EVNTS_SUCCESS;
 }

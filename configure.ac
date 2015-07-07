@@ -145,7 +145,7 @@ AC_CONFIG_FILES([
     Makefile
     source/Makefile
     source/core/Makefile
-    source/pbnj/Makefile
+    source/evnts/Makefile
     source/dspa/core/Makefile
     source/tool-common/Makefile
     source/dmi/Makefile

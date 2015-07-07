@@ -10,19 +10,19 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
-libpbnj.la
+libevnts.la
 
 include_HEADERS = \
-pbnj.h
+evnts.h
 
-libpbnj_la_SOURCES = \
-pbnj.c pbnj.h
+libevnts_la_SOURCES = \
+evnts.c evnts.h
 
-libpbnj_la_CFLAGS =
+libevnts_la_CFLAGS =
 
-libpbnj_la_CPPFLAGS = \
+libevnts_la_CPPFLAGS = \
 -I${top_srcdir}/source
 
-libpbnj_la_LDFLAGS = -version-info ${LIBVINFO}
+libevnts_la_LDFLAGS = -version-info ${LIBVINFO}
 
-libpbnj_la_LIBADD =
+libevnts_la_LIBADD =
