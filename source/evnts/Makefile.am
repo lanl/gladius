@@ -6,9 +6,6 @@
 # top-level directory of this distribution.
 #
 
-# See: LT-VERSION-SCHEME.txt For Guidance
-LIBVINFO = "1:0:0"
-
 lib_LTLIBRARIES = \
 libevnts.la
 
@@ -16,13 +13,14 @@ include_HEADERS = \
 evnts.h
 
 libevnts_la_SOURCES = \
-evnts.c evnts.h
+evnts.cpp evnts.h
 
 libevnts_la_CFLAGS =
 
 libevnts_la_CPPFLAGS = \
 -I${top_srcdir}/source
 
-libevnts_la_LDFLAGS = -version-info ${LIBVINFO}
+libevnts_la_LDFLAGS = \
+-module -avoid-version
 
 libevnts_la_LIBADD =
