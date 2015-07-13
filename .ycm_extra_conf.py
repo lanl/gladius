@@ -32,6 +32,7 @@ import os
 import ycm_core
 
 home = os.getenv("HOME")
+legion_home = os.getenv("LG_RT_DIR")
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
@@ -88,6 +89,7 @@ flags = [
 '-I' + home + '/local/lldb/include',
 '-I' + home + '/local/mrnet/include',
 '-I' + home + '/local/STAT/include',
+'-I' + legion_home,
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the

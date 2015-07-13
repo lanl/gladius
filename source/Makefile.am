@@ -8,7 +8,6 @@
 
 SUBDIRS = \
 core \
-evnts \
 dspa/core \
 tool-common \
 dmi \
