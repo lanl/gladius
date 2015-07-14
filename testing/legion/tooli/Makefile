@@ -64,7 +64,7 @@ ECHO	:= echo
 TOUCH	:= touch
 MAKE	:= make
 ifndef GCC
-GCC	:= g++
+GCC	:= clang++
 endif
 ifndef NVCC
 NVCC	:= $(CUDA)/bin/nvcc

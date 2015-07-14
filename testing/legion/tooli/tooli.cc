@@ -9,14 +9,14 @@
 #include <cstdio>
 
 #include "legion.h"
-#include "legion_tooling.h"
+#include "legion_analysis_utilities.h"
 
 #include <vector>
 
 using namespace LegionRuntime::HighLevel;
 
 enum TaskID {
-  TLTID
+    TLTID
 };
 
 // All single-launch tasks in Legion must have this signature with
@@ -28,8 +28,8 @@ topLevelTask(
     Context,
     HighLevelRuntime *
 ) {
-    printf("--> enter: %s\n", __func__);
-    printf("-->  exit: %s\n", __func__);
+    printf("app:enter: %s\n", __func__);
+    printf("app:exit:  %s\n", __func__);
 }
 
 // We have a main function just like a standard C++ program.
@@ -44,12 +44,13 @@ main(
     HighLevelRuntime::register_legion_task<topLevelTask>(
         TLTID,
         Processor::LOC_PROC,
-        true/*single*/,
-        false/*index*/
+        true /*single*/,
+        false /*index*/
     );
 
+    // Register ALL tools BEFORE HighLevelRuntime::start()
     LegionTool aTool;
-    LegionTooling::register_legion_tool(aTool);
+    HighLevelRuntime::register_legion_tool(&aTool);
 
     return HighLevelRuntime::start(argc, argv);
 }
