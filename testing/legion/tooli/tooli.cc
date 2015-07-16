@@ -6,6 +6,9 @@
  * top-level directory of this distribution.
  */
 
+// Verbose Output
+// ./tooli -cat legion_analysis -level 2
+
 #include <cstdio>
 
 #include "legion.h"
@@ -49,7 +52,7 @@ main(
     );
 
     // Register ALL tools BEFORE HighLevelRuntime::start()
-    LegionTool aTool;
+    LegionTool *aTool = NULL;
     HighLevelRuntime::register_legion_tool(&aTool);
 
     return HighLevelRuntime::start(argc, argv);

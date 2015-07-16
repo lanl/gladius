@@ -4,7 +4,6 @@
 - C++11-capable C++ compiler
 - libelf (http://directory.fsf.org/wiki/Libelf)
 - libiberty (https://gcc.gnu.org/onlinedocs/libiberty/)
-- libmigdb (http://libmigdb.sourceforge.net/)
 - libedit (http://thrysoee.dk/editline/)
 - LaunchMON (https://github.com/scalability-llnl/LaunchMON)
     - libgcrypt (http://www.gnu.org/software/libgcrypt/)
