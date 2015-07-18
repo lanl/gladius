@@ -6,8 +6,8 @@
  * top-level directory of this distribution.
  */
 
-// Verbose Output
-// ./tooli -cat legion_analysis -level 2
+// Enable Analysis Infrastructure
+// ./tooli -hl:analysis [#ANLYS] -cat legion_analysis -level 2
 
 #include <cstdio>
 
@@ -26,7 +26,7 @@ enum TaskID {
 // the extension that they can have different return values.
 void
 topLevelTask(
-    const Task *, 
+    const Task *,
     const std::vector<PhysicalRegion> &,
     Context,
     HighLevelRuntime *

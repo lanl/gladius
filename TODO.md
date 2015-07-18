@@ -1,5 +1,7 @@
 # Gladius TODO
 
+- I do not believe that LaunchMON will be sufficient for all of our needs.
+    - Find alternatives for things that do not call into MPI (PMI?)
 - Fix hand in terminal UI when tool launch fails due to launcher (e.g. mpirun) failure.
     - It appears as if LMON_fe_launchAndSpawnDaemons is not returning on error.
 - Add higher-level send/recv abstraction that can be used by all infrastructure.
