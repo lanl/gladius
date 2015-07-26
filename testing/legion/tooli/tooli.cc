@@ -19,13 +19,29 @@
 using namespace LegionRuntime::HighLevel;
 
 enum TaskID {
-    TLTID
+    TLTID,
+    NLTID
 };
 
 // All single-launch tasks in Legion must have this signature with
 // the extension that they can have different return values.
 void
 topLevelTask(
+    const Task *,
+    const std::vector<PhysicalRegion> &,
+    Context ctx,
+    HighLevelRuntime *rt
+) {
+    printf("app:enter: %s\n", __func__);
+    //
+    TaskLauncher launcher(NLTID, TaskArgument(NULL, 0));
+    rt->execute_task(ctx, launcher);
+    //
+    printf("app:exit:  %s\n", __func__);
+}
+
+void
+nextLevelTask(
     const Task *,
     const std::vector<PhysicalRegion> &,
     Context,
@@ -47,7 +63,13 @@ main(
     HighLevelRuntime::register_legion_task<topLevelTask>(
         TLTID,
         Processor::LOC_PROC,
-        true /*single*/,
+        true  /*single*/,
+        false /*index*/
+    );
+    HighLevelRuntime::register_legion_task<nextLevelTask>(
+        NLTID,
+        Processor::LOC_PROC,
+        true  /*single*/,
         false /*index*/
     );
 
