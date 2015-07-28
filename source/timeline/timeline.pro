@@ -6,13 +6,15 @@
 # top-level directory of this distribution.
 #
 
-QT += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core gui widgets
 
 TEMPLATE = app
+
 TARGET = timeline
+
 INCLUDEPATH += .
+
+QMAKE_CXXFLAGS += -std=c++11
 
 # Input
 SOURCES += timeline.cpp
