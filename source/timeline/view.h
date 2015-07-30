@@ -9,7 +9,6 @@
 #ifndef TIMELINE_VIEW_H_INCLUDED
 #define TIMELINE_VIEW_H_INCLUDED
 
-
 #include <QFrame>
 #include <QGraphicsView>
 

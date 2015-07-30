@@ -23,9 +23,14 @@ SOURCES += \
 timeline.cpp \
 main-window.cpp \
 view.cpp \
-timeline-widget.cpp
+proc-widget.cpp \
+timeline-widget.cpp \
+    legion-prof-log-parser.cpp
 
 HEADERS += \
+info-types.h \
 main-window.h \
 view.h \
-timeline-widget.h
+proc-widget.h \
+timeline-widget.h \
+    legion-prof-log-parser.h

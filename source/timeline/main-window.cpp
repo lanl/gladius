@@ -9,94 +9,58 @@
 #include "main-window.h"
 #include "view.h"
 #include "timeline-widget.h"
+#include "legion-prof-log-parser.h"
 
+#include <QtGlobal>
 #include <QHBoxLayout>
-#include <QLineF>
+#include <QGuiApplication>
+#include <QScreen>
 
+namespace {
+
+/**
+ * @brief getScreenGeometry
+ * @param screenID
+ * @return
+ */
+QRect
+getScreenGeometry(
+    unsigned screenID
+) {
+    return QGuiApplication::screens().at(screenID)->availableGeometry();
+}
+
+} // end namespace
+
+/**
+ * @brief MainWindow::MainWindow
+ * @param parent
+ */
 MainWindow::MainWindow(
     QWidget *parent
 ) : QWidget(parent)
 {
     // TODO add input name, job info, etc. to title?
     setWindowTitle(tr("Task Execution Timeline"));
-    // FIXME Grab screen info
-    resize(1000, 400);
     //
-    populateScene();
+    static const int sScreenID = 0;
+    QRect screenGeometry = getScreenGeometry(sScreenID);
+    resize(screenGeometry.width(), screenGeometry.height() / 2);
+    // TODO
+    LegionProfLogParser logParser;
+    logParser.parse("/Users/samuel/OUT.prof");
+    if (!logParser.parseSuccessful()) {
+         Q_ASSERT_X(false, __FILE__, "LegionProf Log Parse Failed...");
+    }
     //
-    View *view = new View("Top left view");
+    mScene = new QGraphicsScene();
+    mScene->addWidget(new TimelineWidget(logParser.results()));
+    //
+    View *view = new View("");
     view->view()->setScene(mScene);
     // Horizontal layout.
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(view);
     //
     setLayout(layout);
-}
-
-/**
- * @brief The LegionProfReader class
- */
-class LegionProfReader {
-public:
-    //
-    LegionProfReader(void) {
-
-    }
-    //
-};
-
-
-/**
- * @brief MainWindow::populateScene
- */
-void
-MainWindow::populateScene(void)
-{
-    mScene = new QGraphicsScene();
-    mScene->addWidget(new TimelineWidget());
-#if 0
-    //
-    QRegExp taskInfoRx(
-        "(Prof Task Info) ([0-9]+) ([0-9]+) "
-        "([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)"
-    );
-    std::deque<TaskInfo> taskInfos;
-    //
-    QFile inputFile("/Users/samuel/OUT.prof");
-    if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Cannot Open File!";
-    }
-    while (!inputFile.atEnd()) {
-        QString line(inputFile.readLine());
-        if (taskInfoRx.indexIn(line) != -1) {
-            taskInfos.push_back(
-                TaskInfo(taskInfoRx.cap(2).toUInt(),
-                         taskInfoRx.cap(3).toUInt(),
-                         taskInfoRx.cap(4).toULongLong(),
-                         taskInfoRx.cap(5).toULongLong(),
-                         taskInfoRx.cap(6).toULongLong(),
-                         taskInfoRx.cap(7).toULongLong(),
-                         taskInfoRx.cap(8).toULongLong()
-                )
-            );
-        }
-    }
-    qDebug() << "Found " << taskInfos.size();
-    inputFile.close();
-    //
-    qreal x = 0;
-    qreal y = 0;
-    qreal height = 32;
-    static const uint32_t US_PER_PIXEL = 5000;
-
-    QRectF testr(0, 0, 20, 20);
-
-
-    for (const auto &taskInfo : taskInfos) {
-        qreal width = (taskInfo.uStopTime - taskInfo.uStartTime) / US_PER_PIXEL;
-        QRectF execRect(x, 0, width, height);
-        x += width + 2;
-        mScene->addRect(execRect);
-    }
-#endif
 }

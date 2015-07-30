@@ -9,7 +9,6 @@
 #ifndef TIMELINE_MAIN_WINDOW_H_INCLUDED
 #define TIMELINE_MAIN_WINDOW_H_INCLUDED
 
-
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -22,8 +21,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
 private:
-    void populateScene();
-    //
     QGraphicsScene *mScene = nullptr;
 };
 

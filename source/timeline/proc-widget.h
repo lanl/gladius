@@ -6,27 +6,20 @@
  * top-level directory of this distribution.
  */
 
-#ifndef TIMELINE_WIDGET_H_INCLUDED
-#define TIMELINE_WIDGET_H_INCLUDED
-
-#include "proc-widget.h"
-#include "info-types.h"
+#ifndef PROC_WIDGET_H_INCLUDED
+#define PROC_WIDGET_H_INCLUDED
 
 #include <QBrush>
 #include <QPen>
 #include <QWidget>
-#include <QVBoxLayout>
 
-#include <deque>
+#include <stdint.h>
 
-class TimelineWidget : public QWidget {
+class ProcWidget : public QWidget {
     Q_OBJECT
 
 public:
-    TimelineWidget(
-        const LegionProfData &profData,
-        QWidget *parent = nullptr
-    );
+    ProcWidget(uint64_t id, QWidget *parent = nullptr);
     //
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     //
@@ -38,13 +31,13 @@ public slots:
     void setBrush(const QBrush &brush);
     //
     void setAntialiased(bool antialiased);
-    //
-    void setTransformed(bool transformed);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
+    uint64_t mID = 0;
+    //
     QPen pen;
     //
     QBrush brush;
@@ -53,13 +46,7 @@ private:
     //
     bool transformed;
     //
-    QPixmap pixmap;
-    //
-    std::deque<ProcWidget *> mProcWidgets;
-    //
-    QVBoxLayout *mProcLayout = nullptr;
-    //
-    LegionProfData mProfData;
+    QSize mSize;
 };
 
-#endif // TIMELINE_WIDGET_H_INCLUDED
+#endif // PROC_WIDGET_H_INCLUDED
