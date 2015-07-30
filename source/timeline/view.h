@@ -43,7 +43,7 @@ private:
 class View : public QFrame {
     Q_OBJECT
 public:
-    explicit View(const QString &name, QWidget *parent = 0);
+    explicit View(QWidget *parent = 0);
 
     QGraphicsView *view() const;
 
@@ -60,13 +60,7 @@ private slots:
     void print();
 
 private:
-    GraphicsView *graphicsView;
-    QLabel *label2;
-    QToolButton *selectModeButton;
-    QToolButton *dragModeButton;
-    QToolButton *openGlButton;
-    QToolButton *antialiasButton;
-    QToolButton *printButton;
+    GraphicsView *mGraphicsView = nullptr;
     QToolButton *resetButton;
     QSlider *zoomSlider;
 };

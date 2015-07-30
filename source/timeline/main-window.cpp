@@ -15,6 +15,7 @@
 #include <QHBoxLayout>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QString>
 
 namespace {
 
@@ -47,16 +48,17 @@ MainWindow::MainWindow(
     QRect screenGeometry = getScreenGeometry(sScreenID);
     resize(screenGeometry.width(), screenGeometry.height() / 2);
     // TODO
-    LegionProfLogParser logParser;
-    logParser.parse("/Users/samuel/OUT.prof");
-    if (!logParser.parseSuccessful()) {
+    LegionProfLogParser *logParser = new LegionProfLogParser();
+    logParser->parse("/Users/samuel/OUT.prof");
+    if (!logParser->parseSuccessful()) {
          Q_ASSERT_X(false, __FILE__, "LegionProf Log Parse Failed...");
     }
     //
     mScene = new QGraphicsScene();
-    mScene->addWidget(new TimelineWidget(logParser.results()));
+    mScene->addWidget(new TimelineWidget(logParser->results()));
+    delete logParser;
     //
-    View *view = new View("");
+    View *view = new View();
     view->view()->setScene(mScene);
     // Horizontal layout.
     QHBoxLayout *layout = new QHBoxLayout();

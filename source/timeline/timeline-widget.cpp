@@ -18,10 +18,8 @@ TimelineWidget::TimelineWidget(
 ) : QWidget(parent)
   , mProfData(profData)
 {
-    brush = QBrush(Qt::gray);
-    pen = QPen(Qt::NoPen);
-    //
-    setBackgroundRole(QPalette::Base);
+    // SKG Debug Views
+    setBackgroundRole(QPalette::Foreground);
     setAutoFillBackground(true);
 
     mProcLayout = new QVBoxLayout();
@@ -31,46 +29,6 @@ TimelineWidget::TimelineWidget(
         mProcLayout->addWidget(pw);
     }
     setLayout(mProcLayout);
-}
-
-QSize
-TimelineWidget::minimumSizeHint() const
-{
-    return QSize(100, 100);
-}
-
-QSize
-TimelineWidget::sizeHint() const
-{
-    return QSize(100, 100);
-}
-
-void
-TimelineWidget::setPen(const QPen &pen)
-{
-    this->pen = pen;
-    update();
-}
-
-void
-TimelineWidget::setBrush(const QBrush &brush)
-{
-    this->brush = brush;
-    update();
-}
-
-void
-TimelineWidget::setAntialiased(bool antialiased)
-{
-    this->antialiased = antialiased;
-    update();
-}
-
-void
-TimelineWidget::setTransformed(bool transformed)
-{
-    this->transformed = transformed;
-    update();
 }
 
 /**

@@ -53,13 +53,6 @@ ProcWidget::setBrush(const QBrush &brush)
     update();
 }
 
-void
-ProcWidget::setAntialiased(bool antialiased)
-{
-    this->antialiased = antialiased;
-    update();
-}
-
 /**
  * @brief TimelineWidget::paintEvent
  */
@@ -71,12 +64,12 @@ ProcWidget::paintEvent(
     QPainter painter(this);
     painter.setPen(pen);
     painter.setBrush(brush);
-    if (antialiased) painter.setRenderHint(QPainter::Antialiasing, true);
 
     int x = 0;
     int y = height() / 2;
     qreal h = 32;
     static const uint32_t US_PER_PIXEL = 2048;
+    painter.drawRect(QRectF(0, 0, 20, 20));
 #if 0
     for (const auto &taskInfo : taskInfos) {
         qreal w = (taskInfo.uStopTime - taskInfo.uStartTime) / US_PER_PIXEL;

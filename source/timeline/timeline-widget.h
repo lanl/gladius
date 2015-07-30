@@ -27,39 +27,17 @@ public:
         const LegionProfData &profData,
         QWidget *parent = nullptr
     );
-    //
-    QSize minimumSizeHint() const Q_DECL_OVERRIDE;
-    //
-    QSize sizeHint() const Q_DECL_OVERRIDE;
-
-public slots:
-    void setPen(const QPen &pen);
-    //
-    void setBrush(const QBrush &brush);
-    //
-    void setAntialiased(bool antialiased);
-    //
-    void setTransformed(bool transformed);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    QPen pen;
     //
-    QBrush brush;
-    //
-    bool antialiased;
-    //
-    bool transformed;
-    //
-    QPixmap pixmap;
+    LegionProfData mProfData;
     //
     std::deque<ProcWidget *> mProcWidgets;
     //
     QVBoxLayout *mProcLayout = nullptr;
-    //
-    LegionProfData mProfData;
 };
 
 #endif // TIMELINE_WIDGET_H_INCLUDED

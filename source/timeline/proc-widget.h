@@ -29,8 +29,6 @@ public slots:
     void setPen(const QPen &pen);
     //
     void setBrush(const QBrush &brush);
-    //
-    void setAntialiased(bool antialiased);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
@@ -41,8 +39,6 @@ private:
     QPen pen;
     //
     QBrush brush;
-    //
-    bool antialiased;
     //
     bool transformed;
     //
