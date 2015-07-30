@@ -7,6 +7,8 @@
 #
 
 QT += core gui widgets
+qtHaveModule(printsupport): QT += printsupport
+qtHaveModule(opengl): QT += opengl
 
 TEMPLATE = app
 
@@ -17,4 +19,13 @@ INCLUDEPATH += .
 QMAKE_CXXFLAGS += -std=c++11
 
 # Input
-SOURCES += timeline.cpp
+SOURCES += \
+timeline.cpp \
+main-window.cpp \
+view.cpp \
+timeline-widget.cpp
+
+HEADERS += \
+main-window.h \
+view.h \
+timeline-widget.h

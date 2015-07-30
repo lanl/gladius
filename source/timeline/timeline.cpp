@@ -6,32 +6,17 @@
  * top-level directory of this distribution.
  */
 
-#include <QtCore>
-#include <QScreen>
+
+#include "main-window.h"
+
 #include <QApplication>
-#include <QtWidgets>
 #include <QDebug>
-#include <QLine>
 
 /**
- *
- */
-QRect
-getScreenGeometry(
-    unsigned screenID
-) {
-    return QGuiApplication::screens().at(screenID)->availableGeometry();
-}
-
-QBrush
-getBackgroundColor(void)
-{
-    // #282829
-    return QBrush(QColor(40, 40, 41));
-}
-
-/**
- *
+ * @brief main
+ * @param argc
+ * @param argv
+ * @return
  */
 int
 main(
@@ -41,17 +26,9 @@ main(
     qDebug() << "Starting Application...";
     //
     QApplication app(argc, argv);
+    app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
     //
-    QRect screenGeometry = getScreenGeometry(0);
-    //
-    qreal windowWidth = screenGeometry.width();
-    qreal windowHeight = screenGeometry.height() / 2;
-    //
-    QGraphicsScene scene(0, 0, windowWidth, windowHeight);
-    scene.setBackgroundBrush(getBackgroundColor());
-    //
-    QGraphicsView window(&scene);
-    window.resize(windowWidth, windowHeight);
+    MainWindow window;
     window.show();
     //
     return app.exec();
