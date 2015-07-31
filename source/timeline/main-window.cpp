@@ -54,14 +54,14 @@ MainWindow::MainWindow(
          Q_ASSERT_X(false, __FILE__, "LegionProf Log Parse Failed...");
     }
     //
-    mScene = new QGraphicsScene();
+    mScene = new QGraphicsScene(this);
     mScene->addWidget(new TimelineWidget(logParser->results()));
     delete logParser;
     //
-    View *view = new View();
+    View *view = new View(this);
     view->view()->setScene(mScene);
     // Horizontal layout.
-    QHBoxLayout *layout = new QHBoxLayout();
+    QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(view);
     //
     setLayout(layout);
