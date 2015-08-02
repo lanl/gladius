@@ -7,7 +7,7 @@
  */
 
 #include "timeline-widget.h"
-#include "proc-widget.h"
+#include "proc-graphics-item.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -24,9 +24,8 @@ TimelineWidget::TimelineWidget(
 
     mProcLayout = new QVBoxLayout();
     for (size_t p = 0; p < mProfData.nProcessors(); ++p) {
-        ProcWidget *pw = new ProcWidget(p, this);
+        Proc *pw = new Proc(p, this);
         mProcWidgets.push_back(pw);
-        mProcLayout->addWidget(pw);
     }
     setLayout(mProcLayout);
 }

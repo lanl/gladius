@@ -9,7 +9,7 @@
 #ifndef TIMELINE_WIDGET_H_INCLUDED
 #define TIMELINE_WIDGET_H_INCLUDED
 
-#include "proc-widget.h"
+#include "proc-graphics-item.h"
 #include "info-types.h"
 
 #include <QBrush>
@@ -35,7 +35,7 @@ private:
     //
     LegionProfData mProfData;
     //
-    std::deque<ProcWidget *> mProcWidgets;
+    std::deque<Proc *> mProcWidgets;
     //
     QVBoxLayout *mProcLayout = nullptr;
 };

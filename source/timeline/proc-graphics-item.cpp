@@ -6,53 +6,73 @@
  * top-level directory of this distribution.
  */
 
-#include "proc-widget.h"
+#include "proc-graphics-item.h"
 #include "info-types.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include <QPainter>
-#include <QDebug>
+#include <QStyleOption>
 
 #define PROC_H 32
 
-ProcWidget::ProcWidget(
-    uint64_t id,
-    QWidget *parent
-) : QWidget(parent)
-  , mID(id)
+Proc::Proc(
+    int64_t id,
+    TimelineWidget *parent
+) : mID(id)
+  , mTimeline(parent)
 {
-    brush = QBrush(Qt::gray);
-    pen = QPen(Qt::NoPen);
-    //
-    setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
+    setFlag(ItemSendsGeometryChanges);
+    setCacheMode(DeviceCoordinateCache);
+    setZValue(-1);
 }
 
-QSize
-ProcWidget::minimumSizeHint() const
+QRectF Proc::boundingRect() const
 {
-    return QSize(128, PROC_H);
+    qreal adjust = 2;
+    return QRectF( -10 - adjust, -10 - adjust, 23 + adjust, 23 + adjust);
 }
 
-QSize
-ProcWidget::sizeHint() const
+QPainterPath Proc::shape() const
 {
-    return minimumSizeHint();
-}
-
-void
-ProcWidget::setPen(const QPen &pen)
-{
-    this->pen = pen;
-    update();
+    QPainterPath path;
+    path.addRect(-10, -10, 20, 20);
+    return path;
 }
 
 void
-ProcWidget::setBrush(const QBrush &brush)
-{
-    this->brush = brush;
-    update();
+Proc::paint(
+    QPainter *painter,
+    const QStyleOptionGraphicsItem *option,
+    QWidget *widget
+) {
+    painter->setBrush(Qt::red);
+    painter->drawRect(-7, -7, 20, 20);
 }
 
+QVariant
+Proc::itemChange(
+    GraphicsItemChange change,
+    const QVariant &value
+) {
+
+}
+
+void
+Proc::mousePressEvent(
+    QGraphicsSceneMouseEvent *event
+) {
+
+}
+
+void
+Proc::mouseReleaseEvent(
+QGraphicsSceneMouseEvent *event
+) {
+
+}
+
+#if 0
 /**
  * @brief TimelineWidget::paintEvent
  */
@@ -85,3 +105,4 @@ ProcWidget::paintEvent(
     }
 #endif
 }
+#endif
