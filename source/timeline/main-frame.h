@@ -9,6 +9,8 @@
 #ifndef TIMELINE_VIEW_H_INCLUDED
 #define TIMELINE_VIEW_H_INCLUDED
 
+#include "scene.h"
+
 #include <QFrame>
 #include <QGraphicsView>
 
@@ -17,29 +19,6 @@ class QLabel;
 class QSlider;
 class QToolButton;
 QT_END_NAMESPACE
-
-class MainFrame;
-
-/**
- * @brief The GraphicsView class
- */
-class GraphicsView : public QGraphicsView {
-    Q_OBJECT
-
-public:
-    GraphicsView(
-        MainFrame *v
-    ) : QGraphicsView()
-      , view(v) { }
-
-protected:
-#ifndef QT_NO_WHEELEVENT
-    void wheelEvent(QWheelEvent *) Q_DECL_OVERRIDE;
-#endif
-
-private:
-    MainFrame *view = nullptr;
-};
 
 /**
  * @brief The View class
@@ -56,6 +35,9 @@ public slots:
     //
     void zoomOut(int level = 1);
 
+protected:
+    void wheelEvent(QWheelEvent *e) Q_DECL_OVERRIDE;
+
 private slots:
     void resetView(void);
     //
@@ -70,11 +52,17 @@ private slots:
     void print(void);
 
 private:
-    GraphicsView *mGraphicsView = nullptr;
+    QGraphicsView *mGraphicsView = nullptr;
     //
     QToolButton *resetButton = nullptr;
     //
     QSlider *zoomSlider = nullptr;
+    //
+    Scene *mScene = nullptr;
+
+    static constexpr int sMinSliderValue  = 0;
+    static constexpr int sMaxSliderValue  = 512;
+    static constexpr int sInitSliderValue = sMaxSliderValue / 2;
 };
 
 #endif // TIMELINE_VIEW_H_INCLUDED

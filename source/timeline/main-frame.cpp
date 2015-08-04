@@ -7,7 +7,6 @@
  */
 
 #include "main-frame.h"
-#include "legion-prof-log-parser.h"
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -19,20 +18,6 @@
 #include <QtWidgets>
 #endif
 #include <qmath.h>
-
-#ifndef QT_NO_WHEELEVENT
-void GraphicsView::wheelEvent(QWheelEvent *e)
-{
-    if (e->modifiers() & Qt::ControlModifier) {
-        if (e->delta() > 0) view->zoomIn(6);
-        else view->zoomOut(6);
-        e->accept();
-    }
-    else {
-        QGraphicsView::wheelEvent(e);
-    }
-}
-#endif
 
 // TODO: See setStyleSheet
 
@@ -48,7 +33,7 @@ MainFrame::MainFrame(
     // No frame around us.
     setFrameShape(QFrame::NoFrame);
     //
-    mGraphicsView = new GraphicsView(this);
+    mGraphicsView = new QGraphicsView(this);
     mGraphicsView->setRenderHint(QPainter::Antialiasing, false);
     mGraphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     mGraphicsView->setOptimizationFlags(QGraphicsView::DontSavePainterState);
@@ -57,34 +42,27 @@ MainFrame::MainFrame(
     mGraphicsView->setFrameShape(QFrame::NoFrame);
     mGraphicsView->setBackgroundBrush(QBrush(Qt::gray));
     //
-    zoomSlider = new QSlider();
-    zoomSlider->setMinimum(0);
-    zoomSlider->setMaximum(500);
-    zoomSlider->setValue(250);
+    zoomSlider = new QSlider(this);
+    zoomSlider->setMinimum(sMinSliderValue);
+    zoomSlider->setMaximum(sMaxSliderValue);
+    zoomSlider->setValue(sInitSliderValue);
     zoomSlider->setTickPosition(QSlider::TicksRight);
     // Zoom slider layout
     QVBoxLayout *zoomSliderLayout = new QVBoxLayout();
     zoomSliderLayout->addWidget(zoomSlider);
     //
-    resetButton = new QToolButton;
+    resetButton = new QToolButton(this);
     resetButton->setText(tr("0"));
     resetButton->setEnabled(false);
     //
-    QGridLayout *topLayout = new QGridLayout();
+    QGridLayout *topLayout = new QGridLayout(this);
     topLayout->addWidget(mGraphicsView, 1, 0);
     topLayout->addLayout(zoomSliderLayout, 1, 1);
     topLayout->addWidget(resetButton, 2, 1);
     setLayout(topLayout);
-
-    // TODO
-    LegionProfLogParser *logParser = new LegionProfLogParser();
-    logParser->parse("/Users/samuel/OUT.prof");
-    if (!logParser->parseSuccessful()) {
-         Q_ASSERT_X(false, __FILE__, "LegionProf Log Parse Failed...");
-    }
-
-    QGraphicsScene *scene = new QGraphicsScene(mGraphicsView);
-    view()->setScene(scene);
+    //
+    mScene = new Scene(this);
+    view()->setScene(mScene);
     //
     connect(
         resetButton,
@@ -133,7 +111,7 @@ MainFrame::view(void) const
 void
 MainFrame::resetView(void)
 {
-    zoomSlider->setValue(250);
+    zoomSlider->setValue(sInitSliderValue);
     setupMatrix();
     mGraphicsView->ensureVisible(QRectF(0, 0, 0, 0));
     resetButton->setEnabled(false);
@@ -214,4 +192,17 @@ void
 MainFrame::zoomOut(int level)
 {
     zoomSlider->setValue(zoomSlider->value() - level);
+}
+
+void
+MainFrame::wheelEvent(QWheelEvent *e)
+{
+    if (e->modifiers() & Qt::ControlModifier) {
+        if (e->delta() > 0) zoomIn(6);
+        else zoomOut(6);
+        e->accept();
+    }
+    else {
+        QFrame::wheelEvent(e);
+    }
 }
