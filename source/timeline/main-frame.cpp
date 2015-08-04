@@ -41,7 +41,7 @@ void GraphicsView::wheelEvent(QWheelEvent *e)
  * @param name
  * @param parent
  */
-View::View(
+MainFrame::MainFrame(
     QWidget *parent
 ) : QFrame(parent)
 {
@@ -85,13 +85,35 @@ View::View(
 
     QGraphicsScene *scene = new QGraphicsScene(mGraphicsView);
     view()->setScene(scene);
-
-    connect(resetButton, SIGNAL(clicked()), this, SLOT(resetView()));
-    connect(zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(setupMatrix()));
-    connect(mGraphicsView->verticalScrollBar(), SIGNAL(valueChanged(int)),
-            this, SLOT(setResetButtonEnabled()));
-    connect(mGraphicsView->horizontalScrollBar(), SIGNAL(valueChanged(int)),
-            this, SLOT(setResetButtonEnabled()));
+    //
+    connect(
+        resetButton,
+        SIGNAL(clicked()),
+        this,
+        SLOT(resetView())
+    );
+    //
+    connect(
+        zoomSlider,
+        SIGNAL(valueChanged(int)),
+        this,
+        SLOT(setupMatrix())
+    );
+    //
+    connect(
+        mGraphicsView->verticalScrollBar(),
+        SIGNAL(valueChanged(int)),
+        this,
+        SLOT(setResetButtonEnabled())
+    );
+    //
+    connect(
+        mGraphicsView->horizontalScrollBar(),
+        SIGNAL(valueChanged(int)),
+        this,
+        SLOT(setResetButtonEnabled())
+    );
+    //
     setupMatrix();
 }
 
@@ -100,7 +122,7 @@ View::View(
  * @return
  */
 QGraphicsView *
-View::view() const
+MainFrame::view(void) const
 {
     return static_cast<QGraphicsView *>(mGraphicsView);
 }
@@ -109,7 +131,7 @@ View::view() const
  * @brief View::resetView
  */
 void
-View::resetView()
+MainFrame::resetView(void)
 {
     zoomSlider->setValue(250);
     setupMatrix();
@@ -121,7 +143,7 @@ View::resetView()
  * @brief View::setResetButtonEnabled
  */
 void
-View::setResetButtonEnabled()
+MainFrame::setResetButtonEnabled(void)
 {
     resetButton->setEnabled(true);
 }
@@ -130,7 +152,7 @@ View::setResetButtonEnabled()
  * @brief View::setupMatrix
  */
 void
-View::setupMatrix()
+MainFrame::setupMatrix(void)
 {
     qreal scale = qPow(qreal(2), (zoomSlider->value() - 250) / qreal(50));
 
@@ -145,7 +167,7 @@ View::setupMatrix()
  * @brief View::togglePointerMode
  */
 void
-View::togglePointerMode()
+MainFrame::togglePointerMode(void)
 {
 }
 
@@ -154,7 +176,7 @@ View::togglePointerMode()
  * @brief View::toggleAntialiasing
  */
 void
-View::toggleAntialiasing()
+MainFrame::toggleAntialiasing(void)
 {
 }
 
@@ -162,7 +184,7 @@ View::toggleAntialiasing()
  * @brief View::print
  */
 void
-View::print()
+MainFrame::print(void)
 {
 #if !defined(QT_NO_PRINTER) && !defined(QT_NO_PRINTDIALOG)
     QPrinter printer;
@@ -179,7 +201,7 @@ View::print()
  * @param level
  */
 void
-View::zoomIn(int level)
+MainFrame::zoomIn(int level)
 {
     zoomSlider->setValue(zoomSlider->value() + level);
 }
@@ -189,7 +211,7 @@ View::zoomIn(int level)
  * @param level
  */
 void
-View::zoomOut(int level)
+MainFrame::zoomOut(int level)
 {
     zoomSlider->setValue(zoomSlider->value() - level);
 }

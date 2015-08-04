@@ -18,7 +18,7 @@ class QSlider;
 class QToolButton;
 QT_END_NAMESPACE
 
-class View;
+class MainFrame;
 
 /**
  * @brief The GraphicsView class
@@ -28,7 +28,7 @@ class GraphicsView : public QGraphicsView {
 
 public:
     GraphicsView(
-        View *v
+        MainFrame *v
     ) : QGraphicsView()
       , view(v) { }
 
@@ -38,16 +38,16 @@ protected:
 #endif
 
 private:
-    View *view = nullptr;
+    MainFrame *view = nullptr;
 };
 
 /**
  * @brief The View class
  */
-class View : public QFrame {
+class MainFrame : public QFrame {
     Q_OBJECT
 public:
-    explicit View(QWidget *parent = nullptr);
+    explicit MainFrame(QWidget *parent = nullptr);
     //
     QGraphicsView *view(void) const;
 

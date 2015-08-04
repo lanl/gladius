@@ -8,7 +8,6 @@
 
 #include "main-window.h"
 #include "main-frame.h"
-#include "legion-prof-log-parser.h"
 
 #include <QtGlobal>
 #include <QHBoxLayout>
@@ -47,10 +46,10 @@ MainWindow::MainWindow(
     QRect screenGeometry = getScreenGeometry(sScreenID);
     resize(screenGeometry.width(), screenGeometry.height() / 2);
     //
-    View *view = new View(this);
+    MainFrame *mainFrame = new MainFrame(this);
     // Horizontal layout.
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(view);
+    layout->addWidget(mainFrame);
     //
     setLayout(layout);
 }
