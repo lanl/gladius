@@ -25,8 +25,12 @@ class View;
  */
 class GraphicsView : public QGraphicsView {
     Q_OBJECT
+
 public:
-    GraphicsView(View *v) : QGraphicsView(), view(v) { }
+    GraphicsView(
+        View *v
+    ) : QGraphicsView()
+      , view(v) { }
 
 protected:
 #ifndef QT_NO_WHEELEVENT
@@ -34,7 +38,7 @@ protected:
 #endif
 
 private:
-    View *view;
+    View *view = nullptr;
 };
 
 /**
@@ -43,26 +47,34 @@ private:
 class View : public QFrame {
     Q_OBJECT
 public:
-    explicit View(QWidget *parent = 0);
-
-    QGraphicsView *view() const;
+    explicit View(QWidget *parent = nullptr);
+    //
+    QGraphicsView *view(void) const;
 
 public slots:
     void zoomIn(int level = 1);
+    //
     void zoomOut(int level = 1);
 
 private slots:
-    void resetView();
-    void setResetButtonEnabled();
-    void setupMatrix();
-    void togglePointerMode();
-    void toggleAntialiasing();
-    void print();
+    void resetView(void);
+    //
+    void setResetButtonEnabled(void);
+    //
+    void setupMatrix(void);
+    //
+    void togglePointerMode(void);
+    //
+    void toggleAntialiasing(void);
+    //
+    void print(void);
 
 private:
     GraphicsView *mGraphicsView = nullptr;
-    QToolButton *resetButton;
-    QSlider *zoomSlider;
+    //
+    QToolButton *resetButton = nullptr;
+    //
+    QSlider *zoomSlider = nullptr;
 };
 
 #endif // TIMELINE_VIEW_H_INCLUDED

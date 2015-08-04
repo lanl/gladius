@@ -7,8 +7,7 @@
  */
 
 #include "main-window.h"
-#include "view.h"
-#include "timeline-widget.h"
+#include "main-frame.h"
 #include "legion-prof-log-parser.h"
 
 #include <QtGlobal>
@@ -47,19 +46,8 @@ MainWindow::MainWindow(
     static const int sScreenID = 0;
     QRect screenGeometry = getScreenGeometry(sScreenID);
     resize(screenGeometry.width(), screenGeometry.height() / 2);
-    // TODO
-    LegionProfLogParser *logParser = new LegionProfLogParser();
-    logParser->parse("/Users/samuel/OUT.prof");
-    if (!logParser->parseSuccessful()) {
-         Q_ASSERT_X(false, __FILE__, "LegionProf Log Parse Failed...");
-    }
-    //
-    mScene = new QGraphicsScene(this);
-    mScene->addWidget(new TimelineWidget(logParser->results()));
-    delete logParser;
     //
     View *view = new View(this);
-    view->view()->setScene(mScene);
     // Horizontal layout.
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(view);

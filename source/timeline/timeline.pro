@@ -22,15 +22,11 @@ QMAKE_CXXFLAGS += -std=c++11
 SOURCES += \
 timeline.cpp \
 main-window.cpp \
-view.cpp \
-timeline-widget.cpp \
 legion-prof-log-parser.cpp \
-proc-graphics-item.cpp
+main-frame.cpp
 
 HEADERS += \
 info-types.h \
 main-window.h \
-view.h \
-timeline-widget.h \
 legion-prof-log-parser.h \
-proc-graphics-item.h
+main-frame.h

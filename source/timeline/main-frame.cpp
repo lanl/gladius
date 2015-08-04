@@ -6,7 +6,8 @@
  * top-level directory of this distribution.
  */
 
-#include "view.h"
+#include "main-frame.h"
+#include "legion-prof-log-parser.h"
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -54,27 +55,36 @@ View::View(
     mGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     mGraphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     mGraphicsView->setFrameShape(QFrame::NoFrame);
-    //graphicsView->setBackgroundBrush(QBrush(Qt::black));
-
+    mGraphicsView->setBackgroundBrush(QBrush(Qt::gray));
+    //
     zoomSlider = new QSlider();
     zoomSlider->setMinimum(0);
     zoomSlider->setMaximum(500);
     zoomSlider->setValue(250);
     zoomSlider->setTickPosition(QSlider::TicksRight);
-
     // Zoom slider layout
     QVBoxLayout *zoomSliderLayout = new QVBoxLayout();
     zoomSliderLayout->addWidget(zoomSlider);
-
+    //
     resetButton = new QToolButton;
     resetButton->setText(tr("0"));
     resetButton->setEnabled(false);
-
+    //
     QGridLayout *topLayout = new QGridLayout();
     topLayout->addWidget(mGraphicsView, 1, 0);
     topLayout->addLayout(zoomSliderLayout, 1, 1);
     topLayout->addWidget(resetButton, 2, 1);
     setLayout(topLayout);
+
+    // TODO
+    LegionProfLogParser *logParser = new LegionProfLogParser();
+    logParser->parse("/Users/samuel/OUT.prof");
+    if (!logParser->parseSuccessful()) {
+         Q_ASSERT_X(false, __FILE__, "LegionProf Log Parse Failed...");
+    }
+
+    QGraphicsScene *scene = new QGraphicsScene(mGraphicsView);
+    view()->setScene(scene);
 
     connect(resetButton, SIGNAL(clicked()), this, SLOT(resetView()));
     connect(zoomSlider, SIGNAL(valueChanged(int)), this, SLOT(setupMatrix()));
@@ -104,7 +114,6 @@ View::resetView()
     zoomSlider->setValue(250);
     setupMatrix();
     mGraphicsView->ensureVisible(QRectF(0, 0, 0, 0));
-
     resetButton->setEnabled(false);
 }
 

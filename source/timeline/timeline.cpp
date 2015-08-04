@@ -23,10 +23,9 @@ main(
     int argc,
     char **argv
 ) {
-    qDebug() << "Starting Application...";
+    qDebug() << "Starting Timeline...";
     //
     QApplication app(argc, argv);
-    app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
     //
     MainWindow window;
     window.show();
