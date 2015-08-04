@@ -11,7 +11,7 @@
 
 #include "info-types.h"
 
-#include <string>
+#include <QString>
 #include <deque>
 
 /**
@@ -27,7 +27,7 @@ public:
     // No assignment.
     LegionProfLogParser& operator=(const LegionProfLogParser&) = delete;
     //
-    void parse(const std::string &file);
+    void parse(const QString &file);
     //
     bool parseSuccessful(void) const;
     /**

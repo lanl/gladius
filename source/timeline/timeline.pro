@@ -17,19 +17,22 @@ TARGET = timeline
 INCLUDEPATH += .
 
 # TODO Pull top-level configury and populate with that.
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -Wextra -std=c++11
 
 # Input
 SOURCES += \
-timeline.cpp \
 main-window.cpp \
 legion-prof-log-parser.cpp \
 main-frame.cpp \
-scene.cpp
+proc-timeline.cpp \
+main.cpp \
+graph-widget.cpp
 
 HEADERS += \
+common.h \
 info-types.h \
 main-window.h \
 legion-prof-log-parser.h \
 main-frame.h \
-scene.h
+proc-timeline.h \
+graph-widget.h

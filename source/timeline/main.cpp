@@ -7,6 +7,7 @@
  */
 
 
+#include "common.h"
 #include "main-window.h"
 
 #include <QApplication>
@@ -23,9 +24,9 @@ main(
     int argc,
     char **argv
 ) {
-    qDebug() << "Starting Timeline...";
-    //
     QApplication app(argc, argv);
+    //
+    app.setApplicationName(APP_NAME);
     //
     MainWindow window;
     window.show();

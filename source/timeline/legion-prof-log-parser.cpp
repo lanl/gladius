@@ -60,17 +60,19 @@ LegionProfLogParser::~LegionProfLogParser(void)
  */
 void
 LegionProfLogParser::parse(
-    const std::string &file
+    const QString &file
 ) {
     if (mProfData) delete mProfData;
     mProfData = new LegionProfData();
     //
-    QFile inputFile(file.c_str());
+    QFile inputFile(file);
     if (!inputFile.exists()) {
-         Q_ASSERT_X(false, __FILE__, "File Does Not Exist...");
+        //FIXME
+        Q_ASSERT_X(false, __FILE__, "File Does Not Exist...");
     }
     if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-         Q_ASSERT_X(false, __FILE__, "Cannot Open File...");
+        //FIXME
+        Q_ASSERT_X(false, __FILE__, "Cannot Open File...");
     }
     //
     while (!inputFile.atEnd()) {

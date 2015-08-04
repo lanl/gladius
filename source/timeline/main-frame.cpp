@@ -7,6 +7,8 @@
  */
 
 #include "main-frame.h"
+#include "graph-widget.h"
+#include "legion-prof-log-parser.h"
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -21,11 +23,6 @@
 
 // TODO: See setStyleSheet
 
-/**
- * @brief View::View
- * @param name
- * @param parent
- */
 MainFrame::MainFrame(
     QWidget *parent
 ) : QFrame(parent)
@@ -33,60 +30,52 @@ MainFrame::MainFrame(
     // No frame around us.
     setFrameShape(QFrame::NoFrame);
     //
-    mGraphicsView = new QGraphicsView(this);
-    mGraphicsView->setRenderHint(QPainter::Antialiasing, false);
-    mGraphicsView->setDragMode(QGraphicsView::RubberBandDrag);
-    mGraphicsView->setOptimizationFlags(QGraphicsView::DontSavePainterState);
-    mGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-    mGraphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    mGraphicsView->setFrameShape(QFrame::NoFrame);
-    mGraphicsView->setBackgroundBrush(QBrush(Qt::gray));
+    mGraphWidget = new GraphWidget(this);
     //
-    zoomSlider = new QSlider(this);
-    zoomSlider->setMinimum(sMinSliderValue);
-    zoomSlider->setMaximum(sMaxSliderValue);
-    zoomSlider->setValue(sInitSliderValue);
-    zoomSlider->setTickPosition(QSlider::TicksRight);
+    mZoomSlider = new QSlider(this);
+    mZoomSlider->setMinimum(sMinSliderValue);
+    mZoomSlider->setMaximum(sMaxSliderValue);
+    mZoomSlider->setValue(sInitSliderValue);
+    mZoomSlider->setTickPosition(QSlider::TicksRight);
     // Zoom slider layout
     QVBoxLayout *zoomSliderLayout = new QVBoxLayout();
-    zoomSliderLayout->addWidget(zoomSlider);
+    zoomSliderLayout->addWidget(mZoomSlider);
     //
-    resetButton = new QToolButton(this);
-    resetButton->setText(tr("0"));
-    resetButton->setEnabled(false);
+    mResetButton = new QToolButton(this);
+    mResetButton->setText(tr("0"));
+    mResetButton->setEnabled(false);
     //
     QGridLayout *topLayout = new QGridLayout(this);
-    topLayout->addWidget(mGraphicsView, 1, 0);
+    topLayout->addWidget(mGraphWidget, 1, 0);
     topLayout->addLayout(zoomSliderLayout, 1, 1);
-    topLayout->addWidget(resetButton, 2, 1);
+    topLayout->addWidget(mResetButton, 2, 1);
     setLayout(topLayout);
-    //
-    mScene = new Scene(this);
-    view()->setScene(mScene);
+    // TODO FIXME
+    loadLog();
     //
     connect(
-        resetButton,
+        mResetButton,
         SIGNAL(clicked()),
         this,
         SLOT(resetView())
     );
     //
     connect(
-        zoomSlider,
+        mZoomSlider,
         SIGNAL(valueChanged(int)),
         this,
         SLOT(setupMatrix())
     );
     //
     connect(
-        mGraphicsView->verticalScrollBar(),
+        mGraphWidget->verticalScrollBar(),
         SIGNAL(valueChanged(int)),
         this,
         SLOT(setResetButtonEnabled())
     );
     //
     connect(
-        mGraphicsView->horizontalScrollBar(),
+        mGraphWidget->horizontalScrollBar(),
         SIGNAL(valueChanged(int)),
         this,
         SLOT(setResetButtonEnabled())
@@ -95,72 +84,36 @@ MainFrame::MainFrame(
     setupMatrix();
 }
 
-/**
- * @brief View::view
- * @return
- */
-QGraphicsView *
-MainFrame::view(void) const
-{
-    return static_cast<QGraphicsView *>(mGraphicsView);
-}
-
-/**
- * @brief View::resetView
- */
 void
 MainFrame::resetView(void)
 {
-    zoomSlider->setValue(sInitSliderValue);
+    mZoomSlider->setValue(sInitSliderValue);
     setupMatrix();
-    mGraphicsView->ensureVisible(QRectF(0, 0, 0, 0));
-    resetButton->setEnabled(false);
+    mGraphWidget->ensureVisible(QRectF(0, 0, 0, 0));
+    mResetButton->setEnabled(false);
 }
 
-/**
- * @brief View::setResetButtonEnabled
- */
 void
 MainFrame::setResetButtonEnabled(void)
 {
-    resetButton->setEnabled(true);
+    mResetButton->setEnabled(true);
 }
 
-/**
- * @brief View::setupMatrix
- */
 void
 MainFrame::setupMatrix(void)
 {
-    qreal scale = qPow(qreal(2), (zoomSlider->value() - 250) / qreal(50));
-
+    qreal scale = qPow(
+        qreal(2),
+        (mZoomSlider->value() - sInitSliderValue) / qreal(50)
+    );
+    //
     QMatrix matrix;
     matrix.scale(scale, scale);
-
-    mGraphicsView->setMatrix(matrix);
+    //
+    mGraphWidget->setMatrix(matrix);
     setResetButtonEnabled();
 }
 
-/**
- * @brief View::togglePointerMode
- */
-void
-MainFrame::togglePointerMode(void)
-{
-}
-
-
-/**
- * @brief View::toggleAntialiasing
- */
-void
-MainFrame::toggleAntialiasing(void)
-{
-}
-
-/**
- * @brief View::print
- */
 void
 MainFrame::print(void)
 {
@@ -169,29 +122,35 @@ MainFrame::print(void)
     QPrintDialog dialog(&printer, this);
     if (dialog.exec() == QDialog::Accepted) {
         QPainter painter(&printer);
-        mGraphicsView->render(&painter);
+        mGraphWidget->render(&painter);
     }
 #endif
 }
 
-/**
- * @brief View::zoomIn
- * @param level
- */
+void
+MainFrame::loadLog(void)
+{
+    qDebug() << "Loading Log File...";
+    LegionProfLogParser parser;
+    parser.parse("/Users/samuel/OUT.prof");
+    if (!parser.parseSuccessful()) {
+        // FIXME
+        qDebug() << "Bad Parse!";
+    }
+    mGraphWidget->addProcTimeline(ProcType::LOC);
+    mGraphWidget->addProcTimeline(ProcType::LOC);
+}
+
 void
 MainFrame::zoomIn(int level)
 {
-    zoomSlider->setValue(zoomSlider->value() + level);
+    mZoomSlider->setValue(mZoomSlider->value() + level);
 }
 
-/**
- * @brief View::zoomOut
- * @param level
- */
 void
 MainFrame::zoomOut(int level)
 {
-    zoomSlider->setValue(zoomSlider->value() - level);
+    mZoomSlider->setValue(mZoomSlider->value() - level);
 }
 
 void

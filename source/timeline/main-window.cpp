@@ -6,6 +6,7 @@
  * top-level directory of this distribution.
  */
 
+#include "common.h"
 #include "main-window.h"
 #include "main-frame.h"
 
@@ -40,7 +41,7 @@ MainWindow::MainWindow(
 ) : QWidget(parent)
 {
     // TODO add input name, job info, etc. to title?
-    setWindowTitle(tr("Task Execution Timeline"));
+    setWindowTitle(tr(APP_WIN_TITLE));
     //
     static const int sScreenID = 0;
     QRect screenGeometry = getScreenGeometry(sScreenID);
