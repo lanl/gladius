@@ -9,13 +9,32 @@
 #ifndef TIMELINE_INFO_TYPES_H_INCLUDED
 #define TIMELINE_INFO_TYPES_H_INCLUDED
 
-#include <cassert>
+#include "common.h"
 
 #include <deque>
+#include <string>
+#include <map>
 #include <stdint.h>
 
+typedef uint32_t taskid_t;
+
+////////////////////////////////////////////////////////////////////////////////
+struct TaskKind {
+    taskid_t taskID = 0;
+    //
+    std::string name;
+    //
+    TaskKind(
+        uint32_t taskID,
+        const std::string &name
+    ) : taskID(taskID)
+      , name(name) { }
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
 struct TaskInfo {
-    uint32_t taskID = 0;
+    taskid_t taskID = 0;
     //
     uint32_t funcID = 0;
     //
@@ -46,29 +65,26 @@ struct TaskInfo {
       , uStopTime(uStopTime) { }
 };
 
-/**
- * @brief The ProcDesc struct
- */
+////////////////////////////////////////////////////////////////////////////////
 struct ProcDesc {
     //
     uint64_t procID = 0;
     //
-    uint32_t kind = 0;
+    ProcType kind = ProcType::UNKNOWN;
     //
     ProcDesc(
         uint64_t procID,
-        uint32_t kind
+        ProcType kind
     ) : procID(procID)
       , kind(kind) { }
 };
 
-/**
- * @brief The LegionProfData struct
- */
+////////////////////////////////////////////////////////////////////////////////
 struct LegionProfData {
-    LegionProfData& operator=(const LegionProfData&) {
-        assert(false);
-    }
+    //
+    LegionProfData& operator=(const LegionProfData&) = delete;
+    // Map between taskIDs to TaskKinds
+    std::map<taskid_t, TaskKind> taskKinds;
     //
     std::deque<TaskInfo> taskInfos;
     //
@@ -81,6 +97,16 @@ struct LegionProfData {
     nProcessors(void) const {
         return procDescs.size();
     }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class Task {
+public:
+    Task(
+        const std::string &name
+    );
+private:
+    std::string mName;
 };
 
 #endif

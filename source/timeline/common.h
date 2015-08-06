@@ -4,10 +4,14 @@
 #define APP_NAME      "timeline"
 #define APP_WIN_TITLE "Task Execution Timeline"
 
+// Keep This In Sync With Legion
 enum ProcType {
-    UTIL = 0,
-    LOC,
-    TOC
+    TOC_PROC,   // Throughput core
+    LOC_PROC,   // Latency core
+    UTIL_PROC,  // Utility core
+    IO_PROC,    // I/O core
+    PROC_GROUP, // Processor group
+    UNKNOWN     // ???
 };
 
 #endif // TIMELINE_COMMON_H

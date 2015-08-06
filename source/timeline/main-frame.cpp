@@ -51,7 +51,7 @@ MainFrame::MainFrame(
     topLayout->addWidget(mResetButton, 2, 1);
     setLayout(topLayout);
     // TODO FIXME
-    loadLog();
+    plotFromLogFile();
     //
     connect(
         mResetButton,
@@ -128,17 +128,19 @@ MainFrame::print(void)
 }
 
 void
-MainFrame::loadLog(void)
+MainFrame::plotFromLogFile(void)
 {
+    // TODO Add progress bar...
     qDebug() << "Loading Log File...";
+    //
     LegionProfLogParser parser;
     parser.parse("/Users/samuel/OUT.prof");
     if (!parser.parseSuccessful()) {
-        // FIXME
+        // FIXME Display Bad Parse and Why
         qDebug() << "Bad Parse!";
     }
-    mGraphWidget->addProcTimeline(ProcType::LOC);
-    mGraphWidget->addProcTimeline(ProcType::LOC);
+    // We have all the data we need, so just plot the thing.
+    mGraphWidget->plot(parser.results());
 }
 
 void

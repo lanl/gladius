@@ -10,6 +10,7 @@
 #define TIMELINE_GRAPH_WIDGET_H
 
 #include "common.h"
+#include "info-types.h"
 
 #include <QGraphicsView>
 #include <QList>
@@ -28,6 +29,8 @@ public:
     GraphWidget(QWidget *parent = nullptr);
     //
     void addProcTimeline(ProcType type);
+    //
+    void plot(const LegionProfData &plotData);
 
 private:
     //

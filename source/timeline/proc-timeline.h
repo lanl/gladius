@@ -1,15 +1,22 @@
 #ifndef TIMELINE_PROC_TIMELINE_H_INCLUDED
 #define TIMELINE_PROC_TIMELINE_H_INCLUDED
 
-#include <QRectF>
-#include <QPainter>
-#include <QGraphicsView>
+#include "common.h"
+
 #include <QGraphicsItem>
+
+QT_BEGIN_NAMESPACE
+class QRectF;
+class QGraphicsView;
+QT_END_NAMESPACE
 
 class ProcTimeline : public QGraphicsItem {
 public:
     //
-    ProcTimeline(QGraphicsView *parent);
+    ProcTimeline(
+        ProcType procType,
+        QGraphicsView *parent
+    );
     //
     QRectF boundingRect(void) const;
     //
@@ -20,6 +27,7 @@ public:
         QWidget *widget
     );
 private:
+    ProcType mProcType = ProcType::UNKNOWN;
     //
     QGraphicsView *view = nullptr;
     //

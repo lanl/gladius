@@ -2,20 +2,21 @@
 
 #include <QBrush>
 #include <QDebug>
+#include <QPainter>
 
 ProcTimeline::ProcTimeline(
+    ProcType procType,
     QGraphicsView *parent
-) : view(parent)
+) : mProcType(procType)
+  , view(parent)
 {
     setFlag(ItemSendsGeometryChanges);
-    setCacheMode(DeviceCoordinateCache);
-    setZValue(-1);
 }
 
 QRectF
 ProcTimeline::boundingRect(void) const
 {
-    return QRectF(0, 0, 2000, 200);
+    return QRectF(0, 0, 1000, 100);
 }
 
 void

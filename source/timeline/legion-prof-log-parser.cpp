@@ -6,6 +6,7 @@
  * top-level directory of this distribution.
  */
 
+#include "common.h"
 #include "legion-prof-log-parser.h"
 
 #include <QFile>
@@ -31,6 +32,11 @@ QRegExp gTaskInfoRx(
  */
 QRegExp gProcDescRx(
     "Prof Proc Desc ([0-9]+) ([0-9]+)"
+);
+
+// (Task ID) (Task Name)
+QRegExp gTaskKindRx(
+    "Prof Task Kind ([0-9]+) ([a-zA-Z0-9_]+)"
 );
 
 } // end namespace
@@ -77,6 +83,14 @@ LegionProfLogParser::parse(
     //
     while (!inputFile.atEnd()) {
         QString line(inputFile.readLine());
+        if (gTaskKindRx.indexIn(line) != -1) {
+            taskid_t tid = gTaskKindRx.cap(1).toUInt();
+            std::string tname = gTaskKindRx.cap(2).toStdString();
+            mProfData->taskKinds.insert(
+                std::make_pair(tid, TaskKind(tid, tname))
+            );
+            continue;
+        }
         //
         if (gTaskInfoRx.indexIn(line) != -1) {
             mProfData->taskInfos.push_back(
@@ -94,7 +108,7 @@ LegionProfLogParser::parse(
         if (gProcDescRx.indexIn(line) != -1) {
             mProfData->procDescs.push_back(
                 ProcDesc(gProcDescRx.cap(1).toULongLong(),
-                         gProcDescRx.cap(2).toUInt()
+                         static_cast<ProcType>(gProcDescRx.cap(2).toUInt())
                 )
             );
             continue;
@@ -102,8 +116,9 @@ LegionProfLogParser::parse(
     }
     inputFile.close();
 
-    qDebug() << "# Procs" << mProfData->procDescs.size();
-    qDebug() << "Found " <<  mProfData->taskInfos.size();
+    qDebug() << "# Proc Kinds Found:" << mProfData->taskKinds.size();
+    qDebug() << "# Procs Found:" << mProfData->procDescs.size();
+    qDebug() << "# Task Infos Found:" <<  mProfData->taskInfos.size();
 }
 
 /**

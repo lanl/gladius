@@ -48,7 +48,7 @@ private slots:
     //
     void print(void);
     //
-    void loadLog(void);
+    void plotFromLogFile(void);
 
 private:
     //
