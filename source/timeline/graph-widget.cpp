@@ -9,8 +9,6 @@
 #include "graph-widget.h"
 #include "proc-timeline.h"
 
-#include <QDebug>
-
 namespace {
 // enable if you want to use "debug colors."
 static const bool gDrawDebugColors = true;
@@ -45,7 +43,7 @@ GraphWidget::addProcTimeline(
     static qreal y = 0;
     ProcTimeline *tl = new ProcTimeline(type, this);
     tl->setY(y);
-    y += 64.0;
+    y += 32;
     mProcTimelines << tl;
     mScene->addItem(tl);
 }
@@ -57,5 +55,9 @@ GraphWidget::plot(
     // Create the proc timelines.
     for (const auto &procDesc : plotData.procDescs) {
         addProcTimeline(procDesc.kind);
+    }
+    // Populate them...
+    for (const auto &taskInfo : plotData.taskInfos) {
+        mProcTimelines.at(taskInfo.procID)->addTask(taskInfo);
     }
 }

@@ -136,7 +136,7 @@ MainFrame::plotFromLogFile(void)
     LegionProfLogParser parser;
     parser.parse("/Users/samuel/OUT.prof");
     if (!parser.parseSuccessful()) {
-        // FIXME Display Bad Parse and Why
+        // TODO Display Bad Parse and Why
         qDebug() << "Bad Parse!";
     }
     // We have all the data we need, so just plot the thing.
