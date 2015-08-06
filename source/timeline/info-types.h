@@ -17,6 +17,9 @@
 #include <stdint.h>
 
 typedef uint32_t taskid_t;
+typedef uint32_t funcid_t;
+typedef uint64_t procid_t;
+typedef uint64_t ustime_t;
 
 ////////////////////////////////////////////////////////////////////////////////
 struct TaskKind {
@@ -25,7 +28,7 @@ struct TaskKind {
     std::string name;
     //
     TaskKind(
-        uint32_t taskID,
+        taskid_t taskID,
         const std::string &name
     ) : taskID(taskID)
       , name(name) { }
@@ -36,26 +39,26 @@ struct TaskKind {
 struct TaskInfo {
     taskid_t taskID = 0;
     //
-    uint32_t funcID = 0;
+    funcid_t funcID = 0;
     //
-    uint64_t procID = 0;
+    procid_t procID = 0;
     //
-    uint64_t uCreateTime = 0;
+    ustime_t uCreateTime = 0;
     //
-    uint64_t uReadyTime = 0;
+    ustime_t uReadyTime = 0;
     //
-    uint64_t uStartTime = 0;
+    ustime_t uStartTime = 0;
     //
-    uint64_t uStopTime = 0;
+    ustime_t uStopTime = 0;
     //
     TaskInfo(
-        int32_t taskID,
-        int32_t funcID,
-        uint64_t procID,
-        uint64_t uCreateTime,
-        uint64_t uReadyTime,
-        uint64_t uStartTime,
-        uint64_t uStopTime
+        taskid_t taskID,
+        funcid_t funcID,
+        procid_t procID,
+        ustime_t uCreateTime,
+        ustime_t uReadyTime,
+        ustime_t uStartTime,
+        ustime_t uStopTime
     ) : taskID(taskID)
       , funcID(funcID)
       , procID(procID)
@@ -68,12 +71,12 @@ struct TaskInfo {
 ////////////////////////////////////////////////////////////////////////////////
 struct ProcDesc {
     //
-    uint64_t procID = 0;
+    procid_t procID = 0;
     //
     ProcType kind = ProcType::UNKNOWN;
     //
     ProcDesc(
-        uint64_t procID,
+        procid_t procID,
         ProcType kind
     ) : procID(procID)
       , kind(kind) { }
