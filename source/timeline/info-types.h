@@ -62,10 +62,10 @@ struct TaskInfo {
     ) : taskID(taskID)
       , funcID(funcID)
       , procID(procID)
-      , uCreateTime(uCreateTime / 1000)
-      , uReadyTime(uReadyTime   / 1000)
-      , uStartTime(uStartTime   / 1000)
-      , uStopTime(uStopTime     / 1000) {  }
+      , uCreateTime(uCreateTime)
+      , uReadyTime(uReadyTime)
+      , uStartTime(uStartTime)
+      , uStopTime(uStopTime) { }
 };
 
 ////////////////////////////////////////////////////////////////////////////////

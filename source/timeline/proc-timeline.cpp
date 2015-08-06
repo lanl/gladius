@@ -6,6 +6,7 @@
  * top-level directory of this distribution.
  */
 
+#include "common.h"
 #include "proc-timeline.h"
 
 #include <QBrush>
@@ -17,15 +18,12 @@ ProcTimeline::ProcTimeline(
     ProcType procType,
     QGraphicsView *parent
 ) : mProcType(procType)
-  , mView(parent)
-{
-    setFlag(ItemSendsGeometryChanges);
-}
+  , mView(parent) { }
 
 QRectF
 ProcTimeline::boundingRect(void) const
 {
-    if (mTaskWidgets.empty()) return QRectF();
+    return QRectF();
 }
 
 void
@@ -34,16 +32,16 @@ ProcTimeline::addTask(
 ) {
     TaskWidget *taskWidget = new TaskWidget(info);
     qreal x = 0.0, y = pos().y();
-    x = qreal(info.uStartTime / 100);
+    x = qreal(info.uStartTime / sMicroSecPerPixel);
     taskWidget->setPos(x, y);
     mTaskWidgets << taskWidget;
+    prepareGeometryChange();
     mView->scene()->addItem(taskWidget);
 }
 
 void
 ProcTimeline::paint(
-    QPainter *painter,
-    const QStyleOptionGraphicsItem *option,
-    QWidget *widget
-) {
-}
+    QPainter * /*painter */,
+    const QStyleOptionGraphicsItem * /* option */,
+    QWidget * /* widget */
+) { }

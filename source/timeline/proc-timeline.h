@@ -70,8 +70,6 @@ public:
     }
 
 private:
-    // TODO - Grab from user configury?
-    static constexpr qreal sMicroSecPerPixel = 100;
     //
     static constexpr qreal sHeight = 30;
     //
@@ -79,7 +77,6 @@ private:
     //
     qreal mWidth = 0.0;
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 class ProcTimeline : public QGraphicsItem {

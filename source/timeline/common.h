@@ -14,5 +14,9 @@ enum ProcType {
     UNKNOWN     // ???
 };
 
+#include <QtGlobal>
+// TODO - Grab from user configury.
+static const qreal sMicroSecPerPixel = 1e4;
+
 #endif // TIMELINE_COMMON_H
 
