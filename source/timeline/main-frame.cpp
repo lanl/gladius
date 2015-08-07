@@ -98,6 +98,11 @@ MainFrame::keyPressEvent(
     QKeyEvent *keyEvent
 ) {
     switch (keyEvent->key()) {
+        // Reset Zoom
+        case '0': {
+            resetView();
+            break;
+        }
         // Zoom In
         case '+': {
             if (mZoomValue < sMaxZoomValue) {
