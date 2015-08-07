@@ -27,59 +27,17 @@ MainFrame::MainFrame(
     QWidget *parent
 ) : QFrame(parent)
 {
+    mZoomValue = sInitZoomValue;
     // No frame around us.
     setFrameShape(QFrame::NoFrame);
     //
     mGraphWidget = new GraphWidget(this);
     //
-    mZoomSlider = new QSlider(this);
-    mZoomSlider->setMinimum(sMinSliderValue);
-    mZoomSlider->setMaximum(sMaxSliderValue);
-    mZoomSlider->setValue(sInitSliderValue);
-    mZoomSlider->setTickPosition(QSlider::TicksRight);
-    // Zoom slider layout
-    QVBoxLayout *zoomSliderLayout = new QVBoxLayout();
-    zoomSliderLayout->addWidget(mZoomSlider);
-    //
-    mResetButton = new QToolButton(this);
-    mResetButton->setText(tr("0"));
-    mResetButton->setEnabled(false);
-    //
-    QGridLayout *topLayout = new QGridLayout(this);
-    topLayout->addWidget(mGraphWidget, 1, 0);
-    topLayout->addLayout(zoomSliderLayout, 1, 1);
-    topLayout->addWidget(mResetButton, 2, 1);
-    setLayout(topLayout);
+    QGridLayout *layout = new QGridLayout(this);
+    layout ->addWidget(mGraphWidget, 1, 0);
+    setLayout(layout);
     // TODO FIXME
     plotFromLogFile();
-    //
-    connect(
-        mResetButton,
-        SIGNAL(clicked()),
-        this,
-        SLOT(resetView())
-    );
-    //
-    connect(
-        mZoomSlider,
-        SIGNAL(valueChanged(int)),
-        this,
-        SLOT(setupMatrix())
-    );
-    //
-    connect(
-        mGraphWidget->verticalScrollBar(),
-        SIGNAL(valueChanged(int)),
-        this,
-        SLOT(setResetButtonEnabled())
-    );
-    //
-    connect(
-        mGraphWidget->horizontalScrollBar(),
-        SIGNAL(valueChanged(int)),
-        this,
-        SLOT(setResetButtonEnabled())
-    );
     //
     setupMatrix();
 }
@@ -87,16 +45,9 @@ MainFrame::MainFrame(
 void
 MainFrame::resetView(void)
 {
-    mZoomSlider->setValue(sInitSliderValue);
+    mZoomValue = sInitZoomValue;
     setupMatrix();
-    mGraphWidget->ensureVisible(QRectF(0, 0, 0, 0));
-    mResetButton->setEnabled(false);
-}
-
-void
-MainFrame::setResetButtonEnabled(void)
-{
-    mResetButton->setEnabled(true);
+    //mGraphWidget->ensureVisible(QRectF(0, 0, 0, 0));
 }
 
 void
@@ -104,14 +55,13 @@ MainFrame::setupMatrix(void)
 {
     qreal scale = qPow(
         qreal(2),
-        (mZoomSlider->value() - sInitSliderValue) / qreal(50)
+        (mZoomValue - sInitZoomValue) / qreal(50)
     );
     //
     QMatrix matrix;
     matrix.scale(scale, scale);
     //
     mGraphWidget->setMatrix(matrix);
-    setResetButtonEnabled();
 }
 
 void
@@ -144,26 +94,26 @@ MainFrame::plotFromLogFile(void)
 }
 
 void
-MainFrame::zoomIn(int level)
-{
-    mZoomSlider->setValue(mZoomSlider->value() + level);
-}
-
-void
-MainFrame::zoomOut(int level)
-{
-    mZoomSlider->setValue(mZoomSlider->value() - level);
-}
-
-void
-MainFrame::wheelEvent(QWheelEvent *e)
-{
-    if (e->modifiers() & Qt::ControlModifier) {
-        if (e->delta() > 0) zoomIn(6);
-        else zoomOut(6);
-        e->accept();
-    }
-    else {
-        QFrame::wheelEvent(e);
+MainFrame::keyPressEvent(
+    QKeyEvent *keyEvent
+) {
+    switch (keyEvent->key()) {
+        // Zoom In
+        case '+': {
+            if (mZoomValue < sMaxZoomValue) {
+                mZoomValue += sZoomKeyIncrement;
+                setupMatrix();
+            }
+            break;
+        }
+        // Zoom Out
+        case '-': {
+            if (mZoomValue > sMinZoomValue) {
+                mZoomValue -= sZoomKeyIncrement;
+                setupMatrix();
+            }
+            break;
+        }
+        default: QFrame::keyPressEvent(keyEvent);
     }
 }

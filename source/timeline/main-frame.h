@@ -28,21 +28,13 @@ public:
     //
     explicit MainFrame(QWidget *parent = nullptr);
 
-public slots:
-    //
-    void zoomIn(int level = 1);
-    //
-    void zoomOut(int level = 1);
-
 protected:
     //
-    void wheelEvent(QWheelEvent *e) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *keyEvent) Q_DECL_OVERRIDE;
 
 private slots:
     //
     void resetView(void);
-    //
-    void setResetButtonEnabled(void);
     //
     void setupMatrix(void);
     //
@@ -52,17 +44,17 @@ private slots:
 
 private:
     //
-    static constexpr int sMinSliderValue  = 0;
+    static constexpr int sMinZoomValue  = 0;
     //
-    static constexpr int sMaxSliderValue  = 512;
+    static constexpr int sMaxZoomValue  = 512;
     //
-    static constexpr int sInitSliderValue = sMaxSliderValue / 2;
+    static constexpr int sInitZoomValue = sMaxZoomValue / 2;
+    //
+    static constexpr int sZoomKeyIncrement = 8;
+    //
+    int mZoomValue = 0;
     //
     GraphWidget *mGraphWidget = nullptr;
-    //
-    QToolButton *mResetButton = nullptr;
-    //
-    QSlider *mZoomSlider = nullptr;
 };
 
 #endif // TIMELINE_VIEW_H_INCLUDED
