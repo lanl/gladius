@@ -83,9 +83,10 @@ LegionProfLogParser::parse(
     //
     while (!inputFile.atEnd()) {
         QString line(inputFile.readLine());
+        //
         if (gTaskKindRx.indexIn(line) != -1) {
-            taskid_t tid = gTaskKindRx.cap(1).toUInt();
-            std::string tname = gTaskKindRx.cap(2).toStdString();
+            const taskid_t tid = gTaskKindRx.cap(1).toUInt();
+            const std::string tname = gTaskKindRx.cap(2).toStdString();
             mProfData->taskKinds.insert(
                 std::make_pair(tid, TaskKind(tid, tname))
             );

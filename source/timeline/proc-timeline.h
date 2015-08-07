@@ -15,6 +15,7 @@
 #include <QList>
 #include <QGraphicsItem>
 #include <QPainter>
+#include <QBrush>
 
 QT_BEGIN_NAMESPACE
 class QRectF;
@@ -27,7 +28,9 @@ public:
     TaskWidget(
         const TaskInfo &info
     ) : mInfo(info)
-      , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel) {
+      , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
+      , mFillColor(Qt::gray)
+    {
         // TODO Add Cache
         QString toolTip = "Start:" + QString::number(mInfo.uStartTime)
                         + " End: " + QString::number(mInfo.uStopTime);
@@ -45,7 +48,7 @@ public:
         QWidget * /* widget */) Q_DECL_OVERRIDE
     {
         painter->setPen(Qt::NoPen);
-        painter->setBrush(Qt::black);
+        painter->setBrush(mFillColor);
         painter->drawRect(boundingRect());
     }
 
@@ -69,6 +72,11 @@ public:
         return mInfo.uStopTime;
     }
 
+    void
+    setFillColor(const QColor &color) {
+        mFillColor = color;
+    }
+
 private:
     //
     static constexpr qreal sHeight = 30;
@@ -76,6 +84,8 @@ private:
     TaskInfo mInfo;
     //
     qreal mWidth = 0.0;
+    //
+    QColor mFillColor;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,6 +108,11 @@ public:
     //
     void
     addTask(const TaskInfo &info);
+    //
+    void
+    setTaskColorPalette(const QList<QColor> &colorPalette) {
+        mColorPalette = colorPalette;
+    }
 
 private:
     ProcType mProcType = ProcType::UNKNOWN;
@@ -107,6 +122,8 @@ private:
     QRectF mBoundingRect;
     //
     QList<TaskWidget *> mTaskWidgets;
+    //
+    QList<QColor> mColorPalette;
 };
 
 #endif // TIMELINE_PROC_TIMELINE_H_INCLUDED

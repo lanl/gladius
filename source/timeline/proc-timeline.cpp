@@ -34,6 +34,9 @@ ProcTimeline::addTask(
     qreal x = 0.0, y = pos().y();
     x = qreal(info.uStartTime / sMicroSecPerPixel);
     taskWidget->setPos(x, y);
+    if (!mColorPalette.empty()) {
+        taskWidget->setFillColor(mColorPalette[info.funcID]);
+    }
     mTaskWidgets << taskWidget;
     prepareGeometryChange();
     mView->scene()->addItem(taskWidget);
