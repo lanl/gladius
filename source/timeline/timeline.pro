@@ -19,6 +19,10 @@ INCLUDEPATH += .
 # TODO Pull top-level configury and populate with that.
 QMAKE_CXXFLAGS += -Wextra -std=c++11
 
+# TODO Just create a timeline.pro.in and have autotoos generate the .pro?
+# TODO Populate with real boost path from configury
+QMAKE_CXXFLAGS += -I/usr/local/include
+
 # Input
 SOURCES += \
 main-window.cpp \

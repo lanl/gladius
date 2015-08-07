@@ -34,7 +34,17 @@ void
 ProcTimeline::addTask(
     const TaskInfo &info
 ) {
-    const qreal x = qreal(info.uStartTime / sMicroSecPerPixel);
+    using namespace boost::icl;
+
+    const ustime_t startTime = info.uStartTime;
+    const ustime_t stopTime  = info.uStopTime;
+
+    mTimeIntervalMap.add(
+        std::make_pair(interval<ustime_t>::right_open(startTime, stopTime), 1)
+    );
+
+    //
+    const qreal x = qreal(startTime / sMicroSecPerPixel);
     const qreal y = pos().y();
     //
     TaskWidget *taskWidget = new TaskWidget(info);
