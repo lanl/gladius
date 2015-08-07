@@ -13,7 +13,7 @@
 #include "info-types.h"
 
 #include <QGraphicsView>
-#include <QList>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 class QWidget;
@@ -28,7 +28,7 @@ public:
     //
     GraphWidget(QWidget *parent = nullptr);
     //
-    void addProcTimeline(ProcType type);
+    void addProcTimeline(const ProcDesc &procDesc);
     //
     void plot(const LegionProfData &plotData);
 
@@ -36,7 +36,7 @@ private:
     //
     QGraphicsScene *mScene = nullptr;
     //
-    QList<ProcTimeline *> mProcTimelines;
+    QMap<procid_t, ProcTimeline *> mProcTimelines;
 };
 
 #endif // TIMELINE_GRAPHWIDGET_H

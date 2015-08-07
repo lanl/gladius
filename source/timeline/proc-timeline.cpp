@@ -18,7 +18,11 @@ ProcTimeline::ProcTimeline(
     ProcType procType,
     QGraphicsView *parent
 ) : mProcType(procType)
-  , mView(parent) { }
+  , mView(parent)
+{
+    // Add an empty line to the scene. The line will be updated when needed.
+    mTimeAxisLine = mView->scene()->addLine(QLineF());
+}
 
 QRectF
 ProcTimeline::boundingRect(void) const
@@ -30,16 +34,33 @@ void
 ProcTimeline::addTask(
     const TaskInfo &info
 ) {
+    const qreal x = qreal(info.uStartTime / sMicroSecPerPixel);
+    const qreal y = pos().y();
+    //
     TaskWidget *taskWidget = new TaskWidget(info);
-    qreal x = 0.0, y = pos().y();
-    x = qreal(info.uStartTime / sMicroSecPerPixel);
-    taskWidget->setPos(x, y);
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
+    taskWidget->setPos(x, y);
     mTaskWidgets << taskWidget;
-    prepareGeometryChange();
+    // Add this now to the scene so we can get an updated scene width for
+    // the line drawing.
     mView->scene()->addItem(taskWidget);
+    // Update x-axis geometry.
+    const qreal sceneWidth = scene()->width();
+    // The amount of spacing between the task widget and the timeline.
+    static const qreal lineWidgetSpacing = 6.0;
+    // y1 and y2 will always be the sdame. Add the widget's height because y
+    // seems to be coming from the top.
+    const qreal xAxisY = y + taskWidget->getHeight() + lineWidgetSpacing;
+    //
+    //
+    mTimeAxisLine->setLine(
+        0.0,
+        xAxisY,
+        sceneWidth,
+        xAxisY
+    );
 }
 
 void

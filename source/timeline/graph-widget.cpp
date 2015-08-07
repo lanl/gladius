@@ -41,14 +41,14 @@ GraphWidget::GraphWidget(
 
 void
 GraphWidget::addProcTimeline(
-    ProcType type
+    const ProcDesc &procDesc
 ) {
     static qreal y = 0;
-    ProcTimeline *tl = new ProcTimeline(type, this);
+    ProcTimeline *tl = new ProcTimeline(procDesc.kind, this);
     tl->setY(y);
     // FIXME Some timelines are thicker than others.
-    y += 32;
-    mProcTimelines << tl;
+    y += 45;
+    mProcTimelines.insert(procDesc.procID, tl);
     mScene->addItem(tl);
 }
 
@@ -80,7 +80,7 @@ GraphWidget::plot(
     QList<QColor> colorPalette = getColors(30);
     // Create the proc timelines.
     for (const auto &procDesc : plotData.procDescs) {
-        addProcTimeline(procDesc.kind);
+        addProcTimeline(procDesc);
     }
     // Set their color palette.
     foreach (ProcTimeline *timeline, mProcTimelines) {
@@ -89,6 +89,6 @@ GraphWidget::plot(
 
     // Populate them...
     for (const auto &taskInfo : plotData.taskInfos) {
-        mProcTimelines.at(taskInfo.procID)->addTask(taskInfo);
+        mProcTimelines[taskInfo.procID]->addTask(taskInfo);
     }
 }

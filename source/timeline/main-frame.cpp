@@ -54,8 +54,8 @@ void
 MainFrame::setupMatrix(void)
 {
     qreal scale = qPow(
-        qreal(2),
-        (mZoomValue - sInitZoomValue) / qreal(50)
+        2.0,
+        (mZoomValue - sInitZoomValue) / 50.0
     );
     //
     QMatrix matrix;

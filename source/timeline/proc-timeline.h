@@ -20,6 +20,7 @@
 QT_BEGIN_NAMESPACE
 class QRectF;
 class QGraphicsView;
+class QGraphicsLineItem;
 QT_END_NAMESPACE
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,12 +30,12 @@ public:
         const TaskInfo &info
     ) : mInfo(info)
       , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
-      , mFillColor(Qt::gray)
+      , mFillColor(Qt::gray /* Default Color */)
     {
         // TODO Add Cache
         QString toolTip = "Start:" + QString::number(mInfo.uStartTime)
                         + " End: " + QString::number(mInfo.uStopTime);
-        this->setToolTip(toolTip);
+        setToolTip(toolTip);
     }
     //
     QRectF boundingRect(void) const Q_DECL_OVERRIDE {
@@ -75,6 +76,11 @@ public:
     void
     setFillColor(const QColor &color) {
         mFillColor = color;
+    }
+
+    qreal
+    getHeight(void) {
+        return sHeight;
     }
 
 private:
@@ -124,6 +130,8 @@ private:
     QList<TaskWidget *> mTaskWidgets;
     //
     QList<QColor> mColorPalette;
+    //
+    QGraphicsLineItem *mTimeAxisLine = nullptr;
 };
 
 #endif // TIMELINE_PROC_TIMELINE_H_INCLUDED
