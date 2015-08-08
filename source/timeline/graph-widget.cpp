@@ -47,7 +47,7 @@ GraphWidget::addProcTimeline(
     ProcTimeline *tl = new ProcTimeline(procDesc.kind, this);
     tl->setY(y);
     // FIXME Some timelines are thicker than others.
-    y += 45;
+    y += 65;
     mProcTimelines.insert(procDesc.procID, tl);
     mScene->addItem(tl);
 }

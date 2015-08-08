@@ -31,8 +31,10 @@ QT_END_NAMESPACE
 class TaskWidget : public QGraphicsItem {
 public:
     TaskWidget(
-        const TaskInfo &info
+        const TaskInfo &info,
+        uint32_t level
     ) : mInfo(info)
+      , mLevel(level)
       , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
       , mFillColor(Qt::gray /* Default Color */)
     {
@@ -88,6 +90,8 @@ public:
     }
 
 private:
+    //
+    uint32_t mLevel = 0;
     //
     static constexpr qreal sHeight = 30;
     //

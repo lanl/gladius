@@ -44,23 +44,28 @@ ProcTimeline::addTask(
     auto closedInterval = construct< discrete_interval<ustime_t> >(
         startTime, stopTime, interval_bounds::closed()
     );
-    //
+    // The 1 here is the increment when there is an overlap.
     mTimeIntervalMap.add(std::make_pair(closedInterval, 1));
-    //
+    // Now figure out at what level the task will be drawn. We do this be first
+    // determining whether or not there exists overlapping ranges. If so,
+    // now determine the max number of overlaps.
+    uint32_t taskLevel = 1;
     auto itRes = mTimeIntervalMap.equal_range(closedInterval);
+    // first = Time Interval.
+    // second = Number of overlaps in the interval.
     for (auto it = itRes.first; it != itRes.second; ++it) {
-        std::cerr << "== " << it->first << " " << it->second << std::endl;
+        if (it->second > taskLevel) ++taskLevel;
     }
-    std::cerr << std::endl;
     //
     const qreal x = qreal(startTime / sMicroSecPerPixel);
     const qreal y = pos().y();
     //
-    TaskWidget *taskWidget = new TaskWidget(info);
+    TaskWidget *taskWidget = new TaskWidget(info, taskLevel);
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
-    taskWidget->setPos(x, y);
+    // FIXME get height
+    taskWidget->setPos(x, y + (30.0 * taskLevel));
     mTaskWidgets << taskWidget;
     // Add this now to the scene so we can get an updated scene width for
     // the line drawing.
@@ -74,12 +79,14 @@ ProcTimeline::addTask(
     const qreal xAxisY = y + taskWidget->getHeight() + lineWidgetSpacing;
     //
     //
+#if 0
     mTimeAxisLine->setLine(
         0.0,
         xAxisY,
         sceneWidth,
         xAxisY
     );
+#endif
 }
 
 void
