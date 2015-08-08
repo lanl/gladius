@@ -92,7 +92,9 @@ GraphWidget::plot(
         mProcTimelines[taskInfo.procID]->addTask(taskInfo);
     }
     //
+#if 0
     foreach (ProcTimeline *procTimeline, mProcTimelines) {
         procTimeline->debugDumpTimeIntervalData();
     }
+#endif
 }

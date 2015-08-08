@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-#include <boost/icl/interval_map.hpp>
+#include <boost/icl/split_interval_map.hpp>
 
 QT_BEGIN_NAMESPACE
 class QRectF;
@@ -127,9 +127,11 @@ public:
     void
     debugDumpTimeIntervalData(void) {
         for (const auto &ti : mTimeIntervalMap) {
-            std::cout << "Time: " << ti.first
-                      << "# Overlap: " << ti.second << std::endl;
+            std::cerr << "Time: " << ti.first
+                      << " # Overlapping Times: "
+                      << ti.second << std::endl;
         }
+        std::cerr << std::endl;
     }
 
 private:
@@ -145,7 +147,7 @@ private:
     //
     QGraphicsLineItem *mTimeAxisLine = nullptr;
     //
-    boost::icl::interval_map<ustime_t, uint32_t> mTimeIntervalMap;
+    boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervalMap;
 };
 
 #endif // TIMELINE_PROC_TIMELINE_H_INCLUDED

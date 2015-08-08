@@ -14,6 +14,8 @@
 #include <QPainter>
 #include <QGraphicsView>
 
+#include <iostream>
+
 ProcTimeline::ProcTimeline(
     ProcType procType,
     QGraphicsView *parent
@@ -39,10 +41,17 @@ ProcTimeline::addTask(
     const ustime_t startTime = info.uStartTime;
     const ustime_t stopTime  = info.uStopTime;
 
-    mTimeIntervalMap.add(
-        std::make_pair(interval<ustime_t>::right_open(startTime, stopTime), 1)
+    auto closedInterval = construct< discrete_interval<ustime_t> >(
+        startTime, stopTime, interval_bounds::closed()
     );
-
+    //
+    mTimeIntervalMap.add(std::make_pair(closedInterval, 1));
+    //
+    auto itRes = mTimeIntervalMap.equal_range(closedInterval);
+    for (auto it = itRes.first; it != itRes.second; ++it) {
+        std::cerr << "== " << it->first << " " << it->second << std::endl;
+    }
+    std::cerr << std::endl;
     //
     const qreal x = qreal(startTime / sMicroSecPerPixel);
     const qreal y = pos().y();
