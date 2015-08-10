@@ -11,6 +11,7 @@
 
 #include "common.h"
 #include "info-types.h"
+#include "graph-widget.h"
 
 #include <QList>
 #include <QGraphicsItem>
@@ -60,22 +61,22 @@ public:
     }
 
     ustime_t
-    getCreateTime(void) {
+    getCreateTime(void) const {
         return mInfo.uCreateTime;
     }
 
     ustime_t
-    getReadyTime(void) {
+    getReadyTime(void) const {
         return mInfo.uReadyTime;
     }
 
     ustime_t
-    getStartTime(void) {
+    getStartTime(void) const {
         return mInfo.uStartTime;
     }
 
     ustime_t
-    getStopTime(void) {
+    getStopTime(void) const {
         return mInfo.uStopTime;
     }
 
@@ -84,7 +85,7 @@ public:
         mFillColor = color;
     }
 
-    qreal
+    static qreal
     getHeight(void) {
         return sHeight;
     }
@@ -138,7 +139,14 @@ public:
         std::cerr << std::endl;
     }
 
+    qreal
+    getHeight(void) const {
+        return mCurrentMaxTaskLevel * TaskWidget::getHeight();
+    }
+
+
 private:
+    //
     ProcType mProcType = ProcType::UNKNOWN;
     //
     QGraphicsView *mView = nullptr;
@@ -153,6 +161,16 @@ private:
     // A map of time intervals (in ustime_t) and number of overlaps at
     // a given interval.
     boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervalMap;
+    //
+    static constexpr uint32_t sMinTaskLevel = 1;
+    //
+    uint32_t mCurrentMaxTaskLevel = 0;
+    //
+    GraphWidget *
+    mGraphWidget(void) const {
+        return static_cast<GraphWidget *>(mView);
+    }
+
 };
 
 #endif // TIMELINE_PROC_TIMELINE_H_INCLUDED

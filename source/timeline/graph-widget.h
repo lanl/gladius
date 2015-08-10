@@ -31,6 +31,8 @@ public:
     void addProcTimeline(const ProcDesc &procDesc);
     //
     void plot(const LegionProfData &plotData);
+    //
+    void updateProcTimelineLayout(void);
 
 private:
     //

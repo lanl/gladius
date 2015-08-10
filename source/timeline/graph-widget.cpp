@@ -43,13 +43,10 @@ void
 GraphWidget::addProcTimeline(
     const ProcDesc &procDesc
 ) {
-    static qreal y = 0;
     ProcTimeline *tl = new ProcTimeline(procDesc.kind, this);
-    tl->setY(y);
-    // FIXME Some timelines are thicker than others.
-    y += 70;
     mProcTimelines.insert(procDesc.procID, tl);
     mScene->addItem(tl);
+    updateProcTimelineLayout();
 }
 
 // TODO Move into utils
@@ -91,9 +88,21 @@ GraphWidget::plot(
         mProcTimelines[taskInfo.procID]->addTask(taskInfo);
     }
     //
-#if 0
+#if 0 // For debugging time interval data.
     foreach (ProcTimeline *procTimeline, mProcTimelines) {
         procTimeline->debugDumpTimeIntervalData();
     }
 #endif
+}
+
+void
+GraphWidget::updateProcTimelineLayout(void)
+{
+    const qreal spacing = 10.0;
+    qreal y = 0.0;
+    // QMaps are always sorted by key. This is what we want.
+    foreach (ProcTimeline *procTimeline, mProcTimelines) {
+        procTimeline->setY(y);
+        y += ((2.0 * procTimeline->getHeight()) + spacing);
+    }
 }
