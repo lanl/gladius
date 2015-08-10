@@ -112,8 +112,6 @@ MainFrame::keyPressEvent(
     QKeyEvent *keyEvent
 ) {
     const bool commandPressed = (keyEvent->modifiers() & Qt::ControlModifier);
-    // For OS X laptops.
-    const bool osxZoomIn = commandPressed && keyEvent->key() == Qt::Key_Equal;
     // Open Log File
     if (keyEvent->matches(QKeySequence::Open)) {
         QString fileName = openLogFile();
@@ -125,7 +123,8 @@ MainFrame::keyPressEvent(
         return;
     }
     // Zoom In
-    else if (keyEvent->matches(QKeySequence::ZoomIn) || osxZoomIn) {
+    else if (keyEvent->matches(QKeySequence::ZoomIn) ||
+             (commandPressed && keyEvent->key() == Qt::Key_Equal)) {
         if (mZoomValue < sMaxZoomValue) {
             mZoomValue += sZoomKeyIncrement;
             setupMatrix();
@@ -138,6 +137,11 @@ MainFrame::keyPressEvent(
             mZoomValue -= sZoomKeyIncrement;
             setupMatrix();
         }
+        return;
+    }
+    // Print
+    else if (keyEvent->matches(QKeySequence::Print)) {
+        print();
         return;
     }
     switch (keyEvent->key()) {

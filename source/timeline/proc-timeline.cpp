@@ -51,8 +51,8 @@ ProcTimeline::addTask(
     // now determine the max number of overlaps.
     uint32_t taskLevel = 1;
     auto itRes = mTimeIntervalMap.equal_range(closedInterval);
-    // first = Time Interval.
-    // second = Number of overlaps in the interval.
+    // it->first = Time Interval.
+    // it->second = Number of overlaps in the interval.
     for (auto it = itRes.first; it != itRes.second; ++it) {
         if (it->second > taskLevel) ++taskLevel;
     }
