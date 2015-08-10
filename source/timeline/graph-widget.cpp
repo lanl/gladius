@@ -47,7 +47,7 @@ GraphWidget::addProcTimeline(
     ProcTimeline *tl = new ProcTimeline(procDesc.kind, this);
     tl->setY(y);
     // FIXME Some timelines are thicker than others.
-    y += 65;
+    y += 70;
     mProcTimelines.insert(procDesc.procID, tl);
     mScene->addItem(tl);
 }
@@ -86,7 +86,6 @@ GraphWidget::plot(
     foreach (ProcTimeline *timeline, mProcTimelines) {
         timeline->setTaskColorPalette(colorPalette);
     }
-
     // Populate them...
     for (const auto &taskInfo : plotData.taskInfos) {
         mProcTimelines[taskInfo.procID]->addTask(taskInfo);

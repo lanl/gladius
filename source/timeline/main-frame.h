@@ -40,7 +40,9 @@ private slots:
     //
     void print(void);
     //
-    void plotFromLogFile(void);
+    void plotFromLogFile(const QString &fileName);
+    //
+    QString openLogFile(void);
 
 private:
     //

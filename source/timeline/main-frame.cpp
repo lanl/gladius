@@ -10,6 +10,8 @@
 #include "graph-widget.h"
 #include "legion-prof-log-parser.h"
 
+#include <QFileDialog>
+#include <QString>
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
 #include <QPrintDialog>
@@ -36,8 +38,6 @@ MainFrame::MainFrame(
     QGridLayout *layout = new QGridLayout(this);
     layout ->addWidget(mGraphWidget, 1, 0);
     setLayout(layout);
-    // TODO FIXME
-    plotFromLogFile();
     //
     setupMatrix();
 }
@@ -78,13 +78,14 @@ MainFrame::print(void)
 }
 
 void
-MainFrame::plotFromLogFile(void)
-{
+MainFrame::plotFromLogFile(
+    const QString &fileName
+) {
     // TODO Add progress bar...
     qDebug() << "Loading Log File...";
     //
     LegionProfLogParser parser;
-    parser.parse("/Users/samuel/OUT.prof");
+    parser.parse(fileName);
     if (!parser.parseSuccessful()) {
         // TODO Display Bad Parse and Why
         qDebug() << "Bad Parse!";
@@ -93,18 +94,31 @@ MainFrame::plotFromLogFile(void)
     mGraphWidget->plot(parser.results());
 }
 
+QString
+MainFrame::openLogFile(void)
+{
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("Open Log File"),
+        QDir::homePath(),
+        tr("Log Files (*.*)")
+    );
+    //
+    return fileName;
+}
+
 void
 MainFrame::keyPressEvent(
     QKeyEvent *keyEvent
 ) {
     switch (keyEvent->key()) {
         // Reset Zoom
-        case '0': {
+        case Qt::Key_0: {
             resetView();
             break;
         }
         // Zoom In
-        case '+': {
+        case Qt::Key_Plus: {
             if (mZoomValue < sMaxZoomValue) {
                 mZoomValue += sZoomKeyIncrement;
                 setupMatrix();
@@ -112,10 +126,19 @@ MainFrame::keyPressEvent(
             break;
         }
         // Zoom Out
-        case '-': {
+        case Qt::Key_Minus: {
             if (mZoomValue > sMinZoomValue) {
                 mZoomValue -= sZoomKeyIncrement;
                 setupMatrix();
+            }
+            break;
+        }
+        // Open Log File
+        case Qt::Key_O: {
+            QString fileName = openLogFile();
+            // TODO also check if we need to cleanup old plot.
+            if (!fileName.isEmpty()) {
+                plotFromLogFile(fileName);
             }
             break;
         }
