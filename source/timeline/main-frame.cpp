@@ -111,6 +111,16 @@ void
 MainFrame::keyPressEvent(
     QKeyEvent *keyEvent
 ) {
+    // Open Log File
+    if (keyEvent->matches(QKeySequence::Open)) {
+        QString fileName = openLogFile();
+        // TODO also check if we need to cleanup old plot.
+        if (!fileName.isEmpty()) {
+            plotFromLogFile(fileName);
+        }
+        // Done in either case.
+        return;
+    }
     switch (keyEvent->key()) {
         // Reset Zoom
         case Qt::Key_0: {
@@ -130,15 +140,6 @@ MainFrame::keyPressEvent(
             if (mZoomValue > sMinZoomValue) {
                 mZoomValue -= sZoomKeyIncrement;
                 setupMatrix();
-            }
-            break;
-        }
-        // Open Log File
-        case Qt::Key_O: {
-            QString fileName = openLogFile();
-            // TODO also check if we need to cleanup old plot.
-            if (!fileName.isEmpty()) {
-                plotFromLogFile(fileName);
             }
             break;
         }
