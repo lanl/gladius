@@ -146,7 +146,7 @@ MainFrame::keyPressEvent(
     }
     switch (keyEvent->key()) {
         // Reset Zoom
-        case Qt::Key_0: {
+        case Qt::Key_Equal: {
             resetView();
             break;
         }

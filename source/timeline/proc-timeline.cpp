@@ -38,9 +38,9 @@ ProcTimeline::addTask(
 ) {
     using namespace boost::icl;
 
-    const ustime_t startTime = info.uStartTime;
-    const ustime_t stopTime  = info.uStopTime;
-
+    const ustime_t startTime = info.uStartTime / sMicroSecPerPixel;
+    const ustime_t stopTime  = info.uStopTime / sMicroSecPerPixel;
+    //
     auto closedInterval = construct< discrete_interval<ustime_t> >(
         startTime, stopTime, interval_bounds::closed()
     );
@@ -57,7 +57,7 @@ ProcTimeline::addTask(
         if (it->second > taskLevel) ++taskLevel;
     }
     //
-    const qreal x = qreal(startTime / sMicroSecPerPixel);
+    const qreal x = qreal(startTime);
     const qreal y = pos().y();
     //
     TaskWidget *taskWidget = new TaskWidget(info, taskLevel);

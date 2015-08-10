@@ -150,7 +150,8 @@ private:
     QList<QColor> mColorPalette;
     //
     QGraphicsLineItem *mTimeAxisLine = nullptr;
-    //
+    // A map of time intervals (in ustime_t) and number of overlaps at
+    // a given interval.
     boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervalMap;
 };
 
