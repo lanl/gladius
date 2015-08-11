@@ -98,29 +98,30 @@ LegionProfLogParser::parse(
             );
             continue;
         }
-        //
+        // Timing data coming in as nanoseconds.
         if (gTaskInfoRx.indexIn(line) != -1) {
             mProfData->taskInfos.push_back(
                 TaskInfo(gTaskInfoRx.cap(1).toUInt(),
                          gTaskInfoRx.cap(2).toUInt(),
                          gTaskInfoRx.cap(3).toULongLong(),
-                         gTaskInfoRx.cap(4).toULongLong() / 1000,
-                         gTaskInfoRx.cap(5).toULongLong() / 1000,
-                         gTaskInfoRx.cap(6).toULongLong() / 1000,
-                         gTaskInfoRx.cap(7).toULongLong() / 1000
+                         gTaskInfoRx.cap(4).toULongLong() / 1e3,
+                         gTaskInfoRx.cap(5).toULongLong() / 1e3,
+                         gTaskInfoRx.cap(6).toULongLong() / 1e3,
+                         gTaskInfoRx.cap(7).toULongLong() / 1e3
                 )
             );
             continue;
         }
+        // Timing data coming in as nanoseconds.
         if (gMetaInfoRx.indexIn(line) != -1) {
             mProfData->metaInfos.push_back(
                 TaskInfo(gMetaInfoRx.cap(1).toUInt(),
                          gMetaInfoRx.cap(2).toUInt(),
                          gMetaInfoRx.cap(3).toULongLong(),
-                         gMetaInfoRx.cap(4).toULongLong() / 1000,
-                         gMetaInfoRx.cap(5).toULongLong() / 1000,
-                         gMetaInfoRx.cap(6).toULongLong() / 1000,
-                         gMetaInfoRx.cap(7).toULongLong() / 1000
+                         gMetaInfoRx.cap(4).toULongLong() / 1e3,
+                         gMetaInfoRx.cap(5).toULongLong() / 1e3,
+                         gMetaInfoRx.cap(6).toULongLong() / 1e3,
+                         gMetaInfoRx.cap(7).toULongLong() / 1e3
                 )
             );
             continue;

@@ -59,18 +59,17 @@ ProcTimeline::addTask(
 ) {
     using namespace boost::icl;
 
-    const ustime_t startTime = info.uStartTime / sMicroSecPerPixel;
-    const ustime_t stopTime  = info.uStopTime / sMicroSecPerPixel;
+    const ustime_t startTime = info.uStartTime;
+    const ustime_t stopTime  = info.uStopTime;
     //
-    auto closedInterval = construct< discrete_interval<ustime_t> >(
-        startTime, stopTime, interval_bounds::closed()
-    );
+    boost::icl::interval<ustime_t>::type window;
+    window = interval<ustime_t>::closed(startTime, stopTime);
     // The 1 here is the increment when there is an overlap.
-    mTimeIntervalMap.add(std::make_pair(closedInterval, 1));
+    mTimeIntervalMap.add(std::make_pair(window, 1));
     // Now figure out at what level the task will be drawn. We do this be first
     // determining whether or not there exists overlapping ranges. If so,
     // now determine the max number of overlaps.
-    auto itRes = mTimeIntervalMap.equal_range(closedInterval);
+    auto itRes = mTimeIntervalMap.equal_range(window);
     // Stash this so we know when to call updateProcTimelineLayout.
     const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
     auto curTaskMinLevel = sMinTaskLevel;
@@ -93,7 +92,7 @@ ProcTimeline::addTask(
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
     //
-    const qreal taskRight = stopTime;
+    const qreal taskRight = stopTime / sMicroSecPerPixel;
     prepareGeometryChange();
     if (taskRight > mMaxX) mMaxX = taskRight;
     update();
