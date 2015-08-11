@@ -36,8 +36,7 @@ class ProcTimeline : public QGraphicsItem {
 public:
     //
     ProcTimeline(
-        ProcType procType,
-        procid_t procID,
+        const ProcDesc &procDesc,
         QGraphicsView *parent
     );
     //
@@ -69,16 +68,14 @@ public:
     }
     //
     void
-    updateChildrenPositions(void);
+    propagatePositionUpdate(void);
 
 
 private:
     //
-    procid_t mProcID = 0;
+    ProcDesc mProcDesc;
     //
     qreal mMaxX = 0.0;
-    //
-    ProcType mProcType = ProcType::UNKNOWN;
     //
     QGraphicsView *mView = nullptr;
     //

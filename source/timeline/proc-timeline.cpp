@@ -33,11 +33,9 @@ procType2QString(ProcType pType) {
 } // end namespace
 
 ProcTimeline::ProcTimeline(
-    ProcType procType,
-    procid_t procID,
+    const ProcDesc &procDesc,
     QGraphicsView *parent
-) : mProcID(procID)
-  , mProcType(procType)
+) : mProcDesc(procDesc)
   , mView(parent)
   , mCurrentMaxTaskLevel(1) { }
 
@@ -107,7 +105,7 @@ ProcTimeline::addTask(
 }
 
 void
-ProcTimeline::updateChildrenPositions(void)
+ProcTimeline::propagatePositionUpdate(void)
 {
     const int taskY = pos().y();
     foreach (TaskWidget *tw, mTaskWidgets) {
@@ -132,7 +130,10 @@ ProcTimeline::paint(
     painter->drawLine(x1y1, x2y2);
     // Draw Timeline Legend
     static const int legendFixup = -1;
-    const auto procIDStr = QString("%1").arg(mProcID, 6, 10, QChar('0'));
-    const auto timelineLegend = procType2QString(mProcType) + " " + procIDStr;
+    const auto procIDStr = QString("%1").arg(
+        mProcDesc.procID, 6, 10, QChar('0')
+    );
+    const auto timelineLegend = procType2QString(mProcDesc.kind)
+                              + " " + procIDStr;
     painter->drawText(x1y1.x(), x1y1.y() + legendFixup, timelineLegend);
 }

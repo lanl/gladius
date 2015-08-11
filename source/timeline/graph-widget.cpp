@@ -43,7 +43,7 @@ void
 GraphWidget::addProcTimeline(
     const ProcDesc &procDesc
 ) {
-    ProcTimeline *tl = new ProcTimeline(procDesc.kind, procDesc.procID, this);
+    ProcTimeline *tl = new ProcTimeline(procDesc, this);
     mProcTimelines.insert(procDesc.procID, tl);
     mScene->addItem(tl);
     updateProcTimelineLayout();
@@ -98,12 +98,13 @@ GraphWidget::plot(
 void
 GraphWidget::updateProcTimelineLayout(void)
 {
-    const qreal spacing = 10.0;
+    // Spacing between timelines.
+    static const qreal spacing = 10.0;
     qreal y = 0.0;
     // QMaps are always sorted by key. This is what we want.
     foreach (ProcTimeline *procTimeline, mProcTimelines) {
         procTimeline->setY(y);
-        procTimeline->updateChildrenPositions();
+        procTimeline->propagatePositionUpdate();
         y += procTimeline->boundingRect().height() + spacing;
     }
 }
