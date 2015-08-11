@@ -104,10 +104,10 @@ LegionProfLogParser::parse(
                 TaskInfo(gTaskInfoRx.cap(1).toUInt(),
                          gTaskInfoRx.cap(2).toUInt(),
                          gTaskInfoRx.cap(3).toULongLong(),
-                         gTaskInfoRx.cap(4).toULongLong(),
-                         gTaskInfoRx.cap(5).toULongLong(),
-                         gTaskInfoRx.cap(6).toULongLong(),
-                         gTaskInfoRx.cap(7).toULongLong()
+                         gTaskInfoRx.cap(4).toULongLong() / 1000,
+                         gTaskInfoRx.cap(5).toULongLong() / 1000,
+                         gTaskInfoRx.cap(6).toULongLong() / 1000,
+                         gTaskInfoRx.cap(7).toULongLong() / 1000
                 )
             );
             continue;
@@ -117,10 +117,10 @@ LegionProfLogParser::parse(
                 TaskInfo(gMetaInfoRx.cap(1).toUInt(),
                          gMetaInfoRx.cap(2).toUInt(),
                          gMetaInfoRx.cap(3).toULongLong(),
-                         gMetaInfoRx.cap(4).toULongLong(),
-                         gMetaInfoRx.cap(5).toULongLong(),
-                         gMetaInfoRx.cap(6).toULongLong(),
-                         gMetaInfoRx.cap(7).toULongLong()
+                         gMetaInfoRx.cap(4).toULongLong() / 1000,
+                         gMetaInfoRx.cap(5).toULongLong() / 1000,
+                         gMetaInfoRx.cap(6).toULongLong() / 1000,
+                         gMetaInfoRx.cap(7).toULongLong() / 1000
                 )
             );
             continue;

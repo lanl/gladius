@@ -122,6 +122,8 @@ ProcTimeline::paint(
     Q_UNUSED(option);
     Q_UNUSED(widget);
     //
+    painter->save();
+    //
     const auto x1y1 = boundingRect().bottomLeft();
     const auto x2y2 = boundingRect().bottomRight();
     // Draw Timeline
@@ -135,4 +137,6 @@ ProcTimeline::paint(
     const auto timelineLegend = procType2QString(mProcDesc.kind)
                               + " " + procIDStr;
     painter->drawText(x1y1.x(), x1y1.y() + legendFixup, timelineLegend);
+    //
+    painter->restore();
 }
