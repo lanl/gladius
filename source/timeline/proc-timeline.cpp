@@ -9,17 +9,35 @@
 #include "common.h"
 #include "proc-timeline.h"
 
+#include <QString>
 #include <QBrush>
 #include <QDebug>
 #include <QPainter>
 #include <QGraphicsView>
 
-#include <iostream>
+namespace {
+//
+QString
+procType2QString(ProcType pType) {
+    switch (pType) {
+        case TOC_PROC  : return "GPU";
+        case LOC_PROC  : return "CPU";
+        case UTIL_PROC : return "Utility";
+        case IO_PROC   : return "IO";
+        case PROC_GROUP: return "Proc Group";
+        case UNKNOWN   : return "???";
+        default        : return "???";
+    }
+}
+
+} // end namespace
 
 ProcTimeline::ProcTimeline(
     ProcType procType,
+    procid_t procID,
     QGraphicsView *parent
-) : mProcType(procType)
+) : mProcID(procID)
+  , mProcType(procType)
   , mView(parent)
   , mCurrentMaxTaskLevel(1) { }
 
@@ -27,11 +45,13 @@ QRectF
 ProcTimeline::boundingRect(void) const
 {
     if (mTaskWidgets.empty()) return QRectF();
+    //
+    static const qreal spaceForXTimeline = 5;
     return QRectF(
         0,
         0,
         mMaxX,
-        mCurrentMaxTaskLevel * TaskWidget::getHeight()
+        (mCurrentMaxTaskLevel * TaskWidget::getHeight()) + spaceForXTimeline
     );
 }
 
@@ -68,8 +88,9 @@ ProcTimeline::addTask(
     }
     const auto minTaskLevel = thisTaskMinLevel;
     //
-    TaskWidget *taskWidget = new TaskWidget(info, minTaskLevel);
+    TaskWidget *taskWidget = new TaskWidget(info, minTaskLevel, this);
     mTaskWidgets << taskWidget;
+    mView->scene()->addItem(taskWidget);
     //
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
@@ -86,18 +107,32 @@ ProcTimeline::addTask(
 }
 
 void
+ProcTimeline::updateChildrenPositions(void)
+{
+    const int taskY = pos().y();
+    foreach (TaskWidget *tw, mTaskWidgets) {
+        tw->setY(taskY + (tw->getLevel() * TaskWidget::getHeight()));
+    }
+}
+
+void
 ProcTimeline::paint(
     QPainter *painter,
     const QStyleOptionGraphicsItem *option,
     QWidget *widget
 ) {
-    const int widgetY = widget->pos().y();
-    foreach (TaskWidget *tw, mTaskWidgets) {
-        tw->setY(widgetY);
-        tw->paint(painter, option, widget);
-    }
-    painter->setPen(Qt::black);
+    Q_UNUSED(painter);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+    //
     const auto x1y1 = boundingRect().bottomLeft();
     const auto x2y2 = boundingRect().bottomRight();
+    // Draw Timeline
+    painter->setPen(Qt::black);
     painter->drawLine(x1y1, x2y2);
+    // Draw Timeline Legend
+    static const int legendFixup = -1;
+    const auto procIDStr = QString("%1").arg(mProcID, 6, 10, QChar('0'));
+    const auto timelineLegend = procType2QString(mProcType) + " " + procIDStr;
+    painter->drawText(x1y1.x(), x1y1.y() + legendFixup, timelineLegend);
 }

@@ -17,6 +17,7 @@
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QBrush>
+#include <QStyleOptionGraphicsItem>
 
 #include <iostream>
 
@@ -28,85 +29,7 @@ class QGraphicsView;
 class QGraphicsLineItem;
 QT_END_NAMESPACE
 
-////////////////////////////////////////////////////////////////////////////////
-class TaskWidget : public QGraphicsItem {
-public:
-    TaskWidget(
-        const TaskInfo &info,
-        uint32_t level
-    ) : mInfo(info)
-      , mLevel(level)
-      , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
-      , mFillColor(Qt::gray /* Default Color */)
-    {
-        // TODO Add Cache
-        QString toolTip = "Start:" + QString::number(mInfo.uStartTime)
-                        + " End: " + QString::number(mInfo.uStopTime);
-        setToolTip(toolTip);
-    }
-    //
-    QRectF boundingRect(void) const Q_DECL_OVERRIDE {
-        return QRectF(0, 0, mWidth, sHeight);
-    }
-    //
-    void
-    paint(
-        QPainter *painter,
-        const QStyleOptionGraphicsItem * /* option */,
-        QWidget * /* widget */) Q_DECL_OVERRIDE
-    {
-        painter->setPen(Qt::NoPen);
-        painter->setBrush(mFillColor);
-        painter->drawRect(
-            mInfo.uStartTime / sMicroSecPerPixel,
-            pos().y() + ((mLevel - 1) * getHeight()),
-            boundingRect().width(),
-            sHeight
-        );
-    }
-
-    ustime_t
-    getCreateTime(void) const {
-        return mInfo.uCreateTime;
-    }
-
-    ustime_t
-    getReadyTime(void) const {
-        return mInfo.uReadyTime;
-    }
-
-    ustime_t
-    getStartTime(void) const {
-        return mInfo.uStartTime;
-    }
-
-    ustime_t
-    getStopTime(void) const {
-        return mInfo.uStopTime;
-    }
-
-    void
-    setFillColor(const QColor &color) {
-        mFillColor = color;
-    }
-
-    static qreal
-    getHeight(void) {
-        return sHeight;
-    }
-
-private:
-    //
-    uint32_t mLevel = 0;
-    //
-    static constexpr qreal sHeight = 30;
-    //
-    TaskInfo mInfo;
-    //
-    qreal mWidth = 0.0;
-    //
-    QColor mFillColor;
-};
+class TaskWidget;
 
 ////////////////////////////////////////////////////////////////////////////////
 class ProcTimeline : public QGraphicsItem {
@@ -114,6 +37,7 @@ public:
     //
     ProcTimeline(
         ProcType procType,
+        procid_t procID,
         QGraphicsView *parent
     );
     //
@@ -133,7 +57,7 @@ public:
     setTaskColorPalette(const QList<QColor> &colorPalette) {
         mColorPalette = colorPalette;
     }
-
+    //
     void
     debugDumpTimeIntervalData(void) {
         for (const auto &ti : mTimeIntervalMap) {
@@ -143,14 +67,15 @@ public:
         }
         std::cerr << std::endl;
     }
-
-    qreal
-    getHeight(void) const {
-        return mCurrentMaxTaskLevel * TaskWidget::getHeight();
-    }
+    //
+    void
+    updateChildrenPositions(void);
 
 
 private:
+    //
+    procid_t mProcID = 0;
+    //
     qreal mMaxX = 0.0;
     //
     ProcType mProcType = ProcType::UNKNOWN;
@@ -160,8 +85,6 @@ private:
     QList<TaskWidget *> mTaskWidgets;
     //
     QList<QColor> mColorPalette;
-    //
-    QGraphicsLineItem *mTimeAxisLine = nullptr;
     // A map of time intervals (in ustime_t) and number of overlaps at
     // a given interval.
     boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervalMap;
@@ -176,5 +99,93 @@ private:
     }
 
 };
+
+////////////////////////////////////////////////////////////////////////////////
+class TaskWidget : public QGraphicsItem {
+public:
+    TaskWidget(
+        const TaskInfo &info,
+        uint32_t level,
+        ProcTimeline *timeline
+    ) : mInfo(info)
+      , mLevel(level - 1 /* Comes in at base 1 and we want base 0 */)
+      , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
+      , mFillColor(Qt::gray /* Default Color */)
+    {
+        setPos(mInfo.uStartTime / sMicroSecPerPixel, timeline->pos().y());
+        //
+        setFlags(ItemIsSelectable);
+        //
+        setAcceptHoverEvents(true);
+        // TODO Add Cache
+        QString toolTip = "Start:" + QString::number(mInfo.uStartTime)
+                        + " End: " + QString::number(mInfo.uStopTime);
+        setToolTip(toolTip);
+    }
+    //
+    QRectF boundingRect(void) const Q_DECL_OVERRIDE {
+        return QRectF(0, 0, mWidth, sHeight);
+    }
+    //
+    void
+    paint(
+        QPainter *painter,
+        const QStyleOptionGraphicsItem *option,
+        QWidget * /* widget */) Q_DECL_OVERRIDE
+    {
+        painter->setPen(Qt::NoPen);
+        const QColor fillColor = (option->state & QStyle::State_Selected)
+                                 ? mFillColor.light(128) : mFillColor;
+        painter->setBrush(fillColor);
+        painter->drawRect(boundingRect());
+    }
+    //
+    ustime_t
+    getCreateTime(void) const {
+        return mInfo.uCreateTime;
+    }
+    //
+    ustime_t
+    getReadyTime(void) const {
+        return mInfo.uReadyTime;
+    }
+    //
+    ustime_t
+    getStartTime(void) const {
+        return mInfo.uStartTime;
+    }
+    //
+    ustime_t
+    getStopTime(void) const {
+        return mInfo.uStopTime;
+    }
+    //
+    void
+    setFillColor(const QColor &color) {
+        mFillColor = color;
+    }
+    //
+    static qreal
+    getHeight(void) {
+        return sHeight;
+    }
+    //
+    uint32_t getLevel(void) const {
+        return mLevel;
+    }
+
+private:
+    //
+    TaskInfo mInfo;
+    //
+    uint32_t mLevel = 0;
+    //
+    qreal mWidth = 0.0;
+    //
+    static constexpr qreal sHeight = 30;
+    //
+    QColor mFillColor;
+};
+
 
 #endif // TIMELINE_PROC_TIMELINE_H_INCLUDED
