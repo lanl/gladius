@@ -25,8 +25,8 @@ procType2QString(ProcType pType) {
         case UTIL_PROC : return "Utility";
         case IO_PROC   : return "IO";
         case PROC_GROUP: return "Proc Group";
-        case UNKNOWN   : return "???";
-        default        : return "???";
+        case UNKNOWN   : return "Unknown";
+        default        : Q_ASSERT(false);
     }
 }
 
@@ -73,20 +73,15 @@ ProcTimeline::addTask(
     auto itRes = mTimeIntervalMap.equal_range(closedInterval);
     // Stash this so we know when to call updateProcTimelineLayout.
     const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
-    auto thisTaskMinLevel = sMinTaskLevel;
-    bool overlaps = false;
-    if (itRes.first != itRes.second) {
-        overlaps = true;
-        // it->first = Time Interval.
-        // it->second = Number of overlaps in the interval.
-        for (auto it = itRes.first; it != itRes.second; ++it) {
-            if (it->second > mCurrentMaxTaskLevel) ++mCurrentMaxTaskLevel;
-            if (it->second > thisTaskMinLevel) ++thisTaskMinLevel;
-        }
+    auto curTaskMinLevel = sMinTaskLevel;
+    // it->first = Time Interval.
+    // it->second = Number of overlaps in the interval.
+    for (auto it = itRes.first; it != itRes.second; ++it) {
+        if (it->second > mCurrentMaxTaskLevel) ++mCurrentMaxTaskLevel;
+        if (it->second > curTaskMinLevel) ++curTaskMinLevel;
     }
-    const auto minTaskLevel = thisTaskMinLevel;
     //
-    TaskWidget *taskWidget = new TaskWidget(info, minTaskLevel, this);
+    TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel, this);
     mTaskWidgets << taskWidget;
     mView->scene()->addItem(taskWidget);
     //
