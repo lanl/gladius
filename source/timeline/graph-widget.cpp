@@ -87,6 +87,9 @@ GraphWidget::plot(
     for (const auto &taskInfo : plotData.taskInfos) {
         mProcTimelines[taskInfo.procID]->addTask(taskInfo);
     }
+    for (const auto &metaInfo: plotData.metaInfos) {
+        mProcTimelines[metaInfo.procID]->addTask(metaInfo);
+    }
     //
 #if 0 // For debugging time interval data.
     foreach (ProcTimeline *procTimeline, mProcTimelines) {

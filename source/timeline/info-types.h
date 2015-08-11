@@ -20,6 +20,8 @@ typedef uint32_t taskid_t;
 typedef uint32_t funcid_t;
 typedef uint64_t procid_t;
 typedef uint64_t ustime_t;
+typedef uint32_t opid_t;
+typedef uint32_t hlrid_t;
 
 ////////////////////////////////////////////////////////////////////////////////
 struct TaskKind {
@@ -83,6 +85,20 @@ struct ProcDesc {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+struct MetaDesc {
+    //
+    opid_t id = 0;
+    //
+    std::string name;
+    //
+    MetaDesc(
+        opid_t id,
+        const std::string &name
+    ) : id(id)
+      , name(name) { }
+};
+
+////////////////////////////////////////////////////////////////////////////////
 struct LegionProfData {
     //
     LegionProfData& operator=(const LegionProfData&) = delete;
@@ -91,11 +107,12 @@ struct LegionProfData {
     //
     std::deque<TaskInfo> taskInfos;
     //
+    std::deque<TaskInfo> metaInfos;
+    //
     std::deque<ProcDesc> procDescs;
-    /**
-     * @brief nProcessors
-     * @return
-     */
+    //
+    std::map<opid_t, MetaDesc> metaDescs;
+    //
     size_t
     nProcessors(void) const {
         return procDescs.size();

@@ -19,17 +19,18 @@
 #include <deque>
 
 namespace {
-/**
- * @brief taskInfoRx
- */
+//
 QRegExp gTaskInfoRx(
     "Prof Task Info ([0-9]+) ([0-9]+) "
     "([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)"
 );
 
-/**
- * @brief procDescRx
- */
+QRegExp gMetaInfoRx(
+    "Prof Meta Info ([0-9]+) ([0-9]+) "
+    "([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)"
+);
+
+// TODO (???) (???)
 QRegExp gProcDescRx(
     "Prof Proc Desc ([0-9]+) ([0-9]+)"
 );
@@ -37,6 +38,11 @@ QRegExp gProcDescRx(
 // (Task ID) (Task Name)
 QRegExp gTaskKindRx(
     "Prof Task Kind ([0-9]+) ([a-zA-Z0-9_]+)"
+);
+
+// (Operation ID) (Operation Name)
+QRegExp gMetaDescRx(
+    "Prof Meta Desc ([0-9]+) ([a-zA-Z0-9_]+)"
 );
 
 } // end namespace
@@ -106,11 +112,32 @@ LegionProfLogParser::parse(
             );
             continue;
         }
+        if (gMetaInfoRx.indexIn(line) != -1) {
+            mProfData->metaInfos.push_back(
+                TaskInfo(gMetaInfoRx.cap(1).toUInt(),
+                         gMetaInfoRx.cap(2).toUInt(),
+                         gMetaInfoRx.cap(3).toULongLong(),
+                         gMetaInfoRx.cap(4).toULongLong(),
+                         gMetaInfoRx.cap(5).toULongLong(),
+                         gMetaInfoRx.cap(6).toULongLong(),
+                         gMetaInfoRx.cap(7).toULongLong()
+                )
+            );
+            continue;
+        }
         if (gProcDescRx.indexIn(line) != -1) {
             mProfData->procDescs.push_back(
                 ProcDesc(gProcDescRx.cap(1).toULongLong(),
                          static_cast<ProcType>(gProcDescRx.cap(2).toUInt())
                 )
+            );
+            continue;
+        }
+        if (gMetaDescRx.indexIn(line) != -1) {
+            const opid_t opid = gMetaDescRx.cap(1).toUInt();
+            const std::string opName = gMetaDescRx.cap(2).toStdString();
+            mProfData->metaDescs.insert(
+                std::make_pair(opid, MetaDesc(opid, opName))
             );
             continue;
         }
@@ -120,6 +147,8 @@ LegionProfLogParser::parse(
     qDebug() << "# Proc Kinds Found:" << mProfData->taskKinds.size();
     qDebug() << "# Procs Found:" << mProfData->procDescs.size();
     qDebug() << "# Task Infos Found:" <<  mProfData->taskInfos.size();
+    qDebug() << "# Meta Descs Found:" <<  mProfData->metaDescs.size();
+    qDebug() << "# Meta Infos Found:" <<  mProfData->metaInfos.size();
 }
 
 /**
