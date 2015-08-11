@@ -23,7 +23,7 @@ ProcTimeline::ProcTimeline(
   , mView(parent)
   , mCurrentMaxTaskLevel(1)
 {
-    mView->scene()->addItem(this);
+    mXMax = 128;
     // Add an empty line to the scene. The line will be updated when needed.
     mTimeAxisLine = mView->scene()->addLine(QLineF());
 }
@@ -31,7 +31,8 @@ ProcTimeline::ProcTimeline(
 QRectF
 ProcTimeline::boundingRect(void) const
 {
-    return QRectF();
+    if (mTaskWidgets.empty()) return QRectF(0, 0, 128, TaskWidget::getHeight());
+    return QRectF(0, 0, mXMax, mCurrentMaxTaskLevel * TaskWidget::getHeight());
 }
 
 void
@@ -64,7 +65,7 @@ ProcTimeline::addTask(
         }
     }
     //
-    const qreal x = qreal(startTime);
+    const qreal x = boundingRect().right();
     const qreal y = pos().y();
     auto minTaskLevel = overlaps ? mCurrentMaxTaskLevel : sMinTaskLevel;
     //
@@ -72,15 +73,22 @@ ProcTimeline::addTask(
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
+    const qreal taskRight = stopTime;
+    prepareGeometryChange();
+    if (taskRight > mXMax) mXMax = taskRight;
+    update();
     //
-    taskWidget->setPos(x, y + (TaskWidget::getHeight() * minTaskLevel));
+    //
+    //taskWidget->setPos(x, y + (TaskWidget::getHeight() * minTaskLevel));
+    //taskWidget->setPos(qreal(startTime), y);
     mTaskWidgets << taskWidget;
     // Add this now to the scene so we can get an updated scene width for
     // the line drawing.
-    mView->scene()->addItem(taskWidget);
+    //mView->scene()->addItem(taskWidget);
     if (oldMaxTaskLevel != mCurrentMaxTaskLevel) {
         mGraphWidget()->updateProcTimelineLayout();
     }
+#if 0
     // Update x-axis geometry.
     const qreal sceneWidth = scene()->width();
     // The amount of spacing between the task widget and the timeline.
@@ -89,7 +97,6 @@ ProcTimeline::addTask(
     // seems to be coming from the top.
     const qreal xAxisY = y + taskWidget->getHeight() + lineWidgetSpacing;
     //
-#if 0
     mTimeAxisLine->setLine(
         0.0,
         xAxisY,
@@ -101,9 +108,13 @@ ProcTimeline::addTask(
 
 void
 ProcTimeline::paint(
-    QPainter * /* painter */,
-    const QStyleOptionGraphicsItem * /* option */,
-    QWidget * /* widget */
-) { }
+    QPainter * painter,
+    const QStyleOptionGraphicsItem * option,
+    QWidget * widget
+) {
+    foreach (TaskWidget *tw, mTaskWidgets) {
+        tw->paint(painter, option, widget);
+    }
+}
 
 

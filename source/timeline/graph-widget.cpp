@@ -103,6 +103,6 @@ GraphWidget::updateProcTimelineLayout(void)
     // QMaps are always sorted by key. This is what we want.
     foreach (ProcTimeline *procTimeline, mProcTimelines) {
         procTimeline->setY(y);
-        y += ((2.0 * procTimeline->getHeight()) + spacing);
+        y += procTimeline->boundingRect().height() + spacing;
     }
 }
