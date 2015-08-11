@@ -21,18 +21,18 @@ ProcTimeline::ProcTimeline(
     QGraphicsView *parent
 ) : mProcType(procType)
   , mView(parent)
-  , mCurrentMaxTaskLevel(1)
-{
-    mXMax = 128;
-    // Add an empty line to the scene. The line will be updated when needed.
-    mTimeAxisLine = mView->scene()->addLine(QLineF());
-}
+  , mCurrentMaxTaskLevel(1) { }
 
 QRectF
 ProcTimeline::boundingRect(void) const
 {
-    if (mTaskWidgets.empty()) return QRectF(0, 0, 128, TaskWidget::getHeight());
-    return QRectF(0, 0, mXMax, mCurrentMaxTaskLevel * TaskWidget::getHeight());
+    if (mTaskWidgets.empty()) return QRectF();
+    return QRectF(
+        0,
+        0,
+        mMaxX,
+        mCurrentMaxTaskLevel * TaskWidget::getHeight()
+    );
 }
 
 void
@@ -43,8 +43,6 @@ ProcTimeline::addTask(
 
     const ustime_t startTime = info.uStartTime / sMicroSecPerPixel;
     const ustime_t stopTime  = info.uStopTime / sMicroSecPerPixel;
-    // Stash this so we know when to call updateProcTimelineLayout.
-    const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
     //
     auto closedInterval = construct< discrete_interval<ustime_t> >(
         startTime, stopTime, interval_bounds::closed()
@@ -55,6 +53,9 @@ ProcTimeline::addTask(
     // determining whether or not there exists overlapping ranges. If so,
     // now determine the max number of overlaps.
     auto itRes = mTimeIntervalMap.equal_range(closedInterval);
+    // Stash this so we know when to call updateProcTimelineLayout.
+    const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
+    auto thisTaskMinLevel = sMinTaskLevel;
     bool overlaps = false;
     if (itRes.first != itRes.second) {
         overlaps = true;
@@ -62,59 +63,41 @@ ProcTimeline::addTask(
         // it->second = Number of overlaps in the interval.
         for (auto it = itRes.first; it != itRes.second; ++it) {
             if (it->second > mCurrentMaxTaskLevel) ++mCurrentMaxTaskLevel;
+            if (it->second > thisTaskMinLevel) ++thisTaskMinLevel;
         }
     }
-    //
-    const qreal x = boundingRect().right();
-    const qreal y = pos().y();
-    auto minTaskLevel = overlaps ? mCurrentMaxTaskLevel : sMinTaskLevel;
+    const auto minTaskLevel = thisTaskMinLevel;
     //
     TaskWidget *taskWidget = new TaskWidget(info, minTaskLevel);
+    mTaskWidgets << taskWidget;
+    //
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
+    //
     const qreal taskRight = stopTime;
     prepareGeometryChange();
-    if (taskRight > mXMax) mXMax = taskRight;
+    if (taskRight > mMaxX) mMaxX = taskRight;
     update();
     //
-    //
-    //taskWidget->setPos(x, y + (TaskWidget::getHeight() * minTaskLevel));
-    //taskWidget->setPos(qreal(startTime), y);
-    mTaskWidgets << taskWidget;
-    // Add this now to the scene so we can get an updated scene width for
-    // the line drawing.
-    //mView->scene()->addItem(taskWidget);
     if (oldMaxTaskLevel != mCurrentMaxTaskLevel) {
         mGraphWidget()->updateProcTimelineLayout();
     }
-#if 0
-    // Update x-axis geometry.
-    const qreal sceneWidth = scene()->width();
-    // The amount of spacing between the task widget and the timeline.
-    static const qreal lineWidgetSpacing = 6.0;
-    // y1 and y2 will always be the sdame. Add the widget's height because y
-    // seems to be coming from the top.
-    const qreal xAxisY = y + taskWidget->getHeight() + lineWidgetSpacing;
-    //
-    mTimeAxisLine->setLine(
-        0.0,
-        xAxisY,
-        sceneWidth,
-        xAxisY
-    );
-#endif
 }
 
 void
 ProcTimeline::paint(
-    QPainter * painter,
-    const QStyleOptionGraphicsItem * option,
-    QWidget * widget
+    QPainter *painter,
+    const QStyleOptionGraphicsItem *option,
+    QWidget *widget
 ) {
+    const int widgetY = widget->pos().y();
     foreach (TaskWidget *tw, mTaskWidgets) {
+        tw->setY(widgetY);
         tw->paint(painter, option, widget);
     }
+    painter->setPen(Qt::black);
+    const auto x1y1 = boundingRect().bottomLeft();
+    const auto x2y2 = boundingRect().bottomRight();
+    painter->drawLine(x1y1, x2y2);
 }
-
-

@@ -57,8 +57,12 @@ public:
     {
         painter->setPen(Qt::NoPen);
         painter->setBrush(mFillColor);
-        qreal w = (mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel;
-        painter->drawRect(mInfo.uStartTime / sMicroSecPerPixel, pos().y(), w, sHeight);
+        painter->drawRect(
+            mInfo.uStartTime / sMicroSecPerPixel,
+            pos().y() + ((mLevel - 1) * getHeight()),
+            boundingRect().width(),
+            sHeight
+        );
     }
 
     ustime_t
@@ -147,7 +151,7 @@ public:
 
 
 private:
-    qreal mXMax = 0.0;
+    qreal mMaxX = 0.0;
     //
     ProcType mProcType = ProcType::UNKNOWN;
     //
