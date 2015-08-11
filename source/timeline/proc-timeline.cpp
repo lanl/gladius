@@ -77,8 +77,12 @@ ProcTimeline::addTask(
     // it->first = Time Interval.
     // it->second = Number of overlaps in the interval.
     for (auto it = itRes.first; it != itRes.second; ++it) {
-        if (it->second > mCurrentMaxTaskLevel) ++mCurrentMaxTaskLevel;
-        if (it->second > curTaskMinLevel) ++curTaskMinLevel;
+        if (it->second > mCurrentMaxTaskLevel) {
+            mCurrentMaxTaskLevel = it->second;
+        }
+        if (it->second > curTaskMinLevel) {
+            curTaskMinLevel = it->second;
+        }
     }
     //
     TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel, this);
