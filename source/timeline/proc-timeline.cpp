@@ -133,6 +133,20 @@ ProcTimeline::paint(
     const auto procIDStr = QString("%1").arg(
         mProcDesc.procID, 6, 10, QChar('0')
     );
+    // Draw Time Tick Marks. One every 1 millisecond (1000 microseconds).
+    painter->setPen(Qt::gray);
+    static const uint32_t tickIncrement = 1e3 / sMicroSecPerPixel;
+    static const uint8_t majorTickLen = 4;
+    for (uint64_t t = 0; t < boundingRect().width(); t += tickIncrement) {
+        painter->drawLine(
+            t,
+            x1y1.y() - majorTickLen,
+            t,
+            x1y1.y() + majorTickLen
+        );
+    }
+
+
     const auto timelineLegend = procType2QString(mProcDesc.kind)
                               + " " + procIDStr;
     painter->drawText(x1y1.x(), x1y1.y() + legendFixup, timelineLegend);
