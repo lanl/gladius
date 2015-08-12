@@ -103,7 +103,7 @@ struct LegionProfData {
     //
     LegionProfData& operator=(const LegionProfData&) = delete;
     // Map between taskIDs to TaskKinds
-    std::map<taskid_t, TaskKind> taskKinds;
+    std::map<taskid_t, TaskKind *> taskKinds;
     //
     std::deque<TaskInfo> taskInfos;
     //
@@ -111,7 +111,7 @@ struct LegionProfData {
     //
     std::deque<ProcDesc> procDescs;
     //
-    std::map<opid_t, MetaDesc> metaDescs;
+    std::map<opid_t, MetaDesc *> metaDescs;
     //
     size_t
     nProcessors(void) const {

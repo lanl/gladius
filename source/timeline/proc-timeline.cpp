@@ -83,19 +83,23 @@ ProcTimeline::addTask(
             curTaskMinLevel = it->second;
         }
     }
+    // Update bounding rectangle width if need be.
+    const qreal taskRight = stopTime / sMicroSecPerPixel;
+    const bool widthUpdated = taskRight > mMaxX;
+    if (widthUpdated) {
+        mMaxX = taskRight;
+    }
+    if (oldMaxTaskLevel != mCurrentMaxTaskLevel || widthUpdated) {
+        prepareGeometryChange();
+        update();
+    }
     //
     TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel, this);
-    mTaskWidgets << taskWidget;
-    mView->scene()->addItem(taskWidget);
-    //
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
-    //
-    const qreal taskRight = stopTime / sMicroSecPerPixel;
-    prepareGeometryChange();
-    if (taskRight > mMaxX) mMaxX = taskRight;
-    update();
+    mTaskWidgets << taskWidget;
+    mView->scene()->addItem(taskWidget);
     //
     if (oldMaxTaskLevel != mCurrentMaxTaskLevel) {
         mGraphWidget()->updateProcTimelineLayout();
@@ -112,8 +116,8 @@ ProcTimeline::propagatePositionUpdate(void)
         // not at the top. So this is the fixup that gives us that.
         // The -1 because the task levels are base 0 and the timeline levels
         // are at base 1.
-        const auto realLevel = mCurrentMaxTaskLevel - tw->getLevel() - 1;
-        tw->setY(taskY + (realLevel * TaskWidget::getHeight()));
+        const auto effectiveLevel = mCurrentMaxTaskLevel - tw->getLevel() - 1;
+        tw->setY(taskY + (effectiveLevel * TaskWidget::getHeight()));
     }
 }
 
@@ -139,9 +143,9 @@ ProcTimeline::paint(
     const auto procIDStr = QString("%1").arg(
         mProcDesc.procID, 6, 10, QChar('0')
     );
-    // Draw Time Tick Marks. One every 1 millisecond (1000 microseconds).
+    // Draw Time Tick Marks. One every 10 milliseconds.
     painter->setPen(Qt::gray);
-    static const uint32_t tickIncrement = 1e3 / sMicroSecPerPixel;
+    static const uint32_t tickIncrement = 1e4 / sMicroSecPerPixel;
     static const uint8_t majorTickLen = 4;
     for (uint64_t t = 0; t < boundingRect().width(); t += tickIncrement) {
         painter->drawLine(
@@ -151,8 +155,7 @@ ProcTimeline::paint(
             x1y1.y() + majorTickLen
         );
     }
-
-
+    // Draw legend.
     const auto timelineLegend = procType2QString(mProcDesc.kind)
                               + " " + procIDStr;
     painter->drawText(x1y1.x(), x1y1.y() + legendFixup, timelineLegend);

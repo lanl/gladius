@@ -94,7 +94,7 @@ LegionProfLogParser::parse(
             const taskid_t tid = gTaskKindRx.cap(1).toUInt();
             const std::string tname = gTaskKindRx.cap(2).toStdString();
             mProfData->taskKinds.insert(
-                std::make_pair(tid, TaskKind(tid, tname))
+                std::make_pair(tid, new TaskKind(tid, tname))
             );
             continue;
         }
@@ -138,7 +138,7 @@ LegionProfLogParser::parse(
             const opid_t opid = gMetaDescRx.cap(1).toUInt();
             const std::string opName = gMetaDescRx.cap(2).toStdString();
             mProfData->metaDescs.insert(
-                std::make_pair(opid, MetaDesc(opid, opName))
+                std::make_pair(opid, new MetaDesc(opid, opName))
             );
             continue;
         }

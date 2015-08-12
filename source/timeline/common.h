@@ -16,7 +16,7 @@ enum ProcType {
 
 #include <QtGlobal>
 
-static const int sMicroSecPerPixel = 1e1;
+static const int sMicroSecPerPixel = 1e2;
 
 #endif // TIMELINE_COMMON_H
 

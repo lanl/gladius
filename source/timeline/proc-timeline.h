@@ -116,7 +116,8 @@ public:
         setAcceptHoverEvents(true);
         // TODO Add Cache
         QString toolTip = "Start:" + QString::number(mInfo.uStartTime)
-                        + " End: " + QString::number(mInfo.uStopTime);
+                        + " End: " + QString::number(mInfo.uStopTime)
+                        + " Level: " + QString::number(mLevel);
         setToolTip(toolTip);
     }
     //
@@ -169,6 +170,10 @@ public:
     //
     uint16_t getLevel(void) const {
         return mLevel;
+    }
+    //
+    void setLevel(uint16_t level) {
+        mLevel = level;
     }
 
 private:
