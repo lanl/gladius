@@ -83,9 +83,9 @@ private:
     //
     QList<QColor> mColorPalette;
     // A map of time intervals (in ustime_t) and number of overlaps at
-    // a given interval.
+    // a given interval. Inclusive, so no overlap is not 0, it's 1.
     boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervalMap;
-    //
+    // Since mTimeIntervalMap is inclusive, 1 is the minimum level.
     static constexpr uint16_t sMinTaskLevel = 1;
     // If the number of concurrent threads exceeds 2^16, then wow...
     uint16_t mCurrentMaxTaskLevel = 0;
@@ -105,7 +105,7 @@ public:
         uint16_t level,
         ProcTimeline *timeline
     ) : mInfo(info)
-      , mLevel(level - 1 /* Comes in at base 1 and we want base 0 */)
+      , mLevel(level)
       , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
       , mFillColor(Qt::gray /* Default Color */)
     {

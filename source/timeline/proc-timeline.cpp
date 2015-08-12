@@ -94,7 +94,7 @@ ProcTimeline::addTask(
         update();
     }
     //
-    TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel, this);
+    TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel - 1, this);
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
