@@ -47,6 +47,7 @@ MainFrame::resetView(void)
 {
     mZoomValue = sInitZoomValue;
     setupMatrix();
+    // TODO For streaming data, make sure that the right side is visible.
     //mGraphWidget->ensureVisible(QRectF(0, 0, 0, 0));
 }
 

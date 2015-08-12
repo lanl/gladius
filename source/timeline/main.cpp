@@ -13,12 +13,6 @@
 #include <QApplication>
 #include <QDebug>
 
-/**
- * @brief main
- * @param argc
- * @param argv
- * @return
- */
 int
 main(
     int argc,

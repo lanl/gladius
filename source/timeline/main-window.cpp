@@ -45,7 +45,7 @@ MainWindow::MainWindow(
     //
     static const int sScreenID = 0;
     QRect screenGeometry = getScreenGeometry(sScreenID);
-    resize(screenGeometry.width(), screenGeometry.height() / 2);
+    resize(screenGeometry.width(), 2 * screenGeometry.height() / 3);
     //
     MainFrame *mainFrame = new MainFrame(this);
     // Horizontal layout.

@@ -86,9 +86,9 @@ private:
     // a given interval.
     boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervalMap;
     //
-    static constexpr uint32_t sMinTaskLevel = 1;
-    //
-    uint32_t mCurrentMaxTaskLevel = 0;
+    static constexpr uint16_t sMinTaskLevel = 1;
+    // If the number of concurrent threads exceeds 2^16, then wow...
+    uint16_t mCurrentMaxTaskLevel = 0;
     //
     GraphWidget *
     mGraphWidget(void) const {
@@ -102,7 +102,7 @@ class TaskWidget : public QGraphicsItem {
 public:
     TaskWidget(
         const TaskInfo &info,
-        uint32_t level,
+        uint16_t level,
         ProcTimeline *timeline
     ) : mInfo(info)
       , mLevel(level - 1 /* Comes in at base 1 and we want base 0 */)
@@ -167,7 +167,7 @@ public:
         return sHeight;
     }
     //
-    uint32_t getLevel(void) const {
+    uint16_t getLevel(void) const {
         return mLevel;
     }
 
@@ -175,7 +175,7 @@ private:
     //
     TaskInfo mInfo;
     //
-    uint32_t mLevel = 0;
+    uint16_t mLevel = 0;
     //
     qreal mWidth = 0.0;
     //

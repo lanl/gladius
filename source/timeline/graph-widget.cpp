@@ -96,6 +96,8 @@ GraphWidget::plot(
         procTimeline->debugDumpTimeIntervalData();
     }
 #endif
+    // Make things look nice.
+    updateProcTimelineLayout();
 }
 
 void

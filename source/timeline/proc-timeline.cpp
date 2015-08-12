@@ -107,7 +107,13 @@ ProcTimeline::propagatePositionUpdate(void)
 {
     const int taskY = pos().y();
     foreach (TaskWidget *tw, mTaskWidgets) {
-        tw->setY(taskY + (tw->getLevel() * TaskWidget::getHeight()));
+        // As far as drawing goes. In Qt, y goes down as you increment it.
+        // Here we want the lowest levels to be drawn at the bottom --
+        // not at the top. So this is the fixup that gives us that.
+        // The -1 because the task levels are base 0 and the timeline levels
+        // are at base 1.
+        const auto realLevel = mCurrentMaxTaskLevel - tw->getLevel() - 1;
+        tw->setY(taskY + (realLevel * TaskWidget::getHeight()));
     }
 }
 
