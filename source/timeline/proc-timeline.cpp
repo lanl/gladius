@@ -85,6 +85,7 @@ ProcTimeline::addTask(
     // Stash this so we know when to call updateProcTimelineLayout.
     const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
     auto curTaskMinLevel = sMinTaskLevel;
+    qreal zVal = 0.0;
     // it->first = Time Interval.
     // it->second = Number of overlaps in the interval.
     for (auto it = itRes.first; it != itRes.second; ++it) {
@@ -92,6 +93,10 @@ ProcTimeline::addTask(
             if (++curTaskMinLevel > mCurrentMaxTaskLevel) {
                 mCurrentMaxTaskLevel = curTaskMinLevel;
             }
+        }
+        // Send it to the back a bit.
+        else if (boost::icl::contains(window, it->first)) {
+            zVal -= 0.1;
         }
     }
     // Update bounding rectangle width if need be.
@@ -106,6 +111,7 @@ ProcTimeline::addTask(
     }
     //
     TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel - 1, this);
+    taskWidget->setZValue(zVal);
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
