@@ -58,18 +58,7 @@ public:
     }
     //
     void
-    debugDumpTimeIntervalData(void) {
-        for (const auto &ti : mTimeIntervalMap) {
-            std::cerr << "Time: " << ti.first
-                      << " # Overlapping Times: "
-                      << ti.second << std::endl;
-        }
-        std::cerr << std::endl;
-    }
-    //
-    void
     propagatePositionUpdate(void);
-
 
 private:
     //
@@ -107,7 +96,8 @@ public:
     ) : mInfo(info)
       , mLevel(level)
       , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
-      , mFillColor(Qt::gray /* Default Color */)
+      , mColor(Qt::gray /* Default Color */)
+      , mLightColor(mColor.light(sLightness))
     {
         setPos(mInfo.uStartTime / sMicroSecPerPixel, timeline->pos().y());
         //
@@ -131,9 +121,12 @@ public:
         const QStyleOptionGraphicsItem *option,
         QWidget * /* widget */) Q_DECL_OVERRIDE
     {
-        painter->setPen(Qt::gray);
-        const QColor fillColor = (option->state & QStyle::State_Selected)
-                                 ? mFillColor.light(128) : mFillColor;
+        const bool selected = option->state & QStyle::State_Selected;
+        //
+        const QColor penColor = selected ? mColor : mLightColor;
+        const QColor fillColor = selected ? mLightColor : mColor;
+        //
+        painter->setPen(penColor);
         painter->setBrush(fillColor);
         painter->drawRect(boundingRect());
     }
@@ -160,7 +153,8 @@ public:
     //
     void
     setFillColor(const QColor &color) {
-        mFillColor = color;
+        mColor = color;
+        mLightColor = mColor.light(sLightness);
     }
     //
     static qreal
@@ -182,7 +176,11 @@ private:
     //
     static constexpr qreal sHeight = 30;
     //
-    QColor mFillColor;
+    static constexpr int sLightness = 128;
+    //
+    QColor mColor;
+    //
+    QColor mLightColor;
 };
 
 

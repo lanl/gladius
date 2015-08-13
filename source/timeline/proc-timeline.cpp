@@ -42,9 +42,18 @@ ProcTimeline::ProcTimeline(
 QRectF
 ProcTimeline::boundingRect(void) const
 {
-    if (mTaskWidgets.empty()) return QRectF();
-    //
     static const qreal spaceForXTimeline = 5.0;
+    static const qreal minWidth = 1e2;
+    //
+    if (mTaskWidgets.empty()) {
+        return QRectF(
+            0,
+            0,
+            minWidth,
+            TaskWidget::getHeight() + spaceForXTimeline
+        );
+    }
+    //
     return QRectF(
         0,
         0,
