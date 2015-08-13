@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QFileDialog>
 #include <QString>
+#include <QLabel>
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
 #include <QPrintDialog>
@@ -36,9 +37,19 @@ MainFrame::MainFrame(
     //
     mGraphWidget = new GraphWidget(this);
     //
+    mStatusLabel = new QLabel("");
+    //
     QGridLayout *layout = new QGridLayout(this);
-    layout ->addWidget(mGraphWidget, 1, 0);
+    layout->addWidget(mGraphWidget, 1, 0);
+    layout->addWidget(mStatusLabel);
     setLayout(layout);
+    //
+    connect(
+        this,
+        SIGNAL(sigStatusChange(QString)),
+        this,
+        SLOT(mOnStatusChange(QString))
+    );
     //
     mSetupMatrix();
 }
@@ -83,9 +94,8 @@ void
 MainFrame::mStartPlotFromLogFileThread(
     const QString &fileName
 ) {
-    // TODO Add progress bar...
-    qDebug() << "Loading Log File...";
     //
+    emit sigStatusChange("Processing Log File...");
     QThread *thread = new QThread();
     mLegionProfLogParser = new LegionProfLogParser(fileName);
     mLegionProfLogParser->moveToThread(thread);
@@ -101,7 +111,7 @@ MainFrame::mStartPlotFromLogFileThread(
         mLegionProfLogParser,
         SIGNAL(sigParseDone(bool, QString)),
         this,
-        SLOT(parseDone(bool, QString))
+        SLOT(mParseDone(bool, QString))
     );
     // QThread cleanup.
     connect(
@@ -120,7 +130,7 @@ MainFrame::mStartPlotFromLogFileThread(
 }
 
 void
-MainFrame::parseDone(
+MainFrame::mParseDone(
     bool successful,
     QString status
 ) {
@@ -132,6 +142,14 @@ MainFrame::parseDone(
         qDebug() << "Says Parse Is a Bad: " << status;
     }
     mLegionProfLogParser->deleteLater();
+    emit sigStatusChange("");
+}
+
+void
+MainFrame::mOnStatusChange(
+    QString status
+) {
+    mStatusLabel->setText(status);
 }
 
 QString

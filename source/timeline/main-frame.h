@@ -42,7 +42,12 @@ private slots:
     //
     void mPrint(void);
     //
-    void parseDone(bool successful, QString status);
+    void mParseDone(bool successful, QString status);
+    //
+    void mOnStatusChange(QString status);
+
+signals:
+    void sigStatusChange(QString status);
 
 private:
     //
@@ -58,11 +63,13 @@ private:
     //
     GraphWidget *mGraphWidget = nullptr;
     //
+    LegionProfLogParser *mLegionProfLogParser = nullptr;
+    //
+    QLabel *mStatusLabel = nullptr;
+    //
     QString mOpenLogFile(void);
     //
     void mStartPlotFromLogFileThread(const QString &fileName);
-    //
-    LegionProfLogParser *mLegionProfLogParser = nullptr;
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED
