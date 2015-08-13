@@ -61,26 +61,28 @@ ProcTimeline::addTask(
 
     const ustime_t startTime = info.uStartTime;
     const ustime_t stopTime  = info.uStopTime;
+    const ustime_t duration = stopTime - startTime;
+    // No point in drawing something this small, so skip all the work...
+    if (duration < sMicroSecPerPixel) return;
     //
     boost::icl::interval<ustime_t>::type window;
-    window = interval<ustime_t>::closed(startTime, stopTime);
+    window = interval<ustime_t>::open(startTime, stopTime);
     // The 1 here is the increment when there is an overlap.
     mTimeIntervalMap.add(std::make_pair(window, 1));
     // Now figure out at what level the task will be drawn. We do this be first
     // determining whether or not there exists overlapping ranges. If so,
     // now determine the max number of overlaps.
-    auto itRes = mTimeIntervalMap.equal_range(window);
+    const auto itRes = mTimeIntervalMap.equal_range(window);
     // Stash this so we know when to call updateProcTimelineLayout.
     const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
     auto curTaskMinLevel = sMinTaskLevel;
     // it->first = Time Interval.
     // it->second = Number of overlaps in the interval.
     for (auto it = itRes.first; it != itRes.second; ++it) {
-        if (it->second > mCurrentMaxTaskLevel) {
-            mCurrentMaxTaskLevel = it->second;
-        }
-        if (it->second > curTaskMinLevel) {
-            curTaskMinLevel = it->second;
+        if (boost::icl::within(window, it->first)) {
+            if (++curTaskMinLevel > mCurrentMaxTaskLevel) {
+                mCurrentMaxTaskLevel = curTaskMinLevel;
+            }
         }
     }
     // Update bounding rectangle width if need be.
@@ -111,13 +113,7 @@ ProcTimeline::propagatePositionUpdate(void)
 {
     const int taskY = pos().y();
     foreach (TaskWidget *tw, mTaskWidgets) {
-        // As far as drawing goes. In Qt, y goes down as you increment it.
-        // Here we want the lowest levels to be drawn at the bottom --
-        // not at the top. So this is the fixup that gives us that.
-        // The -1 because the task levels are base 0 and the timeline levels
-        // are at base 1.
-        const auto effectiveLevel = mCurrentMaxTaskLevel - tw->getLevel() - 1;
-        tw->setY(taskY + (effectiveLevel * TaskWidget::getHeight()));
+        tw->setY(taskY + (tw->getLevel() * TaskWidget::getHeight()));
     }
 }
 

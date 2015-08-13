@@ -131,7 +131,7 @@ public:
         const QStyleOptionGraphicsItem *option,
         QWidget * /* widget */) Q_DECL_OVERRIDE
     {
-        painter->setPen(Qt::NoPen);
+        painter->setPen(Qt::gray);
         const QColor fillColor = (option->state & QStyle::State_Selected)
                                  ? mFillColor.light(128) : mFillColor;
         painter->setBrush(fillColor);
@@ -170,10 +170,6 @@ public:
     //
     uint16_t getLevel(void) const {
         return mLevel;
-    }
-    //
-    void setLevel(uint16_t level) {
-        mLevel = level;
     }
 
 private:
