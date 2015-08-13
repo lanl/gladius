@@ -6,8 +6,8 @@
 
 // Keep This In Sync With Legion
 enum ProcType {
-    TOC_PROC,   // Throughput core
-    LOC_PROC,   // Latency core
+    TOC_PROC,   // Throughput core (GPU)
+    LOC_PROC,   // Latency core (CPU)
     UTIL_PROC,  // Utility core
     IO_PROC,    // I/O core
     PROC_GROUP, // Processor group

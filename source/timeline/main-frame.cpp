@@ -115,7 +115,7 @@ MainFrame::keyPressEvent(
     const bool commandPressed = (keyEvent->modifiers() & Qt::ControlModifier);
     // Open Log File
     if (keyEvent->matches(QKeySequence::Open)) {
-        QString fileName = openLogFile();
+        const QString fileName = openLogFile();
         // TODO also check if we need to cleanup old plot.
         if (!fileName.isEmpty()) {
             plotFromLogFile(fileName);

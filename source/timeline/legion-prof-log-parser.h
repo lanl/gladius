@@ -30,10 +30,7 @@ public:
     void parse(const QString &file);
     //
     bool parseSuccessful(void) const;
-    /**
-     * @brief results
-     * @return
-     */
+    //
     const LegionProfData& results(void) const {
         return *mProfData;
     }

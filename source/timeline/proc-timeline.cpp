@@ -44,7 +44,7 @@ ProcTimeline::boundingRect(void) const
 {
     if (mTaskWidgets.empty()) return QRectF();
     //
-    static const qreal spaceForXTimeline = 5;
+    static const qreal spaceForXTimeline = 5.0;
     return QRectF(
         0,
         0,

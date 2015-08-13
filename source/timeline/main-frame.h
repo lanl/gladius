@@ -6,8 +6,8 @@
  * top-level directory of this distribution.
  */
 
-#ifndef TIMELINE_VIEW_H_INCLUDED
-#define TIMELINE_VIEW_H_INCLUDED
+#ifndef TIMELINE_MAIN_FRAME_H_INCLUDED
+#define TIMELINE_MAIN_FRAME_H_INCLUDED
 
 #include <QFrame>
 
@@ -59,4 +59,4 @@ private:
     GraphWidget *mGraphWidget = nullptr;
 };
 
-#endif // TIMELINE_VIEW_H_INCLUDED
+#endif // TIMELINE_MAIN_FRAME_H_INCLUDED
