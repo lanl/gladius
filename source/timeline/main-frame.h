@@ -34,15 +34,13 @@ protected:
 
 private slots:
     //
-    void resetView(void);
+    void mResetView(void);
     //
-    void setupMatrix(void);
+    void mSetupMatrix(void);
     //
-    void print(void);
+    void mPrint(void);
     //
-    void plotFromLogFile(const QString &fileName);
-    //
-    QString openLogFile(void);
+    void mPlotFromLogFile(const QString &fileName);
 
 private:
     //
@@ -57,6 +55,8 @@ private:
     int mZoomValue = 0;
     //
     GraphWidget *mGraphWidget = nullptr;
+    //
+    QString mOpenLogFile(void);
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

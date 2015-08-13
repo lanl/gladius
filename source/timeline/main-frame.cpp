@@ -39,20 +39,20 @@ MainFrame::MainFrame(
     layout ->addWidget(mGraphWidget, 1, 0);
     setLayout(layout);
     //
-    setupMatrix();
+    mSetupMatrix();
 }
 
 void
-MainFrame::resetView(void)
+MainFrame::mResetView(void)
 {
     mZoomValue = sInitZoomValue;
-    setupMatrix();
+    mSetupMatrix();
     // TODO For streaming data, make sure that the right side is visible.
     //mGraphWidget->ensureVisible(QRectF(0, 0, 0, 0));
 }
 
 void
-MainFrame::setupMatrix(void)
+MainFrame::mSetupMatrix(void)
 {
     qreal scale = qPow(
         2.0,
@@ -66,7 +66,7 @@ MainFrame::setupMatrix(void)
 }
 
 void
-MainFrame::print(void)
+MainFrame::mPrint(void)
 {
 #if !defined(QT_NO_PRINTER) && !defined(QT_NO_PRINTDIALOG)
     QPrinter printer;
@@ -79,7 +79,7 @@ MainFrame::print(void)
 }
 
 void
-MainFrame::plotFromLogFile(
+MainFrame::mPlotFromLogFile(
     const QString &fileName
 ) {
     // TODO Add progress bar...
@@ -96,7 +96,7 @@ MainFrame::plotFromLogFile(
 }
 
 QString
-MainFrame::openLogFile(void)
+MainFrame::mOpenLogFile(void)
 {
     QString fileName = QFileDialog::getOpenFileName(
         this,
@@ -115,10 +115,10 @@ MainFrame::keyPressEvent(
     const bool commandPressed = (keyEvent->modifiers() & Qt::ControlModifier);
     // Open Log File
     if (keyEvent->matches(QKeySequence::Open)) {
-        const QString fileName = openLogFile();
+        const QString fileName = mOpenLogFile();
         // TODO also check if we need to cleanup old plot.
         if (!fileName.isEmpty()) {
-            plotFromLogFile(fileName);
+            mPlotFromLogFile(fileName);
         }
         // Done in either case.
         return;
@@ -128,7 +128,7 @@ MainFrame::keyPressEvent(
              (commandPressed && keyEvent->key() == Qt::Key_Equal)) {
         if (mZoomValue < sMaxZoomValue) {
             mZoomValue += sZoomKeyIncrement;
-            setupMatrix();
+            mSetupMatrix();
         }
         return;
     }
@@ -136,19 +136,19 @@ MainFrame::keyPressEvent(
     else if (keyEvent->matches(QKeySequence::ZoomOut)) {
         if (mZoomValue > sMinZoomValue) {
             mZoomValue -= sZoomKeyIncrement;
-            setupMatrix();
+            mSetupMatrix();
         }
         return;
     }
     // Print
     else if (keyEvent->matches(QKeySequence::Print)) {
-        print();
+        mPrint();
         return;
     }
     switch (keyEvent->key()) {
         // Reset Zoom
         case Qt::Key_Equal: {
-            resetView();
+            mResetView();
             break;
         }
         default: QFrame::keyPressEvent(keyEvent);
