@@ -9,6 +9,7 @@
 #ifndef TIMELINE_MAIN_FRAME_H_INCLUDED
 #define TIMELINE_MAIN_FRAME_H_INCLUDED
 
+#include "info-types.h"
 #include <QFrame>
 
 QT_BEGIN_NAMESPACE
@@ -18,6 +19,7 @@ class QToolButton;
 QT_END_NAMESPACE
 
 class GraphWidget;
+class LegionProfLogParser;
 
 /**
  * @brief The View class
@@ -40,7 +42,7 @@ private slots:
     //
     void mPrint(void);
     //
-    void mPlotFromLogFile(const QString &fileName);
+    void parseDone(bool successful, QString status);
 
 private:
     //
@@ -57,6 +59,10 @@ private:
     GraphWidget *mGraphWidget = nullptr;
     //
     QString mOpenLogFile(void);
+    //
+    void mStartPlotFromLogFileThread(const QString &fileName);
+    //
+    LegionProfLogParser *mLegionProfLogParser = nullptr;
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

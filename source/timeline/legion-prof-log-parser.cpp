@@ -47,17 +47,11 @@ QRegExp gMetaDescRx(
 
 } // end namespace
 
-/**
- * @brief LegionProfLogParser::LegionProfLogParser
- */
-LegionProfLogParser::LegionProfLogParser(void)
-{
-    mProfData = nullptr;
-}
+LegionProfLogParser::LegionProfLogParser(
+    QString file
+) : mFile(file)
+  , mProfData(nullptr) { }
 
-/**
- * @brief LegionProfLogParser::~LegionProfLogParser
- */
 LegionProfLogParser::~LegionProfLogParser(void)
 {
     if (mProfData) {
@@ -66,18 +60,14 @@ LegionProfLogParser::~LegionProfLogParser(void)
     }
 }
 
-/**
- * @brief LegionProfLogParser::parse
- * @param file
- */
 void
 LegionProfLogParser::parse(
-    const QString &file
+    void
 ) {
     if (mProfData) delete mProfData;
     mProfData = new LegionProfData();
     //
-    QFile inputFile(file);
+    QFile inputFile(mFile);
     if (!inputFile.exists()) {
         //FIXME
         Q_ASSERT_X(false, __FILE__, "File Does Not Exist...");
@@ -150,6 +140,8 @@ LegionProfLogParser::parse(
     qDebug() << "# Task Infos Found:" <<  mProfData->taskInfos.size();
     qDebug() << "# Meta Descs Found:" <<  mProfData->metaDescs.size();
     qDebug() << "# Meta Infos Found:" <<  mProfData->metaInfos.size();
+
+    emit sigParseDone(true, "Success");
 }
 
 /**

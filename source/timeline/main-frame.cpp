@@ -10,6 +10,7 @@
 #include "graph-widget.h"
 #include "legion-prof-log-parser.h"
 
+#include <QThread>
 #include <QFileDialog>
 #include <QString>
 #ifndef QT_NO_PRINTER
@@ -79,20 +80,58 @@ MainFrame::mPrint(void)
 }
 
 void
-MainFrame::mPlotFromLogFile(
+MainFrame::mStartPlotFromLogFileThread(
     const QString &fileName
 ) {
     // TODO Add progress bar...
     qDebug() << "Loading Log File...";
     //
-    LegionProfLogParser parser;
-    parser.parse(fileName);
-    if (!parser.parseSuccessful()) {
-        // TODO Display Bad Parse and Why
-        qDebug() << "Bad Parse!";
+    QThread *thread = new QThread();
+    mLegionProfLogParser = new LegionProfLogParser(fileName);
+    mLegionProfLogParser->moveToThread(thread);
+    //
+    connect(
+        thread,
+        SIGNAL(started()),
+        mLegionProfLogParser,
+        SLOT(parse())
+    );
+    //
+    connect(
+        mLegionProfLogParser,
+        SIGNAL(sigParseDone(bool, QString)),
+        this,
+        SLOT(parseDone(bool, QString))
+    );
+    // QThread cleanup.
+    connect(
+        mLegionProfLogParser,
+        SIGNAL(sigParseDone(bool, QString)),
+        thread,
+        SLOT(quit())
+    );
+    connect(
+        thread,
+        SIGNAL(finished()),
+        thread,
+        SLOT(deleteLater())
+    );
+    thread->start();
+}
+
+void
+MainFrame::parseDone(
+    bool successful,
+    QString status
+) {
+    if (successful) {
+        mGraphWidget->plot(mLegionProfLogParser->results());
     }
-    // We have all the data we need, so just plot the thing.
-    mGraphWidget->plot(parser.results());
+    else {
+        // TODO
+        qDebug() << "Says Parse Is a Bad: " << status;
+    }
+    mLegionProfLogParser->deleteLater();
 }
 
 QString
@@ -118,7 +157,7 @@ MainFrame::keyPressEvent(
         const QString fileName = mOpenLogFile();
         // TODO also check if we need to cleanup old plot.
         if (!fileName.isEmpty()) {
-            mPlotFromLogFile(fileName);
+            mStartPlotFromLogFileThread(fileName);
         }
         // Done in either case.
         return;

@@ -11,15 +11,18 @@
 
 #include "info-types.h"
 
+#include <QObject>
 #include <QString>
 #include <deque>
 
 /**
  * @brief The LegionProfLogParser class
  */
-class LegionProfLogParser {
+class LegionProfLogParser : public QObject {
+    Q_OBJECT
+
 public:
-    LegionProfLogParser(void);
+    LegionProfLogParser(QString file);
     //
     ~LegionProfLogParser(void);
     // No copy constructor.
@@ -27,16 +30,27 @@ public:
     // No assignment.
     LegionProfLogParser& operator=(const LegionProfLogParser&) = delete;
     //
-    void parse(const QString &file);
-    //
     bool parseSuccessful(void) const;
     //
     const LegionProfData& results(void) const {
         return *mProfData;
     }
 
+public slots:
+    //
+    void parse(void);
+
+signals:
+    void sigParseDone(
+        bool successful,
+        QString status
+    );
+
 private:
+    //
+    QString mFile;
+    //
     LegionProfData *mProfData = nullptr;
 };
 
-#endif // TIMELINE_LEGIONPROFLOGPARSER_H
+#endif // TIMELINE_LEGION_PROF_LOG_PARSER_H
