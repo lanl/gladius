@@ -92,9 +92,11 @@ public:
     TaskWidget(
         const TaskInfo &info,
         uint16_t level,
+        qreal zVal,
         ProcTimeline *timeline
     ) : mInfo(info)
       , mLevel(level)
+      , mZValueStash(zVal)
       , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
       , mColor(Qt::gray /* Default Color */)
       , mLightColor(mColor.light(sLightness))
@@ -125,6 +127,9 @@ public:
         //
         const QColor penColor = selected ? mColor : mLightColor;
         const QColor fillColor = selected ? mLightColor : mColor;
+        // Bring foward if selected.
+        if (selected)  setZValue(sMaxZVal);
+        else  setZValue(mZValueStash);
         //
         painter->setPen(penColor);
         painter->setBrush(fillColor);
@@ -162,15 +167,23 @@ public:
         return sHeight;
     }
     //
-    uint16_t getLevel(void) const {
+    uint16_t
+    getLevel(void) const {
         return mLevel;
+    }
+    //
+    void
+    updateZValue(qreal newZVal) {
+        mZValueStash = newZVal;
+        setZValue(mZValueStash);
     }
 
 private:
-    //
     TaskInfo mInfo;
     //
     uint16_t mLevel = 0;
+    //
+    qreal mZValueStash = 0.0;
     //
     qreal mWidth = 0.0;
     //
@@ -178,10 +191,11 @@ private:
     //
     static constexpr int sLightness = 128;
     //
+    static constexpr qreal sMaxZVal = 10.0;
+    //
     QColor mColor;
     //
     QColor mLightColor;
 };
-
 
 #endif // TIMELINE_PROC_TIMELINE_H_INCLUDED

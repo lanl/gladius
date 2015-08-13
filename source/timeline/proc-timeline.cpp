@@ -102,16 +102,22 @@ ProcTimeline::addTask(
     // Update bounding rectangle width if need be.
     const qreal taskRight = stopTime / sMicroSecPerPixel;
     const bool widthUpdated = taskRight > mMaxX;
+    //
     if (widthUpdated) {
         mMaxX = taskRight;
     }
+    //
     if (oldMaxTaskLevel != mCurrentMaxTaskLevel || widthUpdated) {
         prepareGeometryChange();
         update();
     }
     //
-    TaskWidget *taskWidget = new TaskWidget(info, curTaskMinLevel - 1, this);
-    taskWidget->setZValue(zVal);
+    TaskWidget *taskWidget = new TaskWidget(
+        info,
+        curTaskMinLevel - 1,
+        zVal,
+        this
+    );
     if (!mColorPalette.empty()) {
         taskWidget->setFillColor(mColorPalette[info.funcID]);
     }
@@ -154,9 +160,9 @@ ProcTimeline::paint(
     const auto procIDStr = QString("%1").arg(
         mProcDesc.procID, 6, 10, QChar('0')
     );
-    // Draw Time Tick Marks. One every 10 milliseconds.
+    // Draw Time Tick Marks. One every 20 milliseconds.
     painter->setPen(Qt::gray);
-    static const uint32_t tickIncrement = 1e4 / sMicroSecPerPixel;
+    static const uint32_t tickIncrement = 2 * 1e4 / sMicroSecPerPixel;
     static const uint8_t majorTickLen = 4;
     for (uint64_t t = 0; t < boundingRect().width(); t += tickIncrement) {
         painter->drawLine(
