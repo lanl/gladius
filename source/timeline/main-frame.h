@@ -29,12 +29,6 @@ class MainFrame : public QFrame {
 public:
     //
     explicit MainFrame(QWidget *parent = nullptr);
-    //
-    enum Status {
-        INFO = 0,
-        WARN,
-        ERR
-    };
 
 protected:
     //
@@ -48,12 +42,12 @@ private slots:
     //
     void mPrint(void);
     //
-    void mParseDone(bool successful, QString status);
+    void mOnStatusChange(StatusKind status, QString statusStr);
     //
-    void mOnStatusChange(Status status, QString statusStr);
+    void mOnParseDone(void);
 
 signals:
-    void sigStatusChange(Status, QString status);
+    void sigStatusChange(StatusKind kind, QString status);
 
 private:
     //
@@ -75,7 +69,7 @@ private:
     //
     QString mOpenLogFile(void);
     //
-    void mStartPlotFromLogFileThread(const QString &fileName);
+    void mParseLogFile(const QString &fileName);
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

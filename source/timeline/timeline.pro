@@ -6,7 +6,8 @@
 # top-level directory of this distribution.
 #
 
-QT += core gui widgets
+QT += core concurrent widgets gui
+
 qtHaveModule(printsupport): QT += printsupport
 qtHaveModule(opengl): QT += opengl
 

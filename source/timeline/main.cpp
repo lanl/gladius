@@ -13,11 +13,22 @@
 #include <QApplication>
 #include <QDebug>
 
+namespace {
+
+void
+registerMetaTypes(void) {
+    qRegisterMetaType<StatusKind>("StatusKindType");
+}
+
+}
+
 int
 main(
     int argc,
     char **argv
 ) {
+    registerMetaTypes();
+    //
     QApplication app(argc, argv);
     //
     app.setApplicationName(APP_NAME);

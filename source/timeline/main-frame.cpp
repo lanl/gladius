@@ -10,6 +10,8 @@
 #include "graph-widget.h"
 #include "legion-prof-log-parser.h"
 
+#include <QtCore>
+#include <QtConcurrent>
 #include <QThread>
 #include <QFileDialog>
 #include <QString>
@@ -46,9 +48,9 @@ MainFrame::MainFrame(
     //
     connect(
         this,
-        SIGNAL(sigStatusChange(Status, QString)),
+        SIGNAL(sigStatusChange(StatusKind, QString)),
         this,
-        SLOT(mOnStatusChange(Status, QString))
+        SLOT(mOnStatusChange(StatusKind, QString))
     );
     //
     mSetupMatrix();
@@ -91,74 +93,44 @@ MainFrame::mPrint(void)
 }
 
 void
-MainFrame::mStartPlotFromLogFileThread(
+MainFrame::mParseLogFile(
     const QString &fileName
 ) {
-    //
-    emit sigStatusChange(Status::INFO, "Processing Log File...");
-    QThread *thread = new QThread();
     mLegionProfLogParser = new LegionProfLogParser(fileName);
-    mLegionProfLogParser->moveToThread(thread);
-    //
-    connect(
-        thread,
-        SIGNAL(started()),
-        mLegionProfLogParser,
-        SLOT(parse())
-    );
-    //
-    connect(
-        mLegionProfLogParser,
-        SIGNAL(sigParseDone(bool, QString)),
-        this,
-        SLOT(mParseDone(bool, QString))
-    );
-    // QThread cleanup.
-    connect(
-        mLegionProfLogParser,
-        SIGNAL(sigParseDone(bool, QString)),
-        thread,
-        SLOT(quit())
-    );
-    connect(
-        thread,
-        SIGNAL(finished()),
-        thread,
-        SLOT(deleteLater())
-    );
-    thread->start();
-}
-
-void
-MainFrame::mParseDone(
-    bool successful,
-    QString status
-) {
-    if (successful) {
-        mGraphWidget->plot(mLegionProfLogParser->results());
-        emit sigStatusChange(Status::INFO, "");
-    }
-    else {
-        emit sigStatusChange(Status::ERR, status);
-    }
-    mLegionProfLogParser->deleteLater();
+    emit sigStatusChange(StatusKind::INFO, "Parsing Log File...");
+    mLegionProfLogParser->parse();
 }
 
 void
 MainFrame::mOnStatusChange(
-    Status status,
+    StatusKind status,
     QString statusStr
 ) {
     QString colorString;
     switch (status) {
-        case Status::WARN:
-        case Status::ERR:
+        case StatusKind::WARN:
+        case StatusKind::ERR:
             colorString = "<font color='red'>";
             break;
-        case Status::INFO:
+        case StatusKind::INFO:
         default: break;
     }
     mStatusLabel->setText(colorString + statusStr);
+}
+
+void
+MainFrame::mOnParseDone(
+    void
+) {
+    const Status parseStatus = mLegionProfLogParser->status();
+    if (parseStatus == Status::Okay()) {
+        emit sigStatusChange(StatusKind::INFO, "Plotting");
+        mGraphWidget->plot(mLegionProfLogParser->results());
+        emit sigStatusChange(StatusKind::INFO, "");
+    }
+    else {
+        emit sigStatusChange(StatusKind::ERR, parseStatus.errs);
+    }
 }
 
 QString
@@ -184,7 +156,24 @@ MainFrame::keyPressEvent(
         const QString fileName = mOpenLogFile();
         // TODO also check if we need to cleanup old plot.
         if (!fileName.isEmpty()) {
-            mStartPlotFromLogFileThread(fileName);
+            QFuture<void> future = QtConcurrent::run(
+                this,
+                &MainFrame::mParseLogFile, fileName
+            );
+            QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+            watcher->setFuture(future);
+            connect(
+                watcher,
+                SIGNAL(finished()),
+                this,
+                SLOT(mOnParseDone(void))
+            );
+            connect(
+                watcher,
+                SIGNAL(finished()),
+                watcher,
+                SLOT(deleteLater())
+            );
         }
         // Done in either case.
         return;

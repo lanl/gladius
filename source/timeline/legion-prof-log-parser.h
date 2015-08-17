@@ -9,15 +9,16 @@
 #ifndef TIMELINE_LEGION_PROF_LOG_PARSER_H
 #define TIMELINE_LEGION_PROF_LOG_PARSER_H
 
+#include "common.h"
 #include "info-types.h"
 
 #include <QObject>
-#include <QString>
 #include <deque>
 
-/**
- * @brief The LegionProfLogParser class
- */
+QT_BEGIN_NAMESPACE
+class QString;
+QT_END_NAMESPACE
+
 class LegionProfLogParser : public QObject {
     Q_OBJECT
 
@@ -30,27 +31,29 @@ public:
     // No assignment.
     LegionProfLogParser& operator=(const LegionProfLogParser&) = delete;
     //
-    bool parseSuccessful(void) const;
-    //
     const LegionProfData& results(void) const {
         return *mProfData;
     }
+    //
+    Status
+    status(void) { return mStatus; }
 
 public slots:
     //
     void parse(void);
 
 signals:
-    void sigParseDone(
-        bool successful,
-        QString status
-    );
+    void sigParseDone(void);
 
 private:
+    //
+    Status mStatus;
     //
     QString mFileName;
     //
     LegionProfData *mProfData = nullptr;
+    //
+    bool mParseSuccessful(void) const;
 };
 
 #endif // TIMELINE_LEGION_PROF_LOG_PARSER_H

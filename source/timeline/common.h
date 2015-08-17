@@ -1,8 +1,45 @@
 #ifndef TIMELINE_COMMON_H
 #define TIMELINE_COMMON_H
 
+#include <QMetaType>
+#include <QString>
+
+#include <cstring>
+
+#include <stdint.h>
+
 #define APP_NAME      "timeline"
 #define APP_WIN_TITLE "Task Execution Timeline"
+
+struct Status {
+    //
+    static constexpr uint8_t ok     = 0;
+    static constexpr uint8_t errors = 1;
+    //
+    uint8_t code;
+    //
+    QString errs;
+    //
+    Status(const QString &errs)
+        : code(errors)
+        , errs(errs) { }
+    //
+    Status(
+        uint8_t code,
+        const QString &errs
+    ) : code(code)
+      , errs(errs) { }
+    //
+    static Status
+    Okay(void) {
+        static const Status statOk(ok, "Ok");
+        return statOk;
+    }
+    //
+    bool operator==(const Status &other) const {
+        return other.code == this->code;
+    }
+};
 
 // Keep This In Sync With Legion
 enum ProcType {
@@ -14,7 +51,13 @@ enum ProcType {
     UNKNOWN     // ???
 };
 
-#include <QtGlobal>
+//
+enum StatusKind {
+    INFO = 0,
+    WARN,
+    ERR
+};
+Q_DECLARE_METATYPE(StatusKind);
 
 static const int sMicroSecPerPixel = 1e2;
 

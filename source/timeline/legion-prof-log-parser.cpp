@@ -49,7 +49,8 @@ QRegExp gMetaDescRx(
 
 LegionProfLogParser::LegionProfLogParser(
     QString file
-) : mFileName(file)
+) : mStatus(Status::Okay())
+  , mFileName(file)
   , mProfData(nullptr) { }
 
 LegionProfLogParser::~LegionProfLogParser(void)
@@ -64,17 +65,21 @@ void
 LegionProfLogParser::parse(
     void
 ) {
-    if (mProfData) delete mProfData;
+    if (mProfData) {
+        delete mProfData;
+        mStatus = Status::Okay();
+    }
     mProfData = new LegionProfData();
     //
     QFile inputFile(mFileName);
     if (!inputFile.exists()) {
-        emit sigParseDone(false , "'" + mFileName + "' Does Not Exist");
+        mStatus = Status("'" + mFileName + "' Does Not Exist");
+        emit sigParseDone();
         return;
     }
     if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const QString  errs = inputFile.errorString();
-        emit sigParseDone(false , errs);
+        mStatus = Status(inputFile.errorString());
+        emit sigParseDone();
         return;
     }
     //
@@ -135,27 +140,21 @@ LegionProfLogParser::parse(
         }
     }
     inputFile.close();
-    //
-    if (parseSuccessful()) {
-        emit sigParseDone(true, "Success");
-    }
-    else {
-        emit sigParseDone(false, "Could Not Process Log File...");
-    }
 
     qDebug() << "# Proc Kinds Found:" << mProfData->taskKinds.size();
-    qDebug() << "# Procs Found:" << mProfData->procDescs.size();
-    qDebug() << "# Task Infos Found:" <<  mProfData->taskInfos.size();
-    qDebug() << "# Meta Descs Found:" <<  mProfData->metaDescs.size();
-    qDebug() << "# Meta Infos Found:" <<  mProfData->metaInfos.size();
+    qDebug() << "# Procs Found     :" << mProfData->procDescs.size();
+    qDebug() << "# Task Infos Found:" << mProfData->taskInfos.size();
+    qDebug() << "# Meta Descs Found:" << mProfData->metaDescs.size();
+    qDebug() << "# Meta Infos Found:" << mProfData->metaInfos.size();
+
+    if (!mParseSuccessful()) {
+        mStatus = Status("Invalid Log Format");
+    }
+    emit sigParseDone();
 }
 
-/**
- * @brief LegionProfLogParser::parseSuccessful
- * @return
- */
 bool
-LegionProfLogParser::parseSuccessful(void) const
+LegionProfLogParser::mParseSuccessful(void) const
 {
     if (!mProfData) return false;
     if (mProfData->procDescs.size() == 0) return false;
