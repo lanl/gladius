@@ -94,7 +94,9 @@ ProcTimeline::addTask(
                 mCurrentMaxTaskLevel = curTaskMinLevel;
             }
         }
-        // Send it to the back a bit.
+        // Send it to the back a bit. This is the case where what we are
+        // plotting completely covers what's already placed. Instead of
+        // reordering things, we just send the larger item to the back a bit.
         else if (boost::icl::contains(window, it->first)) {
             zVal -= 0.1;
         }
@@ -106,7 +108,7 @@ ProcTimeline::addTask(
     if (widthUpdated) {
         mMaxX = taskRight;
     }
-    //
+    // Did our bounding rectangle change?
     if (oldMaxTaskLevel != mCurrentMaxTaskLevel || widthUpdated) {
         prepareGeometryChange();
         update();

@@ -29,6 +29,12 @@ class MainFrame : public QFrame {
 public:
     //
     explicit MainFrame(QWidget *parent = nullptr);
+    //
+    enum Status {
+        INFO = 0,
+        WARN,
+        ERR
+    };
 
 protected:
     //
@@ -44,10 +50,10 @@ private slots:
     //
     void mParseDone(bool successful, QString status);
     //
-    void mOnStatusChange(QString status);
+    void mOnStatusChange(Status status, QString statusStr);
 
 signals:
-    void sigStatusChange(QString status);
+    void sigStatusChange(Status, QString status);
 
 private:
     //

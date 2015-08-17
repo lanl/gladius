@@ -46,9 +46,9 @@ MainFrame::MainFrame(
     //
     connect(
         this,
-        SIGNAL(sigStatusChange(QString)),
+        SIGNAL(sigStatusChange(Status, QString)),
         this,
-        SLOT(mOnStatusChange(QString))
+        SLOT(mOnStatusChange(Status, QString))
     );
     //
     mSetupMatrix();
@@ -95,7 +95,7 @@ MainFrame::mStartPlotFromLogFileThread(
     const QString &fileName
 ) {
     //
-    emit sigStatusChange("Processing Log File...");
+    emit sigStatusChange(Status::INFO, "Processing Log File...");
     QThread *thread = new QThread();
     mLegionProfLogParser = new LegionProfLogParser(fileName);
     mLegionProfLogParser->moveToThread(thread);
@@ -136,20 +136,29 @@ MainFrame::mParseDone(
 ) {
     if (successful) {
         mGraphWidget->plot(mLegionProfLogParser->results());
+        emit sigStatusChange(Status::INFO, "");
     }
     else {
-        // TODO
-        qDebug() << "Says Parse Is a Bad: " << status;
+        emit sigStatusChange(Status::ERR, status);
     }
     mLegionProfLogParser->deleteLater();
-    emit sigStatusChange("");
 }
 
 void
 MainFrame::mOnStatusChange(
-    QString status
+    Status status,
+    QString statusStr
 ) {
-    mStatusLabel->setText(status);
+    QString colorString;
+    switch (status) {
+        case Status::WARN:
+        case Status::ERR:
+            colorString = "<font color='red'>";
+            break;
+        case Status::INFO:
+        default: break;
+    }
+    mStatusLabel->setText(colorString + statusStr);
 }
 
 QString

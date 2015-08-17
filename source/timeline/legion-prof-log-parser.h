@@ -48,7 +48,7 @@ signals:
 
 private:
     //
-    QString mFile;
+    QString mFileName;
     //
     LegionProfData *mProfData = nullptr;
 };

@@ -49,7 +49,7 @@ QRegExp gMetaDescRx(
 
 LegionProfLogParser::LegionProfLogParser(
     QString file
-) : mFile(file)
+) : mFileName(file)
   , mProfData(nullptr) { }
 
 LegionProfLogParser::~LegionProfLogParser(void)
@@ -67,18 +67,19 @@ LegionProfLogParser::parse(
     if (mProfData) delete mProfData;
     mProfData = new LegionProfData();
     //
-    QFile inputFile(mFile);
+    QFile inputFile(mFileName);
     if (!inputFile.exists()) {
-        //FIXME
-        Q_ASSERT_X(false, __FILE__, "File Does Not Exist...");
+        emit sigParseDone(false , "'" + mFileName + "' Does Not Exist");
+        return;
     }
     if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        //FIXME
-        Q_ASSERT_X(false, __FILE__, "Cannot Open File...");
+        const QString  errs = inputFile.errorString();
+        emit sigParseDone(false , errs);
+        return;
     }
     //
     while (!inputFile.atEnd()) {
-        QString line(inputFile.readLine());
+        const QString line(inputFile.readLine());
         //
         if (gTaskKindRx.indexIn(line) != -1) {
             const taskid_t tid = gTaskKindRx.cap(1).toUInt();
@@ -134,14 +135,19 @@ LegionProfLogParser::parse(
         }
     }
     inputFile.close();
+    //
+    if (parseSuccessful()) {
+        emit sigParseDone(true, "Success");
+    }
+    else {
+        emit sigParseDone(false, "Could Not Process Log File...");
+    }
 
     qDebug() << "# Proc Kinds Found:" << mProfData->taskKinds.size();
     qDebug() << "# Procs Found:" << mProfData->procDescs.size();
     qDebug() << "# Task Infos Found:" <<  mProfData->taskInfos.size();
     qDebug() << "# Meta Descs Found:" <<  mProfData->metaDescs.size();
     qDebug() << "# Meta Infos Found:" <<  mProfData->metaInfos.size();
-
-    emit sigParseDone(true, "Success");
 }
 
 /**
