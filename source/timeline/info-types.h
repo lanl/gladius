@@ -113,6 +113,15 @@ struct LegionProfData {
     //
     std::map<opid_t, MetaDesc *> metaDescs;
     //
+    ~LegionProfData(void) {
+        for (auto &taskKind : taskKinds) {
+            delete taskKind.second;
+        }
+        for (auto &metaDesc: metaDescs) {
+            delete metaDesc.second;
+        }
+    }
+    //
     size_t
     nProcessors(void) const {
         return procDescs.size();

@@ -131,6 +131,7 @@ MainFrame::mOnParseDone(
     else {
         emit sigStatusChange(StatusKind::ERR, parseStatus.errs);
     }
+    mLegionProfLogParser->deleteLater();
 }
 
 QString
