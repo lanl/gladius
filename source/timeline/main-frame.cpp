@@ -97,7 +97,6 @@ MainFrame::mParseLogFile(
     const QString &fileName
 ) {
     mLegionProfLogParser = new LegionProfLogParser(fileName);
-    emit sigStatusChange(StatusKind::INFO, "Parsing Log File...");
     mLegionProfLogParser->parse();
 }
 
@@ -157,6 +156,7 @@ MainFrame::keyPressEvent(
         const QString fileName = mOpenLogFile();
         // TODO also check if we need to cleanup old plot.
         if (!fileName.isEmpty()) {
+            emit sigStatusChange(StatusKind::INFO, "Processing Log File...");
             QFuture<void> future = QtConcurrent::run(
                 this,
                 &MainFrame::mParseLogFile, fileName

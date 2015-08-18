@@ -8,6 +8,7 @@
 
 #include "graph-widget.h"
 #include "proc-timeline.h"
+#include "color-palette-factory.h"
 
 #include <QDebug>
 #include <math.h>
@@ -49,6 +50,7 @@ GraphWidget::addProcTimeline(
     updateProcTimelineLayout();
 }
 
+#if 0
 // TODO Move into utils
 namespace {
 
@@ -69,12 +71,13 @@ getColors(uint32_t numColorsNeeded) {
 }
 
 } // end namespace
+#endif
 
 void
 GraphWidget::plot(
     const LegionProfData &plotData
 ) {
-    QList<QColor> colorPalette = getColors(30);
+    QList<QColor> colorPalette = ColorPaletteFactory::getColorAlphabet2();
     // Create the proc timelines.
     for (const auto &procDesc : plotData.procDescs) {
         addProcTimeline(procDesc);
