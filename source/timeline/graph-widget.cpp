@@ -11,7 +11,13 @@
 #include "color-palette-factory.h"
 
 #include <QDebug>
-#include <math.h>
+#ifndef QT_NO_OPENGL
+#include <QtOpenGL>
+#else
+#include <QtWidgets>
+#endif
+
+#include <qmath.h>
 
 namespace {
 // enable if you want to use "debug colors."
@@ -32,6 +38,10 @@ GraphWidget::GraphWidget(
     setDragMode(QGraphicsView::NoDrag);
     //
     setRenderHint(QPainter::Antialiasing, true);
+    //
+#ifndef QT_NO_OPENGL
+    setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+#endif
     //
     if (gDrawDebugColors) {
         setBackgroundBrush(QBrush(Qt::gray));

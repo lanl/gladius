@@ -11,20 +11,18 @@
 #include "legion-prof-log-parser.h"
 
 #include <QtCore>
-#include <QtConcurrent>
-#include <QThread>
 #include <QFileDialog>
 #include <QString>
 #include <QLabel>
+#include <QtConcurrent>
+#include <QThread>
+#include <QtWidgets>
+
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
 #include <QPrintDialog>
 #endif
-#ifndef QT_NO_OPENGL
-#include <QtOpenGL>
-#else
-#include <QtWidgets>
-#endif
+
 #include <qmath.h>
 
 // TODO: See setStyleSheet
