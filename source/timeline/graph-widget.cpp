@@ -60,29 +60,6 @@ GraphWidget::addProcTimeline(
     updateProcTimelineLayout();
 }
 
-#if 0
-// TODO Move into utils
-namespace {
-
-// Adapted From: https://wiki.qt.io/Color_palette_generator
-QList<QColor>
-getColors(uint32_t numColorsNeeded) {
-    static const double golden_ratio = 0.618033988749895;
-    QList<QColor> brushScale;
-    double h = 0;
-    uint32_t realNumColorsNeeded = numColorsNeeded + 1;
-    for (uint32_t i = 0; i < realNumColorsNeeded; ++i) {
-        h = golden_ratio * 360 / realNumColorsNeeded * i;
-        h = floor(h * 6);
-        brushScale.append(QColor::fromHsv(int(h) % 128, 245, 230, 255));
-    }
-    qDebug() << "List Size:" << brushScale.size();
-    return brushScale;
-}
-
-} // end namespace
-#endif
-
 void
 GraphWidget::plot(
     const LegionProfData &plotData
