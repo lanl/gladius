@@ -17,6 +17,7 @@
 #include <QtConcurrent>
 #include <QThread>
 #include <QtWidgets>
+#include <QStringList>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -131,17 +132,50 @@ MainFrame::mOnParseDone(
     mLegionProfLogParser->deleteLater();
 }
 
-QString
-MainFrame::mOpenLogFile(void)
+QStringList
+MainFrame::mOpenLogFiles(void)
 {
-    QString fileName = QFileDialog::getOpenFileName(
+    QStringList fileNames = QFileDialog::getOpenFileNames(
         this,
         tr("Open Log File"),
         QDir::homePath(),
         tr("Log Files (*.*)")
     );
     //
-    return fileName;
+    return fileNames;
+}
+
+void
+MainFrame::mProcessLogFiles(
+    const QStringList &fileNames
+) {
+    // TODO also check if we need to cleanup old plot.
+    const auto numFiles = fileNames.size();
+    emit sigStatusChange(
+        StatusKind::INFO,
+        "Processing " + QString::number(numFiles) +
+        " Log File" + (numFiles > 1 ? "s" : "")
+    );
+    foreach (const QString fileName, fileNames) {
+        QFuture<void> future = QtConcurrent::run(
+            this,
+            &MainFrame::mParseLogFile, fileName
+        );
+        QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+        watcher->setFuture(future);
+        connect(
+            watcher,
+            SIGNAL(finished()),
+            this,
+            SLOT(mOnParseDone(void))
+        );
+        connect(
+            watcher,
+            SIGNAL(finished()),
+            watcher,
+            SLOT(deleteLater())
+        );
+    }
 }
 
 void
@@ -151,28 +185,9 @@ MainFrame::keyPressEvent(
     const bool commandPressed = (keyEvent->modifiers() & Qt::ControlModifier);
     // Open Log File
     if (keyEvent->matches(QKeySequence::Open)) {
-        const QString fileName = mOpenLogFile();
-        // TODO also check if we need to cleanup old plot.
-        if (!fileName.isEmpty()) {
-            emit sigStatusChange(StatusKind::INFO, "Processing Log File...");
-            QFuture<void> future = QtConcurrent::run(
-                this,
-                &MainFrame::mParseLogFile, fileName
-            );
-            QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
-            watcher->setFuture(future);
-            connect(
-                watcher,
-                SIGNAL(finished()),
-                this,
-                SLOT(mOnParseDone(void))
-            );
-            connect(
-                watcher,
-                SIGNAL(finished()),
-                watcher,
-                SLOT(deleteLater())
-            );
+        const QStringList fileNames = mOpenLogFiles();
+        if (!fileNames.isEmpty()) {
+            mProcessLogFiles(fileNames);
         }
         // Done in either case.
         return;

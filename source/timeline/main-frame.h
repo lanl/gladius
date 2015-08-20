@@ -10,7 +10,9 @@
 #define TIMELINE_MAIN_FRAME_H_INCLUDED
 
 #include "info-types.h"
+
 #include <QFrame>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -67,9 +69,11 @@ private:
     //
     QLabel *mStatusLabel = nullptr;
     //
-    QString mOpenLogFile(void);
+    QStringList mOpenLogFiles(void);
     //
     void mParseLogFile(const QString &fileName);
+    //
+    void mProcessLogFiles(const QStringList &fileNames);
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

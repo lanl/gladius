@@ -33,7 +33,7 @@ public:
         //
         QList<QColor> result;
         //
-        foreach(const QString &color, colors) {
+        foreach (const QString &color, colors) {
             result << QColor(color);
         }
         //
@@ -62,7 +62,7 @@ public:
         //
         QList<QColor> result;
         //
-        foreach(const QString &color, colors) {
+        foreach (const QString &color, colors) {
             result << QColor(color);
         }
         //
