@@ -155,7 +155,7 @@ ProcTimeline::paint(
     const auto x1y1 = boundingRect().bottomLeft();
     const auto x2y2 = boundingRect().bottomRight();
     // Draw Timeline
-    painter->setPen(Qt::black);
+    painter->setPen(Qt::gray);
     painter->drawLine(x1y1, x2y2);
     // Draw Timeline Legend
     static const int legendFixup = -1;
@@ -163,7 +163,7 @@ ProcTimeline::paint(
         mProcDesc.procID, 6, 10, QChar('0')
     );
     // Draw Time Tick Marks. One every 20 milliseconds.
-    painter->setPen(Qt::gray);
+    painter->setPen(Qt::black);
     static const uint32_t tickIncrement = 2 * 1e4 / sMicroSecPerPixel;
     static const uint8_t majorTickLen = 4;
     for (uint64_t t = 0; t < boundingRect().width(); t += tickIncrement) {
