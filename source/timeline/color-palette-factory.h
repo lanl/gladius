@@ -70,7 +70,7 @@ public:
     }
 
     // Adapted From: https://wiki.qt.io/Color_palette_generator
-    QList<QColor>
+    static QList<QColor>
     getColors(uint32_t numColorsNeeded) {
         static const double golden_ratio = 0.618033988749895;
         QList<QColor> brushScale;

@@ -35,12 +35,15 @@ GraphWidget::GraphWidget(
     //
     setFrameShape(QFrame::NoFrame);
     //
-    setDragMode(QGraphicsView::NoDrag);
+    //setDragMode(QGraphicsView::NoDrag);
+    setDragMode(QGraphicsView::RubberBandDrag);
     //
     setRenderHint(QPainter::Antialiasing, true);
     //
 #ifndef QT_NO_OPENGL
-    setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+    // On OS X I get "QMacCGContext:: Unsupported painter devtype type 1"
+    // when this is enabled.
+    //setViewport(new QGLWidget(QGLFormat(QGL::DoubleBuffer)));
 #endif
     //
     if (gDrawDebugColors) {
@@ -54,6 +57,7 @@ void
 GraphWidget::addProcTimeline(
     const ProcDesc &procDesc
 ) {
+    // TODO make sure that the proc that we are adding isn't already created.
     ProcTimeline *tl = new ProcTimeline(procDesc, this);
     mProcTimelines.insert(procDesc.procID, tl);
     mScene->addItem(tl);
