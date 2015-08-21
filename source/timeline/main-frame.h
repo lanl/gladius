@@ -76,6 +76,8 @@ private:
     //
     void mParseLogFile(const QString &fileName);
     //
+    void mPreProcessLogFiles(void);
+    //
     void mProcessLogFiles(const QStringList &fileNames);
 };
 

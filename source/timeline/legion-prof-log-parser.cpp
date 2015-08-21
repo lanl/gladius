@@ -67,6 +67,7 @@ LegionProfLogParser::parse(
 ) {
     if (mProfData) {
         // Must already be done.
+        emit sigParseDone();
         return;
     }
     mProfData = new LegionProfData();

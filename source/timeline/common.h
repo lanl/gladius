@@ -47,6 +47,10 @@ struct Status {
     bool operator==(const Status &other) const {
         return other.code == this->code;
     }
+    //
+    bool operator!=(const Status &other) const {
+        return other.code != this->code;
+    }
 };
 
 // Keep This In Sync With Legion

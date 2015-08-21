@@ -144,7 +144,7 @@ MainFrame::mOnParseDone(
     bool allGood = true;
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         const Status parseStatus = p->status();
-        if (!(parseStatus == Status::Okay())) {
+        if (parseStatus != Status::Okay()) {
             emit sigStatusChange(StatusKind::ERR, parseStatus.errs);
             allGood = false;
             break;
@@ -155,8 +155,11 @@ MainFrame::mOnParseDone(
     // It's all good, so plot the data.
     emit sigStatusChange(StatusKind::INFO, "Plotting...");
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
+        // FIXME consider adding a "addPlotData" to avoid some of the costly
+        // operations in plot. Then at the end plot.
         mGraphWidget->plot(p->results());
         p->deleteLater();
+        p = nullptr;
     }
     emit sigStatusChange(StatusKind::INFO, "");
 }
@@ -172,6 +175,16 @@ MainFrame::mOpenLogFiles(void)
     );
     //
     return fileNames;
+}
+
+void
+MainFrame::mPreProcessLogFiles()
+{
+    foreach(LegionProfLogParser *p, mLegionProfLogParsers) {
+        if (p) p->deleteLater();
+    }
+    mLegionProfLogParsers.clear();
+    mNumFilesParsed = 0;
 }
 
 void
@@ -218,6 +231,8 @@ MainFrame::keyPressEvent(
     if (keyEvent->matches(QKeySequence::Open)) {
         const QStringList fileNames = mOpenLogFiles();
         if (!fileNames.isEmpty()) {
+            // Do cleanup if need be.
+            mPreProcessLogFiles();
             mProcessLogFiles(fileNames);
         }
         // Done in either case.
