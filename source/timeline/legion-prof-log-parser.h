@@ -37,6 +37,9 @@ public:
     //
     Status
     status(void) { return mStatus; }
+    //
+    QString
+    getFileName(void) const { return mFileName; }
 
 public slots:
     //

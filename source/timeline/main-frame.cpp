@@ -145,7 +145,8 @@ MainFrame::mOnParseDone(
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         const Status parseStatus = p->status();
         if (parseStatus != Status::Okay()) {
-            emit sigStatusChange(StatusKind::ERR, parseStatus.errs);
+            QString errs = p->getFileName() + ": " + parseStatus.errs;
+            emit sigStatusChange(StatusKind::ERR, errs);
             allGood = false;
             break;
         }
@@ -158,9 +159,13 @@ MainFrame::mOnParseDone(
         // FIXME consider adding a "addPlotData" to avoid some of the costly
         // operations in plot. Then at the end plot.
         mGraphWidget->plot(p->results());
-        p->deleteLater();
-        p = nullptr;
     }
+    // We no longer need the parser instances, so clean them up.
+    foreach (const QString fName, mLegionProfLogParsers.keys()) {
+        mLegionProfLogParsers[fName]->deleteLater();
+        mLegionProfLogParsers[fName] = nullptr;
+    }
+    // All done!
     emit sigStatusChange(StatusKind::INFO, "");
 }
 
