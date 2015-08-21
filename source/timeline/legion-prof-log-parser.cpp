@@ -66,8 +66,8 @@ LegionProfLogParser::parse(
     void
 ) {
     if (mProfData) {
-        delete mProfData;
-        mStatus = Status::Okay();
+        // Must already be done.
+        return;
     }
     mProfData = new LegionProfData();
     //

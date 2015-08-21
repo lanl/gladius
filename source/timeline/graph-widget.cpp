@@ -29,13 +29,10 @@ GraphWidget::GraphWidget(
 ) : QGraphicsView(parent)
   , mScene(new QGraphicsScene(this))
 {
-    setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    setFrameShape(QFrame::NoFrame);
     //
     setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     //
-    setFrameShape(QFrame::NoFrame);
-    //
-    //setDragMode(QGraphicsView::NoDrag);
     setDragMode(QGraphicsView::RubberBandDrag);
     //
     setRenderHint(QPainter::Antialiasing, true);
@@ -57,11 +54,12 @@ void
 GraphWidget::addProcTimeline(
     const ProcDesc &procDesc
 ) {
-    // TODO make sure that the proc that we are adding isn't already created.
-    ProcTimeline *tl = new ProcTimeline(procDesc, this);
-    mProcTimelines.insert(procDesc.procID, tl);
-    mScene->addItem(tl);
-    updateProcTimelineLayout();
+    if (!mProcTimelines.contains(procDesc.procID)) {
+        ProcTimeline *tl = new ProcTimeline(procDesc, this);
+        mProcTimelines.insert(procDesc.procID, tl);
+        mScene->addItem(tl);
+        updateProcTimelineLayout();
+    }
 }
 
 void
