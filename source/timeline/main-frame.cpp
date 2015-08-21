@@ -136,8 +136,14 @@ MainFrame::mOnParseDone(
     //
     mutex.lock();
     bool doPlot = false;
+    const auto totalNumFiles = mLegionProfLogParsers.size();
     mNumFilesParsed++;
-    if (mNumFilesParsed == mLegionProfLogParsers.size()) {
+    const float percentDone = (float(mNumFilesParsed) / totalNumFiles) * 100.0;
+    emit sigStatusChange(
+        StatusKind::INFO,
+        "Parsing: " + QString::number(percentDone, 'f', 0) + "% Done"
+    );
+    if (mNumFilesParsed == totalNumFiles) {
         doPlot = true;
     }
     //
