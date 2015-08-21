@@ -18,11 +18,6 @@
 
 namespace {
 
-/**
- * @brief getScreenGeometry
- * @param screenID
- * @return
- */
 QRect
 getScreenGeometry(
     unsigned screenID
@@ -32,10 +27,6 @@ getScreenGeometry(
 
 } // end namespace
 
-/**
- * @brief MainWindow::MainWindow
- * @param parent
- */
 MainWindow::MainWindow(
     QWidget *parent
 ) : QWidget(parent)

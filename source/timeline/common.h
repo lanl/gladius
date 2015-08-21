@@ -67,6 +67,16 @@ enum StatusKind {
 };
 Q_DECLARE_METATYPE(StatusKind);
 
+namespace Common {
+
+inline void
+registerMetaTypes(void) {
+    qRegisterMetaType<StatusKind>("StatusKindType");
+}
+
+}
+
+
 static const int sMicroSecPerPixel = 1e2;
 
 #endif // TIMELINE_COMMON_H
