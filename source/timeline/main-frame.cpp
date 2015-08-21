@@ -110,16 +110,22 @@ MainFrame::mOnStatusChange(
     StatusKind status,
     QString statusStr
 ) {
-    QString colorString;
+    QString msgBegin;
+    QString msgEnd = "]";
     switch (status) {
         case StatusKind::WARN:
+            msgBegin = "Warning [";
+            break;
         case StatusKind::ERR:
-            colorString = "<font color='red'>";
+            msgBegin = "Error [";
             break;
         case StatusKind::INFO:
-        default: break;
+        default:
+            msgBegin = "";
+            msgEnd   = "";
+            break;
     }
-    mStatusLabel->setText(colorString + statusStr);
+    mStatusLabel->setText(msgBegin + statusStr + msgEnd);
 }
 
 void
@@ -145,7 +151,7 @@ MainFrame::mOnParseDone(
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         const Status parseStatus = p->status();
         if (parseStatus != Status::Okay()) {
-            QString errs = p->getFileName() + ": " + parseStatus.errs;
+            const QString errs = p->getFileName() + ": " + parseStatus.errs;
             emit sigStatusChange(StatusKind::ERR, errs);
             allGood = false;
             break;
