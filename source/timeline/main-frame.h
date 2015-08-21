@@ -13,6 +13,7 @@
 
 #include <QFrame>
 #include <QStringList>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -63,9 +64,11 @@ private:
     //
     int mZoomValue = 0;
     //
-    GraphWidget *mGraphWidget = nullptr;
+    int mNumFilesParsed = 0;
     //
-    LegionProfLogParser *mLegionProfLogParser = nullptr;
+    GraphWidget *mGraphWidget = nullptr;
+    // Map between log file name and parser.
+    QMap<QString, LegionProfLogParser *> mLegionProfLogParsers;
     //
     QLabel *mStatusLabel = nullptr;
     //

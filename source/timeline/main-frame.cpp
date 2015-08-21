@@ -15,6 +15,7 @@
 #include <QString>
 #include <QLabel>
 #include <QtConcurrent>
+#include <QMutex>
 #include <QThread>
 #include <QtWidgets>
 #include <QStringList>
@@ -23,6 +24,8 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #endif
+
+#include <cassert>
 
 #include <qmath.h>
 
@@ -95,8 +98,11 @@ void
 MainFrame::mParseLogFile(
     const QString &fileName
 ) {
-    mLegionProfLogParser = new LegionProfLogParser(fileName);
-    mLegionProfLogParser->parse();
+    static QMutex mutex;
+    mutex.lock();
+    auto *aParser = mLegionProfLogParsers[fileName];
+    aParser->parse();
+    mutex.unlock();
 }
 
 void
@@ -120,16 +126,39 @@ void
 MainFrame::mOnParseDone(
     void
 ) {
-    const Status parseStatus = mLegionProfLogParser->status();
-    if (parseStatus == Status::Okay()) {
-        emit sigStatusChange(StatusKind::INFO, "Plotting");
-        mGraphWidget->plot(mLegionProfLogParser->results());
-        emit sigStatusChange(StatusKind::INFO, "");
+    static QMutex mutex;
+    //
+    mutex.lock();
+    bool doPlot = false;
+    mNumFilesParsed++;
+    if (mNumFilesParsed == mLegionProfLogParsers.size()) {
+        doPlot = true;
     }
-    else {
-        emit sigStatusChange(StatusKind::ERR, parseStatus.errs);
+    //
+    if (!doPlot) {
+        mutex.unlock();
+        return;
     }
-    mLegionProfLogParser->deleteLater();
+    mutex.unlock();
+    // Else we try to plot...
+    bool allGood = true;
+    foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
+        const Status parseStatus = p->status();
+        if (!(parseStatus == Status::Okay())) {
+            emit sigStatusChange(StatusKind::ERR, parseStatus.errs);
+            allGood = false;
+            break;
+        }
+    }
+    //
+    if (!allGood) return;
+    // It's all good, so plot the data.
+    emit sigStatusChange(StatusKind::INFO, "Plotting...");
+    foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
+        mGraphWidget->plot(p->results());
+        p->deleteLater();
+    }
+    emit sigStatusChange(StatusKind::INFO, "");
 }
 
 QStringList
@@ -156,25 +185,27 @@ MainFrame::mProcessLogFiles(
         "Processing " + QString::number(numFiles) +
         " Log File" + (numFiles > 1 ? "s" : "")
     );
+    // Perform initial population of the parser map. This is done here so we
+    // query the map for its size which will be used to determine if all the
+    // parses are done.
+    foreach (const QString fileName, fileNames) {
+        assert(!mLegionProfLogParsers.contains(fileName));
+        auto *aParser = new LegionProfLogParser(fileName);
+        mLegionProfLogParsers[fileName] = aParser;
+    }
+    //
     foreach (const QString fileName, fileNames) {
         QFuture<void> future = QtConcurrent::run(
             this,
             &MainFrame::mParseLogFile, fileName
         );
-        QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+        //
+        auto *watcher = new QFutureWatcher<void>();
         watcher->setFuture(future);
-        connect(
-            watcher,
-            SIGNAL(finished()),
-            this,
-            SLOT(mOnParseDone(void))
-        );
-        connect(
-            watcher,
-            SIGNAL(finished()),
-            watcher,
-            SLOT(deleteLater())
-        );
+        //
+        connect(watcher, SIGNAL(finished()), this, SLOT(mOnParseDone()));
+        //
+        connect(watcher, SIGNAL(finished()), watcher, SLOT(deleteLater()));
     }
 }
 
