@@ -96,10 +96,6 @@ GraphWidget::plot(
 ) {
     // Make things look a bit nicer.
     updateProcTimelineLayout();
-    //
-    foreach (ProcTimeline *timeline, mProcTimelines) {
-        timeline->doneAddingTasks();
-    }
 }
 
 void

@@ -141,13 +141,13 @@ LegionProfLogParser::parse(
         }
     }
     inputFile.close();
-
+#if 0
     qDebug() << "# Proc Kinds Found:" << mProfData->taskKinds.size();
     qDebug() << "# Procs Found     :" << mProfData->procDescs.size();
     qDebug() << "# Task Infos Found:" << mProfData->taskInfos.size();
     qDebug() << "# Meta Descs Found:" << mProfData->metaDescs.size();
     qDebug() << "# Meta Infos Found:" << mProfData->metaInfos.size();
-
+#endif
     if (!mParseSuccessful()) {
         mStatus = Status("Invalid Log Format");
     }

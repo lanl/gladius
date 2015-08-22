@@ -53,9 +53,6 @@ public:
     addTask(const TaskInfo &info);
     //
     void
-    doneAddingTasks(void);
-    //
-    void
     setTaskColorPalette(const QList<QColor> &colorPalette) {
         mColorPalette = colorPalette;
     }
@@ -76,7 +73,7 @@ private:
     QList<QColor> mColorPalette;
     // A map of time intervals (in ustime_t) and number of overlaps at
     // a given interval. Inclusive, so no overlap is not 0, it's 1.
-    boost::icl::split_interval_map<ustime_t, uint32_t> *mTimeIntervals;
+    boost::icl::split_interval_map<ustime_t, uint32_t> mTimeIntervals;
     // Since mTimeIntervalMap is inclusive, 1 is the minimum level.
     static constexpr uint16_t sMinTaskLevel = 1;
     // If the number of concurrent threads exceeds 2^16, then wow...

@@ -37,7 +37,6 @@ ProcTimeline::ProcTimeline(
     QGraphicsView *parent
 ) : mProcDesc(procDesc)
   , mView(parent)
-  , mTimeIntervals(new boost::icl::split_interval_map<ustime_t, uint32_t>)
   , mCurrentMaxTaskLevel(1) { }
 
 QRectF
@@ -78,11 +77,11 @@ ProcTimeline::addTask(
     boost::icl::interval<ustime_t>::type window;
     window = interval<ustime_t>::open(startTime, stopTime);
     // The 1 here is the increment when there is an overlap.
-    mTimeIntervals->add(std::make_pair(window, 1));
+    mTimeIntervals.add(std::make_pair(window, 1));
     // Now figure out at what level the task will be drawn. We do this be first
     // determining whether or not there exists overlapping ranges. If so,
     // now determine the max number of overlaps.
-    const auto itRes = mTimeIntervals->equal_range(window);
+    const auto itRes = mTimeIntervals.equal_range(window);
     // Stash this so we know when to call updateProcTimelineLayout.
     const auto oldMaxTaskLevel = mCurrentMaxTaskLevel;
     auto curTaskMinLevel = sMinTaskLevel;
@@ -129,16 +128,6 @@ ProcTimeline::addTask(
     //
     if (oldMaxTaskLevel != mCurrentMaxTaskLevel) {
         mGraphWidget()->updateProcTimelineLayout();
-    }
-}
-
-void
-ProcTimeline::doneAddingTasks(void)
-{
-    if (mTimeIntervals) {
-        mTimeIntervals->clear();
-        delete mTimeIntervals;
-        mTimeIntervals = nullptr;
     }
 }
 
