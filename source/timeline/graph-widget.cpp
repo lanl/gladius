@@ -63,7 +63,7 @@ GraphWidget::addProcTimeline(
 }
 
 void
-GraphWidget::plot(
+GraphWidget::addPlotData(
     const LegionProfData &plotData
 ) {
     QList<QColor> colorPalette = ColorPaletteFactory::getColorAlphabet2();
@@ -88,8 +88,18 @@ GraphWidget::plot(
         procTimeline->debugDumpTimeIntervalData();
     }
 #endif
+}
+
+void
+GraphWidget::plot(
+    void
+) {
     // Make things look a bit nicer.
     updateProcTimelineLayout();
+    //
+    foreach (ProcTimeline *timeline, mProcTimelines) {
+        timeline->doneAddingTasks();
+    }
 }
 
 void

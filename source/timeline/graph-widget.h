@@ -30,7 +30,9 @@ public:
     //
     void addProcTimeline(const ProcDesc &procDesc);
     //
-    void plot(const LegionProfData &plotData);
+    void plot(void);
+    //
+    void addPlotData(const LegionProfData &plotData);
     //
     void updateProcTimelineLayout(void);
 

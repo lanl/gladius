@@ -168,10 +168,9 @@ MainFrame::mOnParseDone(
     // It's all good, so plot the data.
     emit sigStatusChange(StatusKind::INFO, "Plotting...");
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
-        // FIXME consider adding a "addPlotData" to avoid some of the costly
-        // operations in plot. Then at the end plot.
-        mGraphWidget->plot(p->results());
+        mGraphWidget->addPlotData(p->results());
     }
+    mGraphWidget->plot();
     // We no longer need the parser instances, so clean them up.
     foreach (const QString fName, mLegionProfLogParsers.keys()) {
         mLegionProfLogParsers[fName]->deleteLater();
