@@ -44,8 +44,8 @@ MainFrame::MainFrame(
     mStatusLabel = new QLabel("");
     //
     QGridLayout *layout = new QGridLayout(this);
-    layout->addWidget(mGraphWidget, 1, 0);
-    layout->addWidget(mStatusLabel);
+    layout->addWidget(mGraphWidget, 0, 0);
+    layout->addWidget(mStatusLabel, 1, 0, Qt::AlignRight);
     setLayout(layout);
     //
     connect(
@@ -125,6 +125,7 @@ MainFrame::mOnStatusChange(
             msgEnd   = "";
             break;
     }
+    mStatusLabel->clear();
     mStatusLabel->setText(msgBegin + statusStr + msgEnd);
 }
 
