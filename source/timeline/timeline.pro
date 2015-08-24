@@ -43,4 +43,4 @@ legion-prof-log-parser.h \
 main-frame.h \
 proc-timeline.h \
 graph-widget.h \
-    color-palette-factory.h
+color-palette-factory.h
