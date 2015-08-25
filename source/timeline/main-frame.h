@@ -18,7 +18,7 @@
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QSlider;
-class QToolButton;
+class QPushButton;
 QT_END_NAMESPACE
 
 class GraphWidget;
@@ -71,6 +71,8 @@ private:
     QMap<QString, LegionProfLogParser *> mLegionProfLogParsers;
     //
     QLabel *mStatusLabel = nullptr;
+    //
+    QPushButton *mGraphStatsButton = nullptr;
     //
     QStringList mOpenLogFiles(void);
     //

@@ -19,6 +19,7 @@
 #include <QThread>
 #include <QtWidgets>
 #include <QStringList>
+#include <QPushButton>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -41,10 +42,15 @@ MainFrame::MainFrame(
     //
     mGraphWidget = new GraphWidget(this);
     //
-    mStatusLabel = new QLabel("");
+    mStatusLabel = new QLabel(this);
+    //
+    mGraphStatsButton = new QPushButton(this);
+    mGraphStatsButton->setFlat(true);
+    //mGraphStatsButton->hide();
     //
     QGridLayout *layout = new QGridLayout(this);
     layout->addWidget(mGraphWidget, 0, 0);
+    layout->addWidget(mGraphStatsButton, 1, 0, Qt::AlignLeft);
     layout->addWidget(mStatusLabel, 1, 0, Qt::AlignRight);
     setLayout(layout);
     //
