@@ -36,9 +36,9 @@ MainWindow::MainWindow(
     //
     setStyleSheet(
         "QFrame {border: none; margin: 0px; padding: 0px;}"
-        "QPushButton {border: none; margin: 0px; padding: 0px;}"
-        "QPushButton:pressed { border: none; }"
-        "QPushButton:checked { border: none; }"
+        "QToolButton {border: none; margin: 0px; padding: 0px;}"
+        "QToolButton:pressed { border: none; }"
+        "QToolButton:checked { border: none; }"
     );
     //
     static const int sScreenID = 0;

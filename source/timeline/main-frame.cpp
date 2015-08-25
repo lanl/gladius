@@ -19,7 +19,7 @@
 #include <QThread>
 #include <QtWidgets>
 #include <QStringList>
-#include <QPushButton>
+#include <QToolButton>
 #include <QStackedLayout>
 
 #ifndef QT_NO_PRINTER
@@ -48,9 +48,9 @@ MainFrame::MainFrame(
     mTimelinePixmap = new QPixmap(":/icons/timeline.24px.svg");
     mStatsPixmap = new QPixmap(":/icons/stats.24px.svg");
     //
-    mGraphStatsButton = new QPushButton(this);
+    mGraphStatsButton = new QToolButton(this);
     mGraphStatsButton->setCheckable(true);
-    mGraphStatsButton->setIconSize(QSize(48, 48));
+    mGraphStatsButton->setIconSize(mTimelinePixmap->size());
     // Hide until we have things to show.
     mGraphStatsButton->hide();
     //
@@ -205,7 +205,7 @@ MainFrame::mOnParseDone(
     // All done!
     emit sigStatusChange(StatusKind::INFO, "");
     // Now we can show this button.
-    mGraphStatsButton->setIcon(*mGetGraphStatsButtonPixmap(false));
+    mOnGraphStatsButtonPressed(false);
     mGraphStatsButton->show();
 }
 
@@ -218,6 +218,7 @@ MainFrame::mOnGraphStatsButtonPressed(
     );
     //
     mGraphStatsButton->setIcon(*mGetGraphStatsButtonPixmap(pressed));
+    mGraphStatsButton->setToolTip(mGetGraphStatsButtonToolTip(pressed));
     mStackedGraphStatsLayout->setCurrentIndex(panelIndex);
 }
 

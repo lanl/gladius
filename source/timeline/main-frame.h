@@ -16,11 +16,12 @@
 #include <QStackedLayout>
 #include <QStringList>
 #include <QMap>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QSlider;
-class QPushButton;
+class QToolButton;
 class QTextEdit;
 QT_END_NAMESPACE
 
@@ -88,7 +89,7 @@ private:
     //
     QPixmap *mStatsPixmap = nullptr;
     //
-    QPushButton *mGraphStatsButton = nullptr;
+    QToolButton *mGraphStatsButton = nullptr;
     //
     QTextEdit *mStatsTextArea = nullptr;
     //
@@ -109,6 +110,13 @@ private:
     QPixmap *
     mGetGraphStatsButtonPixmap(bool pressed) {
         return (pressed ? mTimelinePixmap : mStatsPixmap);
+    }
+    //
+    QString
+    mGetGraphStatsButtonToolTip(bool pressed) {
+        static const QString timelineTip = "Show Exection Timeline";
+        static const QString statsTip    = "Show Statistics";
+        return (pressed ? timelineTip : statsTip);
     }
 };
 
