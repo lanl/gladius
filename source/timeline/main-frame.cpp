@@ -35,7 +35,7 @@ namespace {
 
 QString
 getGraphStatsButtonText(bool pressed) {
-    return (pressed ? "Show Statistics" : "Show Timeline");
+    return (pressed ? "Show Timeline" : "Show Statistics");
 }
 
 } // end namespace
