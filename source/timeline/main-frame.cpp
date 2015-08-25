@@ -20,6 +20,7 @@
 #include <QtWidgets>
 #include <QStringList>
 #include <QPushButton>
+#include <QStackedLayout>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -37,22 +38,31 @@ MainFrame::MainFrame(
 ) : QFrame(parent)
 {
     mZoomValue = sInitZoomValue;
-    // No frame around us.
-    setFrameShape(QFrame::NoFrame);
-    //
-    mGraphWidget = new GraphWidget(this);
+    // Page 1
+    mGraphWidget = new GraphWidget();
+    // Page 2
+    mStatsTextArea = new QTextEdit();
+    mStatsTextArea->setReadOnly(true);
     //
     mStatusLabel = new QLabel(this);
     //
     mGraphStatsButton = new QPushButton(this);
-    mGraphStatsButton->setFlat(true);
-    //mGraphStatsButton->hide();
+    mGraphStatsButton->setCheckable(true);
+    // Hide until we have things to show.
+    mGraphStatsButton->hide();
     //
     QGridLayout *layout = new QGridLayout(this);
-    layout->addWidget(mGraphWidget, 0, 0);
-    layout->addWidget(mGraphStatsButton, 1, 0, Qt::AlignLeft);
-    layout->addWidget(mStatusLabel, 1, 0, Qt::AlignRight);
+    // We stack the graph and the stats for a given graph window.
+    mStackedGraphStatsLayout = new QStackedLayout();
+    mStackedGraphStatsLayout->addWidget(mGraphWidget);
+    mStackedGraphStatsLayout->addWidget(mStatsTextArea);
+    //
+    layout->addLayout(mStackedGraphStatsLayout, 0, 0);
+    layout->addWidget(mGraphStatsButton,        1, 0, Qt::AlignLeft);
+    layout->addWidget(mStatusLabel,             1, 0, Qt::AlignRight);
     setLayout(layout);
+    //
+    mSetupMatrix();
     //
     connect(
         this,
@@ -60,8 +70,12 @@ MainFrame::MainFrame(
         this,
         SLOT(mOnStatusChange(StatusKind, QString))
     );
-    //
-    mSetupMatrix();
+    connect(
+        mGraphStatsButton,
+        SIGNAL(clicked(bool)),
+        this,
+        SLOT(mOnGraphStatsButtonPressed(bool))
+    );
 }
 
 void
@@ -185,6 +199,20 @@ MainFrame::mOnParseDone(
     }
     // All done!
     emit sigStatusChange(StatusKind::INFO, "");
+    // TODO Cleanup
+    mGraphStatsButton->setText("Stats");
+    mGraphStatsButton->show();
+}
+
+void
+MainFrame::mOnGraphStatsButtonPressed(
+    bool pressed
+) {
+    const QString text = (pressed ? "Timeline" : "Stats");
+    const int panelIndex = (pressed ? 1 : 0);
+    //
+    mGraphStatsButton->setText(text);
+    mStackedGraphStatsLayout->setCurrentIndex(panelIndex);
 }
 
 QStringList

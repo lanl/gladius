@@ -19,6 +19,8 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QSlider;
 class QPushButton;
+class QStackedLayout;
+class QTextEdit;
 QT_END_NAMESPACE
 
 class GraphWidget;
@@ -48,6 +50,8 @@ private slots:
     void mOnStatusChange(StatusKind status, QString statusStr);
     //
     void mOnParseDone(void);
+    //
+    void mOnGraphStatsButtonPressed(bool pressed);
 
 signals:
     void sigStatusChange(StatusKind kind, QString status);
@@ -66,6 +70,8 @@ private:
     //
     int mNumFilesParsed = 0;
     //
+    QStackedLayout *mStackedGraphStatsLayout = nullptr;
+    //
     GraphWidget *mGraphWidget = nullptr;
     // Map between log file name and parser.
     QMap<QString, LegionProfLogParser *> mLegionProfLogParsers;
@@ -73,6 +79,8 @@ private:
     QLabel *mStatusLabel = nullptr;
     //
     QPushButton *mGraphStatsButton = nullptr;
+    //
+    QTextEdit *mStatsTextArea = nullptr;
     //
     QStringList mOpenLogFiles(void);
     //

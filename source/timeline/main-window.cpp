@@ -34,6 +34,13 @@ MainWindow::MainWindow(
     // TODO add input name, job info, etc. to title?
     setWindowTitle(tr(APP_WIN_TITLE));
     //
+    setStyleSheet(
+        "QFrame {border: none; margin: 0px; padding: 0px;}"
+        "QPushButton {border: none; margin: 0px; padding: 0px;}"
+        "QPushButton:pressed { border: none; }"
+        "QPushButton:checked { border: none; }"
+    );
+    //
     static const int sScreenID = 0;
     QRect screenGeometry = getScreenGeometry(sScreenID);
     resize(screenGeometry.width(), 2 * screenGeometry.height() / 3);
