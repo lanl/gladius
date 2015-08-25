@@ -37,7 +37,7 @@ MainFrame::MainFrame(
 ) : QFrame(parent)
 {
     static const int maxThreads = 8;
-    mThreadPool = new QThreadPool();
+    mThreadPool = new QThreadPool(this);
     mThreadPool->setMaxThreadCount(maxThreads);
     //
     mZoomValue = sInitZoomValue;
