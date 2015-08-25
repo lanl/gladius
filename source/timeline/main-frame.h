@@ -12,6 +12,7 @@
 #include "info-types.h"
 
 #include <QFrame>
+#include <QStackedLayout>
 #include <QStringList>
 #include <QMap>
 
@@ -19,7 +20,6 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QSlider;
 class QPushButton;
-class QStackedLayout;
 class QTextEdit;
 QT_END_NAMESPACE
 
@@ -57,6 +57,11 @@ signals:
     void sigStatusChange(StatusKind kind, QString status);
 
 private:
+    // Update if the order of mStackedGraphStatsLayout additions changes.
+    enum StackedLayoutIndex {
+        TIMELINE = 0,
+        STATS
+    };
     //
     static constexpr int sMinZoomValue  = 0;
     //
@@ -89,6 +94,11 @@ private:
     void mPreProcessLogFiles(void);
     //
     void mProcessLogFiles(const QStringList &fileNames);
+    //
+    bool mTimelineInFocus(void) {
+        const auto cIndex = mStackedGraphStatsLayout->currentIndex();
+        return StackedLayoutIndex::TIMELINE == cIndex;
+    }
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

@@ -31,7 +31,14 @@
 
 #include <qmath.h>
 
-// TODO: See setStyleSheet
+namespace {
+
+QString
+getGraphStatsButtonText(bool pressed) {
+    return (pressed ? "Show Statistics" : "Show Timeline");
+}
+
+} // end namespace
 
 MainFrame::MainFrame(
     QWidget *parent
@@ -199,8 +206,8 @@ MainFrame::mOnParseDone(
     }
     // All done!
     emit sigStatusChange(StatusKind::INFO, "");
-    // TODO Cleanup
-    mGraphStatsButton->setText("Stats");
+    // Now we can show this button.
+    mGraphStatsButton->setText(getGraphStatsButtonText(false));
     mGraphStatsButton->show();
 }
 
@@ -208,10 +215,11 @@ void
 MainFrame::mOnGraphStatsButtonPressed(
     bool pressed
 ) {
-    const QString text = (pressed ? "Timeline" : "Stats");
-    const int panelIndex = (pressed ? 1 : 0);
+    const int panelIndex = (
+        pressed ? StackedLayoutIndex::STATS : StackedLayoutIndex::TIMELINE
+    );
     //
-    mGraphStatsButton->setText(text);
+    mGraphStatsButton->setText(getGraphStatsButtonText(pressed));
     mStackedGraphStatsLayout->setCurrentIndex(panelIndex);
 }
 
@@ -292,6 +300,8 @@ MainFrame::keyPressEvent(
     // Zoom In
     else if (keyEvent->matches(QKeySequence::ZoomIn) ||
              (commandPressed && keyEvent->key() == Qt::Key_Equal)) {
+        if (!mTimelineInFocus()) return;
+        //
         if (mZoomValue < sMaxZoomValue) {
             mZoomValue += sZoomKeyIncrement;
             mSetupMatrix();
@@ -300,6 +310,8 @@ MainFrame::keyPressEvent(
     }
     // Zoom Out
     else if (keyEvent->matches(QKeySequence::ZoomOut)) {
+        if (!mTimelineInFocus()) return;
+        //
         if (mZoomValue > sMinZoomValue) {
             mZoomValue -= sZoomKeyIncrement;
             mSetupMatrix();
@@ -314,6 +326,8 @@ MainFrame::keyPressEvent(
     switch (keyEvent->key()) {
         // Reset Zoom
         case Qt::Key_Equal: {
+            if (!mTimelineInFocus()) return;
+            //
             mResetView();
             break;
         }
