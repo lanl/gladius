@@ -31,15 +31,6 @@
 
 #include <qmath.h>
 
-namespace {
-
-QString
-getGraphStatsButtonText(bool pressed) {
-    return (pressed ? "Show Timeline" : "Show Statistics");
-}
-
-} // end namespace
-
 MainFrame::MainFrame(
     QWidget *parent
 ) : QFrame(parent)
@@ -53,8 +44,13 @@ MainFrame::MainFrame(
     //
     mStatusLabel = new QLabel(this);
     //
+    // Icons From: http://google.github.io/material-design-icons/
+    mTimelinePixmap = new QPixmap(":/icons/timeline.24px.svg");
+    mStatsPixmap = new QPixmap(":/icons/stats.24px.svg");
+    //
     mGraphStatsButton = new QPushButton(this);
     mGraphStatsButton->setCheckable(true);
+    mGraphStatsButton->setIconSize(QSize(48, 48));
     // Hide until we have things to show.
     mGraphStatsButton->hide();
     //
@@ -162,25 +158,27 @@ MainFrame::mOnParseDone(
 ) {
     static QMutex mutex;
     //
-    mutex.lock();
+    mutex.lock(); //////////////////////////////////////////////////////////////
     bool doPlot = false;
     const auto totalNumFiles = mLegionProfLogParsers.size();
     mNumFilesParsed++;
     const float percentDone = (float(mNumFilesParsed) / totalNumFiles) * 100.0;
+    //
     emit sigStatusChange(
         StatusKind::INFO,
         "Parsing: " + QString::number(percentDone, 'f', 0) + "% Done"
     );
+    //
     if (mNumFilesParsed == totalNumFiles) {
         doPlot = true;
     }
     //
     if (!doPlot) {
-        mutex.unlock();
+        mutex.unlock(); ////////////////////////////////////////////////////////
         return;
     }
-    mutex.unlock();
-    // Else we try to plot...
+    mutex.unlock(); ////////////////////////////////////////////////////////////
+    // Else we try to plot... (Main thread only)
     bool allGood = true;
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         const Status parseStatus = p->status();
@@ -207,7 +205,7 @@ MainFrame::mOnParseDone(
     // All done!
     emit sigStatusChange(StatusKind::INFO, "");
     // Now we can show this button.
-    mGraphStatsButton->setText(getGraphStatsButtonText(false));
+    mGraphStatsButton->setIcon(*mGetGraphStatsButtonPixmap(false));
     mGraphStatsButton->show();
 }
 
@@ -219,7 +217,7 @@ MainFrame::mOnGraphStatsButtonPressed(
         pressed ? StackedLayoutIndex::STATS : StackedLayoutIndex::TIMELINE
     );
     //
-    mGraphStatsButton->setText(getGraphStatsButtonText(pressed));
+    mGraphStatsButton->setIcon(*mGetGraphStatsButtonPixmap(pressed));
     mStackedGraphStatsLayout->setCurrentIndex(panelIndex);
 }
 

@@ -44,3 +44,6 @@ main-frame.h \
 proc-timeline.h \
 graph-widget.h \
 color-palette-factory.h
+
+RESOURCES += \
+    images.qrc

@@ -11,6 +11,7 @@
 
 #include "common.h"
 
+#include <string>
 #include <deque>
 #include <string>
 #include <map>
@@ -125,6 +126,16 @@ struct LegionProfData {
     size_t
     nProcessors(void) const {
         return procDescs.size();
+    }
+    // TODO add a time range for the analysis?
+    void
+    analyze(void) {
+
+    }
+    //
+    std::string
+    getAnalysisReport(void) {
+        return "";
     }
 };
 

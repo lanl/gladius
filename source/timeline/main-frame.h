@@ -12,6 +12,7 @@
 #include "info-types.h"
 
 #include <QFrame>
+#include <QPixmap>
 #include <QStackedLayout>
 #include <QStringList>
 #include <QMap>
@@ -83,6 +84,10 @@ private:
     //
     QLabel *mStatusLabel = nullptr;
     //
+    QPixmap *mTimelinePixmap = nullptr;
+    //
+    QPixmap *mStatsPixmap = nullptr;
+    //
     QPushButton *mGraphStatsButton = nullptr;
     //
     QTextEdit *mStatsTextArea = nullptr;
@@ -95,9 +100,15 @@ private:
     //
     void mProcessLogFiles(const QStringList &fileNames);
     //
-    bool mTimelineInFocus(void) {
+    bool
+    mTimelineInFocus(void) {
         const auto cIndex = mStackedGraphStatsLayout->currentIndex();
         return StackedLayoutIndex::TIMELINE == cIndex;
+    }
+    //
+    QPixmap *
+    mGetGraphStatsButtonPixmap(bool pressed) {
+        return (pressed ? mTimelinePixmap : mStatsPixmap);
     }
 };
 
