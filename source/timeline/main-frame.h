@@ -19,6 +19,7 @@
 #include <QString>
 
 QT_BEGIN_NAMESPACE
+class QThreadPool;
 class QLabel;
 class QSlider;
 class QToolButton;
@@ -72,6 +73,8 @@ private:
     static constexpr int sInitZoomValue = sMaxZoomValue / 2;
     //
     static constexpr int sZoomKeyIncrement = 8;
+    //
+    QThreadPool *mThreadPool = nullptr;
     //
     int mZoomValue = 0;
     //

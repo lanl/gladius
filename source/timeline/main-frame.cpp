@@ -21,6 +21,7 @@
 #include <QStringList>
 #include <QToolButton>
 #include <QStackedLayout>
+#include <QThreadPool>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -35,6 +36,10 @@ MainFrame::MainFrame(
     QWidget *parent
 ) : QFrame(parent)
 {
+    static const int maxThreads = 8;
+    mThreadPool = new QThreadPool();
+    mThreadPool->setMaxThreadCount(maxThreads);
+    //
     mZoomValue = sInitZoomValue;
     // Page 1
     mGraphWidget = new GraphWidget();
@@ -178,7 +183,7 @@ MainFrame::mOnParseDone(
         return;
     }
     mutex.unlock(); ////////////////////////////////////////////////////////////
-    // Else we try to plot... (Main thread only)
+    // Else we try to plot... (one thread only)
     bool allGood = true;
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         const Status parseStatus = p->status();
@@ -192,7 +197,6 @@ MainFrame::mOnParseDone(
     //
     if (!allGood) return;
     // It's all good, so plot the data.
-    emit sigStatusChange(StatusKind::INFO, "Plotting...");
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         mGraphWidget->addPlotData(p->results());
     }
@@ -267,6 +271,7 @@ MainFrame::mProcessLogFiles(
     //
     foreach (const QString fileName, fileNames) {
         QFuture<void> future = QtConcurrent::run(
+            mThreadPool,
             this,
             &MainFrame::mParseLogFile, fileName
         );
