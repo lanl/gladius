@@ -233,7 +233,7 @@ MainFrame::mOpenLogFiles(void)
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(
         this,
-        tr("Open Log File"),
+        tr("Open Log Files"),
         QDir::homePath(),
         tr("Log Files (*.*)")
     );

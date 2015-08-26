@@ -141,7 +141,7 @@ LegionProfLogParser::parse(
         }
     }
     inputFile.close();
-#if 0
+#if 1
     qDebug() << "# Proc Kinds Found:" << mProfData->taskKinds.size();
     qDebug() << "# Procs Found     :" << mProfData->procDescs.size();
     qDebug() << "# Task Infos Found:" << mProfData->taskInfos.size();

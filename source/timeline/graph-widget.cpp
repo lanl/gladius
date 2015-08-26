@@ -29,6 +29,7 @@ GraphWidget::GraphWidget(
 ) : QGraphicsView(parent)
   , mScene(new QGraphicsScene(this))
 {
+    setOptimizationFlags(QGraphicsView::DontSavePainterState);
     setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     //
     setDragMode(QGraphicsView::RubberBandDrag);
