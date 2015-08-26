@@ -29,8 +29,6 @@ GraphWidget::GraphWidget(
 ) : QGraphicsView(parent)
   , mScene(new QGraphicsScene(this))
 {
-    setFrameShape(QFrame::NoFrame);
-    //
     setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     //
     setDragMode(QGraphicsView::RubberBandDrag);

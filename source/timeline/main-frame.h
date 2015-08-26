@@ -44,7 +44,8 @@ protected:
 
 private slots:
     //
-    void mResetView(void);
+    void
+    mFitViewToScene(void);
     //
     void mSetupMatrix(void);
     //
@@ -66,17 +67,17 @@ private:
         STATS
     };
     //
-    static constexpr int sMinZoomValue  = 0;
+    static constexpr qreal sMinZoomValue  = -512.0;
     //
-    static constexpr int sMaxZoomValue  = 512;
+    static constexpr qreal sMaxZoomValue  = 512.0;
     //
-    static constexpr int sInitZoomValue = sMaxZoomValue / 2;
+    static constexpr qreal sZoomKeyIncrement = 4.0;
     //
-    static constexpr int sZoomKeyIncrement = 8;
+    qreal mInitZoomValue = 0.0;
     //
     QThreadPool *mThreadPool = nullptr;
     //
-    int mZoomValue = 0;
+    qreal mZoomValue = 0;
     //
     int mNumFilesParsed = 0;
     //
@@ -121,6 +122,10 @@ private:
         static const QString statsTip    = "Show Statistics";
         return (pressed ? timelineTip : statsTip);
     }
+    //
+    void mRecalibrateZoomValues(
+        qreal targetScale
+    );
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

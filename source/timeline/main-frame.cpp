@@ -29,6 +29,7 @@
 #endif
 
 #include <cassert>
+#include <cmath>
 
 #include <qmath.h>
 
@@ -39,8 +40,6 @@ MainFrame::MainFrame(
     static const int maxThreads = 8;
     mThreadPool = new QThreadPool(this);
     mThreadPool->setMaxThreadCount(maxThreads);
-    //
-    mZoomValue = sInitZoomValue;
     // Page 1
     mGraphWidget = new GraphWidget();
     // Page 2
@@ -70,8 +69,6 @@ MainFrame::MainFrame(
     layout->addWidget(mStatusLabel,             1, 0, Qt::AlignRight);
     setLayout(layout);
     //
-    mSetupMatrix();
-    //
     connect(
         this,
         SIGNAL(sigStatusChange(StatusKind, QString)),
@@ -87,20 +84,22 @@ MainFrame::MainFrame(
 }
 
 void
-MainFrame::mResetView(void)
+MainFrame::mRecalibrateZoomValues(qreal targetScale)
 {
-    mZoomValue = sInitZoomValue;
+    // Solve 2^(x/50) = targetScale to get x. x is the target value.
+    const qreal x = 50.0 * std::log2(targetScale);
+    // Now solve: x = mZoomValue - sInitZoomValue to get mZoomValue
+    mZoomValue = x + mInitZoomValue;
+    //
     mSetupMatrix();
-    // TODO For streaming data, make sure that the right side is visible.
-    //mGraphWidget->ensureVisible(QRectF(0, 0, 0, 0));
 }
 
 void
 MainFrame::mSetupMatrix(void)
 {
-    qreal scale = qPow(
+    const qreal scale = qPow(
         2.0,
-        (mZoomValue - sInitZoomValue) / 50.0
+        (mZoomValue - mInitZoomValue) / 50.0
     );
     //
     QMatrix matrix;
@@ -200,7 +199,10 @@ MainFrame::mOnParseDone(
     foreach (LegionProfLogParser *p, mLegionProfLogParsers) {
         mGraphWidget->addPlotData(p->results());
     }
+    //
     mGraphWidget->plot();
+    //
+    mFitViewToScene();
     // We no longer need the parser instances, so clean them up.
     foreach (const QString fName, mLegionProfLogParsers.keys()) {
         mLegionProfLogParsers[fName]->deleteLater();
@@ -286,6 +288,19 @@ MainFrame::mProcessLogFiles(
 }
 
 void
+MainFrame::mFitViewToScene(void)
+{
+    const auto viewRect = mGraphWidget->viewport()->rect();
+    const auto sceneRect = mGraphWidget->scene()->sceneRect();
+    static const qreal fudge = 0.9;
+    const qreal scale = (viewRect.height() * fudge) / sceneRect.height();
+    // Now that we have the target scale now we need to update the zoom values
+    // so that we have a nice transtion between the scaled view and user
+    // zoom interactions.
+    mRecalibrateZoomValues(scale);
+}
+
+void
 MainFrame::keyPressEvent(
     QKeyEvent *keyEvent
 ) {
@@ -332,7 +347,7 @@ MainFrame::keyPressEvent(
         case Qt::Key_Equal: {
             if (!mTimelineInFocus()) return;
             //
-            mResetView();
+            mFitViewToScene();
             break;
         }
         default: QFrame::keyPressEvent(keyEvent);
