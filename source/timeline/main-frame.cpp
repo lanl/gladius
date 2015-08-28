@@ -81,6 +81,11 @@ MainFrame::MainFrame(
         this,
         SLOT(mOnGraphStatsButtonPressed(bool))
     );
+    // Process any files that were provided in the commandline.
+    const QStringList fileNames = mGetFileNamesFromArgv();
+    if (!fileNames.empty()) {
+        mProcessLogFiles(fileNames);
+    }
 }
 
 void
@@ -92,6 +97,21 @@ MainFrame::mRecalibrateZoomValues(qreal targetScale)
     mZoomValue = x + mInitZoomValue;
     //
     mSetupMatrix();
+}
+
+QStringList
+MainFrame::mGetFileNamesFromArgv()
+{
+    const int argc = QCoreApplication::arguments().size();
+    const QStringList argv = QCoreApplication::arguments();
+    QStringList fileNames;
+
+    for (int argi = 1; argi < argc; ++argi) {
+        // Skip options
+        if (argv.at(argi).at(0) == '-') continue;
+        fileNames << argv.at(argi);
+    }
+    return fileNames;
 }
 
 void

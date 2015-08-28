@@ -17,6 +17,7 @@
 #include <QStringList>
 #include <QMap>
 #include <QString>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 class QThreadPool;
@@ -126,6 +127,9 @@ private:
     void mRecalibrateZoomValues(
         qreal targetScale
     );
+    //
+    QStringList
+    mGetFileNamesFromArgv(void);
 };
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED
