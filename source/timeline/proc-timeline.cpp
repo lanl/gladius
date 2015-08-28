@@ -146,9 +146,13 @@ ProcTimeline::paint(
     const QStyleOptionGraphicsItem *option,
     QWidget *widget
 ) {
-    Q_UNUSED(painter);
-    Q_UNUSED(option);
     Q_UNUSED(widget);
+    const qreal lod = option->levelOfDetailFromTransform(
+        painter->worldTransform()
+    );
+    if (lod < 0.2) {
+        return;
+    }
     //
     painter->save();
     //
