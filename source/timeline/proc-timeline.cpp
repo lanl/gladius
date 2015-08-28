@@ -150,9 +150,6 @@ ProcTimeline::paint(
     const qreal lod = option->levelOfDetailFromTransform(
         painter->worldTransform()
     );
-    if (lod < 0.2) {
-        return;
-    }
     //
     painter->save();
     //
@@ -166,6 +163,10 @@ ProcTimeline::paint(
     const auto procIDStr = QString("%1").arg(
         mProcDesc.procID, 6, 10, QChar('0')
     );
+    if (lod < 0.5) {
+        painter->restore();
+        return;
+    }
     // Draw legend.
     const auto timelineLegend = procType2QString(mProcDesc.kind)
                               + " " + procIDStr;
