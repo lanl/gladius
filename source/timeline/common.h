@@ -80,7 +80,6 @@ registerMetaTypes(void) {
 
 }
 
-
 static const int sMicroSecPerPixel = 1e2;
 
 #endif // TIMELINE_COMMON_H
