@@ -26,7 +26,7 @@ bool needsHelp(
     static const QString h1 = "--help";
     static const QString h2 = "-h";
 
-    foreach (const QString arg, argv) {
+    foreach (const QString &arg, argv) {
         if (arg == h0 || arg == h1 || arg == h2) {
             return true;
         }
