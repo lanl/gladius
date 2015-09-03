@@ -91,25 +91,34 @@ class TaskWidget : public QGraphicsItem {
 public:
     TaskWidget(
         const TaskInfo &info,
+        const ProcDesc &execResource,
         uint16_t level,
         qreal zVal,
         ProcTimeline *timeline
     ) : mInfo(info)
+      , mExecResource(execResource)
       , mLevel(level)
       , mZValueStash(zVal)
       , mWidth((mInfo.uStopTime - mInfo.uStartTime) / sMicroSecPerPixel)
       , mColor(Qt::gray /* Default Color */)
       , mLightColor(mColor.light(sLightness))
     {
+        static const QString us = QChar(0x03BC) + 's';
+        //
         setPos(mInfo.uStartTime / sMicroSecPerPixel, timeline->pos().y());
         //
         setFlags(ItemIsSelectable);
         //
         setAcceptHoverEvents(true);
         // TODO Add Cache
-        QString toolTip = "Start:" + QString::number(mInfo.uStartTime)
-                        + " End: " + QString::number(mInfo.uStopTime)
-                        + " Level: " + QString::number(mLevel);
+        const auto duration = mInfo.uStopTime = mInfo.uStartTime;
+        QString toolTip =
+            "Name: " + QString("TODO")
+            + "\nExecuted on: " + Common::procType2QString(mExecResource.kind) + ' '
+                                + QString::number(mExecResource.procID)
+            + "\nStart: "    + QString::number(mInfo.uStartTime)
+            + "\nEnd: "      + QString::number(mInfo.uStopTime)
+            + "\nDuration: " + QString::number(duration) + ' ' + us;
         setToolTip(toolTip);
     }
     //
@@ -180,6 +189,8 @@ public:
 
 private:
     TaskInfo mInfo;
+    //
+    ProcDesc mExecResource;
     //
     uint16_t mLevel = 0;
     //

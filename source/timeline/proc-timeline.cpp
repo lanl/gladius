@@ -15,23 +15,6 @@
 #include <QPainter>
 #include <QGraphicsView>
 
-namespace {
-//
-QString
-procType2QString(ProcType pType) {
-    switch (pType) {
-        case TOC_PROC  : return "GPU";
-        case LOC_PROC  : return "CPU";
-        case UTIL_PROC : return "Utility";
-        case IO_PROC   : return "IO";
-        case PROC_GROUP: return "Proc Group";
-        case UNKNOWN   : return "Unknown";
-        default        : Q_ASSERT(false);
-    }
-}
-
-} // end namespace
-
 ProcTimeline::ProcTimeline(
     const ProcDesc &procDesc,
     QGraphicsView *parent
@@ -113,9 +96,9 @@ ProcTimeline::addTask(
         prepareGeometryChange();
         update();
     }
-    //
     TaskWidget *taskWidget = new TaskWidget(
         info,
+        mProcDesc,
         curTaskMinLevel - 1,
         zVal,
         this
@@ -168,7 +151,7 @@ ProcTimeline::paint(
         return;
     }
     // Draw legend.
-    const auto timelineLegend = procType2QString(mProcDesc.kind)
+    const auto timelineLegend = Common::procType2QString(mProcDesc.kind)
                               + " " + procIDStr;
     painter->drawText(x1y1.x(), x1y1.y() + legendFixup, timelineLegend);
     //

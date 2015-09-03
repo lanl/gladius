@@ -78,7 +78,21 @@ registerMetaTypes(void) {
     qRegisterMetaType<StatusKind>("StatusKindType");
 }
 
+//
+inline QString
+procType2QString(ProcType pType) {
+    switch (pType) {
+        case TOC_PROC  : return "GPU";
+        case LOC_PROC  : return "CPU";
+        case UTIL_PROC : return "Utility";
+        case IO_PROC   : return "IO";
+        case PROC_GROUP: return "Proc Group";
+        case UNKNOWN   : return "Unknown";
+        default        : Q_ASSERT(false);
+    }
 }
+
+} // end namespace Common
 
 static const int sMicroSecPerPixel = 1e2;
 
