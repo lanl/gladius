@@ -111,8 +111,8 @@ public:
         //
         setAcceptHoverEvents(true);
         // TODO Add Cache
-        const auto duration = mInfo.uStopTime = mInfo.uStartTime;
-        QString toolTip =
+        const auto duration = mInfo.uStopTime - mInfo.uStartTime;
+        const QString toolTip =
             "Name: " + QString("TODO")
             + "\nExecuted on: " + Common::procType2QString(mExecResource.kind) + ' '
                                 + QString::number(mExecResource.procID)
