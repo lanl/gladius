@@ -111,14 +111,16 @@ public:
         //
         setAcceptHoverEvents(true);
         // TODO Add Cache
-        const auto duration = mInfo.uStopTime - mInfo.uStartTime;
+        const auto durationInUs = mInfo.uStopTime - mInfo.uStartTime;
+        const auto durationInS = float(durationInUs) / 1e6;
         const QString toolTip =
             "Name: " + QString("TODO")
             + "\nExecuted on: " + Common::procType2QString(mExecResource.kind) + ' '
                                 + QString::number(mExecResource.procID)
             + "\nStart: "    + QString::number(mInfo.uStartTime)
             + "\nEnd: "      + QString::number(mInfo.uStopTime)
-            + "\nDuration: " + QString::number(duration) + ' ' + us;
+            + "\nDuration: " + QString::number(durationInS, 'f', 1) + " s ("
+                             + QString::number(durationInUs) + ' ' + us + ')';
         setToolTip(toolTip);
     }
     //
