@@ -1,5 +1,7 @@
 # Timeline TODO
 
+- Create sane numbering scheme for Procs.
+- Add host information to execution info.
 - Add timeline to bottom of all tasks with units, etc.
 - Add label with help key sequence and implement help panel.
 - Add stats panel.
