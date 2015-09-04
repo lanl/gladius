@@ -130,6 +130,10 @@ private:
     //
     QStringList
     mGetFileNamesFromArgv(void);
+    //
+    void
+    mPopulateHelpTextArea(void);
 };
+
 
 #endif // TIMELINE_MAIN_FRAME_H_INCLUDED

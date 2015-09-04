@@ -11,6 +11,7 @@
 #include "legion-prof-log-parser.h"
 
 #include <QtCore>
+#include <QFile>
 #include <QFileDialog>
 #include <QString>
 #include <QLabel>
@@ -23,6 +24,7 @@
 #include <QStackedLayout>
 #include <QThreadPool>
 #include <QHBoxLayout>
+#include <QTextStream>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -33,17 +35,6 @@
 #include <cmath>
 
 #include <qmath.h>
-
-namespace {
-
-void
-populateHelpText(
-    QTextEdit *area
-) {
-    area->insertPlainText("Help");
-}
-
-}
 
 MainFrame::MainFrame(
     QWidget *parent
@@ -60,7 +51,7 @@ MainFrame::MainFrame(
     // Page 3
     mHelpTextArea = new QTextEdit();
     mHelpTextArea->setReadOnly(true);
-    populateHelpText(mHelpTextArea);
+    mPopulateHelpTextArea();
     //
     mStatusLabel = new QLabel(this);
     //
@@ -131,6 +122,27 @@ MainFrame::MainFrame(
     if (!fileNames.empty()) {
         mProcessLogFiles(fileNames);
     }
+}
+
+void
+MainFrame::mPopulateHelpTextArea(
+    void
+) {
+    QFile file(":/html/help.html");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        const QString errs = "Cannot Display Help Text: " + file.errorString();
+        mHelpTextArea->setText("Error [" + errs + "]");
+        return;
+    }
+    QTextStream istream(&file);
+    if (istream.status() != QTextStream::Ok) {
+        const QString errs = "Cannot Display Help Text";
+        mHelpTextArea->setText("Error [" + errs + "]");
+        file.close();
+        return;
+    }
+    mHelpTextArea->setHtml(istream.readAll());
+    file.close();
 }
 
 void

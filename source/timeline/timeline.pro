@@ -46,4 +46,5 @@ graph-widget.h \
 color-palette-factory.h
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
+    html.qrc
