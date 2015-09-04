@@ -57,6 +57,8 @@ private slots:
     void mOnParseDone(void);
     //
     void mOnGraphStatsButtonPressed(bool pressed);
+    //
+    void mOnHelpButtonPressed(bool pressed);
 
 signals:
     void sigStatusChange(StatusKind kind, QString status);
@@ -65,7 +67,8 @@ private:
     // Update if the order of mStackedGraphStatsLayout additions changes.
     enum StackedLayoutIndex {
         TIMELINE = 0,
-        STATS
+        STATS,
+        HELP
     };
     //
     static constexpr qreal sMinZoomValue  = -512.0;

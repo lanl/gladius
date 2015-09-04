@@ -34,6 +34,17 @@
 
 #include <qmath.h>
 
+namespace {
+
+void
+populateHelpText(
+    QTextEdit *area
+) {
+    area->insertPlainText("Help");
+}
+
+}
+
 MainFrame::MainFrame(
     QWidget *parent
 ) : QFrame(parent)
@@ -49,6 +60,7 @@ MainFrame::MainFrame(
     // Page 3
     mHelpTextArea = new QTextEdit();
     mHelpTextArea->setReadOnly(true);
+    populateHelpText(mHelpTextArea);
     //
     mStatusLabel = new QLabel(this);
     //
@@ -107,6 +119,12 @@ MainFrame::MainFrame(
         SIGNAL(clicked(bool)),
         this,
         SLOT(mOnGraphStatsButtonPressed(bool))
+    );
+    connect(
+        mHelpButton,
+        SIGNAL(clicked(bool)),
+        this,
+        SLOT(mOnHelpButtonPressed(bool))
     );
     // Process any files that were provided in the commandline.
     const QStringList fileNames = mGetFileNamesFromArgv();
@@ -270,8 +288,30 @@ MainFrame::mOnGraphStatsButtonPressed(
         pressed ? StackedLayoutIndex::STATS : StackedLayoutIndex::TIMELINE
     );
     //
+    if (mHelpButton->isChecked()) {
+        // Raise the help button and tell it is isn't pressed anymore.
+        mHelpButton->setChecked(false);
+        emit mOnHelpButtonPressed(false);
+    }
+    //
     mGraphStatsButton->setToolTip(mGetGraphStatsButtonToolTip(pressed));
     mStackedGraphStatsLayout->setCurrentIndex(panelIndex);
+}
+
+void
+MainFrame::mOnHelpButtonPressed(
+    bool pressed
+) {
+    static int sPrevPanelIndex = StackedLayoutIndex::STATS;
+    if (pressed) {
+        // Save current index for toggling back and forth between help and the
+        // panel that was in focus before help was requested.
+        sPrevPanelIndex = mStackedGraphStatsLayout->currentIndex();
+        mStackedGraphStatsLayout->setCurrentIndex(StackedLayoutIndex::HELP);
+    }
+    else {
+        mStackedGraphStatsLayout->setCurrentIndex(sPrevPanelIndex);
+    }
 }
 
 QStringList
