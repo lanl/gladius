@@ -94,9 +94,15 @@ private:
     //
     QPixmap *mStatsPixmap = nullptr;
     //
+    QPixmap *mHelpPixmap = nullptr;
+    //
     QToolButton *mGraphStatsButton = nullptr;
     //
+    QToolButton *mHelpButton = nullptr;
+    //
     QTextEdit *mStatsTextArea = nullptr;
+    //
+    QTextEdit *mHelpTextArea = nullptr;
     //
     QStringList mOpenLogFiles(void);
     //

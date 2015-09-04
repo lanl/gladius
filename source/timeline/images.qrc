@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>icons/stats.24px.svg</file>
         <file>icons/timeline.24px.svg</file>
+        <file>icons/help.24px.svg</file>
     </qresource>
 </RCC>

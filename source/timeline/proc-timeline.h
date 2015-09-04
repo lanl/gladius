@@ -103,7 +103,7 @@ public:
       , mColor(Qt::gray /* Default Color */)
       , mLightColor(mColor.light(sLightness))
     {
-        static const QString us = QChar(0x03BC) + 's';
+        static const QString us = ' ' + QChar(0x03BC) + 's';
         //
         setPos(mInfo.uStartTime / sMicroSecPerPixel, timeline->pos().y());
         //
@@ -117,10 +117,10 @@ public:
             "Name: " + QString("TODO")
             + "\nExecuted on: " + Common::procType2QString(mExecResource.kind) + ' '
                                 + QString::number(mExecResource.procID)
-            + "\nStart: "    + QString::number(mInfo.uStartTime)
-            + "\nEnd: "      + QString::number(mInfo.uStopTime)
+            + "\nStart: "    + QString::number(mInfo.uStartTime) + us
+            + "\nEnd: "      + QString::number(mInfo.uStopTime) + us
             + "\nDuration: " + QString::number(durationInS, 'f', 1) + " s ("
-                             + QString::number(durationInUs) + ' ' + us + ')';
+                             + QString::number(durationInUs) + us + ')';
         setToolTip(toolTip);
     }
     //

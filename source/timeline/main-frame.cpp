@@ -22,6 +22,7 @@
 #include <QToolButton>
 #include <QStackedLayout>
 #include <QThreadPool>
+#include <QHBoxLayout>
 
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
@@ -45,16 +46,32 @@ MainFrame::MainFrame(
     // Page 2
     mStatsTextArea = new QTextEdit();
     mStatsTextArea->setReadOnly(true);
+    // Page 3
+    mHelpTextArea = new QTextEdit();
+    mHelpTextArea->setReadOnly(true);
     //
     mStatusLabel = new QLabel(this);
     //
     // Icons From: http://google.github.io/material-design-icons/
     mTimelinePixmap = new QPixmap(":/icons/timeline.24px.svg");
     mStatsPixmap = new QPixmap(":/icons/stats.24px.svg");
+    mHelpPixmap = new QPixmap(":/icons/help.24px.svg");
     //
     mGraphStatsButton = new QToolButton(this);
     mGraphStatsButton->setCheckable(true);
     mGraphStatsButton->setIconSize(mTimelinePixmap->size());
+    //
+    mHelpButton = new QToolButton(this);
+    mHelpButton->setCheckable(true);
+    mHelpButton->setIconSize(mHelpPixmap->size());
+    mHelpButton->setIcon(*mHelpPixmap);
+    mHelpButton->setToolTip("Show Help");
+    //Button Layout TODO FIX Leak
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(mHelpButton);
+    buttonLayout->addWidget(mGraphStatsButton);
+    buttonLayout->addStretch();
+    buttonLayout->setSpacing(0);
     // Hide until we have things to show.
     mGraphStatsButton->hide();
     //
@@ -63,9 +80,10 @@ MainFrame::MainFrame(
     mStackedGraphStatsLayout = new QStackedLayout();
     mStackedGraphStatsLayout->addWidget(mGraphWidget);
     mStackedGraphStatsLayout->addWidget(mStatsTextArea);
+    mStackedGraphStatsLayout->addWidget(mHelpTextArea);
     //
     layout->addLayout(mStackedGraphStatsLayout, 0, 0);
-    layout->addWidget(mGraphStatsButton,        1, 0, Qt::AlignLeft);
+    layout->addItem(buttonLayout,               1, 0, Qt::AlignLeft);
     layout->addWidget(mStatusLabel,             1, 0, Qt::AlignRight);
     setLayout(layout);
     //
