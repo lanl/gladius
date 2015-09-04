@@ -54,18 +54,27 @@ MainFrame::MainFrame(
     //
     // Icons From: http://google.github.io/material-design-icons/
     mTimelinePixmap = new QPixmap(":/icons/timeline.24px.svg");
-    mStatsPixmap = new QPixmap(":/icons/stats.24px.svg");
-    mHelpPixmap = new QPixmap(":/icons/help.24px.svg");
     //
     mGraphStatsButton = new QToolButton(this);
     mGraphStatsButton->setCheckable(true);
     mGraphStatsButton->setIconSize(mTimelinePixmap->size());
+    mGraphStatsButton->setStyleSheet(
+        "QToolButton { border-image: url(:/icons/stats.24px.svg) }"
+        "QToolButton:checked { border-image: url(:/icons/timeline.24px.svg) }"
+    );
     //
     mHelpButton = new QToolButton(this);
     mHelpButton->setCheckable(true);
-    mHelpButton->setIconSize(mHelpPixmap->size());
-    mHelpButton->setIcon(*mHelpPixmap);
+    mHelpButton->setIconSize(mTimelinePixmap->size());
     mHelpButton->setToolTip("Show Help");
+    mHelpButton->setStyleSheet(
+        "QToolButton { "
+        "    border-image: url(:/icons/help.24px.svg)"
+        "}"
+        "QToolButton:checked {"
+        "    border-image: url(:/icons/help.checked.24px.svg)"
+        "}"
+    );
     //Button Layout TODO FIX Leak
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(mHelpButton);
@@ -261,7 +270,6 @@ MainFrame::mOnGraphStatsButtonPressed(
         pressed ? StackedLayoutIndex::STATS : StackedLayoutIndex::TIMELINE
     );
     //
-    mGraphStatsButton->setIcon(*mGetGraphStatsButtonPixmap(pressed));
     mGraphStatsButton->setToolTip(mGetGraphStatsButtonToolTip(pressed));
     mStackedGraphStatsLayout->setCurrentIndex(panelIndex);
 }

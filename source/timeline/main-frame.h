@@ -92,10 +92,6 @@ private:
     //
     QPixmap *mTimelinePixmap = nullptr;
     //
-    QPixmap *mStatsPixmap = nullptr;
-    //
-    QPixmap *mHelpPixmap = nullptr;
-    //
     QToolButton *mGraphStatsButton = nullptr;
     //
     QToolButton *mHelpButton = nullptr;
@@ -116,11 +112,6 @@ private:
     mTimelineInFocus(void) {
         const auto cIndex = mStackedGraphStatsLayout->currentIndex();
         return StackedLayoutIndex::TIMELINE == cIndex;
-    }
-    //
-    QPixmap *
-    mGetGraphStatsButtonPixmap(bool pressed) {
-        return (pressed ? mTimelinePixmap : mStatsPixmap);
     }
     //
     QString
