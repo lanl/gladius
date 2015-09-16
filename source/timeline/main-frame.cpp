@@ -146,8 +146,9 @@ MainFrame::mPopulateHelpTextArea(
 }
 
 void
-MainFrame::mRecalibrateZoomValues(qreal targetScale)
-{
+MainFrame::mRecalibrateZoomValues(
+    qreal targetScale
+) {
     // Solve 2^(x/50) = targetScale to get x. x is the target value.
     const qreal x = 50.0 * std::log2(targetScale);
     // Now solve: x = mZoomValue - sInitZoomValue to get mZoomValue
@@ -157,7 +158,7 @@ MainFrame::mRecalibrateZoomValues(qreal targetScale)
 }
 
 QStringList
-MainFrame::mGetFileNamesFromArgv()
+MainFrame::mGetFileNamesFromArgv(void)
 {
     const int argc = QCoreApplication::arguments().size();
     const QStringList argv = QCoreApplication::arguments();
@@ -301,6 +302,9 @@ MainFrame::mOnGraphStatsButtonPressed(
     );
     //
     if (mHelpButton->isChecked()) {
+        if (!mHelpButton->isVisible()) {
+            mHelpButton->show();
+        }
         // Raise the help button and tell it is isn't pressed anymore.
         mHelpButton->setChecked(false);
         emit mOnHelpButtonPressed(false);

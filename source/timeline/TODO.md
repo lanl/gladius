@@ -1,5 +1,6 @@
 # Timeline TODO
 
+- Start using semantic tags to ID regions, etc.
 - Create sane numbering scheme for Procs.
 - Add host information to execution info.
 - Add timeline to bottom of all tasks with units, etc.
