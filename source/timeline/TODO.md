@@ -1,5 +1,6 @@
 # Timeline TODO
 
+- Make profiling info tolerant to missing measurements.
 - Start using semantic tags to ID regions, etc.
 - Create sane numbering scheme for Procs.
 - Add host information to execution info.
