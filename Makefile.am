@@ -12,8 +12,8 @@ SUBDIRS = \
 source
 
 EXTRA_DIST = \
-license.txt readme.md run.md todo.md thanks.txt hack.md build.md \
-lt-version-scheme.txt debugging.md
+autogen build.md doc gladius.mk hack \
+license.txt readme.md run.md testing thanks.txt
 
 AM_CFLAGS =
 
