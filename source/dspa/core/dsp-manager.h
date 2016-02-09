@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015      Los Alamos National Security, LLC
+ * Copyright (c) 2015-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,8 +10,7 @@
  * The Domain-Specific Plugin (DSP) manager.
  */
 
-#ifndef GLADIUS_DSPA_DSP_MANAGER_H_INCLUDED
-#define GLADIUS_DSPA_DSP_MANAGER_H_INCLUDED
+#pragma once
 
 #include "dspa/core/gladius-dspi.h"
 
@@ -78,5 +77,3 @@ public:
 
 } // end dspa namespace
 } // end gladius namespace
-
-#endif

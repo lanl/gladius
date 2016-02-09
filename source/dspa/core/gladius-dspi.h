@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015      Los Alamos National Security, LLC
+ * Copyright (c) 2015-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,8 +10,7 @@
  * The Domain-Specific Plugin Interface (DSPI).
  */
 
-#ifndef GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
-#define GLADIUS_DSPA_GLADIUS_DSPI_H_INCLUDED
+#pragma once
 
 #include "core/args.h"
 #include "core/macros.h"
@@ -143,5 +142,3 @@ struct DomainSpecificPluginInfo {
 
 } // end dspi namespace
 } // end gladius namespace
-
-#endif

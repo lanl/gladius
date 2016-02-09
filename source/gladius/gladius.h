@@ -1,13 +1,12 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
-#define GLADIUS_GLADIUS_GLADIUS_H_INCLUDED
+#pragma once
 
 #include "core/core.h"
 #include "core/session.h"
@@ -55,5 +54,3 @@ public:
 };
 
 } // end gladius namespace
-
-#endif

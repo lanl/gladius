@@ -10,8 +10,7 @@
  * Home to the environment variable registry that impact gladius' behavior.
  */
 
-#ifndef GLADIUS_CORE_ENV_H_INCLUDED
-#define GLADIUS_CORE_ENV_H_INCLUDED
+#pragma once
 
 #include <string>
 #include <vector>
@@ -108,5 +107,3 @@ public:
 
 }
 }
-
-#endif
