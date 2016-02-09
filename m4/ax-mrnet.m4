@@ -61,7 +61,12 @@ else
     AC_MSG_CHECKING([MRNet xplat version])
     mrnet_lib_xplat_prefix="$ax_mrnet_path/lib"
     xplat_vstr=`ls -1 $mrnet_lib_xplat_prefix | grep xplat-`
-    AC_MSG_RESULT([$xplat_vstr])
+    if test $? != 0; then
+        AC_MSG_RESULT([quien sabe])
+        AC_MSG_ERROR([Could not determine xplat version])
+    else
+        AC_MSG_RESULT([$xplat_vstr])
+    fi
     MRNET_CPPFLAGS="$MRNET_CPPFLAGS -I$mrnet_lib_xplat_prefix/$xplat_vstr/include"
     MRNETFE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_fe_link_libs"
     MRNETBE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_be_link_libs"
