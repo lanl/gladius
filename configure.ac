@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015      Los Alamos National Security, LLC
+# Copyright (c) 2015-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This FILE is part of the Gladius project. See the LICENSE.txt FILE at the
@@ -58,13 +58,12 @@ fi
 ################################################################################
 # Checks for libraries.
 ################################################################################
-AX_PTHREAD(
-    [LIBS="$PTHREAD_LIBS $LIBS"
-     CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-     CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
-    ],
-    [AC_MSG_ERROR([Pthreads support required, but not found.])]
-)
+# To enable, see automake in: https://github.com/bitcoin/bitcoin/pull/5516
+# and update .am files accordingly.
+#AX_PTHREAD(
+#    [],
+#    [AC_MSG_ERROR([Pthreads support required, but not found.])]
+#)
 
 ################################################################################
 AX_BOOST_BASE(
@@ -177,11 +176,6 @@ cat << EOF
 | LDFLAGS  : ${LDFLAGS}
 | LIBS     : ${LIBS}
 | PREFIX   : ${prefix}
-+-------------------------------------------------------------------------------
-| pthread ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+-------------------------------------------------------------------------------
-| PTHREAD_LIBS   : ${PTHREAD_LIBS}
-| PTHREAD_CFLAGS : ${PTHREAD_CFLAGS}
 +-------------------------------------------------------------------------------
 | boost ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 +-------------------------------------------------------------------------------
