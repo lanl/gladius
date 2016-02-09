@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015      Los Alamos National Security, LLC
+# Copyright (c) 2015-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This FILE is part of the Gladius project. See the LICENSE.txt FILE at the
@@ -57,7 +57,12 @@ else
     # The MRNet back-end libraries.
     mrnet_be_link_libs="-lmrnet -lxplat"
     MRNET_CPPFLAGS="-I$ax_mrnet_path/$includesubdirs"
-    MRNET_CPPFLAGS="$MRNET_CPPFLAGS -I$ax_mrnet_path/lib/xplat-4.0.0/include"
+    # deal with changing path names.
+    AC_MSG_CHECKING([MRNet xplat version])
+    mrnet_lib_xplat_prefix="$ax_mrnet_path/lib"
+    xplat_vstr=`ls -1 $mrnet_lib_xplat_prefix | grep xplat-`
+    AC_MSG_RESULT([$xplat_vstr])
+    MRNET_CPPFLAGS="$MRNET_CPPFLAGS -I$mrnet_lib_xplat_prefix/$xplat_vstr/include"
     MRNETFE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_fe_link_libs"
     MRNETBE_LDFLAGS="-L$ax_mrnet_path/$libsubdirs $mrnet_be_link_libs"
 

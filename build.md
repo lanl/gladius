@@ -22,6 +22,8 @@ cd LaunchMON
 ./bootstrap
 ./configure --prefix=$LMON_PREFIX \
 MPICC=mpicc MPICXX=mpic++ && \
+MAKEINFOFLAGS="--force" make
+# This will fail. See next step (NOTES). Fix those issues.
 MAKEINFOFLAGS="--force" make && make install
 ```
 ### NOTES:
