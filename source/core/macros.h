@@ -6,8 +6,7 @@
  * top-level directory of this distribution.
  */
 
-#ifndef GLADIUS_CORE_MACROS_H_INCLUDED
-#define GLADIUS_CORE_MACROS_H_INCLUDED
+#pragma once
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -138,5 +137,3 @@ do {                                                                           \
     std::cout << compNameColorCode                                             \
               << "[" + std::string(compName) + "] "                            \
               << gladius::core::colors::color().ansiEndColor()
-
-#endif

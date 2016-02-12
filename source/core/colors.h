@@ -48,6 +48,7 @@ public:
      * Disable copy constructor.
      */
     colors(const colors &that) = delete;
+
     //
     colors &
     operator=(const colors &other);

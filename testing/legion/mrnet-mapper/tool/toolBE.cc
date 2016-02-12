@@ -22,10 +22,16 @@ using namespace std;
 int
 main(int argc, char **argv)
 {
-    Network *net = MRN::Network::CreateNetworkBE( argc, argv );
+    Network *net = MRN::Network::CreateNetworkBE(argc, argv);
     assert(net);
 
     int myRank = net->get_LocalRank();
+
+    sleep(myRank);
+
+    for (int i = 0; i < argc; ++i) {
+        cout << "rank arg: " << myRank << " " << argv[i] << endl;
+    }
 
     cout << "hi from mrnet rank " << myRank << endl;
 

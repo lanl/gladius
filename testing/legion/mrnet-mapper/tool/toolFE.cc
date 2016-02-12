@@ -41,10 +41,14 @@ buildNetwork(string beExe)
     string topology = getTopology();
     map<string, string> attributes;
 
+    const char *argv[3] = {
+        "arg0", "arg1", NULL
+    };
+
     net = Network::CreateNetworkFE(
               topology.c_str(), // topology
               beExe.c_str(), // path to back-end exe
-              NULL, // back-end argv
+              argv, // back-end argv
               &attributes, // Network attributes
               true, // rank back-ends (start from 0)
               true // topology in memory buffer, not a file
