@@ -2,17 +2,20 @@
  * Copyright (c) 2016      Los Alamos National Security, LLC
  *                         All rights reserved.
  *
+ * Copyright (c) 2003-2015 Dorian C. Arnold, Philip C. Roth, Barton P. Miller
+ *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
  */
 
 #include "tool-proto.h"
 
-#include <cassert>
-#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <map>
+#include <cassert>
+#include <cstdlib>
+#include <mutex>
 
 #include "mrnet/MRNet.h"
 
@@ -21,6 +24,14 @@ using namespace std;
 
 namespace {
 
+int gNumAttached;
+
+void
+initGlobals(void)
+{
+    gNumAttached = 0;
+}
+
 void
 usage(void)
 {
@@ -28,33 +39,135 @@ usage(void)
 }
 
 string
-getTopology(void)
+getTopologyString(void)
 {
-    return "localhost:0 => localhost:1 ;";
+    //return "localhost:0 => localhost:1 ;";
+
+    return "localhost:0 =>"
+           "  localhost:1"
+           "  localhost:2 ;"
+           ""
+           "localhost:1 =>"
+           "  localhost:3"
+           "  localhost:4 ;"
+           ""
+           "localhost:2 =>"
+           "  localhost:5"
+           "  localhost:6 ;";
+}
+
+void
+getNetworkTopology(
+    Network *net,
+    NetworkTopology **outTopo,
+    vector<NetworkTopology::Node *> &outInternalLeaves
+) {
+    NetworkTopology *topology = net->get_NetworkTopology();
+    assert(topology);
+    *outTopo = topology;
+    // TODO checks
+    topology->get_Leaves(outInternalLeaves);
+    // TODO add printout of stats, etc.
 }
 
 Network *
 buildNetwork(string beExe)
 {
     Network *net = NULL;
-    string topology = getTopology();
-    map<string, string> attributes;
-
-    const char *argv[3] = {
-        "arg0", "arg1", NULL
-    };
+    string topology = getTopologyString();
 
     net = Network::CreateNetworkFE(
               topology.c_str(), // topology
-              beExe.c_str(), // path to back-end exe
-              argv, // back-end argv
-              &attributes, // Network attributes
+              NULL, // path to back-end exe
+              NULL, // back-end argv
+              NULL, // Network attributes
               true, // rank back-ends (start from 0)
               true // topology in memory buffer, not a file
           );
     assert(net);
 
     return net;
+}
+
+void
+beAddCallback(
+    Event *event,
+    void *evt_data
+) {
+    std::mutex guard;
+
+    if ((event->get_Class() == Event::TOPOLOGY_EVENT) &&
+        (event->get_Type() == TopologyEvent::TOPOL_ADD_BE)) {
+        guard.lock();
+        ++gNumAttached;
+        guard.unlock();
+
+        TopologyEvent::TopolEventData *ted = (TopologyEvent::TopolEventData *)evt_data;
+        delete ted;
+    }
+}
+
+void
+publishBackendConnectionInfo(
+    vector<NetworkTopology::Node *>& leaves,
+    unsigned numBEs
+) {
+   FILE *fp = NULL;
+   const char *connfile = "./attachBE_connections";
+   assert(NULL != (fp = fopen(connfile, "w+")));
+
+   unsigned num_leaves = unsigned(leaves.size());
+   unsigned be_per_leaf = numBEs / num_leaves;
+   unsigned curr_leaf = 0;
+   for(unsigned i=0; (i < numBEs) && (curr_leaf < num_leaves); i++) {
+       if( i && (i % be_per_leaf == 0) ) {
+           // select next parent
+           curr_leaf++;
+           if( curr_leaf == num_leaves ) {
+               // except when there is no "next"
+               curr_leaf--;
+           }
+       }
+       fprintf(stdout, "BE %d will connect to %s:%d:%d\n",
+               i,
+               leaves[curr_leaf]->get_HostName().c_str(),
+               leaves[curr_leaf]->get_Port(),
+               leaves[curr_leaf]->get_Rank() );
+
+       fprintf(fp, "%s %d %d %d\n",
+               leaves[curr_leaf]->get_HostName().c_str(),
+               leaves[curr_leaf]->get_Port(),
+               leaves[curr_leaf]->get_Rank(),
+               i);
+   }
+   fclose(fp);
+}
+
+void
+registerEventCallbacks(Network *net)
+{
+    bool cbrc = net->register_EventCallback(
+                    Event::TOPOLOGY_EVENT,
+                    TopologyEvent::TOPOL_ADD_BE,
+                    beAddCallback, NULL
+                );
+    assert(cbrc);
+}
+
+void
+waitForBackendConnections(unsigned nConnections)
+{
+    std::mutex guard;
+    unsigned currCount = 0;
+    do {
+        sleep(1);
+        guard.lock();
+        currCount = gNumAttached;
+        printf("*** %u connected out of %u...\n", currCount, nConnections);
+        guard.unlock();
+    } while(currCount != nConnections);
+
+    printf("All %u backends have attached!\n", nConnections);
 }
 
 }
@@ -67,10 +180,26 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    cout << "*** starting ***" << endl;
+    cout << "*** starting tool front-end ***" << endl;
+
+    initGlobals();
 
     Network *net = buildNetwork(string(argv[1]));
     assert(net);
+
+    registerEventCallbacks(net);
+
+    NetworkTopology *topology = NULL;
+    vector<NetworkTopology::Node *> internalLeaves;
+    getNetworkTopology(net, &topology, internalLeaves);
+
+    unsigned nExpectedBEs = internalLeaves.size();
+
+    publishBackendConnectionInfo(internalLeaves, nExpectedBEs);
+
+    waitForBackendConnections(nExpectedBEs);
+
+    printf("*** waiting for %u back-ends to connect...\n", nExpectedBEs);
 
     Communicator *commWorld = net->get_BroadcastCommunicator();
     assert(commWorld);
