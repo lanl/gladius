@@ -6,7 +6,7 @@
  * top-level directory of this distribution.
  */
 
-#include "net-proto.h"
+#include "tool-proto.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -30,8 +30,7 @@ usage(void)
 string
 getTopology(void)
 {
-    //return "localhost:0 => localhost:1 ;";
-    return "localhost:0 =>\nlocalhost:1\nlocalhost:2\nlocalhost:3\nlocalhost:4 ;";
+    return "localhost:0 => localhost:1 ;";
 }
 
 Network *

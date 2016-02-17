@@ -6,7 +6,7 @@
  * top-level directory of this distribution.
  */
 
-#include "net-proto.h"
+#include "tool-proto.h"
 
 #include <cassert>
 #include <cstdlib>
