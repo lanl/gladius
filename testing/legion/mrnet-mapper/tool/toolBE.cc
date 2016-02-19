@@ -26,8 +26,8 @@ using namespace std;
 
 struct ThreadPersonality {
     int rank = 0;
-    int argc = 0;
-    char **argv = NULL;
+    static constexpr int argc = 6;
+    char *argv[argc];
 };
 
 class ToolContext {
@@ -184,7 +184,6 @@ toolAttach(
     for (size_t i = 0; i < tc.getNToolThreads(); ++i) {
         ThreadPersonality *tp = new ThreadPersonality();
         tp->rank = (10000 * (i + 1)) + tc.getUID();
-        tp->argc = 6;
         tp->argv[0] = (char *)"./toolBE";
         tp->argv[1] = tc.parentHostname;
         tp->argv[2] = tc.parentPort;
