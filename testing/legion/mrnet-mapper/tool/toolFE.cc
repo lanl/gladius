@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <string>
-#include <map>
 #include <cassert>
 #include <cstdlib>
 #include <atomic>
@@ -165,7 +164,7 @@ waitForBackendConnections(unsigned nConnections)
 }
 
 int
-main(int argc, char **argv)
+main(int argc, char **)
 {
     if (argc != 1) {
         usage();
