@@ -15,7 +15,7 @@
 #include <map>
 #include <cassert>
 #include <cstdlib>
-#include <mutex>
+#include <atomic>
 
 #include "mrnet/MRNet.h"
 
@@ -24,18 +24,18 @@ using namespace std;
 
 namespace {
 
-int gNumAttached;
+atomic<unsigned> gAtomicNumAttached;
 
 void
 initGlobals(void)
 {
-    gNumAttached = 0;
+    gAtomicNumAttached = 0;
 }
 
 void
 usage(void)
 {
-    cout << "usage: toolFE toolBE" << endl;
+    cout << "usage: toolFE" << endl;
 }
 
 string
@@ -71,7 +71,7 @@ getNetworkTopology(
 }
 
 Network *
-buildNetwork(string beExe)
+buildNetwork(void)
 {
     Network *net = NULL;
     string topology = getTopologyString();
@@ -94,14 +94,9 @@ beAddCallback(
     Event *event,
     void *evt_data
 ) {
-    std::mutex guard;
-
     if ((event->get_Class() == Event::TOPOLOGY_EVENT) &&
         (event->get_Type() == TopologyEvent::TOPOL_ADD_BE)) {
-        guard.lock();
-        ++gNumAttached;
-        guard.unlock();
-
+        gAtomicNumAttached++;
         TopologyEvent::TopolEventData *ted = (TopologyEvent::TopolEventData *)evt_data;
         delete ted;
     }
@@ -116,28 +111,28 @@ publishBackendConnectionInfo(
    const char *connfile = "./attachBE_connections";
    assert(NULL != (fp = fopen(connfile, "w+")));
 
-   unsigned num_leaves = unsigned(leaves.size());
-   unsigned be_per_leaf = numBEs / num_leaves;
-   unsigned curr_leaf = 0;
-   for(unsigned i=0; (i < numBEs) && (curr_leaf < num_leaves); i++) {
+   unsigned numLeaves = unsigned(leaves.size());
+   unsigned be_per_leaf = numBEs / numLeaves;
+   unsigned currLeaf = 0;
+   for (unsigned i = 0; (i < numBEs) && (currLeaf < numLeaves); ++i) {
        if( i && (i % be_per_leaf == 0) ) {
            // select next parent
-           curr_leaf++;
-           if( curr_leaf == num_leaves ) {
+           currLeaf++;
+           if (currLeaf == numLeaves) {
                // except when there is no "next"
-               curr_leaf--;
+               currLeaf--;
            }
        }
        fprintf(stdout, "BE %d will connect to %s:%d:%d\n",
                i,
-               leaves[curr_leaf]->get_HostName().c_str(),
-               leaves[curr_leaf]->get_Port(),
-               leaves[curr_leaf]->get_Rank() );
+               leaves[currLeaf]->get_HostName().c_str(),
+               leaves[currLeaf]->get_Port(),
+               leaves[currLeaf]->get_Rank() );
 
        fprintf(fp, "%s %d %d %d\n",
-               leaves[curr_leaf]->get_HostName().c_str(),
-               leaves[curr_leaf]->get_Port(),
-               leaves[curr_leaf]->get_Rank(),
+               leaves[currLeaf]->get_HostName().c_str(),
+               leaves[currLeaf]->get_Port(),
+               leaves[currLeaf]->get_Rank(),
                i);
    }
    fclose(fp);
@@ -157,14 +152,11 @@ registerEventCallbacks(Network *net)
 void
 waitForBackendConnections(unsigned nConnections)
 {
-    std::mutex guard;
     unsigned currCount = 0;
     do {
         sleep(1);
-        guard.lock();
-        currCount = gNumAttached;
+        currCount = gAtomicNumAttached;
         printf("*** %u connected out of %u...\n", currCount, nConnections);
-        guard.unlock();
     } while(currCount != nConnections);
 
     printf("All %u backends have attached!\n", nConnections);
@@ -175,7 +167,7 @@ waitForBackendConnections(unsigned nConnections)
 int
 main(int argc, char **argv)
 {
-    if (argc != 2) {
+    if (argc != 1) {
         usage();
         return EXIT_FAILURE;
     }
@@ -184,7 +176,7 @@ main(int argc, char **argv)
 
     initGlobals();
 
-    Network *net = buildNetwork(string(argv[1]));
+    Network *net = buildNetwork();
     assert(net);
 
     registerEventCallbacks(net);
@@ -198,8 +190,6 @@ main(int argc, char **argv)
     publishBackendConnectionInfo(internalLeaves, nExpectedBEs);
 
     waitForBackendConnections(nExpectedBEs);
-
-    printf("*** waiting for %u back-ends to connect...\n", nExpectedBEs);
 
     Communicator *commWorld = net->get_BroadcastCommunicator();
     assert(commWorld);
