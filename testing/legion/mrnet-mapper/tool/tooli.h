@@ -16,11 +16,15 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
+#include <chrono>
 
 #include <limits.h>
 #include <unistd.h>
 #include "mrnet/MRNet.h"
-#include "xplat/Thread.h"
 
 using namespace MRN;
 using namespace std;
@@ -35,10 +39,13 @@ class ToolContext {
 private:
     ssize_t mUID = 0;
     size_t mNToolThreads = 0;
-    std::vector<XPlat::Thread::Id> mTIDs;
+    size_t mNToolThreadsAttached = 0;
+    std::vector<std::thread> mThreadPool;
     std::string mConnectionFile;
 
 public:
+    std::condition_variable allThreadsAttached;
+    std::mutex allThreadsAttachedMutex;
     char mHostname[HOST_NAME_MAX];
     char parentHostname[HOST_NAME_MAX],
          parentPort[16],
@@ -54,9 +61,9 @@ public:
         assert(-1 != gethostname(mHostname, sizeof(mHostname)));
     }
 
-    std::vector<XPlat::Thread::Id> &
-    getThreadIDs(void) {
-        return mTIDs;
+    std::vector<std::thread> &
+    getThreadPool(void) {
+        return mThreadPool;
     }
 
     ssize_t
@@ -67,6 +74,31 @@ public:
 
     size_t
     getNToolThreads(void) { return mNToolThreads; }
+
+    void
+    threadAttached(void) {
+        std::lock_guard<std::mutex> lock(allThreadsAttachedMutex);
+        ++mNToolThreadsAttached;
+        allThreadsAttached.notify_one();
+    }
+
+    void
+    waitForAttach(void) {
+        const auto timeout = std::chrono::seconds(10);
+        std::unique_lock<std::mutex> lock(allThreadsAttachedMutex);
+        auto status = allThreadsAttached.wait_for(
+            lock,
+            timeout,
+            [&](){ return mNToolThreads == mNToolThreadsAttached; }
+        );
+        // TODO make sure all are fine and report to caller.
+        if (status) {
+            cout << "success!!!!!" << endl;
+        }
+        else {
+            cout << "timed out!!!!!!!!!!!!" << endl;
+        }
+    }
 };
 
 int
@@ -104,10 +136,10 @@ getParentInfo(ToolContext &tc)
 }
 
 void *
-toolThreadMain(void *arg)
-{
-    ThreadPersonality *tp = (ThreadPersonality *)arg;
-
+toolThreadMain(
+    ToolContext *tc,
+    ThreadPersonality *tp
+) {
     char rankStr[64];
     snprintf(rankStr, sizeof(rankStr), "%d", tp->rank);
     tp->argv[5] = rankStr;
@@ -160,12 +192,12 @@ toolThreadMain(void *arg)
 
     } while ( tag != PROTO_EXIT );
 
+    tc->threadAttached();
     // FE delete of the network will cause us to exit, wait for it
     net->waitfor_ShutDown();
     delete net;
 
-    // TODO
-    //delete arg;
+    delete tp;
     return NULL;
 }
 
@@ -178,8 +210,9 @@ toolAttach(
     // TODO add as class member
     assert(!getParentInfo(tc));
 
-    std::vector<XPlat::Thread::Id> &tids = tc.getThreadIDs();
-    for (size_t i = 0; i < tc.getNToolThreads(); ++i) {
+    std::vector<std::thread> &threads = tc.getThreadPool();
+    const auto nThreads = tc.getNToolThreads();
+    for (size_t i = 0; i < nThreads; ++i) {
         ThreadPersonality *tp = new ThreadPersonality();
         tp->rank = (10000 * (i + 1)) + tc.getUID();
         tp->argv[0] = (char *)"./toolBE";
@@ -187,10 +220,10 @@ toolAttach(
         tp->argv[2] = tc.parentPort;
         tp->argv[3] = tc.parentRank;
         tp->argv[4] = tc.mHostname;
-        XPlat::Thread::Id tid;
-        XPlat::Thread::Create(toolThreadMain, (void *)tp, &tid);
-        tids.push_back(tid);
+        threads.push_back(std::thread(toolThreadMain, &tc, tp));
     }
+    tc.waitForAttach();
+    // wait for all the threads to start
     return 0;
 }
 
@@ -198,12 +231,10 @@ int
 toolDetach(ToolContext &tc)
 {
     if (0 == tc.getUID()) cout << "=== detaching tool..." << endl;
-    std::vector<XPlat::Thread::Id> &tids = tc.getThreadIDs();
-    size_t nThreads = tids.size();
+    std::vector<std::thread> &threads = tc.getThreadPool();
+    const auto nThreads = threads.size();
     for (size_t t = 0; t < nThreads; ++t) {
-        XPlat::Thread::Id tid = tids[t];
-        void *retval = NULL;
-        XPlat::Thread::Join(tid, &retval);
+        threads[t].join();
     }
     return 0;
 }

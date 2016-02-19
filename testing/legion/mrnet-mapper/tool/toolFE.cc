@@ -18,18 +18,12 @@
 
 #include "mrnet/MRNet.h"
 
-using namespace MRN;
 using namespace std;
+using namespace MRN;
 
 namespace {
 
-atomic<unsigned> gAtomicNumAttached;
-
-void
-initGlobals(void)
-{
-    gAtomicNumAttached = 0;
-}
+atomic<unsigned> gAtomicNumAttached{0};
 
 void
 usage(void)
@@ -172,8 +166,6 @@ main(int argc, char **)
     }
 
     cout << "*** starting tool front-end ***" << endl;
-
-    initGlobals();
 
     Network *net = buildNetwork();
     assert(net);
