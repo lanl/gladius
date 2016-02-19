@@ -44,11 +44,19 @@ GEN_SRC		?= mapper-mrnet-interop.cc
 GEN_GPU_SRC	?= # .cu files
 
 # You can modify these variables, some will be appended to by the runtime makefile
-INC_FLAGS	?=
-CC_FLAGS	?=
+xplat_version := 5.0.1
+INC_FLAGS	?= \
+-I$(MRNET_HOME)/include \
+-I$(MRNET_HOME)/lib/xplat-$(xplat_version)/include
+
+CC_FLAGS	?= -g -pthread -std=c++11
 NVCC_FLAGS	?=
 GASNET_FLAGS?=
-LD_FLAGS	?=
+
+LD_FLAGS	?= \
+-L$(MRNET_HOME)/lib \
+-L/usr/lib/x86_64-linux-gnu \
+-lmrnet -lxplat -lboost_system -lboost_timer -ldl
 
 ###########################################################################
 #

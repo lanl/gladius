@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include "mrnet/MRNet.h"
 
+// TODO move
 using namespace MRN;
 using namespace std;
 
@@ -84,7 +85,8 @@ public:
 
     void
     waitForAttach(void) {
-        const auto timeout = std::chrono::seconds(10);
+        // TODO FIXME
+        const auto timeout = std::chrono::seconds(100000);
         std::unique_lock<std::mutex> lock(allThreadsAttachedMutex);
         auto status = allThreadsAttached.wait_for(
             lock,
@@ -94,9 +96,11 @@ public:
         // TODO make sure all are fine and report to caller.
         if (status) {
             cout << "success!!!!!" << endl;
+            fflush(stdout);
         }
         else {
             cout << "timed out!!!!!!!!!!!!" << endl;
+            fflush(stdout);
         }
     }
 };

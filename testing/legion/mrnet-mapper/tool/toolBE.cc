@@ -18,8 +18,6 @@
 
 #include <limits.h>
 #include <unistd.h>
-#include "mrnet/MRNet.h"
-#include "xplat/Thread.h"
 #include "mpi.h"
 
 using namespace MRN;

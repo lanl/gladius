@@ -24,6 +24,8 @@
 
 #include "default_mapper.h"
 
+#include "tool/tooli.h"
+
 using namespace LegionRuntime::HighLevel;
 using namespace LegionRuntime::Accessor;
 using namespace LegionRuntime::Arrays;
@@ -71,17 +73,23 @@ public:
                                 MappingTagID tag);
 };
 
-void mapper_registration(Machine machine, HighLevelRuntime *rt,
-                          const std::set<Processor> &local_procs)
-{
-  for (std::set<Processor>::const_iterator it = local_procs.begin();
-        it != local_procs.end(); it++)
-  {
-    rt->replace_default_mapper(
-        new AdversarialMapper(machine, rt, *it), *it);
-    rt->add_mapper(PARTITIONING_MAPPER_ID,
-        new PartitioningMapper(machine, rt, *it), *it);
-  }
+void
+mapper_registration(
+    Machine machine,
+    HighLevelRuntime *rt,
+    const std::set<Processor> &local_procs
+) {
+    std::cout << "--- " << __func__ << endl;
+    ToolContext tc(0, 1, "./attachBE_connections");
+    assert(!toolAttach(tc));
+    for (std::set<Processor>::const_iterator it = local_procs.begin();
+         it != local_procs.end(); it++) {
+        rt->replace_default_mapper(
+                new AdversarialMapper(machine, rt, *it), *it);
+        rt->add_mapper(PARTITIONING_MAPPER_ID,
+                new PartitioningMapper(machine, rt, *it), *it);
+    }
+    std::cout << "--- " << __func__ << endl;
 }
 
 // Here is the constructor for our adversial mapper.
@@ -303,17 +311,19 @@ AdversarialMapper::AdversarialMapper(Machine m,
 //  choices for all options except the last one.  Here
 //  we choose a random processor in our system to
 //  send the task to.
-void AdversarialMapper::select_task_options(Task *task)
+void
+AdversarialMapper::select_task_options(Task *task)
 {
-  task->inline_task = false;
-  task->spawn_task = false;
-  task->map_locally = false;
-  task->profile_task = false;
-  task->task_priority = 0;
-  std::set<Processor> all_procs;
-  machine.get_all_processors(all_procs);
-  task->target_proc =
-    DefaultMapper::select_random_processor(all_procs, Processor::LOC_PROC, machine);
+    std::cout << "--- in " << __func__ << std::endl;
+    task->inline_task = false;
+    task->spawn_task = false;
+    task->map_locally = false;
+    task->profile_task = false;
+    task->task_priority = 0;
+    std::set<Processor> all_procs;
+    machine.get_all_processors(all_procs);
+    task->target_proc =
+        DefaultMapper::select_random_processor(all_procs, Processor::LOC_PROC, machine);
 }
 
 // The second call that we override is the slice_domain
@@ -587,28 +597,29 @@ void top_level_task(const Task *task,
   runtime->destroy_index_space(ctx, is);
 }
 
-void init_field_task(const Task *task,
-                     const std::vector<PhysicalRegion> &regions,
-                     Context ctx, HighLevelRuntime *runtime)
-{
-  assert(regions.size() == 1);
-  assert(task->regions.size() == 1);
-  assert(task->regions[0].privilege_fields.size() == 1);
+void
+init_field_task(
+    const Task *task,
+    const std::vector<PhysicalRegion> &regions,
+    Context ctx, HighLevelRuntime *runtime
+) {
+    assert(regions.size() == 1);
+    assert(task->regions.size() == 1);
+    assert(task->regions[0].privilege_fields.size() == 1);
 
-  FieldID fid = *(task->regions[0].privilege_fields.begin());
-  const int point = task->index_point.point_data[0];
-  printf("Initializing field %d for block %d...\n", fid, point);
+    FieldID fid = *(task->regions[0].privilege_fields.begin());
+    const int point = task->index_point.point_data[0];
+    printf("Initializing field %d for block %d...\n", fid, point);
 
-  RegionAccessor<AccessorType::Generic, double> acc =
-    regions[0].get_field_accessor(fid).typeify<double>();
+    RegionAccessor<AccessorType::Generic, double> acc =
+        regions[0].get_field_accessor(fid).typeify<double>();
 
-  Domain dom = runtime->get_index_space_domain(ctx,
-      task->regions[0].region.get_index_space());
-  Rect<1> rect = dom.get_rect<1>();
-  for (GenericPointInRectIterator<1> pir(rect); pir; pir++)
-  {
-    acc.write(DomainPoint::from_point<1>(pir.p), drand48());
-  }
+    Domain dom = runtime->get_index_space_domain(ctx,
+            task->regions[0].region.get_index_space());
+    Rect<1> rect = dom.get_rect<1>();
+    for (GenericPointInRectIterator<1> pir(rect); pir; pir++) {
+        acc.write(DomainPoint::from_point<1>(pir.p), drand48());
+    }
 }
 
 void daxpy_task(const Task *task,

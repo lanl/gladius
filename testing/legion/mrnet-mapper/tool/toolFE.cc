@@ -34,8 +34,9 @@ usage(void)
 string
 getTopologyString(void)
 {
-    //return "localhost:0 => localhost:1 ;";
+    return "localhost:0 => localhost:1 ;";
 
+#if 0
     return "localhost:0 =>"
            "  localhost:1"
            "  localhost:2 ;"
@@ -47,6 +48,7 @@ getTopologyString(void)
            "localhost:2 =>"
            "  localhost:5"
            "  localhost:6 ;";
+#endif
 }
 
 void
@@ -207,8 +209,14 @@ main(int argc, char **)
 
     cout << "sum of all back-end ranks is: " << res << endl;
 
-    cout << "shutting down" << endl;
+    cout << "q to kill back-ends..." << endl;
 
+    char cmd = ' ';
+    do {
+        cmd = getchar();
+    } while (cmd != 'q');
+
+    cout << "shutting down" << endl;
     assert(stream->send(PROTO_EXIT, "") != -1);
     assert(stream->flush() != -1);
 
