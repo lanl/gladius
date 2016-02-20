@@ -30,6 +30,8 @@ using namespace LegionRuntime::HighLevel;
 using namespace LegionRuntime::Accessor;
 using namespace LegionRuntime::Arrays;
 
+ToolContext *toolContext = NULL;
+
 enum TaskIDs {
     TOP_LEVEL_TASK_ID,
     INIT_FIELD_TASK_ID,
@@ -80,8 +82,9 @@ mapper_registration(
     const std::set<Processor> &local_procs
 ) {
     std::cout << "--- " << __func__ << endl;
-    ToolContext tc(0, 1, "./attachBE_connections");
-    assert(!toolAttach(tc));
+    toolContext = new ToolContext(0, 1, "./attachBE_connections");
+    assert(!toolAttach(*toolContext));
+
     for (std::set<Processor>::const_iterator it = local_procs.begin();
          it != local_procs.end(); it++) {
         rt->replace_default_mapper(
