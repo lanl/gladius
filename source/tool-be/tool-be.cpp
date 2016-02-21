@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -15,8 +15,6 @@
 #include "core/env.h"
 #include "tool-common/tool-common.h"
 #include "dmi/dmi.h"
-
-#include "lmon_api/lmon_be.h"
 
 #include <cstdlib>
 #include <string>
@@ -46,6 +44,7 @@ do {                                                                           \
     }                                                                          \
 } while (0)
 
+#if 0
 /**
  *
  */
@@ -159,6 +158,7 @@ feToBeUnpack(
     }
     return 0;
 }
+#endif
 }
 
 /**
@@ -210,6 +210,9 @@ ToolBE::mInitLMON(
     const core::Args &args,
     bool beVerbose
 ) {
+    GLADIUS_UNUSED(args);
+    GLADIUS_UNUSED(beVerbose);
+#if 0
     mLMONBE.init(args, beVerbose);
     // We know how to do this, so let LMON know what to call.
     mLMONBE.regUnpackForFEToBE(feToBeUnpack);
@@ -217,6 +220,7 @@ ToolBE::mInitLMON(
     mLMONBE.handshake();
     // Let LMON populate our process table.
     mLMONBE.createAndPopulateProcTab(mProcTab);
+#endif
 }
 
 /**
@@ -250,6 +254,7 @@ ToolBE::connect(void)
     VCOMP_COUT("Connecting..." << std::endl);
     VCOMP_COUT("Receiving Tool Leaf Information." << std::endl);
     toolbecommon::ToolLeafInfoArrayT lia;
+#if 0
     mLMONBE.recvConnectionInfo(lia);
     //
     mLMONBE.broadcast((void *)&lia.size, sizeof(int));
@@ -266,6 +271,7 @@ ToolBE::connect(void)
         (void *)lia.leaves,
         lia.size * sizeof(toolbecommon::ToolLeafInfoT)
     );
+#endif
     //
     mMRNBE.setPersonality(lia);
     //
@@ -351,5 +357,4 @@ ToolBE::enterPluginMain(void)
 void
 ToolBE::finalize(void)
 {
-    mLMONBE.finalize();
 }

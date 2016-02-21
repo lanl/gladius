@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -275,11 +275,13 @@ void
 ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
+#if 0 // TODO
         // First init LaunchMON
         mLMONFE.init(mBeVerbose);
         // Register function that is responsible for packing data for front-end
         // to back-end transfers. The MRNetFE knows how to do this.
         mLMONFE.regPackForFeToBe(mrnetfe::MRNetFE::getFEToBePackFun());
+#endif
         // Then do the same for MRNet
         mMRNFE.init(mBeVerbose);
     }
@@ -299,7 +301,9 @@ ToolFE::mStartToolLashUpThread(void)
     mtLashUpComplete.wait(lock);
     luThread.join();
     if (GLADIUS_SUCCESS != maStatus) {
+#if 0 // TODO
         mLMONFE.shutdown();
+#endif
         GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", maStatus);
     }
 }
@@ -317,10 +321,12 @@ ToolFE::mConnectMRNetTree(void)
         VCOMP_COUT("Connection Attempt: " << attempt << std::endl);
         // Take a break and let things happen...
         sleep(1);
+#if 0 // TODO
         // First make sure that the daemons are okay.
         if (!WIFBESPAWNED(mLMONFE.getState())) {
             GLADIUS_THROW("The Tool Daemons Have Exited.");
         }
+#endif
         // Try to connect.
         auto status = mMRNFE.connect();
         // All done - Get outta here...
@@ -372,7 +378,9 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
             envTups.push_back(make_pair(envVar, core::utils::getEnv(envVar)));
         }
     }
+#if 0 // TODO
     mLMONFE.forwardEnvsToBEs(envTups);
+#endif
 }
 
 /**
@@ -387,6 +395,7 @@ ToolFE::mInitiateToolLashUp(void)
         echoLaunchStart(mAppArgs);
         // Setup environment variable forwarding to the remote environments.
         mForwardEnvsToBEsIfSetOnFE();
+#if 0 // TODO
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs);
         // Make sure that the tool daemons launched.
@@ -397,6 +406,7 @@ ToolFE::mInitiateToolLashUp(void)
         mMRNFE.createNetworkFE(mLMONFE.getProcTab());
         // Send info to daemons.
         mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
+#endif
         // Wait for MRNet tree connections.
         mConnectMRNetTree();
         // Setup connected MRNet network.
@@ -408,7 +418,8 @@ ToolFE::mInitiateToolLashUp(void)
     }
     catch (const std::exception &e) {
         GLADIUS_CERR << e.what() << std::endl;
-        maStatus = GLADIUS_ERR_LMON;
+        // TODO update return code.
+        maStatus = GLADIUS_ERR;
     }
     // Notify main thread unconditionally.
     mtLashUpComplete.notify_one();
@@ -461,10 +472,16 @@ ToolFE::mEnterPluginMain(void)
     VCOMP_COUT("Entering Plugin Main." << std::endl);
 
     try {
+        // TODO FIXME
+        toolcommon::ProcessTable fake;
         dspi::DSPluginArgs pluginArgs(
             mPathToPluginPack,
             mAppArgs,
+#if 0 // TODO
             mLMONFE.getProcTab(),
+#else
+            fake,
+#endif
             mMRNFE.getProtoStream(),
             mMRNFE.getNetwork()
         );

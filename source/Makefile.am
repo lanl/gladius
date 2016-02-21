@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Los Alamos National Security, LLC
+# Copyright (c) 2014-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This FILE is part of the Gladius project. See the LICENSE.txt FILE at the
@@ -10,14 +10,11 @@ SUBDIRS = \
 core \
 dspa/core \
 tool-common \
-dmi \
-lmon \
 mrnet \
 mrnet/filters \
-tool-fe \
 tool-be \
+tool-fe \
 ui \
 ui/term \
 gladius \
-dspa/hello \
-dspa/pgdb
+dspa/hello

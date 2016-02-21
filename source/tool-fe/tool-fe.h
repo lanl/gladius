@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,12 +10,10 @@
  * The Front-End (FE) API. The interface to the tool actions.
  */
 
-#ifndef GLADIUS_TOOL_FE_TOOL_FE_H_INCLUDED
-#define GLADIUS_TOOL_FE_TOOL_FE_H_INCLUDED
+#pragma once
 
 #include "core/core.h"
 #include "tool-common/tool-common.h"
-#include "lmon/lmon-fe.h"
 #include "mrnet/mrnet-fe.h"
 #include "dspa/core/dsp-manager.h"
 #include "dspa/core/gladius-dspi.h"
@@ -43,8 +41,6 @@ private:
     bool mBeVerbose;
     // stdin copy
     int mStdInCopy = 0;
-    // Our LaunchMON front-end instance.
-    lmonfe::LaunchMonFE mLMONFE;
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
@@ -120,7 +116,5 @@ public:
     registerComponent(void);
 };
 
-}
+} // end toolfe namespace
 } // end gladius namespace
-
-#endif

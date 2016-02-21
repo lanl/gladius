@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Los Alamos National Security, LLC
+# Copyright (c) 2014-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -20,7 +20,6 @@ libGladiusUITerm_la_CFLAGS =
 libGladiusUITerm_la_CPPFLAGS = \
 -I${top_srcdir}/source \
 ${GLADIUS_TOOL_COMMON_CPPFLAGS} \
-${LMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 
 libGladiusUITerm_la_LDFLAGS = \
@@ -30,7 +29,6 @@ ${LIBEDIT_LIBS} \
 libGladiusUITerm_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
 ${top_builddir}/source/tool-common/libGladiusToolCommon.la \
-${top_builddir}/source/lmon/libGladiusLaunchMONFE.la \
 ${top_builddir}/source/mrnet/libGladiusMRNetFE.la \
 ${top_builddir}/source/tool-fe/libGladiusToolFE.la \
 ${top_builddir}/source/ui/libGladiusUI.la
