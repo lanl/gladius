@@ -48,6 +48,7 @@ flags = [
 'c++',
 '-I.',
 '-I./source',
+'-I' + home + '/local/mrnet/lib/xplat-5.0.1/include',
 '-I' + home + '/local/mrnet/include',
 '-I' + legion_home,
 '-I' + legion_home + '/legion',

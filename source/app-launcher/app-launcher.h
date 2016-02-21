@@ -20,11 +20,24 @@
 #include "core/args.h"
 #include "tool-common/tool-common.h"
 
+#include <string>
+
 namespace gladius {
 namespace applauncher {
 
 class AppLauncher {
+public:
+    /**
+     * Supported launcher types.
+     */
+    enum AppLauncherPersonality {
+        ORTE, /* orte */
+        NONE  /* none specified */
+    };
+
 protected:
+    // The launcher "personality", i.e. what kind of launcher.
+    AppLauncherPersonality mPersonality;
     // All arguments supplied to launch request.
     core::Args mAppArgs;
     // Target hosts in parallel job.
@@ -34,13 +47,48 @@ public:
     /**
      *
      */
-    AppLauncher(void) { ; }
+    AppLauncher(
+        void
+    ) : mPersonality(NONE) { ; }
 
     /**
      *
      */
     virtual ~AppLauncher(void) { ; }
 
+    /**
+     *
+     */
+    AppLauncherPersonality
+    getPersonality(void) { return mPersonality; }
+
+    /**
+     *
+     */
+    std::string
+    getPersonalityName(void) {
+        switch(mPersonality) {
+            // TODO mpich v. open mpi's mpirun?
+            case (ORTE): return "orte";
+            case (NONE): return "none";
+            default: return "???";
+        }
+    }
+
+    /**
+     *
+     */
+    void
+    setPersonality(AppLauncherPersonality p) { mPersonality = p; }
+
+    /**
+     * Returns personality based on launcher name.
+     */
+    static AppLauncherPersonality
+    getPersonalityByName(const std::string &name) {
+        if ("mpirun" == name) return ORTE;
+        else return NONE;
+    }
 };
 
 } // end gladius applauncher

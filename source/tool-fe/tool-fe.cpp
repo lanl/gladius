@@ -10,6 +10,7 @@
 
 #include "core/utils.h"
 #include "core/env.h"
+#include "app-launcher/app-launcher.h"
 #include "tool-be/tool-be.h"
 
 #include <string>
@@ -183,6 +184,24 @@ ToolFE::envSane(std::string &whatsWrong)
     }
     // Set member, so we can get the plugin pack later...
     mPathToPluginPack = pathToPluginPackIfAvail;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup parallel launcher.
+    ////////////////////////////////////////////////////////////////////////////
+    // The first argument should be the launcher name.
+    mAppLauncherName = std::string(mAppArgs.argv()[0]);
+    mAppLauncher.setPersonality(
+        applauncher::AppLauncher::getPersonalityByName(mAppLauncherName)
+    );
+    VCOMP_COUT(
+        "Application launcher personality: " <<
+        mAppLauncher.getPersonalityName() << std::endl
+    );
+    if (applauncher::AppLauncher::NONE == mAppLauncher.getPersonality()) {
+        whatsWrong = "Cannot determine launcher type by name: '"
+                   + mAppLauncherName + "'";
+        return false;
+    }
     return true;
 }
 
@@ -234,18 +253,20 @@ void
 ToolFE::mainLoop(
     const core::Args &args
 ) {
-    VCOMP_COUT("Entering Main Loop." << std::endl);
+    VCOMP_COUT("Entering main loop." << std::endl);
     //
     try {
         mAppArgs = args;
-        // Make sure that all the required bits are
-        // set before we get to launching anything.
+        // Make sure that all the required bits are set before we get to
+        // launching anything.
         std::string whatsWrong;
         if (!envSane(whatsWrong)) {
             GLADIUS_CERR << whatsWrong << std::endl;
             return;
         }
+        ////////////////////////////////////////////////////////////////////////
         // If we are here, then our environment is sane enough to start...
+        ////////////////////////////////////////////////////////////////////////
         // Perform any actions that need to take place before lash-up.
         mPreToolInitActons();
         mInitializeToolInfrastructure();
@@ -268,6 +289,7 @@ ToolFE::mainLoop(
         // of infrastructure.
         GLADIUS_CERR << e.what() << std::endl;
     }
+    // TODO return code to caller
 }
 
 /**
@@ -295,7 +317,7 @@ ToolFE::mConnectMRNetTree(void)
     decltype(mMaxRetries) attempt = 1;
     bool connectSuccess = false;
     do {
-        VCOMP_COUT("Connection Attempt: " << attempt << std::endl);
+        VCOMP_COUT("Connection attempt: " << attempt << std::endl);
         // Take a break and let things happen...
         sleep(1);
 #if 0 // TODO
@@ -405,7 +427,7 @@ ToolFE::mLoadPlugins(void)
 {
     using namespace std;
 
-    VCOMP_COUT("Loading Plugins." << std::endl);
+    VCOMP_COUT("Loading plugins." << std::endl);
     // Get the front-end plugin pack.
     mPluginPack = mDSPManager.getPluginPackFrom(
                       dspa::DSPluginPack::PluginFE,
@@ -418,7 +440,7 @@ ToolFE::mLoadPlugins(void)
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
     mFEPlugin = fePluginInfo->pluginConstruct();
 
-    VCOMP_COUT("Done Loading Plugins." << std::endl);
+    VCOMP_COUT("Done loading plugins." << std::endl);
 }
 
 /**
@@ -427,7 +449,7 @@ ToolFE::mLoadPlugins(void)
 void
 ToolFE::mSendPluginInfoToBEs(void)
 {
-    VCOMP_COUT("Sending Plugin Info to Back-Ends." << std::endl);
+    VCOMP_COUT("Sending plugin info to back-ends." << std::endl);
     // MRNet knows how to do this...
     mMRNFE.pluginInfoBCast(
         std::string(mPluginPack.pluginInfo->pluginName),
@@ -441,7 +463,7 @@ ToolFE::mSendPluginInfoToBEs(void)
 void
 ToolFE::mEnterPluginMain(void)
 {
-    VCOMP_COUT("Entering Plugin Main." << std::endl);
+    VCOMP_COUT("Entering plugin main." << std::endl);
 
     try {
         // TODO FIXME
@@ -468,5 +490,5 @@ ToolFE::mEnterPluginMain(void)
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 
-    VCOMP_COUT("Exited Plugin Main." << std::endl);
+    VCOMP_COUT("Exited plugin main." << std::endl);
 }

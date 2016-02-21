@@ -55,7 +55,7 @@ DSPManager::pluginPackAvailable(
 ) {
     using namespace std;
 
-    VCOMP_COUT("Checking for Availability of " + mTargetModeName + "." << endl);
+    VCOMP_COUT("Checking for availability of " + mTargetModeName + "." << endl);
     // All the paths that we are going to search for the plugin pack. Order
     // matters here. Always push the base location of package installations
     // first. Then push the rest, in the order provided by GLADIUS_PLUGIN_PATH.
@@ -68,13 +68,13 @@ DSPManager::pluginPackAvailable(
     // Now get vector of path strings from GLADIUS_PLUGIN_PATH.
     if (!utils::envVarSet(GLADIUS_ENV_PLUGIN_PATH_NAME)) {
         VCOMP_COUT(
-            GLADIUS_ENV_PLUGIN_PATH_NAME " Not Set. "
-            "No External Plugin Paths to Search..." << std::endl
+            GLADIUS_ENV_PLUGIN_PATH_NAME " not set. "
+            "No external plugin paths to search..." << std::endl
         );
     }
     else {
         VCOMP_COUT(
-            "Adding Paths Found in: " GLADIUS_ENV_PLUGIN_PATH_NAME << endl
+            "Adding paths found in: " GLADIUS_ENV_PLUGIN_PATH_NAME << endl
         );
         const auto &envStr = utils::getEnv(GLADIUS_ENV_PLUGIN_PATH_NAME);
         const auto &pathVec = utils::strTok(envStr, ":");
@@ -96,7 +96,7 @@ DSPManager::pluginPackAvailable(
     //
     VCOMP_COUT(
         mTargetModeName + " Found: "
-        + (pluginBaseFound ? "Yes" : "No") << endl
+        + (pluginBaseFound ? "yes" : "no") << endl
     );
     // If we found the base directory, now let's check for the usability of the
     // plugin pack directory. Make sure that all the files we care about exist
@@ -121,7 +121,7 @@ DSPManager::mPluginPackLooksGood(
     using namespace std;
 
     VCOMP_COUT(
-        "Making Sure " + pathToPackBase + " Holds Usable Plugin Pack." << endl;
+        "Making sure " + pathToPackBase + " holds usable plugin pack." << endl;
     );
     // Developer sanity...
     assert(utils::fileExists(pathToPackBase) && "Bogus Path!");

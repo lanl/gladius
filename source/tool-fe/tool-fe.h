@@ -49,6 +49,8 @@ private:
     toolcommon::timeout_t mConnectionTimeoutInSec;
     // Max number of connection retries.
     toolcommon::retry_t mMaxRetries;
+    // The name of the parallel application launcher.
+    std::string mAppLauncherName;
     // The path to a valid plugin pack.
     std::string mPathToPluginPack;
     // The plugin pack for our current session.
