@@ -197,13 +197,13 @@ main(int argc, char **)
                          TFILTER_NULL
                      );
     assert(stream);
-    assert(stream->send(PROTO_PING, "%d", 7) != -1);
+    assert(stream->send(PROTO_CONN, "%d", 7) != -1);
     assert(stream->flush() != -1);
 
     int tag = 0;
     PacketPtr packet;
     assert(stream->recv(&tag, packet) != -1);
-    assert(tag == PROTO_PING);
+    assert(tag == PROTO_CONN);
     int res = 0;
     packet->unpack("%d", &res);
 

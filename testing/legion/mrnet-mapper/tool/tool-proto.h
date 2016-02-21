@@ -10,5 +10,6 @@
 
 #include "mrnet/Types.h"
 
-#define PROTO_PING (FirstApplicationTag)
-#define PROTO_EXIT (FirstApplicationTag + 1)
+#define PROTO_CONN (FirstApplicationTag)
+#define PROTO_PING (FirstApplicationTag + 1)
+#define PROTO_EXIT (FirstApplicationTag + 2)

@@ -6,6 +6,11 @@
  * top-level directory of this distribution.
  */
 
+/**
+ * To fully understand the entire set of interactions here, you'll also need to
+ * see the back-end versions of the tool, LaunchMon, and MRNet.
+ */
+
 #include "tool-fe.h"
 
 #include "core/utils.h"
@@ -18,11 +23,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
-/**
- * To fully understand the entire set of interactions here, you'll also need to
- * see the back-end versions of the tool, LaunchMon, and MRNet.
- */
 
 using namespace gladius;
 using namespace gladius::toolfe;
@@ -83,9 +83,12 @@ echoLaunchStart(const gladius::core::Args &args)
 } // end namespace
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const toolcommon::timeout_t ToolFE::sDefaultTimeout = 30;
 const toolcommon::retry_t ToolFE::sDefaultMaxRetries = 8;
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 /**
  * Component registration.
  */

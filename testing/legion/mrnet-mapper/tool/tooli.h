@@ -159,47 +159,39 @@ toolThreadMain(
     net = Network::CreateNetworkBE(tp->argc, tp->argv);
     assert(net);
 
-    do {
-        if (net->recv(&tag, p, &stream) != 1) {
-            fprintf( stderr, "BE[%s]: net->recv() failure\n", rankStr);
-            tag = PROTO_EXIT;
-        }
-
-        switch( tag ) {
-            case PROTO_PING: {
-                if (p->unpack( "%d", &recv_int) == -1 ) {
-                    fprintf( stderr, "BE[%s]: stream::unpack(%%d) failure\n", rankStr);
-                    return NULL;
-                }
-
-                fprintf( stdout, "BE[%s]: received int = %d\n", rankStr, recv_int);
-
-                if ((stream->send(PROTO_PING, "%d", recv_int) == -1) ||
-                    (stream->flush() == -1 )) {
-                    fprintf( stderr, "BE[%s]: stream::send(%%d) failure\n", rankStr);
-                    return NULL;
-                }
-                break;
+    if (net->recv(&tag, p, &stream) != 1) {
+        fprintf( stderr, "BE[%s]: net->recv() failure\n", rankStr);
+        tag = PROTO_EXIT;
+    }
+    switch (tag) {
+        case PROTO_CONN: {
+            if (p->unpack( "%d", &recv_int) == -1 ) {
+                fprintf( stderr, "BE[%s]: stream::unpack(%%d) failure\n", rankStr);
+                return NULL;
             }
-
-            case PROTO_EXIT:
-                break;
-
-            default:
-                fprintf( stderr, "BE[%s]: Unknown Protocol %d\n", rankStr, tag);
-                tag = PROTO_EXIT;
-                break;
+            if ((stream->send(PROTO_CONN, "%d", recv_int) == -1) ||
+                (stream->flush() == -1 )) {
+                fprintf( stderr, "BE[%s]: stream::send(%%d) failure\n", rankStr);
+                assert(false);
+            }
+            printf("connected!\n");
+            tc->threadAttached();
+            break;
         }
+        default:
+            fprintf( stderr, "BE[%s]: Unknown Protocol %d\n", rankStr, tag);
+            tag = PROTO_EXIT;
+            break;
+    }
 
     fflush(stdout);
     fflush(stderr);
 
-    } while ( tag != PROTO_EXIT );
-
-    tc->threadAttached();
+#if 0
     // FE delete of the network will cause us to exit, wait for it
     net->waitfor_ShutDown();
     delete net;
+#endif
 
     delete tp;
     return NULL;
