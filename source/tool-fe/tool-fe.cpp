@@ -7,6 +7,7 @@
  */
 
 #include "tool-fe.h"
+
 #include "core/utils.h"
 #include "core/env.h"
 #include "tool-be/tool-be.h"
@@ -80,6 +81,7 @@ echoLaunchStart(const gladius::core::Args &args)
 
 } // end namespace
 
+////////////////////////////////////////////////////////////////////////////////
 const toolcommon::timeout_t ToolFE::sDefaultTimeout = 30;
 const toolcommon::retry_t ToolFE::sDefaultMaxRetries = 8;
 
@@ -244,11 +246,11 @@ ToolFE::mainLoop(
             return;
         }
         // If we are here, then our environment is sane enough to start...
+        // Perform any actions that need to take place before lash-up.
         mPreToolInitActons();
-        //
         mInitializeToolInfrastructure();
-        // Start lash-up thread.
-        mStartToolLashUpThread();
+        // Start lash-up.
+        mInitiateToolLashUp();
         //
         mPostToolInitActons();
         // Now that the base infrastructure is up, now load the user-specified
@@ -275,36 +277,11 @@ void
 ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
-#if 0 // TODO
-        // First init LaunchMON
-        mLMONFE.init(mBeVerbose);
-        // Register function that is responsible for packing data for front-end
-        // to back-end transfers. The MRNetFE knows how to do this.
-        mLMONFE.regPackForFeToBe(mrnetfe::MRNetFE::getFEToBePackFun());
-#endif
         // Then do the same for MRNet
         mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
-    }
-}
-
-/**
- *
- */
-void
-ToolFE::mStartToolLashUpThread(void)
-{
-    std::unique_lock<std::mutex> lock(mtLashUpLock);
-    std::thread luThread(&ToolFE::mInitiateToolLashUp, this);
-    mtLashUpComplete.wait(lock);
-    luThread.join();
-    if (GLADIUS_SUCCESS != maStatus) {
-#if 0 // TODO
-        mLMONFE.shutdown();
-#endif
-        GLADIUS_THROW_CALL_FAILED_RC("mStartToolLashUpThread", maStatus);
     }
 }
 
@@ -384,17 +361,16 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 }
 
 /**
- * The thread that initiates the tool lash-up.  This is NOT the main thread, so
- * this is why we don't throw in the exceptional case.
+ * Initiates the tool lash-up bits.
  */
 void
 ToolFE::mInitiateToolLashUp(void)
 {
     try {
-        maStatus = GLADIUS_SUCCESS;
         echoLaunchStart(mAppArgs);
+        // TODO
         // Setup environment variable forwarding to the remote environments.
-        mForwardEnvsToBEsIfSetOnFE();
+        //mForwardEnvsToBEsIfSetOnFE();
 #if 0 // TODO
         // And so it begins...
         mLMONFE.launchAndSpawnDaemons(mAppArgs);
@@ -417,12 +393,8 @@ ToolFE::mInitiateToolLashUp(void)
         mMRNFE.handshake();
     }
     catch (const std::exception &e) {
-        GLADIUS_CERR << e.what() << std::endl;
-        // TODO update return code.
-        maStatus = GLADIUS_ERR;
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
-    // Notify main thread unconditionally.
-    mtLashUpComplete.notify_one();
 }
 
 /**

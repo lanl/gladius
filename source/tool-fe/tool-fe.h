@@ -21,8 +21,6 @@
 #include <string>
 #include <thread>
 #include <mutex>
-#include <atomic>
-#include <condition_variable>
 
 namespace gladius {
 namespace toolfe {
@@ -31,11 +29,6 @@ class ToolFE {
 private:
     // Threading things ////////////////////////////////////////////////////////
     //
-    std::mutex mtLashUpLock;
-    //
-    std::condition_variable mtLashUpComplete;
-    //
-    std::atomic<int> maStatus;
     ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
@@ -73,9 +66,6 @@ private:
     //
     void
     mPostToolInitActons(void);
-    //
-    void
-    mStartToolLashUpThread(void);
     //
     void
     mInitiateToolLashUp(void);
