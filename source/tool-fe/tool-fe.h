@@ -14,6 +14,7 @@
 
 #include "core/core.h"
 #include "tool-common/tool-common.h"
+#include "app-launcher/app-launcher.h"
 #include "mrnet/mrnet-fe.h"
 #include "dspa/core/dsp-manager.h"
 #include "dspa/core/gladius-dspi.h"
@@ -34,6 +35,8 @@ private:
     bool mBeVerbose;
     // stdin copy
     int mStdInCopy = 0;
+    // Out parallel application launcher.
+    applauncher::AppLauncher mAppLauncher;
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
@@ -47,8 +50,7 @@ private:
     // Max number of connection retries.
     toolcommon::retry_t mMaxRetries;
     // The path to a valid plugin pack.
-    std::string
-    mPathToPluginPack;
+    std::string mPathToPluginPack;
     // The plugin pack for our current session.
     dspa::DSPluginPack mPluginPack;
     //

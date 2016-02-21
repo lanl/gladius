@@ -143,6 +143,7 @@ AC_CONFIG_FILES([
     source/core/Makefile
     source/dspa/core/Makefile
     source/tool-common/Makefile
+    source/app-launcher/Makefile
     source/mrnet/Makefile
     source/mrnet/filters/Makefile
     source/ui/Makefile

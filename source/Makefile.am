@@ -10,6 +10,7 @@ SUBDIRS = \
 core \
 dspa/core \
 tool-common \
+app-launcher \
 mrnet \
 mrnet/filters \
 tool-be \
