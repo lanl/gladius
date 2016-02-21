@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -12,12 +12,11 @@
  * Home to common infrastructure used by tool front-ends and back-ends.
  */
 
-#ifndef GLADIUS_TOOL_COMMON_TOOL_COMMON_H_INCLUDED
-#define GLADIUS_TOOL_COMMON_TOOL_COMMON_H_INCLUDED
+#pragma once
 
 #include "core/core.h"
 #include "core/utils.h"
-
+#include "tool-common/faux-mpir.h"
 
 #include <cstring>
 #include <cstdint>
@@ -29,7 +28,6 @@
 
 #include <limits.h>
 
-#include "lmon_api/lmon_proctab.h"
 #include "mrnet/MRNet.h"
 
 namespace gladius {
@@ -429,5 +427,3 @@ typedef struct ToolLeafInfoArrayT {
 
 }
 }
-
-#endif

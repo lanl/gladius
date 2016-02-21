@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Los Alamos National Security, LLC
+# Copyright (c) 2014-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -12,6 +12,7 @@ lib_LTLIBRARIES = \
 libGladiusToolCommon.la
 
 libGladiusToolCommon_la_SOURCES = \
+faux-mpir.h \
 tool-common.h tool-common.cpp
 
 libGladiusToolCommon_la_CFLAGS =
