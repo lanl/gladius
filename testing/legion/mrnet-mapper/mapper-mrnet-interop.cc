@@ -325,6 +325,7 @@ AdversarialMapper::select_task_options(Task *task)
     toolContext->inMapper->BroadcastCondition(ToolContext::ToolConditions::MAP);
     toolContext->inMapper->Unlock();
     std::cout << "waiting for step command..." << std::endl;
+
     int tag;
     PacketPtr p;
     Stream *stream;

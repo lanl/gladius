@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Los Alamos National Security, LLC
+# Copyright (c) 2014-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -17,6 +17,7 @@ core.h \
 ret-codes.h \
 args.h \
 colors.h colors.cpp \
+console.h \
 env.h env.cpp \
 gladius-exception.h gladius-exception.cpp \
 macros.h \
