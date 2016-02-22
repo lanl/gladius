@@ -13,3 +13,4 @@
 #define PROTO_CONN (FirstApplicationTag)
 #define PROTO_PING (FirstApplicationTag + 1)
 #define PROTO_EXIT (FirstApplicationTag + 2)
+#define PROTO_STEP (FirstApplicationTag + 3)

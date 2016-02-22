@@ -24,7 +24,9 @@
 
 #include <limits.h>
 #include <unistd.h>
+
 #include "mrnet/MRNet.h"
+#include "xplat/Monitor.h"
 
 // TODO move
 using namespace MRN;
@@ -37,16 +39,25 @@ struct ThreadPersonality {
 };
 
 class ToolContext {
+public:
+    enum ToolConditions {
+        MAP = 0
+    };
 private:
     ssize_t mUID = 0;
     size_t mNToolThreads = 0;
     size_t mNToolThreadsAttached = 0;
-    std::vector<std::thread> mThreadPool;
+    std::vector<std::thread> mThreads;
     std::string mConnectionFile;
 
 public:
     std::condition_variable allThreadsAttached;
     std::mutex allThreadsAttachedMutex;
+
+    XPlat::Monitor *inMapper = NULL;
+    // TODO make thread-safe and have many.
+    MRN::Network *net = NULL;
+
     char mHostname[HOST_NAME_MAX];
     char parentHostname[HOST_NAME_MAX],
          parentPort[16],
@@ -59,12 +70,15 @@ public:
     ) : mUID(uid)
       , mNToolThreads(nToolThreads)
       , mConnectionFile(connectionFile) {
+        // TODO delete
+        inMapper = new XPlat::Monitor();
+        inMapper->RegisterCondition(MAP);
         assert(-1 != gethostname(mHostname, sizeof(mHostname)));
     }
 
     std::vector<std::thread> &
-    getThreadPool(void) {
-        return mThreadPool;
+    getThreads(void) {
+        return mThreads;
     }
 
     ssize_t
@@ -152,23 +166,23 @@ toolThreadMain(
     int tag;
     PacketPtr p;
     Stream *stream;
-    Network *net = NULL;
 
     assert(6 == tp->argc);
 
-    net = Network::CreateNetworkBE(tp->argc, tp->argv);
-    assert(net);
+    tc->net = Network::CreateNetworkBE(tp->argc, tp->argv);
+    assert(tc->net);
 
-    if (net->recv(&tag, p, &stream) != 1) {
+    if (tc->net->recv(&tag, p, &stream) != 1) {
         fprintf( stderr, "BE[%s]: net->recv() failure\n", rankStr);
         tag = PROTO_EXIT;
     }
     switch (tag) {
         case PROTO_CONN: {
-            if (p->unpack( "%d", &recv_int) == -1 ) {
+            if (p->unpack( "%d", &recv_int) == -1) {
                 fprintf( stderr, "BE[%s]: stream::unpack(%%d) failure\n", rankStr);
                 return NULL;
             }
+            // Ack
             if ((stream->send(PROTO_CONN, "%d", recv_int) == -1) ||
                 (stream->flush() == -1 )) {
                 fprintf( stderr, "BE[%s]: stream::send(%%d) failure\n", rankStr);
@@ -184,6 +198,7 @@ toolThreadMain(
             break;
     }
 
+
     fflush(stdout);
     fflush(stderr);
 
@@ -192,7 +207,6 @@ toolThreadMain(
     net->waitfor_ShutDown();
     delete net;
 #endif
-
     delete tp;
     return NULL;
 }
@@ -206,7 +220,7 @@ toolAttach(
     // TODO add as class member
     assert(!getParentInfo(tc));
 
-    std::vector<std::thread> &threads = tc.getThreadPool();
+    std::vector<std::thread> &threads = tc.getThreads();
     const auto nThreads = tc.getNToolThreads();
     for (size_t i = 0; i < nThreads; ++i) {
         ThreadPersonality *tp = new ThreadPersonality();
@@ -219,6 +233,7 @@ toolAttach(
         threads.push_back(std::thread(toolThreadMain, &tc, tp));
     }
     tc.waitForAttach();
+    tc.inMapper->WaitOnCondition(ToolContext::ToolConditions::MAP);
     // wait for all the threads to start
     return 0;
 }
@@ -227,7 +242,7 @@ int
 toolDetach(ToolContext &tc)
 {
     if (0 == tc.getUID()) cout << "=== detaching tool..." << endl;
-    std::vector<std::thread> &threads = tc.getThreadPool();
+    std::vector<std::thread> &threads = tc.getThreads();
     const auto nThreads = threads.size();
     for (size_t t = 0; t < nThreads; ++t) {
         threads[t].join();

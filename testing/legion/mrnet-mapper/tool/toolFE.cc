@@ -178,7 +178,8 @@ main(int argc, char **)
     vector<NetworkTopology::Node *> internalLeaves;
     getNetworkTopology(net, &topology, internalLeaves);
 
-    unsigned nExpectedBEs = internalLeaves.size();
+    unsigned nBeThreads = 1;
+    unsigned nExpectedBEs = internalLeaves.size() * nBeThreads;
 
     publishBackendConnectionInfo(internalLeaves, nExpectedBEs);
 
@@ -197,7 +198,7 @@ main(int argc, char **)
                          TFILTER_NULL
                      );
     assert(stream);
-    assert(stream->send(PROTO_CONN, "%d", 7) != -1);
+    assert(stream->send(PROTO_CONN, "%d", 1) != -1);
     assert(stream->flush() != -1);
 
     int tag = 0;
@@ -214,6 +215,11 @@ main(int argc, char **)
     char cmd = ' ';
     do {
         cmd = getchar();
+        if ('s' == cmd) {
+            std::cout << "stepping..." << std::endl;
+            assert(stream->send(PROTO_STEP, "%d", 1) != -1);
+            assert(stream->flush() != -1);
+        }
     } while (cmd != 'q');
 
     cout << "shutting down" << endl;

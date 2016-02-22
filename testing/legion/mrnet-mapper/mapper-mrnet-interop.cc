@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
@@ -82,7 +81,8 @@ mapper_registration(
     const std::set<Processor> &local_procs
 ) {
     std::cout << "--- " << __func__ << endl;
-    toolContext = new ToolContext(0, 1, "./attachBE_connections");
+    static const unsigned nThread = 1;
+    toolContext = new ToolContext(0, nThread, "./attachBE_connections");
     assert(!toolAttach(*toolContext));
 
     for (std::set<Processor>::const_iterator it = local_procs.begin();
@@ -318,6 +318,24 @@ void
 AdversarialMapper::select_task_options(Task *task)
 {
     std::cout << "--- in " << __func__ << std::endl;
+
+    toolContext->inMapper->Lock();
+    std::cout << "*** TOOL:In Mapper Call...\n" << std::endl;
+    MRN::Network *net = toolContext->net;
+    toolContext->inMapper->BroadcastCondition(ToolContext::ToolConditions::MAP);
+    toolContext->inMapper->Unlock();
+    std::cout << "waiting for step command..." << std::endl;
+    int tag;
+    PacketPtr p;
+    Stream *stream;
+    assert(net->recv(&tag, p, &stream) != -1);
+    assert(tag == PROTO_STEP);
+
+    toolContext->inMapper->WaitOnCondition(ToolContext::ToolConditions::MAP);
+
+    std::cout << "done!" << std::endl;
+
+
     task->inline_task = false;
     task->spawn_task = false;
     task->map_locally = false;
