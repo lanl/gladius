@@ -9,25 +9,53 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 
 namespace gladius {
 namespace core {
 
 class console {
+    /**
+     *
+     */
+    class OutS : public std::ostream {
+        /**
+         *
+         */
+        class StreamBuf : public std::stringbuf {
+            //
+            std::ostream &mOutput;
+        public:
+            /**
+             *
+             */
+            StreamBuf(std::ostream &str) : mOutput(str) { ; }
 
-    struct Out {
-        template<class TYPE>
-        Out &operator<<(const TYPE &tval) {
-            std::cout << tval << std::endl;
-            return *this;
-        }
+            /**
+             *
+             */
+            virtual int
+            sync(void) {
+                mOutput << "[blah]" << str();
+                str("");
+                mOutput.flush();
+                return 0;
+            }
+        };
+
+        StreamBuf buffer;
+    public:
+        /**
+         *
+         */
+        OutS(
+            void
+        ) : std::ostream(&buffer)
+          , buffer(std::cout) { ; }
     };
-
-    struct Decorator {
-
-    }
 public:
-    Out out;
+    //
+    OutS outs;
 };
 
 } // end core namespace
