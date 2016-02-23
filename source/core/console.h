@@ -13,15 +13,14 @@
 
 namespace gladius {
 namespace core {
-
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 class console {
-    /**
-     *
-     */
+     ///////////////////////////////////////////////////////////////////////////
+     ///////////////////////////////////////////////////////////////////////////
     class OutS : public std::ostream {
-        /**
-         *
-         */
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
         class StreamBuf : public std::stringbuf {
             //
             std::ostream &mOutput;
@@ -41,21 +40,37 @@ class console {
                 mOutput.flush();
                 return 0;
             }
-        };
-
-        StreamBuf buffer;
+        }; // class StreamBuf
+        //
+        StreamBuf mBuffer;
     public:
         /**
          *
          */
         OutS(
             void
-        ) : std::ostream(&buffer)
-          , buffer(std::cout) { ; }
-    };
+        ) : std::ostream(&mBuffer)
+          , mBuffer(std::cout) { ; }
+
+        /**
+         *
+         */
+        OutS(
+            std::ostream &os
+        ) : std::ostream(&mBuffer)
+          , mBuffer(os) { ; }
+    }; // class OutS
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    class ErrS : public OutS {
+    public:
+        ErrS(void) : OutS(std::cerr) { ; }
+    }; // class ErrS
 public:
     //
     OutS outs;
+    //
+    ErrS errs;
 };
 
 } // end core namespace
