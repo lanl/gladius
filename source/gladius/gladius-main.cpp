@@ -13,7 +13,6 @@
 #include "gladius.h"
 
 #include "core/core.h"
-#include "core/console.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -30,9 +29,6 @@ main(
     using namespace gladius;
     using namespace gladius::core;
     try {
-        core::console c;
-        c.outs << "hi" << 123 << " asdfasdf " << std::endl;
-        c.errs << "errs!" << std::endl;
         Args args(argc,
                   const_cast<const char **>(argv),
                   const_cast<const char **>(envp));

@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 
 namespace gladius {
 namespace core {
@@ -60,18 +61,34 @@ class console {
         ) : std::ostream(&mBuffer)
           , mBuffer(os) { ; }
     }; // class OutS
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-    class ErrS : public OutS {
-    public:
-        ErrS(void) : OutS(std::cerr) { ; }
-    }; // class ErrS
+    //
+    std::string mMsgPrefix;
+    //
+    OutS *mOuts = nullptr;
+    //
+    OutS *mErrs = nullptr;
 public:
-    //
-    OutS outs;
-    //
-    ErrS errs;
-};
+    /**
+     *
+     */
+    console(
+        std::string msgPrefix = ""
+    ) : mMsgPrefix(msgPrefix)
+      , mOuts(new OutS(std::cout))
+      , mErrs(new OutS(std::cerr)) { ; }
+
+    /**
+     *
+     */
+    OutS &
+    outs(void) { return *mOuts; }
+
+    /**
+     *
+     */
+    OutS &
+    errs(void) { return *mErrs; }
+}; // class console
 
 } // end core namespace
 } // end gladius namespace
