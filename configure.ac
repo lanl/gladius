@@ -35,6 +35,14 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 ################################################################################
+# MPI compiler checks
+################################################################################
+AX_PROGS_MPICOMPS
+AS_IF([test "x$AX_PROGS_MPICOMPS_HAVE_MPICC" != "x1"],dnl
+      [AC_MSG_ERROR(
+       [MPICC cannot compile MPI apps. Set MPICC to something that can.])])
+
+################################################################################
 # Add some nice flags for development.
 ################################################################################
 AC_MSG_CHECKING([if building in developer mode])
@@ -163,6 +171,7 @@ cat << EOF
 | VERSION  : ${VERSION}
 | CC       : ${CC}
 | CXX      : ${CXX}
+| MPICC    : ${MPICC}
 | CFLAGS   : ${CFLAGS}
 | CXXFLAGS : ${CXXFLAGS}
 | CPP      : ${CPP}
