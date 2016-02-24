@@ -86,6 +86,7 @@ public:
      */
     static AppLauncherPersonality
     getPersonalityByName(const std::string &name) {
+        // TODO deal with all mpiruns
         if ("mpirun" == name) return ORTE;
         else return NONE;
     }

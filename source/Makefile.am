@@ -11,6 +11,7 @@ core \
 dspa/core \
 tool-common \
 app-launcher \
+dsys \
 mrnet \
 mrnet/filters \
 tool-be \

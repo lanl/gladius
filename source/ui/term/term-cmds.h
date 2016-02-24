@@ -59,7 +59,8 @@ quitCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
     using namespace std;
     GLADIUS_UNUSED(args);
-    GLADIUS_CERR_WARN << "Quitting. Do you really want to proceed: [Y/n]: " << flush;
+    GLADIUS_CERR_WARN << "Quitting. Do you really want to proceed: [Y/n]: "
+                      << flush;
     char answer[8];
     cin.getline(answer, sizeof(answer));
     if (0 == strcmp("Y", answer)) {
@@ -200,7 +201,7 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     // A new instance every time we are here.
     toolfe::ToolFE toolFE;
     // Enter the tool's main loop.
-    toolFE.mainLoop(launchArgs);
+    toolFE.main(launchArgs);
     //
     args.terminal->TheTerminal().installSignalHandlers();
     // Continue REPL

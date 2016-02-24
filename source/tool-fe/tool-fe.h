@@ -28,9 +28,6 @@ namespace toolfe {
 
 class ToolFE {
 private:
-    // Threading things ////////////////////////////////////////////////////////
-    //
-    ////////////////////////////////////////////////////////////////////////////
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
     // stdin copy
@@ -55,6 +52,9 @@ private:
     std::string mPathToPluginPack;
     // The plugin pack for our current session.
     dspa::DSPluginPack mPluginPack;
+    //
+    bool
+    mBaseCoreUsable(std::string &whatsWrong);
     //
     void
     mGetStateFromEnvs(void);
@@ -85,30 +85,21 @@ private:
 
 public:
     // Default timeout (in seconds)
-    static const toolcommon::timeout_t sDefaultTimeout;
+    static constexpr toolcommon::timeout_t sDefaultTimeout = 30;
     // Default max number of retry attempts.
-    static const toolcommon::retry_t sDefaultMaxRetries;
+    static constexpr toolcommon::retry_t sDefaultMaxRetries = 8;
     //
     ToolFE(void);
     //
     void
-    mainLoop(const core::Args &args);
-    //
-    void
-    beSend();
-    //
-    void
-    beRecv();
-    //
-    bool
-    envSane(std::string &whatsWrong);
+    main(const core::Args &args);
     //
     void
     mConnectMRNetTree(void);
     //
     static void
     registerComponent(void);
-};
+}; // class ToolFE
 
 } // end toolfe namespace
 } // end gladius namespace

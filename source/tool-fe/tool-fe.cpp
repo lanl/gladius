@@ -84,11 +84,6 @@ echoLaunchStart(const gladius::core::Args &args)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-const toolcommon::timeout_t ToolFE::sDefaultTimeout = 30;
-const toolcommon::retry_t ToolFE::sDefaultMaxRetries = 8;
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 /**
  * Component registration.
  */
@@ -162,7 +157,7 @@ ToolFE::ToolFE(
  * Returns whether or not the tool-fe's environment setup is sane.
  */
 bool
-ToolFE::envSane(std::string &whatsWrong)
+ToolFE::mBaseCoreUsable(std::string &whatsWrong)
 {
     static const auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
     //
@@ -253,18 +248,18 @@ ToolFE::mPostToolInitActons(void)
  * entry point from a caller's perspective.
  */
 void
-ToolFE::mainLoop(
+ToolFE::main(
     const core::Args &args
 ) {
-    VCOMP_COUT("Entering main loop." << std::endl);
+    VCOMP_COUT("Entering main." << std::endl);
     //
     try {
         mAppArgs = args;
         // Make sure that all the required bits are set before we get to
         // launching anything.
         std::string whatsWrong;
-        if (!envSane(whatsWrong)) {
-            GLADIUS_CERR << whatsWrong << std::endl;
+        if (!mBaseCoreUsable(whatsWrong)) {
+            GLADIUS_CERR << std::endl << whatsWrong << std::endl;
             return;
         }
         ////////////////////////////////////////////////////////////////////////
@@ -272,6 +267,7 @@ ToolFE::mainLoop(
         ////////////////////////////////////////////////////////////////////////
         // Perform any actions that need to take place before lash-up.
         mPreToolInitActons();
+        //
         mInitializeToolInfrastructure();
         // Start lash-up.
         mInitiateToolLashUp();

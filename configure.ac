@@ -35,12 +35,15 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 ################################################################################
-# MPI compiler checks
+# MPI compiler wrapper checks
 ################################################################################
 AX_PROGS_MPICOMPS
-AS_IF([test "x$AX_PROGS_MPICOMPS_HAVE_MPICC" != "x1"],dnl
-      [AC_MSG_ERROR(
-       [MPICC cannot compile MPI apps. Set MPICC to something that can.])])
+AS_IF(
+    [test "x$AX_PROGS_MPICOMPS_HAVE_MPICXX" != "x1"],dnl
+    [AC_MSG_ERROR(
+        [MPICXX cannot compile C++ MPI code. Set MPICXX to something that can.]
+     )]dnl
+)
 
 ################################################################################
 # Add some nice flags for development.
@@ -152,6 +155,7 @@ AC_CONFIG_FILES([
     source/dspa/core/Makefile
     source/tool-common/Makefile
     source/app-launcher/Makefile
+    source/dsys/Makefile
     source/mrnet/Makefile
     source/mrnet/filters/Makefile
     source/ui/Makefile
@@ -171,7 +175,7 @@ cat << EOF
 | VERSION  : ${VERSION}
 | CC       : ${CC}
 | CXX      : ${CXX}
-| MPICC    : ${MPICC}
+| MPICXX   : ${MPICXX}
 | CFLAGS   : ${CFLAGS}
 | CXXFLAGS : ${CXXFLAGS}
 | CPP      : ${CPP}
