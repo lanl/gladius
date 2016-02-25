@@ -22,6 +22,77 @@
 
 #include "mpi.h"
 
+using namespace std;
+
+namespace {
+
+static const char *prompt = "(dsys)";
+
+static const int SUCCESS = 0;
+static const int ERROR   = 1;
+
+struct Proc {
+    bool initialized;
+    int cwRank;
+    int cwSize;
+
+    Proc(void)
+        : initialized(false)
+        , cwRank(0)
+        , cwSize(0) { ; }
+};
+
+int
+init(
+    int argc,
+    char **argv,
+    Proc &p
+) {
+    int mpiRC = MPI_Init(&argc, &argv);
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+    else p.initialized = true;
+    //
+    mpiRC = MPI_Comm_size(MPI_COMM_WORLD, &p.cwSize);
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+    //
+    mpiRC = MPI_Comm_rank(MPI_COMM_WORLD, &p.cwRank);
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+    //
+    return SUCCESS;
+}
+
+void
+fini(const Proc &p)
+{
+    if (p.initialized) {
+        MPI_Finalize();
+    }
+}
+
+int
+ready(const Proc &p)
+{
+    int mpiRC = MPI_Barrier(MPI_COMM_WORLD);
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+
+    if (0 == p.cwRank) {
+        cout << prompt << flush;
+    }
+    return SUCCESS;
+}
+
+int
+interact(Proc &p)
+{
+    int rc = ERROR;
+
+    if (SUCCESS != (rc = ready(p))) return rc;
+
+    return rc;
+}
+
+} // namespace
+
 /**
  *
  */
@@ -30,19 +101,18 @@ main(
     int argc,
     char **argv
 ) {
-    int mpiRC = MPI_Init(&argc, &argv);
+    int rc = SUCCESS;
     //
-    int cwSize = 0;
-    mpiRC = MPI_Comm_size(MPI_COMM_WORLD, &cwSize);
+    Proc proc;
     //
-    int cwRank = 0;
-    mpiRC = MPI_Comm_rank(MPI_COMM_WORLD, &cwRank);
-
-    if (0 == cwRank) {
-        std::cout << "hi from: " << cwRank << std::endl;
+    if (SUCCESS != (rc = init(argc, argv, proc))) {
+        goto out;
     }
     //
-    mpiRC = MPI_Finalize();
-
-    return EXIT_SUCCESS;
+    if (SUCCESS != (rc = interact(proc))) {
+        goto out;
+    }
+out:
+    fini(proc);
+    return (SUCCESS == rc) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

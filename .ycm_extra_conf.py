@@ -50,6 +50,7 @@ flags = [
 '-I./source',
 '-I' + home + '/local/mrnet/lib/xplat-5.0.1/include',
 '-I' + home + '/local/mrnet/include',
+'-I' + home + '/local/ompi/1.6.5-gcc/include',
 '-I' + legion_home,
 '-I' + legion_home + '/realm',
 '-I' + legion_home + '/legion',
