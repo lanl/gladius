@@ -298,7 +298,6 @@ void
 ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
-        // Then do the same for MRNet
         mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {

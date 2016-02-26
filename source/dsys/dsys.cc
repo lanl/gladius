@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <string>
 #include <map>
+#include <functional>
 
 #include <cstdio>
 #include <unistd.h>
@@ -33,25 +34,43 @@ static const char *prompt = "(dsys)";
 
 static const int SUCCESS = 0;
 static const int ERROR   = 1;
+//
+static const int DONE    = 0;
+static const int STEP    = 1;
+static const int HOSTS   = 2;
 
-static const int DONE = 0;
-static const int STEP = 1;
-
-std::map<char, int> cmdProtoTab = {
+const map<char, int> cmdProtoTab = {
     {'q', DONE},
-    {'s', STEP}
+    {'s', STEP},
+    {'h', HOSTS}
 };
 
+
 struct Proc {
+    bool leader;
     bool initialized;
     int cwRank;
     int cwSize;
 
     Proc(void)
-        : initialized(false)
+        : leader(false)
+        , initialized(false)
         , cwRank(0)
         , cwSize(0) { ; }
 };
+
+int
+hosts(Proc &p)
+{
+    cout << "hi from: " << p.cwRank << endl;
+    return SUCCESS;
+}
+
+int
+done(Proc &)
+{
+    return SUCCESS;
+}
 
 int
 init(
@@ -69,6 +88,8 @@ init(
     mpiRC = MPI_Comm_rank(MPI_COMM_WORLD, &p.cwRank);
     if (MPI_SUCCESS != mpiRC) return ERROR;
     //
+    p.leader = (0 == p.cwRank);
+    //
     return SUCCESS;
 }
 
@@ -82,63 +103,45 @@ fini(const Proc &p)
     return SUCCESS;
 }
 
-int
-boss(Proc &)
-{
-    int mpiRC = MPI_Barrier(MPI_COMM_WORLD);
-    if (MPI_SUCCESS != mpiRC) return ERROR;
-
-    int ucmd, cmd;
-    do {
-        cout << prompt << flush;
-        string line;
-        getline(cin, line);
-        ucmd = line[0];
-        auto i = cmdProtoTab.find(ucmd);
-        // Command not found
-        if (i == cmdProtoTab.end()) {
-            cerr << "unknown command: '" << char(ucmd) << "'" << endl;
-            return ERROR;
-        }
-        // Broadcast command to workers
-        cmd = i->second;
-        int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        if (MPI_SUCCESS != mpiRC) return ERROR;
-    } while (DONE != cmd);
-    return SUCCESS;
-}
-
-int
-worker(Proc &)
-{
-    int mpiRC = MPI_Barrier(MPI_COMM_WORLD);
-    if (MPI_SUCCESS != mpiRC) return ERROR;
-
-    int cmd = DONE;
-    do {
-        int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        if (MPI_SUCCESS != mpiRC) return ERROR;
-        switch(cmd) {
-            case DONE: {
-                cout << "done!" << endl;
-                break;
-            }
-            case STEP: {
-                cout << "step" << endl;
-                break;
-            }
-            default: return ERROR;
-        }
-    } while (DONE != cmd);
-
-    return SUCCESS;
-}
+const map< int, function<int(Proc &p)> > protoFunTable = {
+    {DONE,  done},
+    {HOSTS, hosts}
+};
 
 int
 interact(Proc &p)
 {
-    if (0 != p.cwRank) return worker(p);
-    else return boss(p);
+    int mpiRC = MPI_Barrier(MPI_COMM_WORLD);
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+
+    int cmd;
+    do {
+        if (p.leader) {
+            cout << prompt << flush;
+            string line;
+            getline(cin, line);
+            auto i = cmdProtoTab.find(line[0]);
+            // Command not found
+            if (i == cmdProtoTab.end()) {
+                cerr << "unknown command: '" << line[0] << "'" << endl;
+                return ERROR;
+            }
+            // Broadcast command to workers
+            cmd = i->second;
+        }
+        int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        if (MPI_SUCCESS != mpiRC) return ERROR;
+        //
+        auto searchr = protoFunTable.find(cmd);
+        if (searchr == protoFunTable.end()) {
+            cerr << "unknown protocol: '" << cmd << "'" << endl;
+            return ERROR;
+        }
+        else {
+            searchr->second(p);
+        }
+    } while (DONE != cmd);
+    return SUCCESS;
 }
 
 } // namespace
@@ -163,7 +166,7 @@ main(
         goto out;
     }
     // Don't finalize in out: (may hang). Just exit on error so that the MPI
-    // runtime can just bail through an error path.
+    // runtime can just bail when a process exits with an error code.
     if (SUCCESS != (rc = fini(proc))) {
         goto out;
     }
