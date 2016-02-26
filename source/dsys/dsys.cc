@@ -19,7 +19,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <map>
 
+#include <cstdio>
+#include <unistd.h>
 #include "mpi.h"
 
 using namespace std;
@@ -30,6 +33,14 @@ static const char *prompt = "(dsys)";
 
 static const int SUCCESS = 0;
 static const int ERROR   = 1;
+
+static const int DONE = 0;
+static const int STEP = 1;
+
+std::map<char, int> cmdProtoTab = {
+    {'q', DONE},
+    {'s', STEP}
+};
 
 struct Proc {
     bool initialized;
@@ -61,34 +72,73 @@ init(
     return SUCCESS;
 }
 
-void
+int
 fini(const Proc &p)
 {
     if (p.initialized) {
-        MPI_Finalize();
+        int mpiRC = MPI_Finalize();
+        if (MPI_SUCCESS != mpiRC) return ERROR;
     }
+    return SUCCESS;
 }
 
 int
-ready(const Proc &p)
+boss(Proc &)
 {
     int mpiRC = MPI_Barrier(MPI_COMM_WORLD);
     if (MPI_SUCCESS != mpiRC) return ERROR;
 
-    if (0 == p.cwRank) {
+    int ucmd, cmd;
+    do {
         cout << prompt << flush;
-    }
+        string line;
+        getline(cin, line);
+        ucmd = line[0];
+        auto i = cmdProtoTab.find(ucmd);
+        // Command not found
+        if (i == cmdProtoTab.end()) {
+            cerr << "unknown command: '" << char(ucmd) << "'" << endl;
+            return ERROR;
+        }
+        // Broadcast command to workers
+        cmd = i->second;
+        int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        if (MPI_SUCCESS != mpiRC) return ERROR;
+    } while (DONE != cmd);
+    return SUCCESS;
+}
+
+int
+worker(Proc &)
+{
+    int mpiRC = MPI_Barrier(MPI_COMM_WORLD);
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+
+    int cmd = DONE;
+    do {
+        int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        if (MPI_SUCCESS != mpiRC) return ERROR;
+        switch(cmd) {
+            case DONE: {
+                cout << "done!" << endl;
+                break;
+            }
+            case STEP: {
+                cout << "step" << endl;
+                break;
+            }
+            default: return ERROR;
+        }
+    } while (DONE != cmd);
+
     return SUCCESS;
 }
 
 int
 interact(Proc &p)
 {
-    int rc = ERROR;
-
-    if (SUCCESS != (rc = ready(p))) return rc;
-
-    return rc;
+    if (0 != p.cwRank) return worker(p);
+    else return boss(p);
 }
 
 } // namespace
@@ -112,7 +162,14 @@ main(
     if (SUCCESS != (rc = interact(proc))) {
         goto out;
     }
+    // Don't finalize in out: (may hang). Just exit on error so that the MPI
+    // runtime can just bail through an error path.
+    if (SUCCESS != (rc = fini(proc))) {
+        goto out;
+    }
 out:
-    fini(proc);
-    return (SUCCESS == rc) ? EXIT_SUCCESS : EXIT_FAILURE;
+    int exitCode = (SUCCESS == rc) ? EXIT_SUCCESS : EXIT_FAILURE;
+    exit(exitCode);
+    // Never reached.
+    return -127;
 }
