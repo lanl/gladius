@@ -16,15 +16,16 @@
 #include "config.h"
 #endif
 
+#include <functional>
 #include <iostream>
 #include <cstdlib>
 #include <string>
-#include <map>
-#include <functional>
 #include <cstdio>
+#include <map>
 
 #include <limits.h>
 #include <unistd.h>
+
 #include "mpi.h"
 
 using namespace std;
@@ -93,6 +94,7 @@ hosts(Proc &p)
     // Populate the hostname/number of targets table
     if (p.leader) {
         for (int r = 0; r < p.cwSize; ++r) {
+            // Grab the host name from the flat buffer.
             string hn(&(hostNames[r * HOST_NAME_MAX]));
             auto &tab = p.hostTargetNumTab;
             auto searchr = tab.find(hn);

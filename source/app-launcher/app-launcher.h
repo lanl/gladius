@@ -90,6 +90,7 @@ public:
         if ("mpirun" == name) return ORTE;
         else return NONE;
     }
+private:
 };
 
 } // end gladius applauncher

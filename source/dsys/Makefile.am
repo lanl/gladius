@@ -13,4 +13,4 @@ bin_PROGRAMS = \
 gladius-dsys
 
 gladius_dsys_SOURCES = \
-dsys.cc
+dsys.cpp
