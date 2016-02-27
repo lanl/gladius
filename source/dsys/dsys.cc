@@ -21,8 +21,9 @@
 #include <string>
 #include <map>
 #include <functional>
-
 #include <cstdio>
+
+#include <limits.h>
 #include <unistd.h>
 #include "mpi.h"
 
@@ -39,39 +40,89 @@ static const int DONE    = 0;
 static const int STEP    = 1;
 static const int HOSTS   = 2;
 
-const map<char, int> cmdProtoTab = {
-    {'q', DONE},
-    {'s', STEP},
-    {'h', HOSTS}
-};
-
-
+/**
+ *
+ */
 struct Proc {
+    char hostname[HOST_NAME_MAX];
     bool leader;
     bool initialized;
     int cwRank;
     int cwSize;
+    // Map between a hostname and the number of targets on it. There shall be no
+    // duplicate hostnames in this table.
+    map<string, int> hostTargetNumTab;
 
     Proc(void)
         : leader(false)
         , initialized(false)
         , cwRank(0)
-        , cwSize(0) { ; }
+        , cwSize(0) {
+        int rc = gethostname(hostname, sizeof(hostname));
+        if (0 != rc) exit(EXIT_FAILURE);
+    }
 };
 
+/**
+ *
+ */
 int
 hosts(Proc &p)
 {
-    cout << "hi from: " << p.cwRank << endl;
+    static bool done = false;
+    if (done) return SUCCESS;
+    //
+    char *hostNames = NULL;
+    //
+    if (p.leader) {
+        hostNames = new char[p.cwSize * HOST_NAME_MAX * sizeof(char)];
+        if (!hostNames) return ERROR;
+    }
+    //
+    int mpiRC = MPI_Gather(
+                    p.hostname,
+                    HOST_NAME_MAX,
+                    MPI_CHAR,
+                    hostNames,
+                    HOST_NAME_MAX,
+                    MPI_CHAR,
+                    0,
+                    MPI_COMM_WORLD
+                );
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+    // Populate the hostname/number of targets table
+    if (p.leader) {
+        for (int r = 0; r < p.cwSize; ++r) {
+            string hn(&(hostNames[r * HOST_NAME_MAX]));
+            auto &tab = p.hostTargetNumTab;
+            auto searchr = tab.find(hn);
+            // Not found
+            if (searchr == tab.end()) {
+                tab.insert(make_pair(hn, 1));
+            }
+            // Found, increment by one
+            else {
+                searchr->second += 1;
+            }
+        }
+    }
+    if (hostNames) delete[] hostNames;
+    done = true;
     return SUCCESS;
 }
 
+/**
+ *
+ */
 int
 done(Proc &)
 {
     return SUCCESS;
 }
 
+/**
+ *
+ */
 int
 init(
     int argc,
@@ -93,6 +144,9 @@ init(
     return SUCCESS;
 }
 
+/**
+ *
+ */
 int
 fini(const Proc &p)
 {
@@ -103,11 +157,26 @@ fini(const Proc &p)
     return SUCCESS;
 }
 
+/**
+ * User command/protocol table.
+ */
+const map<char, int> cmdProtoTab = {
+    {'q', DONE},
+    {'s', STEP},
+    {'h', HOSTS}
+};
+
+/**
+ * Protocol/function table.
+ */
 const map< int, function<int(Proc &p)> > protoFunTable = {
     {DONE,  done},
     {HOSTS, hosts}
 };
 
+/**
+ * Interaction REPL.
+ */
 int
 interact(Proc &p)
 {
@@ -120,14 +189,14 @@ interact(Proc &p)
             cout << prompt << flush;
             string line;
             getline(cin, line);
-            auto i = cmdProtoTab.find(line[0]);
+            auto searchr = cmdProtoTab.find(line[0]);
             // Command not found
-            if (i == cmdProtoTab.end()) {
+            if (searchr == cmdProtoTab.end()) {
                 cerr << "unknown command: '" << line[0] << "'" << endl;
                 return ERROR;
             }
             // Broadcast command to workers
-            cmd = i->second;
+            cmd = searchr->second;
         }
         int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
         if (MPI_SUCCESS != mpiRC) return ERROR;
