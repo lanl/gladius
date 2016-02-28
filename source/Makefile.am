@@ -12,6 +12,7 @@ dspa/core \
 tool-common \
 app-launcher \
 dsys \
+dsys/mpi \
 mrnet \
 mrnet/filters \
 tool-be \

@@ -7,7 +7,7 @@
  */
 
 /**
- * The Distributed System (dsys) Interface (DSYSI).
+ * The Distributed System (dsys) Interface (DSI).
  */
 
 #pragma once
@@ -22,7 +22,7 @@ namespace dsysi {
 /**
  *
  */
-class DMI {
+class DSI {
 private:
     static const std::string sPromptString;
     //
@@ -59,9 +59,9 @@ private:
 
 public:
     //
-    DMI(void);
+    DSI(void);
     //
-    ~DMI(void);
+    ~DSI(void);
     //
     void
     init(

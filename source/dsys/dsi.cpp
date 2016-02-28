@@ -17,7 +17,7 @@
 #include "core/core.h"
 #include "core/utils.h"
 
-#include "dmi/dmi.h"
+#include "dsys/dsi.h"
 
 #include <cstdio>
 #include <cassert>
@@ -31,11 +31,11 @@
 
 
 using namespace gladius;
-using namespace gladius::dmi;
+using namespace gladius::dsysi;
 
 namespace {
 // This component's name.
-const std::string CNAME = "**dsysi";
+const std::string CNAME = "****dsi";
 //
 const auto COMPC = core::colors::NONE;
 // CNAME's color code.
@@ -54,17 +54,17 @@ do {                                                                           \
 /**
  * The initial size of the output buffer. 16k should be plenty.
  */
-const size_t DMI::sInitBufSize = 1024 * 16;
+const size_t DSI::sInitBufSize = 1024 * 16;
 
 /**
  *
  */
-const std::string DMI::sPromptString = "(gdb) ";
+const std::string DSI::sPromptString = "(gdb) ";
 
 /**
  *
  */
-DMI::DMI(void)
+DSI::DSI(void)
 {
     mCurLineBufSize = sInitBufSize;
 }
@@ -72,7 +72,7 @@ DMI::DMI(void)
 /**
  *
  */
-DMI::~DMI(void)
+DSI::~DSI(void)
 {
     using namespace std;
     // Wait for GDB (child)
@@ -112,12 +112,12 @@ DMI::~DMI(void)
  *
  */
 void
-DMI::init(
+DSI::init(
     bool beVerbose
 ) {
     mBeVerbose = beVerbose;
     //
-    VCOMP_COUT("Initializing the DMI..." << std::endl);
+    VCOMP_COUT("Initializing the DSI..." << std::endl);
     // Get GDB's path.
     auto status =  core::utils::which("gdb", mPathToGDB);
     if (GLADIUS_SUCCESS != status) {
@@ -187,14 +187,14 @@ DMI::init(
     //
     assert(std::string(mFromGDBLineBuf) == sPromptString);
     //
-    VCOMP_COUT("Done Initializing the DMI..." << std::endl);
+    VCOMP_COUT("Done Initializing the DSI..." << std::endl);
 }
 
 /**
  *
  */
 void
-DMI::mWaitForPrompt(void)
+DSI::mWaitForPrompt(void)
 {
     while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str())) {
         mGetGDBRespLine();
@@ -205,7 +205,7 @@ DMI::mWaitForPrompt(void)
  *
  */
 size_t
-DMI::mGetGDBRespLine(void)
+DSI::mGetGDBRespLine(void)
 {
     char charBuf = '\0';
     size_t nRead = 0;
@@ -232,7 +232,7 @@ DMI::mGetGDBRespLine(void)
  *
  */
 std::string
-DMI::mDrainToString(void)
+DSI::mDrainToString(void)
 {
     std::string result = "";
     do {
@@ -247,7 +247,7 @@ DMI::mDrainToString(void)
  *
  */
 void
-DMI::attach(pid_t targetPID)
+DSI::attach(pid_t targetPID)
 {
     VCOMP_COUT(
         "GDB PID: " << mGDBPID <<
@@ -269,7 +269,7 @@ DMI::attach(pid_t targetPID)
  *
  */
 int
-DMI::sendCommand(
+DSI::sendCommand(
     const std::string &rawCMD
 ) {
     fputs(std::string(rawCMD + "\n").c_str(), mTo);
@@ -281,7 +281,7 @@ DMI::sendCommand(
  *
  */
 int
-DMI::recvResp(
+DSI::recvResp(
     std::string &outputIfSuccess
 ) {
     outputIfSuccess = mDrainToString();

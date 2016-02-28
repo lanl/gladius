@@ -156,6 +156,7 @@ AC_CONFIG_FILES([
     source/tool-common/Makefile
     source/app-launcher/Makefile
     source/dsys/Makefile
+    source/dsys/mpi/Makefile
     source/mrnet/Makefile
     source/mrnet/filters/Makefile
     source/ui/Makefile
