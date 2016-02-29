@@ -19,7 +19,7 @@
 #include "core/ret-codes.h"
 #include "core/args.h"
 #include "core/utils.h"
-#include "tool-common/tool-common.h"
+#include "core/hosts.h"
 
 #include <string>
 
@@ -36,7 +36,7 @@ public:
         NONE  /* none specified */
     };
 
-protected:
+private:
     // Name of the launcher, e.g. mpirun, srun, aprun
     std::string mName;
     // Absolute that to the launcher.
@@ -46,7 +46,7 @@ protected:
     // All arguments supplied to launch request.
     core::Args mAppArgs;
     // Target hosts in parallel job.
-    toolcommon::Hosts mHosts;
+    core::Hosts mHosts;
 
 public:
     /**
@@ -89,13 +89,13 @@ public:
      *
      */
     AppLauncherPersonality
-    getPersonality(void) { return mPersonality; }
+    getPersonality(void) const { return mPersonality; }
 
     /**
      *
      */
     std::string
-    getPersonalityName(void) {
+    getPersonalityName(void) const {
         switch(mPersonality) {
             // TODO mpich v. open mpi's mpirun?
             case (ORTE): return "orte";
@@ -108,7 +108,7 @@ public:
      *
      */
     std::string
-    which(void) { return mAbsolutePath; }
+    which(void) const { return mAbsolutePath; }
 
     /**
      * Returns personality based on launcher name.

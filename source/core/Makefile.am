@@ -16,6 +16,7 @@ libGladiusCore_la_SOURCES = \
 core.h \
 ret-codes.h \
 args.h \
+hosts.h \
 colors.h colors.cpp \
 console.h \
 env.h env.cpp \

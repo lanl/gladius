@@ -14,6 +14,8 @@
 #define GLADIUS_MRNET_MRNET_FE_H_INCLUDED
 
 #include "mrnet/MRNet.h"
+
+#include "core/hosts.h"
 #include "tool-common/tool-common.h"
 
 #include <string>
@@ -37,7 +39,7 @@ private:
     // Hostname of the tool front-end.
     std::string mFEHostName;
     //
-    toolcommon::Hosts mHosts;
+    core::Hosts mHosts;
     //
     std::string
     mGenFlatTopo(void);
@@ -55,7 +57,7 @@ public:
         const std::string &topoFilePath,
         TopologyType topoType,
         const std::string &feHostName,
-        const toolcommon::Hosts &hosts
+        const core::Hosts &hosts
     );
 };
 

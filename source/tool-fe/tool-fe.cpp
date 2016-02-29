@@ -299,7 +299,7 @@ ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
         mInitializeParallelLauncher();
-        //mDSI.init(mBeVerbose);
+        mDSI.init(mAppLauncher, mBeVerbose);
         mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {

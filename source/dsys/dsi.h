@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "app-launcher/app-launcher.h"
+
 #include <string>
 
 namespace gladius {
@@ -32,12 +34,12 @@ private:
     size_t mCurLineBufSize = 0;
     //
     bool mBeVerbose = false;
+    // Path to parallel application launcher.
+    std::string mPathToAppl;
     //
-    std::string mPathToGDB;
+    int mToAppl[2];
     //
-    int mToGDB[2];
-    //
-    int mFromGDB[2];
+    int mFromAppl[2];
     // PID of DSys launcher process.
     pid_t mGDBPID = 0;
     //
@@ -64,6 +66,7 @@ public:
     //
     void
     init(
+        const applauncher::AppLauncher &appl,
         bool beVerbose
     );
     //

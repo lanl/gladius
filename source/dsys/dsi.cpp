@@ -101,8 +101,8 @@ DSI::~DSI(void)
     fclose(mTo);
     fclose(mFrom);
     //
-    close(mToGDB[1]);
-    close(mFromGDB[0]);
+    close(mToAppl[1]);
+    close(mFromAppl[0]);
     //
     if (mFromDSysLineBuf) free(mFromDSysLineBuf);
 }
@@ -112,25 +112,19 @@ DSI::~DSI(void)
  */
 void
 DSI::init(
+    const applauncher::AppLauncher &appl,
     bool beVerbose
 ) {
     mBeVerbose = beVerbose;
     //
     VCOMP_COUT("Initializing the DSI..." << std::endl);
     // Get dsys' path.
-    auto status =  core::utils::which(sDSysName, mPathToGDB);
-    if (GLADIUS_SUCCESS != status) {
-        static const std::string errs =
-            "It appears as if " + std::string(sDSysName) + " is either "
-            "not installed or not in your $PATH. "
-            " Please fix this and try again.";
-        GLADIUS_THROW(errs);
-    }
+    mPathToAppl = appl.which();
     // Allocate initial string buffer.
     mFromDSysLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromDSysLineBuf));
     if (!mFromDSysLineBuf) GLADIUS_THROW_OOR();
     //
-    if (-1 == pipe(mToGDB) || -1 == pipe(mFromGDB)) {
+    if (-1 == pipe(mToAppl) || -1 == pipe(mFromAppl)) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
         GLADIUS_THROW("pipe(2): " + errs);
@@ -142,11 +136,11 @@ DSI::init(
     // Child. Don't throw here.
     ////////////////////////////////////////////////////////////////////////////
     if (0 == mGDBPID) {
-        close(mToGDB[1]);
-        close(mFromGDB[0]);
+        close(mToAppl[1]);
+        close(mFromAppl[0]);
         // Connect stdin and stdout
-        if (-1 == dup2(mToGDB[0], STDIN_FILENO) ||
-            -1 == dup2(mFromGDB[1], STDOUT_FILENO)) {
+        if (-1 == dup2(mToAppl[0], STDIN_FILENO) ||
+            -1 == dup2(mFromAppl[1], STDOUT_FILENO)) {
             int err = errno;
             auto errs = core::utils::getStrError(err);
             GLADIUS_CERR << "dup2(2): " + errs << std::endl;
@@ -154,7 +148,7 @@ DSI::init(
         }
         // Build the argv for execvp
         char *argv[4] = {
-            (char *)mPathToGDB.c_str(),
+            (char *)mPathToAppl.c_str(),
             (char *)"--interpreter=mi",
             (char *)"--quiet",
             nullptr
@@ -175,12 +169,12 @@ DSI::init(
     ////////////////////////////////////////////////////////////////////////////
     // TODO check for running child.
     // Close unused.
-    close(mToGDB[0]);
-    close(mFromGDB[1]);
+    close(mToAppl[0]);
+    close(mFromAppl[1]);
     // TODO add error checks
-    mTo = fdopen(mToGDB[1], "w");
+    mTo = fdopen(mToAppl[1], "w");
     // TODO not sure this is needed.
-    mFrom = fdopen(mFromGDB[0], "r");
+    mFrom = fdopen(mFromAppl[0], "r");
     //
     mWaitForPrompt();
     //
@@ -208,7 +202,7 @@ DSI::mGetGDBRespLine(void)
 {
     char charBuf = '\0';
     size_t nRead = 0;
-    while (1 == read(mFromGDB[0], &charBuf, 1)) {
+    while (1 == read(mFromAppl[0], &charBuf, 1)) {
         // Need more memory.
         if (nRead == mCurLineBufSize) {
             // Double the size.

@@ -62,7 +62,7 @@ MRNetTopology::MRNetTopology(
     const std::string &topoFilePath,
     TopologyType topoType,
     const std::string &feHostName,
-    const toolcommon::Hosts &hosts
+    const core::Hosts &hosts
 ) : mTopoFilePath(topoFilePath)
   , mTopoType(topoType)
   , mFEHostName(feHostName)
@@ -444,8 +444,8 @@ MRNetFE::createNetworkFE(
     VCOMP_COUT("Creating and Populating MRNet Topology" << std::endl);
     // Stash the process table because we'll need this info later.
     mProcTab = procTab;
-    //
-    const auto &hosts = toolcommon::Hosts(mProcTab);
+    // TODO FIXME get hosts
+    const auto &hosts = core::Hosts();
     // Set the number of target hosts
     mNumAppNodes = hosts.nHosts();
     // Create the topology file.
@@ -495,6 +495,7 @@ void
 MRNetFE::mCreateDaemonTIDMap(void)
 {
     using namespace std;
+    using namespace core;
     using namespace toolcommon;
 
     // A map between host names and the task IDs on them.

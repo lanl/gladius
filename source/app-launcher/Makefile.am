@@ -24,5 +24,4 @@ libGladiusAppLauncher_la_CPPFLAGS = \
 libGladiusAppLauncher_la_LDFLAGS = -version-info ${LIBVINFO}
 
 libGladiusAppLauncher_la_LIBADD = \
-${top_builddir}/source/core/libGladiusCore.la \
-${top_builddir}/source/tool-common/libGladiusToolCommon.la
+${top_builddir}/source/core/libGladiusCore.la

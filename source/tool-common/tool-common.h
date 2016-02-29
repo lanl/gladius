@@ -303,52 +303,6 @@ public:
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-/**
- * TODO add real host resolution things?
- */
-class Hosts {
-    //
-    std::set<std::string> mHostNames;
-public:
-    //
-    Hosts(void) { ; }
-    //
-    Hosts(const ProcessTable &pTab) {
-        mHostNames = pTab.hostNamesInTable();
-    }
-
-    /**
-     * Returns reference to our set of host names.
-     */
-    const std::set<std::string> &
-    hostNames(void) const {
-        return mHostNames;
-    }
-
-    /**
-     * Returns the number of hosts.
-     */
-    size_t
-    nHosts(void) const {
-        return mHostNames.size();
-    }
-
-    /**
-     * Returns the canonical hostname form from an arbitrary hostname string.
-     */
-    static std::string
-    canonicalForm(const std::string &hostname) {
-        auto chn = hostname;
-        auto dotPos = chn.find_first_of(".");
-        if (std::string::npos != dotPos) {
-            chn = chn.substr(0, dotPos);
-        }
-        return chn;
-    }
-};
-
 /**
  * Block until every back-end calls beReady;
  */
