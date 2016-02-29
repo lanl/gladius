@@ -31,7 +31,7 @@
 
 
 using namespace gladius;
-using namespace gladius::dsysi;
+using namespace gladius::dsi;
 
 namespace {
 // This component's name.
@@ -50,11 +50,6 @@ do {                                                                           \
     }                                                                          \
 } while (0)
 } // end namespace
-
-/**
- * The initial size of the output buffer. 16k should be plenty.
- */
-const size_t DSI::sInitBufSize = 1024 * 16;
 
 /**
  *
@@ -118,7 +113,7 @@ DSI::init(
     mBeVerbose = beVerbose;
     //
     VCOMP_COUT("Initializing the DSI..." << std::endl);
-    // Get GDB's path.
+    // Get dsys' path.
     auto status =  core::utils::which("gdb", mPathToGDB);
     if (GLADIUS_SUCCESS != status) {
         GLADIUS_THROW(

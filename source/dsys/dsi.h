@@ -17,7 +17,7 @@
 #include <unistd.h>
 
 namespace gladius {
-namespace dsysi {
+namespace dsi {
 
 /**
  *
@@ -25,8 +25,10 @@ namespace dsysi {
 class DSI {
 private:
     static const std::string sPromptString;
-    //
-    static const size_t sInitBufSize;
+    /**
+     * The initial size of the output buffer. 16k should be plenty.
+     */
+    static constexpr size_t sInitBufSize = 1024 * 16;
     //
     size_t mCurLineBufSize = 0;
     //
@@ -83,5 +85,5 @@ public:
 };
 
 
-} // end dsysi namespace
+} // end dsi namespace
 } // end gladius namespace

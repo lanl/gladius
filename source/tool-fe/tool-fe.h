@@ -14,6 +14,7 @@
 
 #include "core/core.h"
 #include "tool-common/tool-common.h"
+#include "dsys/dsi.h"
 #include "app-launcher/app-launcher.h"
 #include "mrnet/mrnet-fe.h"
 #include "dspa/core/dsp-manager.h"
@@ -32,6 +33,8 @@ private:
     bool mBeVerbose;
     // stdin copy
     int mStdInCopy = 0;
+    // Our distributed system interface.
+    dsi::DSI mDSI;
     // Out parallel application launcher.
     applauncher::AppLauncher mAppLauncher;
     // Our MRNet instance.
