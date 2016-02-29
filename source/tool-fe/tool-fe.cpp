@@ -233,9 +233,7 @@ void
 ToolFE::mInitializeParallelLauncher(
     void
 ) {
-    // The first argument should be the launcher name.
-    mAppLauncherName = std::string(mAppArgs.argv()[0]);
-    mAppLauncher.init(mAppLauncherName);
+    mAppLauncher.init(mAppArgs);
     VCOMP_COUT(
         "Application launcher personality: " <<
         mAppLauncher.getPersonalityName() << std::endl

@@ -78,7 +78,7 @@ DSI::~DSI(void)
     pid_t w;
     int status;
     do {
-        w = waitpid(mGDBPID, &status, WUNTRACED | WCONTINUED);
+        w = waitpid(mApplPID, &status, WUNTRACED | WCONTINUED);
         if (w == -1) {
             int err = errno;
             auto errs = core::utils::getStrError(err);
@@ -131,11 +131,11 @@ DSI::init(
     }
     // TODO set O_NONBLOCK?
     // Create new process for GDB.
-    mGDBPID = fork();
+    mApplPID = fork();
     ////////////////////////////////////////////////////////////////////////////
     // Child. Don't throw here.
     ////////////////////////////////////////////////////////////////////////////
-    if (0 == mGDBPID) {
+    if (0 == mApplPID) {
         close(mToAppl[1]);
         close(mFromAppl[0]);
         // Connect stdin and stdout
@@ -159,10 +159,10 @@ DSI::init(
         _exit(127);
     }
     // Fork failure.
-    else if (-1 == mGDBPID) {
+    else if (-1 == mApplPID) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
-        GLADIUS_THROW("Cannot Create GDB Process: " + errs);
+        GLADIUS_THROW("Cannot create dsys processes: " + errs);
     }
     ////////////////////////////////////////////////////////////////////////////
     // Parent.
@@ -190,7 +190,7 @@ void
 DSI::mWaitForPrompt(void)
 {
     while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
-        mGetGDBRespLine();
+        mGetRespLine();
     }
 }
 
@@ -198,7 +198,7 @@ DSI::mWaitForPrompt(void)
  *
  */
 size_t
-DSI::mGetGDBRespLine(void)
+DSI::mGetRespLine(void)
 {
     char charBuf = '\0';
     size_t nRead = 0;
@@ -229,7 +229,7 @@ DSI::mDrainToString(void)
 {
     std::string result = "";
     do {
-        mGetGDBRespLine();
+        mGetRespLine();
         result += std::string(mFromDSysLineBuf) + "\n";
     } while (0 != strcmp(mFromDSysLineBuf, sPromptString));
 
@@ -243,7 +243,7 @@ void
 DSI::attach(pid_t targetPID)
 {
     VCOMP_COUT(
-        "GDB PID: " << mGDBPID <<
+        "GDB PID: " << mApplPID <<
         " Attaching to Target PID: " << targetPID << std::endl
     );
     //

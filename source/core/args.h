@@ -12,6 +12,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 #include <string>
 #include <iostream>
 
@@ -43,6 +44,23 @@ public:
         mArgC = argc;
         mArgV = core::utils::dupArgv(argc, argv);
         mEnv = const_cast<char **>(envp);
+    }
+
+    /**
+     * Same as above, just initialize from vector of strings.
+     */
+    Args(const std::vector<std::string> &argv) {
+        mArgC = argv.size();
+        //
+        char **tmpArgv = (char **)calloc(mArgC, sizeof(char *));
+        if (!tmpArgv) GLADIUS_THROW_OOR();
+        for (int argi = 0; argi < mArgC; ++argi) {
+            tmpArgv[argi] = (char *)argv[argi].c_str();
+        }
+        //
+        mArgV = core::utils::dupArgv(mArgC, (const char **)tmpArgv);
+        // Done with this
+        free(tmpArgv);
     }
 
     /**

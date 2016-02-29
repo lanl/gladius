@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016      Los Alamos National Security, LLC
+ * Copyright (c)      2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -40,8 +40,8 @@ private:
     int mToAppl[2];
     //
     int mFromAppl[2];
-    // PID of DSys launcher process.
-    pid_t mGDBPID = 0;
+    // PID of application launcher process.
+    pid_t mApplPID = 0;
     //
     char *mFromDSysLineBuf = nullptr;
     //
@@ -50,7 +50,7 @@ private:
     FILE *mFrom = nullptr;
     //
     size_t
-    mGetGDBRespLine(void);
+    mGetRespLine(void);
     //
     void
     mWaitForPrompt(void);
