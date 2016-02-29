@@ -14,10 +14,10 @@
 #include "config.h"
 #endif
 
+#include "dsys/dsi.h"
+
 #include "core/core.h"
 #include "core/utils.h"
-
-#include "dsys/dsi.h"
 
 #include <cstdio>
 #include <cassert>
@@ -29,7 +29,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
 using namespace gladius;
 using namespace gladius::dsi;
 
@@ -37,7 +36,7 @@ namespace {
 // This component's name.
 const std::string CNAME = "****dsi";
 //
-const auto COMPC = core::colors::NONE;
+const auto COMPC = core::colors::GREEN;
 // CNAME's color code.
 const std::string NAMEC = core::colors::color().ansiBeginColor(COMPC);
 // Convenience macro to decorate this component's output.
@@ -52,9 +51,14 @@ do {                                                                           \
 } // end namespace
 
 /**
- *
+ * The prompt string we are expecting when interacting with dsys.
  */
-const std::string DSI::sPromptString = "(gdb) ";
+const char DSI::sPromptString[] = "(dsys) ";
+
+/**
+ * The name of the executable that we are interacting with.
+ */
+const char DSI::sDSysName[] = "gladius-dsys";
 
 /**
  *
@@ -100,7 +104,7 @@ DSI::~DSI(void)
     close(mToGDB[1]);
     close(mFromGDB[0]);
     //
-    if (mFromGDBLineBuf) free(mFromGDBLineBuf);
+    if (mFromDSysLineBuf) free(mFromDSysLineBuf);
 }
 
 /**
@@ -114,17 +118,17 @@ DSI::init(
     //
     VCOMP_COUT("Initializing the DSI..." << std::endl);
     // Get dsys' path.
-    auto status =  core::utils::which("gdb", mPathToGDB);
+    auto status =  core::utils::which(sDSysName, mPathToGDB);
     if (GLADIUS_SUCCESS != status) {
-        GLADIUS_THROW(
-            "It appears as if GDB is either "
+        static const std::string errs =
+            "It appears as if " + std::string(sDSysName) + " is either "
             "not installed or not in your $PATH. "
-            " Please fix this and try again."
-        );
+            " Please fix this and try again.";
+        GLADIUS_THROW(errs);
     }
     // Allocate initial string buffer.
-    mFromGDBLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromGDBLineBuf));
-    if (!mFromGDBLineBuf) GLADIUS_THROW_OOR();
+    mFromDSysLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromDSysLineBuf));
+    if (!mFromDSysLineBuf) GLADIUS_THROW_OOR();
     //
     if (-1 == pipe(mToGDB) || -1 == pipe(mFromGDB)) {
         int err = errno;
@@ -180,7 +184,7 @@ DSI::init(
     //
     mWaitForPrompt();
     //
-    assert(std::string(mFromGDBLineBuf) == sPromptString);
+    assert(std::string(mFromDSysLineBuf) == sPromptString);
     //
     VCOMP_COUT("Done Initializing the DSI..." << std::endl);
 }
@@ -191,7 +195,7 @@ DSI::init(
 void
 DSI::mWaitForPrompt(void)
 {
-    while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str())) {
+    while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         mGetGDBRespLine();
     }
 }
@@ -209,13 +213,13 @@ DSI::mGetGDBRespLine(void)
         if (nRead == mCurLineBufSize) {
             // Double the size.
             mCurLineBufSize *= 2;
-            mFromGDBLineBuf = (char *)realloc(mFromGDBLineBuf, mCurLineBufSize);
-            if (!mFromGDBLineBuf) GLADIUS_THROW_OOR();
+            mFromDSysLineBuf = (char *)realloc(mFromDSysLineBuf, mCurLineBufSize);
+            if (!mFromDSysLineBuf) GLADIUS_THROW_OOR();
         }
-        mFromGDBLineBuf[nRead] = charBuf;
+        mFromDSysLineBuf[nRead] = charBuf;
         if (charBuf == '\n') {
             // Don't forget to update nRead before we break.
-            mFromGDBLineBuf[nRead++] = '\0';
+            mFromDSysLineBuf[nRead++] = '\0';
             break;
         }
         ++nRead;
@@ -232,8 +236,8 @@ DSI::mDrainToString(void)
     std::string result = "";
     do {
         mGetGDBRespLine();
-        result += std::string(mFromGDBLineBuf) + "\n";
-    } while (0 != strcmp(mFromGDBLineBuf, sPromptString.c_str()));
+        result += std::string(mFromDSysLineBuf) + "\n";
+    } while (0 != strcmp(mFromDSysLineBuf, sPromptString));
 
     return result;
 }

@@ -18,6 +18,7 @@
 
 #include "core/ret-codes.h"
 #include "core/args.h"
+#include "core/utils.h"
 #include "tool-common/tool-common.h"
 
 #include <string>
@@ -36,6 +37,10 @@ public:
     };
 
 protected:
+    // Name of the launcher, e.g. mpirun, srun, aprun
+    std::string mName;
+    // Absolute that to the launcher.
+    std::string mAbsolutePath;
     // The launcher "personality", i.e. what kind of launcher.
     AppLauncherPersonality mPersonality;
     // All arguments supplied to launch request.
@@ -50,6 +55,30 @@ public:
     AppLauncher(
         void
     ) : mPersonality(NONE) { ; }
+
+    /**
+     *
+     */
+    void
+    init(const std::string &name) {
+        mName = name;
+        mPersonality = getPersonalityByName(name);
+
+        if (applauncher::AppLauncher::NONE == mPersonality) {
+            static const std::string errs =
+                "Cannot determine launcher type by name: '" + mName + "'";
+            GLADIUS_THROW(errs);
+        }
+
+        auto status =  core::utils::which(mName, mAbsolutePath);
+        if (GLADIUS_SUCCESS != status) {
+            static const std::string errs =
+                "It appears as if " + std::string(mName) + " is either "
+                "not installed or not in your $PATH. "
+                " Please fix this and try again.";
+            GLADIUS_THROW(errs);
+        }
+    }
 
     /**
      *
@@ -78,8 +107,8 @@ public:
     /**
      *
      */
-    void
-    setPersonality(AppLauncherPersonality p) { mPersonality = p; }
+    std::string
+    which(void) { return mAbsolutePath; }
 
     /**
      * Returns personality based on launcher name.
@@ -90,6 +119,7 @@ public:
         if ("mpirun" == name) return ORTE;
         else return NONE;
     }
+
 private:
 };
 

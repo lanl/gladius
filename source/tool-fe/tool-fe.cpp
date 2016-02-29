@@ -183,23 +183,6 @@ ToolFE::mBaseCoreUsable(std::string &whatsWrong)
     // Set member, so we can get the plugin pack later...
     mPathToPluginPack = pathToPluginPackIfAvail;
 
-    ////////////////////////////////////////////////////////////////////////////
-    // Setup parallel launcher.
-    ////////////////////////////////////////////////////////////////////////////
-    // The first argument should be the launcher name.
-    mAppLauncherName = std::string(mAppArgs.argv()[0]);
-    mAppLauncher.setPersonality(
-        applauncher::AppLauncher::getPersonalityByName(mAppLauncherName)
-    );
-    VCOMP_COUT(
-        "Application launcher personality: " <<
-        mAppLauncher.getPersonalityName() << std::endl
-    );
-    if (applauncher::AppLauncher::NONE == mAppLauncher.getPersonality()) {
-        whatsWrong = "Cannot determine launcher type by name: '"
-                   + mAppLauncherName + "'";
-        return false;
-    }
     return true;
 }
 
@@ -241,6 +224,23 @@ ToolFE::mPostToolInitActons(void)
         );
     }
     close(mStdInCopy);
+}
+
+/**
+ *
+ */
+void
+ToolFE::mInitializeParallelLauncher(
+    void
+) {
+    // The first argument should be the launcher name.
+    mAppLauncherName = std::string(mAppArgs.argv()[0]);
+    mAppLauncher.init(mAppLauncherName);
+    VCOMP_COUT(
+        "Application launcher personality: " <<
+        mAppLauncher.getPersonalityName() << std::endl
+    );
+    VCOMP_COUT("Which launcher: " << mAppLauncher.which() << std::endl);
 }
 
 /**
@@ -298,6 +298,8 @@ void
 ToolFE::mInitializeToolInfrastructure(void)
 {
     try {
+        mInitializeParallelLauncher();
+        //mDSI.init(mBeVerbose);
         mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {

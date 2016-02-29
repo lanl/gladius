@@ -72,6 +72,9 @@ private:
     mInitializeToolInfrastructure(void);
     //
     void
+    mInitializeParallelLauncher(void);
+    //
+    void
     mPostToolInitActons(void);
     //
     void

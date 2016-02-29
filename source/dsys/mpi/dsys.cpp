@@ -32,7 +32,7 @@ using namespace std;
 
 namespace {
 
-static const char *prompt = "(dsys)";
+static const char *prompt = "(dsys) ";
 
 static const int SUCCESS = 0;
 static const int ERROR   = 1;
@@ -205,7 +205,8 @@ interact(Proc &p)
         //
         auto searchr = protoFunTable.find(cmd);
         if (searchr == protoFunTable.end()) {
-            cerr << "unknown protocol: '" << cmd << "'" << endl;
+            // Callback function for given command not found.
+            cerr << "cannot satisfy protocol request!" << endl;
             return ERROR;
         }
         else {

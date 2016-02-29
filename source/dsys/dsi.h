@@ -14,8 +14,6 @@
 
 #include <string>
 
-#include <unistd.h>
-
 namespace gladius {
 namespace dsi {
 
@@ -24,10 +22,11 @@ namespace dsi {
  */
 class DSI {
 private:
-    static const std::string sPromptString;
-    /**
-     * The initial size of the output buffer. 16k should be plenty.
-     */
+    //
+    static const char sDSysName[];
+    //
+    static const char sPromptString[];
+     //The initial size of the output buffer. 16k should be plenty.
     static constexpr size_t sInitBufSize = 1024 * 16;
     //
     size_t mCurLineBufSize = 0;
@@ -39,12 +38,10 @@ private:
     int mToGDB[2];
     //
     int mFromGDB[2];
-    // PID of GDB process.
+    // PID of DSys launcher process.
     pid_t mGDBPID = 0;
     //
-    char *mFromGDBLineBuf = nullptr;
-    //
-    pid_t mTargetPID = 0;
+    char *mFromDSysLineBuf = nullptr;
     //
     FILE *mTo = nullptr;
     //
@@ -83,7 +80,6 @@ public:
         std::string &outputIfSuccess
     );
 };
-
 
 } // end dsi namespace
 } // end gladius namespace
