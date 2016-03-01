@@ -62,7 +62,7 @@ public:
     /**
      *
      */
-    void
+    int
     init(const core::Args &args) {
         mAppArgs = args;
         // First argument should be launcher name
@@ -72,7 +72,8 @@ public:
         if (applauncher::AppLauncher::NONE == mPersonality) {
             static const std::string errs =
                 "Cannot determine launcher type by name: '" + mName + "'";
-            GLADIUS_THROW(errs);
+            GLADIUS_CERR << errs << std::endl;
+            return GLADIUS_ERR;
         }
         //
         auto status =  core::utils::which(mName, mAbsolutePath);
@@ -81,8 +82,10 @@ public:
                 "It appears as if " + std::string(mName) + " is either "
                 "not installed or not in your $PATH. "
                 " Please fix this and try again.";
-            GLADIUS_THROW(errs);
+            GLADIUS_CERR << errs << std::endl;
+            return GLADIUS_ERR;
         }
+        return GLADIUS_SUCCESS;
     }
 
     /**

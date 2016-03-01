@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2015 Los Alamos National Security, LLC
+# Copyright (c) 2014-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -13,8 +13,7 @@ lib_LTLIBRARIES = \
 libGladiusAppLauncher.la
 
 libGladiusAppLauncher_la_SOURCES = \
-app-launcher.h \
-app-launcher-orte.h
+app-launcher.h
 
 libGladiusAppLauncher_la_CFLAGS =
 

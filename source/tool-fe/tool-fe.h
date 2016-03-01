@@ -35,7 +35,7 @@ private:
     int mStdInCopy = 0;
     // Our distributed system interface.
     dsi::DSI mDSI;
-    // Out parallel application launcher.
+    // Our parallel application launcher.
     applauncher::AppLauncher mAppLauncher;
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
@@ -56,22 +56,22 @@ private:
     // The plugin pack for our current session.
     dspa::DSPluginPack mPluginPack;
     //
-    bool
-    mBaseCoreUsable(std::string &whatsWrong);
+    int
+    mBaseCoreUsable(void);
     //
     void
     mGetStateFromEnvs(void);
     //
-    void
+    int
     mPreToolInitActons(void);
     //
     void
     mForwardEnvsToBEsIfSetOnFE(void);
     //
-    void
+    int
     mInitializeToolInfrastructure(void);
     //
-    void
+    int
     mInitializeParallelLauncher(void);
     //
     void
@@ -97,7 +97,7 @@ public:
     //
     ToolFE(void);
     //
-    void
+    int
     main(
         const core::Args &appArgv,
         const core::Args &launcherArgv

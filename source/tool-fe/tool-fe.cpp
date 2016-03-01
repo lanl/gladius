@@ -156,15 +156,17 @@ ToolFE::ToolFE(
 /**
  * Returns whether or not the tool-fe's environment setup is sane.
  */
-bool
-ToolFE::mBaseCoreUsable(std::string &whatsWrong)
+int
+ToolFE::mBaseCoreUsable(void)
 {
+    std::string whatsWrong;
     static const auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
     //
     if (!core::utils::envVarSet(envMode)) {
         whatsWrong = "Cannot determine current mode.\nPlease set '"
                    + std::string(envMode) +  "' and try again.";
-        return false;
+        GLADIUS_CERR << whatsWrong << std::endl;
+        return GLADIUS_ERR;
     }
     auto modeName = core::utils::getEnv(envMode);
     // Initialize the DSP manager.
@@ -178,35 +180,36 @@ ToolFE::mBaseCoreUsable(std::string &whatsWrong)
                      "where this plugin pack lives is in "
                      GLADIUS_ENV_PLUGIN_PATH_NAME " and all required plugins "
                      "are installed." ;
-        return false;
+        GLADIUS_CERR << whatsWrong << std::endl;
+        return GLADIUS_ERR;
     }
     // Set member, so we can get the plugin pack later...
     mPathToPluginPack = pathToPluginPackIfAvail;
-
-    return true;
+    // Good to go!
+    return GLADIUS_SUCCESS;
 }
 
 /**
  *
  */
-void
+int
 ToolFE::mPreToolInitActons(void)
 {
+    using namespace std;
     // Dup here before we start tool infrastructure lash-up. Someone in
     // there makes stdio act funny. This is a workaround to fix that.
     mStdInCopy = dup(STDIN_FILENO);
     if (-1 == mStdInCopy) {
         int err = errno;
-        GLADIUS_THROW_CALL_FAILED(
-            "dup(2): " + core::utils::getStrError(err)
-        );
+        GLADIUS_CERR << "dup(2): " + core::utils::getStrError(err) << endl;
+        return GLADIUS_ERR;
     }
     if (-1 == close(STDIN_FILENO)) {
         int err = errno;
-        GLADIUS_THROW_CALL_FAILED(
-            "close(2): " + core::utils::getStrError(err)
-        );
+        GLADIUS_CERR << "close(2): " + core::utils::getStrError(err) << endl;
+        return GLADIUS_ERR;
     }
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -229,46 +232,52 @@ ToolFE::mPostToolInitActons(void)
 /**
  *
  */
-void
-ToolFE::mInitializeParallelLauncher(
-    void
-) {
-    mAppLauncher.init(mLauncherArgs);
+int
+ToolFE::mInitializeParallelLauncher(void)
+{
+    int rc = GLADIUS_SUCCESS;
+    if (GLADIUS_SUCCESS != (rc = mAppLauncher.init(mLauncherArgs))) {
+        return rc;
+    }
     VCOMP_COUT(
         "Application launcher personality: " <<
         mAppLauncher.getPersonalityName() << std::endl
     );
     VCOMP_COUT("Which launcher: " << mAppLauncher.which() << std::endl);
+    return rc;
 }
 
 /**
  * Responsible for running the tool front-end instance. This is the tool-fe
  * entry point from a caller's perspective.
  */
-void
+int
 ToolFE::main(
     const core::Args &appArgv,
     const core::Args &launcherArgv
 ) {
     VCOMP_COUT("Entering main." << std::endl);
+    int rc = GLADIUS_SUCCESS;
     //
     try {
         mAppArgs = appArgv;
         mLauncherArgs = launcherArgv;
         // Make sure that all the required bits are set before we get to
         // launching anything.
-        std::string whatsWrong;
-        if (!mBaseCoreUsable(whatsWrong)) {
-            GLADIUS_CERR << std::endl << whatsWrong << std::endl;
-            return;
+        if (GLADIUS_SUCCESS != (rc = mBaseCoreUsable())) {
+            return rc;
+        }
+        // Perform any actions that need to take place before lash-up.
+        if (GLADIUS_SUCCESS != (rc = mPreToolInitActons())) {
+            return rc;
+        }
+        //
+        if (GLADIUS_SUCCESS != (rc = mInitializeToolInfrastructure())) {
+            return rc;
         }
         ////////////////////////////////////////////////////////////////////////
         // If we are here, then our environment is sane enough to start...
         ////////////////////////////////////////////////////////////////////////
-        // Perform any actions that need to take place before lash-up.
-        mPreToolInitActons();
-        //
-        mInitializeToolInfrastructure();
         // Start lash-up.
         mInitiateToolLashUp();
         //
@@ -281,30 +290,32 @@ ToolFE::main(
         // Now turn it over to the plugin.
         mEnterPluginMain();
     }
-    // If something went south, just print the haps and return to the top-level
-    // REPL. Insulate the caller by catching things and handling them here.
     catch (const std::exception &e) {
-        // TODO - gracefully shutdown things. We may need to tear down a bunch
-        // of infrastructure.
-        GLADIUS_CERR << e.what() << std::endl;
+        GLADIUS_THROW(e.what());
     }
-    // TODO return code to caller
+    // TODO - gracefully shutdown things. We may need to tear down a bunch of
+    // infrastructure.
+    return rc;
 }
 
 /**
  *
  */
-void
+int
 ToolFE::mInitializeToolInfrastructure(void)
 {
+    int rc = GLADIUS_SUCCESS;
     try {
-        mInitializeParallelLauncher();
-        mDSI.init(mAppLauncher, mBeVerbose);
-        mMRNFE.init(mBeVerbose);
+        if (GLADIUS_SUCCESS != (rc = mInitializeParallelLauncher())) {
+            return rc;
+        }
+        //mDSI.init(mAppLauncher, mBeVerbose);
+        //mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
+    return rc;
 }
 
 /**
