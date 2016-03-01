@@ -45,6 +45,8 @@ private:
     dspi::DomainSpecificPlugin *mFEPlugin = nullptr;
     // Target application arguments.
     core::Args mAppArgs;
+    // Launcher arguments.
+    core::Args mLauncherArgs;
     // Connection timeout (in seconds).
     toolcommon::timeout_t mConnectionTimeoutInSec;
     // Max number of connection retries.
@@ -96,7 +98,10 @@ public:
     ToolFE(void);
     //
     void
-    main(const core::Args &args);
+    main(
+        const core::Args &appArgv,
+        const core::Args &launcherArgv
+    );
     //
     void
     mConnectMRNetTree(void);

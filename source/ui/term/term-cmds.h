@@ -15,6 +15,7 @@
 #include "tool-fe/tool-fe.h"
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include <sys/types.h>
 #include <signal.h>
@@ -182,26 +183,52 @@ historyCMDCallback(const EvalInputCmdCallBackArgs &args)
 /**
  * Launches target application.
  * Expecting:
- * launch <LAUNCHER> [LAUNCHER_ARGS] APP
+ * launch application [OPTION]... with launcher [OPTION]...
  */
 inline bool
 launchCMDCallback(const EvalInputCmdCallBackArgs &args)
 {
-    // launch should have at least 2 arguments. So, print out the usage.
-    if (args.argc < 2) {
+    using namespace std;
+    // Recall: 'launch' will always be the first argument in argv
+    // launch should have at least 4 arguments. So, print out the usage.
+    if (args.argc < 4) {
         echoCommandUsage(args, args.argv[0]);
         return true;
     }
-    // If here then create the tool front-end and enter its main loop.  Adjust
-    // the argv that we are gonig to pass to the toolfe by removing the launch
-    // command string and adjusting the arg count.
-    core::Args launchArgs(args.argc - 1, (const char **)args.argv + 1);
+    // Index of where the launcher argv begins. 1 to skip 'launch'
+    int li = 1;
+    // Grab application argv.
+    vector<string> appArgv;
+    for (; li < args.argc; ++li) {
+        const string arg = args.argv[li];
+        if ("with" == arg) break;
+        appArgv.push_back(arg);
+    }
+    if (appArgv.empty() || li == args.argc ||
+        "with" != string(args.argv[li])) {
+        GLADIUS_CERR << "Malformed launch command... Please try again." << endl;
+        echoCommandUsage(args, args.argv[0]);
+        return true;
+    }
+    // Grab launcher argv.
+    // Skip 'with'
+    li += 1;
+    vector<string> launcherArgv;
+    for (; li < args.argc; ++li) {
+        launcherArgv.push_back(args.argv[li]);
+    }
+    // Make sure with what is provided.
+    if (launcherArgv.empty()) {
+        GLADIUS_CERR << "Launcher command not provided. 'with' what?" << endl;
+        echoCommandUsage(args, args.argv[0]);
+        return true;
+    }
     //
     args.terminal->TheTerminal().uninstallSignalHandlers();
     // A new instance every time we are here.
     toolfe::ToolFE toolFE;
     // Enter the tool's main loop.
-    toolFE.main(launchArgs);
+    toolFE.main(core::Args(appArgv), core::Args(launcherArgv));
     //
     args.terminal->TheTerminal().installSignalHandlers();
     // Continue REPL

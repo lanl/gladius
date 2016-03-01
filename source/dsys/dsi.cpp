@@ -74,6 +74,8 @@ DSI::DSI(void)
 DSI::~DSI(void)
 {
     using namespace std;
+    // TODO FIXME
+    return;
     // Wait for GDB (child)
     pid_t w;
     int status;
@@ -82,7 +84,7 @@ DSI::~DSI(void)
         if (w == -1) {
             int err = errno;
             auto errs = core::utils::getStrError(err);
-            GLADIUS_THROW("pipe(2): " + errs);
+            GLADIUS_CERR_WARN << "pipe(2): " + errs << endl;
         }
         if (WIFEXITED(status)) {
             VCOMP_COUT("GDB Exited Status: " << WEXITSTATUS(status) << endl);

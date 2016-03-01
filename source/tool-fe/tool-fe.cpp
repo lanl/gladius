@@ -233,7 +233,7 @@ void
 ToolFE::mInitializeParallelLauncher(
     void
 ) {
-    mAppLauncher.init(mAppArgs);
+    mAppLauncher.init(mLauncherArgs);
     VCOMP_COUT(
         "Application launcher personality: " <<
         mAppLauncher.getPersonalityName() << std::endl
@@ -247,12 +247,14 @@ ToolFE::mInitializeParallelLauncher(
  */
 void
 ToolFE::main(
-    const core::Args &args
+    const core::Args &appArgv,
+    const core::Args &launcherArgv
 ) {
     VCOMP_COUT("Entering main." << std::endl);
     //
     try {
-        mAppArgs = args;
+        mAppArgs = appArgv;
+        mLauncherArgs = launcherArgv;
         // Make sure that all the required bits are set before we get to
         // launching anything.
         std::string whatsWrong;
