@@ -57,7 +57,7 @@ private:
     dspa::DSPluginPack mPluginPack;
     //
     int
-    mBaseCoreUsable(void);
+    mSetupCore(void);
     //
     void
     mGetStateFromEnvs(void);

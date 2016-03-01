@@ -157,7 +157,7 @@ ToolFE::ToolFE(
  * Returns whether or not the tool-fe's environment setup is sane.
  */
 int
-ToolFE::mBaseCoreUsable(void)
+ToolFE::mSetupCore(void)
 {
     std::string whatsWrong;
     static const auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
@@ -185,8 +185,8 @@ ToolFE::mBaseCoreUsable(void)
     }
     // Set member, so we can get the plugin pack later...
     mPathToPluginPack = pathToPluginPackIfAvail;
-    // Good to go!
-    return GLADIUS_SUCCESS;
+    //
+    return mInitializeParallelLauncher();
 }
 
 /**
@@ -264,7 +264,7 @@ ToolFE::main(
         mLauncherArgs = launcherArgv;
         // Make sure that all the required bits are set before we get to
         // launching anything.
-        if (GLADIUS_SUCCESS != (rc = mBaseCoreUsable())) {
+        if (GLADIUS_SUCCESS != (rc = mSetupCore())) {
             return rc;
         }
         // Perform any actions that need to take place before lash-up.
@@ -306,11 +306,8 @@ ToolFE::mInitializeToolInfrastructure(void)
 {
     int rc = GLADIUS_SUCCESS;
     try {
-        if (GLADIUS_SUCCESS != (rc = mInitializeParallelLauncher())) {
-            return rc;
-        }
-        //mDSI.init(mAppLauncher, mBeVerbose);
-        //mMRNFE.init(mBeVerbose);
+        mDSI.init(mAppLauncher, mBeVerbose);
+        mMRNFE.init(mBeVerbose);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
