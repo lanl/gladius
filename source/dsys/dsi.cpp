@@ -80,6 +80,7 @@ DSI::DSI(
 DSI::~DSI(void)
 {
     using namespace std;
+    //
     if (-1 != mApplPID) {
         // Wait for dsys child process
         pid_t w;

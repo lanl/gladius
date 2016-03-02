@@ -73,10 +73,9 @@ public:
         int nProc
     ) {
         using namespace std;
-        // Already in the table
+        // Already in the table. Warn and just update.
         if (0 != mLandscape.count(hn)) {
             GLADIUS_CERR_WARN << hn << " already in table..." << endl;
-            return GLADIUS_ERR;
         }
         mLandscape[hn] = nProc;
         //
