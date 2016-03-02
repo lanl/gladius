@@ -114,6 +114,19 @@ public:
     /**
      *
      */
+    std::vector<std::string>
+    toArgv(void) const
+    {
+        std::vector<std::string> res;
+        for (int i = 0; i < mArgC; ++i) {
+            res.push_back(mArgV[i]);
+        }
+        return res;
+    }
+
+    /**
+     *
+     */
     char **
     envp(void) const
     {

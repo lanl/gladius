@@ -45,9 +45,7 @@ private:
     // The launcher "personality", i.e. what kind of launcher.
     AppLauncherPersonality mPersonality;
     // All arguments supplied to launch request.
-    core::Args mAppArgs;
-    // Target hosts in parallel job.
-    core::Hosts mHosts;
+    core::Args mLauncherArgs;
 
 public:
     /**
@@ -64,9 +62,9 @@ public:
      */
     int
     init(const core::Args &args) {
-        mAppArgs = args;
+        mLauncherArgs = args;
         // First argument should be launcher name
-        mName = mAppArgs.argv()[0];
+        mName = mLauncherArgs.argv()[0];
         mPersonality = getPersonalityByName(mName);
         //
         if (applauncher::AppLauncher::NONE == mPersonality) {
@@ -119,34 +117,19 @@ public:
     which(void) const { return mAbsolutePath; }
 
     /**
-     * Returns the launch command for the given command given the structure of
-     * the provided arguments in mAppArgs.
      *
-     * Example:
-     * Given mAppArgs: mpirun -n 2 foo --fooArg=3
-     *        cmdArgv: baz --bazArg0 --bazArg1
-     * Results: mpirun -n 2 baz --bazArg0 --bazArg1
      */
-    // TODO FIXME
     core::Args
-    getLaunchArgVFor(const std::vector<std::string> &cmdArgv) {
-        char **argv = mAppArgs.argv();
-        std::vector<std::string> newArgv;
-        // Grab launch command
-        newArgv.push_back(argv[0]);
-        // Then grab the rest of the first bit (launcher arguments) until we
-        // reach the application portion of the argument list.
-        // The assumption is that all launcher-related arguments will be of the
-        // form: -launcherArgName varValue ... app [app args]...
-        for (int argi = 1; argi < mAppArgs.argc(); ) {
-            if ('-' != argv[argi][0]) break;
-            newArgv.push_back(std::string(argv[argi++]));
-            newArgv.push_back(std::string(argv[argi++]));
-        }
-        for (const auto &c : cmdArgv) {
-            newArgv.push_back(c);
-        }
-        return core::Args(newArgv);
+    getLaunchCMDFor(
+        const core::Args &appArgs
+    ) {
+        using namespace std;
+        //
+        vector<string> args  = mLauncherArgs.toArgv();
+        vector<string> aargs = appArgs.toArgv();
+        args.insert(end(args), begin(aargs), end(aargs));
+        //
+        return core::Args(args);
     }
 
     /**

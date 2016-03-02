@@ -112,16 +112,15 @@ DSI::~DSI(void)
 /**
  *
  */
-void
+int
 DSI::init(
     const applauncher::AppLauncher &appl,
     bool beVerbose
 ) {
     mBeVerbose = beVerbose;
+    mAppl = appl;
     //
     VCOMP_COUT("Initializing the DSI..." << std::endl);
-    // Get dsys' path.
-    mPathToAppl = appl.which();
     // Allocate initial string buffer.
     mFromDSysLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromDSysLineBuf));
     if (!mFromDSysLineBuf) GLADIUS_THROW_OOR();
@@ -149,14 +148,10 @@ DSI::init(
             exit(EXIT_FAILURE);
         }
         // Build the argv for execvp
-        char *argv[4] = {
-            (char *)mPathToAppl.c_str(),
-            (char *)"--interpreter=mi",
-            (char *)"--quiet",
-            nullptr
-        };
+        std::vector<std::string> dsysArgv = {sDSysName};
+        core::Args argv = mAppl.getLaunchCMDFor(core::Args(dsysArgv));
         //
-        execvp(argv[0], argv);
+        execvp(argv.argv()[0], argv.argv());
         // Reached only on execvp failure.
         _exit(127);
     }
@@ -183,6 +178,7 @@ DSI::init(
     assert(std::string(mFromDSysLineBuf) == sPromptString);
     //
     VCOMP_COUT("Done Initializing the DSI..." << std::endl);
+    return GLADIUS_SUCCESS;
 }
 
 /**

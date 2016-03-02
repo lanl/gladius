@@ -31,11 +31,11 @@ private:
      //The initial size of the output buffer. 16k should be plenty.
     static constexpr size_t sInitBufSize = 1024 * 16;
     //
+    applauncher::AppLauncher mAppl;
+    //
     size_t mCurLineBufSize = 0;
     //
     bool mBeVerbose = false;
-    // Path to parallel application launcher.
-    std::string mPathToAppl;
     //
     int mToAppl[2];
     //
@@ -64,7 +64,7 @@ public:
     //
     ~DSI(void);
     //
-    void
+    int
     init(
         const applauncher::AppLauncher &appl,
         bool beVerbose
