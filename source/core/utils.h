@@ -215,9 +215,13 @@ public:
      */
     static std::string
     formatCallFailed(
-        const std::string &inErrs
+        const std::string &inErrs,
+        std::string fileName,
+        int lineNo
     ) {
-        std::string errs = "A call failed that shouldn't have: ";
+        const std::string lineNoStr = std::to_string(lineNo);
+        std::string errs = "[" + fileName + ", line " + lineNoStr + "] ";
+        errs += "A call failed that shouldn't have: ";
         errs += inErrs;
         return errs;
     }

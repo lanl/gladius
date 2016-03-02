@@ -141,7 +141,9 @@ DSI::init(
     if (-1 == pipe(mToAppl) || -1 == pipe(mFromAppl)) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
-        GLADIUS_CERR << utils::formatCallFailed("pipe(2): " + errs) << endl;
+        GLADIUS_CERR << utils::formatCallFailed(
+                            "pipe(2): " + errs, GLADIUS_WHERE
+                        ) << endl;
         return GLADIUS_ERR_IO;
     }
     // TODO set O_NONBLOCK?
@@ -158,7 +160,9 @@ DSI::init(
             -1 == dup2(mFromAppl[1], STDOUT_FILENO)) {
             int err = errno;
             auto errs = core::utils::getStrError(err);
-            GLADIUS_CERR << utils::formatCallFailed("dup2(2): " + errs) << endl;
+            GLADIUS_CERR << utils::formatCallFailed(
+                                "dup2(2): " + errs, GLADIUS_WHERE
+                            ) << endl;
             exit(EXIT_FAILURE);
         }
         // Build the argv for execvp
@@ -173,7 +177,9 @@ DSI::init(
     else if (-1 == mApplPID) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
-        GLADIUS_CERR << utils::formatCallFailed("fork(2): " + errs) << endl;
+        GLADIUS_CERR << utils::formatCallFailed(
+                            "fork(2): " + errs, GLADIUS_WHERE
+                        ) << endl;
         return GLADIUS_ERR;
     }
     ////////////////////////////////////////////////////////////////////////////
@@ -183,10 +189,15 @@ DSI::init(
     // Close unused.
     close(mToAppl[0]);
     close(mFromAppl[1]);
-    // TODO add error checks
     mTo = fdopen(mToAppl[1], "w");
     // TODO not sure this is needed.
     mFrom = fdopen(mFromAppl[0], "r");
+    if (!mTo || !mFrom) {
+        GLADIUS_CERR << utils::formatCallFailed(
+                            "fdopen(3): ", GLADIUS_WHERE
+                        ) << endl;
+        return GLADIUS_ERR_IO;
+    }
     //
     mWaitForPrompt();
     //
