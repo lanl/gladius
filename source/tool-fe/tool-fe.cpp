@@ -341,6 +341,10 @@ ToolFE::mDetermineProcLandscape(void)
                           << mProcLandscape.nProcesses() << std::endl;
         GLADIUS_COUT_STAT << "....Number of Hosts: "
                           << mProcLandscape.nHosts() << std::endl;
+        // No longer need this, so tear it down.
+        if (GLADIUS_SUCCESS != (rc = mDSI.shutdown())) {
+            return rc;
+        }
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

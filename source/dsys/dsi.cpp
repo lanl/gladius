@@ -323,3 +323,17 @@ DSI::getProcessLandscape(
     }
     return GLADIUS_SUCCESS;
 }
+
+/**
+ * Sends shutdown command to dsys.
+ */
+int
+DSI::shutdown(void)
+{
+    using namespace std;
+    int rc = GLADIUS_SUCCESS;
+    if (GLADIUS_SUCCESS != (rc = mSendCommand("q"))) {
+        return rc;
+    }
+    return rc;
+}

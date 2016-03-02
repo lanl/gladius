@@ -85,6 +85,9 @@ public:
     getProcessLandscape(
         core::ProcessLandscape &pl
     );
+    //
+    int
+    shutdown(void);
 };
 
 } // end dsi namespace
