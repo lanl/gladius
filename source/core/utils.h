@@ -210,6 +210,17 @@ public:
         return kill(target, signal);
     }
 
+    /**
+     *
+     */
+    static std::string
+    formatCallFailed(
+        const std::string &inErrs
+    ) {
+        std::string errs = "A call failed that shouldn't have: ";
+        errs += inErrs;
+        return errs;
+    }
 };
 
 } // end core namespace

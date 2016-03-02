@@ -188,7 +188,7 @@ interact(Proc &p)
     int cmd;
     do {
         if (p.leader) {
-            cout << prompt << flush;
+            cout << prompt << endl << flush;
             string line;
             getline(cin, line);
             auto searchr = cmdProtoTab.find(line[0]);

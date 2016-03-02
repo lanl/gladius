@@ -63,9 +63,13 @@ const char DSI::sDSysName[] = "gladius-dsys";
 /**
  *
  */
-DSI::DSI(void)
+DSI::DSI(
+    void
+) : mCurLineBufSize(sInitBufSize)
+  , mApplPID(-1)
 {
-    mCurLineBufSize = sInitBufSize;
+    memset(mToAppl,   -1, sizeof(mToAppl));
+    memset(mFromAppl, -1, sizeof(mFromAppl));
 }
 
 /**
@@ -74,37 +78,43 @@ DSI::DSI(void)
 DSI::~DSI(void)
 {
     using namespace std;
-    // TODO FIXME
-    return;
-    // Wait for GDB (child)
-    pid_t w;
-    int status;
-    do {
-        w = waitpid(mApplPID, &status, WUNTRACED | WCONTINUED);
-        if (w == -1) {
-            int err = errno;
-            auto errs = core::utils::getStrError(err);
-            GLADIUS_CERR_WARN << "pipe(2): " + errs << endl;
-        }
-        if (WIFEXITED(status)) {
-            VCOMP_COUT("GDB Exited Status: " << WEXITSTATUS(status) << endl);
-        }
-        else if (WIFSIGNALED(status)) {
-            VCOMP_COUT("GDB Killed By Signal: " << WTERMSIG(status) << endl);
-        }
-        else if (WIFSTOPPED(status)) {
-            VCOMP_COUT("GDB Stopped By Signal: " << WSTOPSIG(status) << endl);
-        }
-        else if (WIFCONTINUED(status)) {
-            VCOMP_COUT("GDB Continued..." << endl);
-        }
-    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    if (-1 != mApplPID) {
+        // Wait for dsys child process
+        pid_t w;
+        int status;
+        do {
+            w = waitpid(mApplPID, &status, WUNTRACED | WCONTINUED);
+            if (w == -1) {
+                int err = errno;
+                auto errs = core::utils::getStrError(err);
+                GLADIUS_CERR_WARN << "pipe(2): " + errs << endl;
+            }
+            if (WIFEXITED(status)) {
+                VCOMP_COUT(
+                    "Appl Exited Status: " << WEXITSTATUS(status) << endl
+                );
+            }
+            else if (WIFSIGNALED(status)) {
+                VCOMP_COUT(
+                    "Appl Killed By Signal: " << WTERMSIG(status) << endl
+                );
+            }
+            else if (WIFSTOPPED(status)) {
+                VCOMP_COUT(
+                    "Appl Stopped By Signal: " << WSTOPSIG(status) << endl
+                );
+            }
+            else if (WIFCONTINUED(status)) {
+                VCOMP_COUT("Appl Continued..." << endl);
+            }
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    }
     // Other cleanup.
-    fclose(mTo);
-    fclose(mFrom);
+    if (mTo) fclose(mTo);
+    if (mFrom) fclose(mFrom);
     //
-    close(mToAppl[1]);
-    close(mFromAppl[0]);
+    if (mToAppl[1]   != -1) close(mToAppl[1]);
+    if (mFromAppl[0] != -1) close(mFromAppl[0]);
     //
     if (mFromDSysLineBuf) free(mFromDSysLineBuf);
 }
@@ -117,6 +127,9 @@ DSI::init(
     const applauncher::AppLauncher &appl,
     bool beVerbose
 ) {
+    using namespace std;
+    using namespace core;
+
     mBeVerbose = beVerbose;
     mAppl = appl;
     //
@@ -128,7 +141,8 @@ DSI::init(
     if (-1 == pipe(mToAppl) || -1 == pipe(mFromAppl)) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
-        GLADIUS_THROW("pipe(2): " + errs);
+        GLADIUS_CERR << utils::formatCallFailed("pipe(2): " + errs) << endl;
+        return GLADIUS_ERR_IO;
     }
     // TODO set O_NONBLOCK?
     // Create new process for GDB.
@@ -144,7 +158,7 @@ DSI::init(
             -1 == dup2(mFromAppl[1], STDOUT_FILENO)) {
             int err = errno;
             auto errs = core::utils::getStrError(err);
-            GLADIUS_CERR << "dup2(2): " + errs << std::endl;
+            GLADIUS_CERR << utils::formatCallFailed("dup2(2): " + errs) << endl;
             exit(EXIT_FAILURE);
         }
         // Build the argv for execvp
@@ -159,7 +173,8 @@ DSI::init(
     else if (-1 == mApplPID) {
         int err = errno;
         auto errs = core::utils::getStrError(err);
-        GLADIUS_THROW("Cannot create dsys processes: " + errs);
+        GLADIUS_CERR << utils::formatCallFailed("fork(2): " + errs) << endl;
+        return GLADIUS_ERR;
     }
     ////////////////////////////////////////////////////////////////////////////
     // Parent.
@@ -187,9 +202,11 @@ DSI::init(
 void
 DSI::mWaitForPrompt(void)
 {
+    VCOMP_COUT("Waiting for prompt..." << std::endl);
     while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         mGetRespLine();
     }
+    VCOMP_COUT("Done waiting for prompt!" << std::endl);
 }
 
 /**
