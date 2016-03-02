@@ -204,6 +204,7 @@ DSI::init(
     assert(std::string(mFromDSysLineBuf) == sPromptString);
     //
     VCOMP_COUT("Done Initializing the DSI..." << std::endl);
+    //
     return GLADIUS_SUCCESS;
 }
 

@@ -129,7 +129,7 @@ public:
         const toolcommon::ProcessTable &procTab
     );
     //
-    void
+    int
     init(bool beVerbose = false);
     //
     void

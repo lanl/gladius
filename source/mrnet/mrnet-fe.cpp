@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
@@ -322,7 +322,7 @@ MRNetFE::mSetEnvs(void)
 /**
  * Initialization.
  */
-void
+int
 MRNetFE::init(
     bool beVerbose
 ) {
@@ -331,21 +331,27 @@ MRNetFE::init(
     string whatsWrong;
     try {
         mBeVerbose = beVerbose;
-        VCOMP_COUT("Initializing MRNet Front-End." << endl);
+        //
+        VCOMP_COUT("Initializing MRNet front-end." << endl);
+        //
         if (!mDetermineAndSetPaths(whatsWrong)) {
-            GLADIUS_THROW(whatsWrong);
+            GLADIUS_CERR << whatsWrong << endl;
+            return GLADIUS_ERR;
         }
         mSetEnvs();
+        //
         mSessionDir = core::SessionFE::TheSession().sessionDir();
         // Create a unique name for the file.
         mTopoFile = mSessionDir + utils::osPathSep
                   + utils::getHostname() + "-"
                   + std::to_string(getpid()) + "-" + CNAME + ".topo";
-        VCOMP_COUT("Topology Specification File: " << mTopoFile << endl);
+        VCOMP_COUT("Topology specification file: " << mTopoFile << endl);
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -379,7 +385,7 @@ MRNetFE::mDetermineAndSetPaths(
     using namespace std;
 
     whatsWrong = "";
-    VCOMP_COUT("Determining and Setting Paths." << std::endl);
+    VCOMP_COUT("Determining and setting paths." << std::endl);
     // Make sure that we can find mrnet_commnode. Really just to get the base
     // MRNet installation path. That way we can find the libraries that we need.
     string cnPath;
@@ -700,7 +706,7 @@ MRNetFE::pluginInfoBCast(
     const std::string &pathToValidPlugin
 )
 {
-    VCOMP_COUT("Sending Plugin Info to Back-Ends." << std::endl);
+    VCOMP_COUT("Sending plugin info to back-ends." << std::endl);
     //
     const char *pluginName = validPluginName.c_str();
     const char *pluginPath = pathToValidPlugin.c_str();
@@ -720,5 +726,5 @@ MRNetFE::pluginInfoBCast(
         GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
     //
-    VCOMP_COUT("Done Sending Plugin Info to Back-Ends." << std::endl);
+    VCOMP_COUT("Done sending plugin info to back-ends." << std::endl);
 }

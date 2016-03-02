@@ -69,12 +69,20 @@ static const std::vector<core::EnvironmentVar> compEnvVars = {
  *
  */
 void
-echoLaunchStart(const gladius::core::Args &args)
+echoLaunchStart(
+    const gladius::core::Args &largs,
+    const gladius::core::Args &aargs
+)
 {
-    std::string lstr;
-    for (decltype(args.argc()) i = 0; i < args.argc(); ++i) {
-        lstr += args.argv()[i];
-        lstr += " ";
+    using namespace std;
+    // Construct the entire launch command.
+    auto argv = largs.toArgv();
+    auto aArgv = aargs.toArgv();
+    argv.insert(end(argv), begin(aArgv), end(aArgv));
+    // To a single string
+    string lstr;
+    for (const auto & arg : argv) {
+        lstr += (arg + " ");
     }
     GLADIUS_COUT_STAT << "Launch Sequence Initiated..." << std::endl;
     GLADIUS_COUT_STAT << "Starting: " << lstr << std::endl;
@@ -316,8 +324,12 @@ ToolFE::mInitializeToolInfrastructure(void)
 {
     int rc = GLADIUS_SUCCESS;
     try {
-        mDSI.init(mAppLauncher, mBeVerbose);
-        mMRNFE.init(mBeVerbose);
+        if (GLADIUS_SUCCESS != (rc = mDSI.init(mAppLauncher, mBeVerbose))) {
+            return rc;
+        }
+        if (GLADIUS_SUCCESS != (rc = mMRNFE.init(mBeVerbose))) {
+            return rc;
+        }
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -407,7 +419,7 @@ void
 ToolFE::mInitiateToolLashUp(void)
 {
     try {
-        echoLaunchStart(mAppArgs);
+        echoLaunchStart(mLauncherArgs, mAppArgs);
         // TODO
         // Setup environment variable forwarding to the remote environments.
         //mForwardEnvsToBEsIfSetOnFE();
