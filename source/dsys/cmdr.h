@@ -7,8 +7,8 @@
  */
 
 /**
- * Implements the interface to our parallel application launcher functionality.
- * This interfaces to things like orte, aprun, srun, etc.
+ * Implements generating launch commands for various parallel launchers like
+ * orterun, aprun, srun, etc.
  */
 #pragma once
 
@@ -25,9 +25,9 @@
 #include <string>
 
 namespace gladius {
-namespace applauncher {
+namespace cmdr {
 
-class AppLauncher {
+class Commandr {
 public:
     /**
      * Supported launcher types.
@@ -51,7 +51,7 @@ public:
     /**
      *
      */
-    AppLauncher(
+    Commandr(
         void
     ) : mName("")
       , mAbsolutePath("")
@@ -67,7 +67,7 @@ public:
         mName = mLauncherArgs.argv()[0];
         mPersonality = getPersonalityByName(mName);
         //
-        if (applauncher::AppLauncher::NONE == mPersonality) {
+        if (cmdr::Commandr::NONE == mPersonality) {
             static const std::string errs =
                 "Cannot determine launcher type by name: '" + mName + "'";
             GLADIUS_CERR << errs << std::endl;
@@ -89,7 +89,7 @@ public:
     /**
      *
      */
-    ~AppLauncher(void) { ; }
+    ~Commandr(void) { ; }
 
     /**
      *
@@ -143,5 +143,5 @@ public:
     }
 };
 
-} // end gladius applauncher
+} // end gladius cmdr
 } // end gladius namespace

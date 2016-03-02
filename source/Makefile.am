@@ -10,7 +10,6 @@ SUBDIRS = \
 core \
 dspa/core \
 tool-common \
-app-launcher \
 dsys \
 dsys/mpi \
 mrnet \

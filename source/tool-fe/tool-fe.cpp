@@ -15,7 +15,6 @@
 
 #include "core/utils.h"
 #include "core/env.h"
-#include "app-launcher/app-launcher.h"
 #include "tool-be/tool-be.h"
 
 #include <string>
@@ -252,14 +251,14 @@ int
 ToolFE::mInitializeParallelLauncher(void)
 {
     int rc = GLADIUS_SUCCESS;
-    if (GLADIUS_SUCCESS != (rc = mAppLauncher.init(mLauncherArgs))) {
+    if (GLADIUS_SUCCESS != (rc = mCommandr.init(mLauncherArgs))) {
         return rc;
     }
     VCOMP_COUT(
         "Application launcher personality: " <<
-        mAppLauncher.getPersonalityName() << std::endl
+        mCommandr.getPersonalityName() << std::endl
     );
-    VCOMP_COUT("Which launcher: " << mAppLauncher.which() << std::endl);
+    VCOMP_COUT("Which launcher: " << mCommandr.which() << std::endl);
     return rc;
 }
 
@@ -295,7 +294,9 @@ ToolFE::main(
         // If we are here, then our environment is sane enough to start...
         ////////////////////////////////////////////////////////////////////////
         // Start lash-up.
-        mInitiateToolLashUp();
+        if (GLADIUS_SUCCESS != (rc = mInitiateToolLashUp())) {
+            return rc;
+        }
         //
         if (GLADIUS_SUCCESS != (rc = mPostToolInitActons())) {
             return rc;
@@ -324,7 +325,7 @@ ToolFE::mInitializeToolInfrastructure(void)
 {
     int rc = GLADIUS_SUCCESS;
     try {
-        if (GLADIUS_SUCCESS != (rc = mDSI.init(mAppLauncher, mBeVerbose))) {
+        if (GLADIUS_SUCCESS != (rc = mDSI.init(mCommandr, mBeVerbose))) {
             return rc;
         }
         if (GLADIUS_SUCCESS != (rc = mMRNFE.init(mBeVerbose))) {
@@ -415,7 +416,7 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 /**
  * Initiates the tool lash-up bits.
  */
-void
+int
 ToolFE::mInitiateToolLashUp(void)
 {
     try {
@@ -447,6 +448,8 @@ ToolFE::mInitiateToolLashUp(void)
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**

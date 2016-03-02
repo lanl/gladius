@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "app-launcher/app-launcher.h"
+#include "dsys/cmdr.h"
 
 #include <string>
 
@@ -31,7 +31,7 @@ private:
      //The initial size of the output buffer. 16k should be plenty.
     static constexpr size_t sInitBufSize = 1024 * 16;
     //
-    applauncher::AppLauncher mAppl;
+    cmdr::Commandr mCommandr;
     //
     size_t mCurLineBufSize = 0;
     //
@@ -66,7 +66,7 @@ public:
     //
     int
     init(
-        const applauncher::AppLauncher &appl,
+        const cmdr::Commandr &cmdr,
         bool beVerbose
     );
     //

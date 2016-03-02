@@ -14,8 +14,8 @@
 
 #include "core/core.h"
 #include "tool-common/tool-common.h"
+#include "dsys/cmdr.h"
 #include "dsys/dsi.h"
-#include "app-launcher/app-launcher.h"
 #include "mrnet/mrnet-fe.h"
 #include "dspa/core/dsp-manager.h"
 #include "dspa/core/gladius-dspi.h"
@@ -36,7 +36,7 @@ private:
     // Our distributed system interface.
     dsi::DSI mDSI;
     // Our parallel application launcher.
-    applauncher::AppLauncher mAppLauncher;
+    cmdr::Commandr mCommandr;
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
@@ -77,7 +77,7 @@ private:
     int
     mPostToolInitActons(void);
     //
-    void
+    int
     mInitiateToolLashUp(void);
     //
     void

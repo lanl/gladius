@@ -13,6 +13,7 @@ lib_LTLIBRARIES = \
 libGladiusDSI.la
 
 libGladiusDSI_la_SOURCES = \
+cmdr.h \
 dsi.h dsi.cpp
 
 libGladiusDSI_la_CFLAGS =

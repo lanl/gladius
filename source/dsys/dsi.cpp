@@ -124,14 +124,14 @@ DSI::~DSI(void)
  */
 int
 DSI::init(
-    const applauncher::AppLauncher &appl,
+    const cmdr::Commandr &cmdr,
     bool beVerbose
 ) {
     using namespace std;
     using namespace core;
 
     mBeVerbose = beVerbose;
-    mAppl = appl;
+    mCommandr = cmdr;
     //
     VCOMP_COUT("Initializing the DSI..." << std::endl);
     // Allocate initial string buffer.
@@ -167,7 +167,7 @@ DSI::init(
         }
         // Build the argv for execvp
         std::vector<std::string> dsysArgv = {sDSysName};
-        core::Args argv = mAppl.getLaunchCMDFor(core::Args(dsysArgv));
+        core::Args argv = mCommandr.getLaunchCMDFor(core::Args(dsysArgv));
         //
         execvp(argv.argv()[0], argv.argv());
         // Reached only on execvp failure.
