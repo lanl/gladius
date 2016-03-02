@@ -211,6 +211,19 @@ public:
     }
 
     /**
+     * Returns the canonical hostname form from an arbitrary hostname string.
+     */
+    static std::string
+    canonicalHostname(const std::string &hostname) {
+        auto chn = hostname;
+        auto dotPos = chn.find_first_of(".");
+        if (std::string::npos != dotPos) {
+            chn = chn.substr(0, dotPos);
+        }
+        return chn;
+    }
+
+    /**
      *
      */
     static std::string

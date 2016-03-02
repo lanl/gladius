@@ -287,6 +287,10 @@ ToolFE::main(
             return rc;
         }
         //
+        if (GLADIUS_SUCCESS != (rc = mDetermineProcLandscape())) {
+            return rc;
+        }
+        //
         if (GLADIUS_SUCCESS != (rc = mInitializeToolInfrastructure())) {
             return rc;
         }
@@ -321,13 +325,38 @@ ToolFE::main(
  *
  */
 int
-ToolFE::mInitializeToolInfrastructure(void)
+ToolFE::mDetermineProcLandscape(void)
 {
+    VCOMP_COUT("Determining process landscape..." << std::endl);
     int rc = GLADIUS_SUCCESS;
     try {
         if (GLADIUS_SUCCESS != (rc = mDSI.init(mCommandr, mBeVerbose))) {
             return rc;
         }
+        if (GLADIUS_SUCCESS != (rc = mDSI.getProcessLandscape(mProcLandscape))) {
+            return rc;
+        }
+        GLADIUS_COUT_STAT << "Job Statistics:" << std::endl;
+        GLADIUS_COUT_STAT << "....Number of Application Processes: "
+                          << mProcLandscape.nProcesses() << std::endl;
+        GLADIUS_COUT_STAT << "....Number of Hosts: "
+                          << mProcLandscape.nHosts() << std::endl;
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+    VCOMP_COUT("Done determining process landscape..." << std::endl);
+    return rc;
+}
+
+/**
+ *
+ */
+int
+ToolFE::mInitializeToolInfrastructure(void)
+{
+    int rc = GLADIUS_SUCCESS;
+    try {
         if (GLADIUS_SUCCESS != (rc = mMRNFE.init(mBeVerbose))) {
             return rc;
         }

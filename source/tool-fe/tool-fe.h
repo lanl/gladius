@@ -13,6 +13,7 @@
 #pragma once
 
 #include "core/core.h"
+#include "core/process-landscape.h"
 #include "tool-common/tool-common.h"
 #include "dsys/cmdr.h"
 #include "dsys/dsi.h"
@@ -35,8 +36,10 @@ private:
     int mStdInCopy = 0;
     // Our distributed system interface.
     dsi::DSI mDSI;
-    // Our parallel application launcher.
+    // Our parallel application launcher personality.
     cmdr::Commandr mCommandr;
+    // Our target process landscape.
+    core::ProcessLandscape mProcLandscape;
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
@@ -88,6 +91,9 @@ private:
     //
     void
     mEnterPluginMain(void);
+    //
+    int
+    mDetermineProcLandscape(void);
 
 public:
     // Default timeout (in seconds)

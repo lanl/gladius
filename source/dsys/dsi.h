@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include "core/process-landscape.h"
 #include "dsys/cmdr.h"
 
 #include <string>
@@ -57,6 +58,16 @@ private:
     //
     std::string
     mDrainToString(void);
+    //
+    int
+    mSendCommand(
+        const std::string &rawCMD
+    );
+    //
+    int
+    mRecvResp(
+        std::string &outputIfSuccess
+    );
 
 public:
     //
@@ -71,13 +82,8 @@ public:
     );
     //
     int
-    sendCommand(
-        const std::string &rawCMD
-    );
-    //
-    int
-    recvResp(
-        std::string &outputIfSuccess
+    getProcessLandscape(
+        core::ProcessLandscape &pl
     );
 };
 

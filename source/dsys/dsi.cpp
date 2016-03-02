@@ -24,10 +24,12 @@
 #include <iostream>
 
 #include <errno.h>
+#include <sstream>
 #include <string.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 using namespace gladius;
 using namespace gladius::dsi;
@@ -203,7 +205,7 @@ DSI::init(
     //
     assert(std::string(mFromDSysLineBuf) == sPromptString);
     //
-    VCOMP_COUT("Done Initializing the DSI..." << std::endl);
+    VCOMP_COUT("Done initializing the DSI..." << std::endl);
     //
     return GLADIUS_SUCCESS;
 }
@@ -218,7 +220,7 @@ DSI::mWaitForPrompt(void)
     while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         mGetRespLine();
     }
-    VCOMP_COUT("Done waiting for prompt!" << std::endl);
+    VCOMP_COUT("Done waiting for prompt..." << std::endl);
 }
 
 /**
@@ -255,11 +257,11 @@ std::string
 DSI::mDrainToString(void)
 {
     std::string result = "";
-    do {
-        mGetRespLine();
+    mGetRespLine();
+    while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         result += std::string(mFromDSysLineBuf) + "\n";
-    } while (0 != strcmp(mFromDSysLineBuf, sPromptString));
-
+        mGetRespLine();
+    }
     return result;
 }
 
@@ -267,10 +269,9 @@ DSI::mDrainToString(void)
  *
  */
 int
-DSI::sendCommand(
+DSI::mSendCommand(
     const std::string &rawCMD
 ) {
-    VCOMP_COUT("Sending Command: " << rawCMD << std::endl);
     fputs(std::string(rawCMD + "\n").c_str(), mTo);
     fflush(mTo);
     return GLADIUS_SUCCESS;
@@ -280,9 +281,45 @@ DSI::sendCommand(
  *
  */
 int
-DSI::recvResp(
+DSI::mRecvResp(
     std::string &outputIfSuccess
 ) {
     outputIfSuccess = mDrainToString();
+    return GLADIUS_SUCCESS;
+}
+
+/**
+ *
+ */
+int
+DSI::getProcessLandscape(
+    core::ProcessLandscape &pl
+) {
+    using namespace std;
+    // Gather info from dsys
+    int rc = GLADIUS_SUCCESS;
+    if (GLADIUS_SUCCESS != (rc = mSendCommand("h"))) {
+        return rc;
+    }
+    string respStr;
+    if (GLADIUS_SUCCESS != (rc = mRecvResp(respStr))) {
+        return rc;
+    }
+    // Now process and populate the landscape object.
+    stringstream ss(respStr);
+    string line;
+    char hnbuf[HOST_NAME_MAX] = {'\0'};
+    int hnn = 0;
+    while (std::getline(ss, line, '\n')) {
+        int n = sscanf(line.c_str(), "%s %d", hnbuf, &hnn);
+        if (2 != n) {
+            GLADIUS_CERR << "Invalid response detected: " << line << endl;
+            return GLADIUS_ERR;
+        }
+        if (GLADIUS_SUCCESS != (rc = pl.insert(hnbuf, hnn))) {
+            GLADIUS_CERR << "Could not update process landscape!" << endl;
+            return rc;
+        }
+    }
     return GLADIUS_SUCCESS;
 }

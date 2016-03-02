@@ -68,10 +68,27 @@ struct Proc {
  *
  */
 int
+echoHosts(Proc &p)
+{
+    // I don't have it, so return.
+    if (!p.leader) return SUCCESS;
+    // I do, so here you go
+    // Form: [hostname] [number of expected tasks]
+    for (const auto ti : p.hostTargetNumTab) {
+        std::cout << ti.first << " " << ti.second << std::endl;
+    }
+    std::cout << std::flush;
+    return SUCCESS;
+}
+
+/**
+ *
+ */
+int
 hosts(Proc &p)
 {
     static bool done = false;
-    if (done) return SUCCESS;
+    if (done) return echoHosts(p);
     //
     char *hostNames = NULL;
     //
@@ -110,7 +127,7 @@ hosts(Proc &p)
     }
     if (hostNames) delete[] hostNames;
     done = true;
-    return SUCCESS;
+    return echoHosts(p);
 }
 
 /**

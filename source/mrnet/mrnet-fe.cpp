@@ -528,7 +528,7 @@ MRNetFE::mCreateDaemonTIDMap(void)
     // Populate hostname to MRNet ranks.
     for (const auto &beNode : backendNodes) {
         const auto nodeRank = beNode->get_Rank();
-        const auto chn = Hosts::canonicalForm(beNode->get_HostName());
+        const auto chn = core::utils::canonicalHostname(beNode->get_HostName());
         hostToMrnetRankMap[chn] = nodeRank;
     }
     // Now prepare info to be transfered to the remote daemons.

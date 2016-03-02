@@ -17,6 +17,7 @@ core.h \
 ret-codes.h \
 args.h \
 hosts.h \
+process-landscape.h \
 colors.h colors.cpp \
 console.h \
 env.h env.cpp \
