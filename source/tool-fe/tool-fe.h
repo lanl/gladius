@@ -59,7 +59,7 @@ private:
     int
     mSetupCore(void);
     //
-    void
+    int
     mGetStateFromEnvs(void);
     //
     int
@@ -74,7 +74,7 @@ private:
     int
     mInitializeParallelLauncher(void);
     //
-    void
+    int
     mPostToolInitActons(void);
     //
     void

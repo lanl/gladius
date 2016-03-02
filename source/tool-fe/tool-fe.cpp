@@ -101,14 +101,11 @@ ToolFE::registerComponent(void)
 /**
  *
  */
-void
+int
 ToolFE::mGetStateFromEnvs(void)
 {
     if (core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME)) {
         mBeVerbose = true;
-    }
-    else {
-        mBeVerbose = false;
     }
     //
     auto rc = core::utils::getEnvAs(
@@ -120,7 +117,10 @@ ToolFE::mGetStateFromEnvs(void)
         mMaxRetries = sDefaultMaxRetries;
     }
     else if (GLADIUS_SUCCESS != rc) {
-        GLADIUS_THROW_CALL_FAILED_RC("core::utils::getEnvAs", rc);
+        GLADIUS_CERR << "Error encountered while trying to "
+                        "read environment variable: "
+                     << ENV_VAR_CONNECT_MAX_RETRIES << std::endl;
+        return rc;
     }
     if (mMaxRetries <= 0) mMaxRetries = toolcommon::unlimitedRetries;
     //
@@ -133,11 +133,16 @@ ToolFE::mGetStateFromEnvs(void)
         mConnectionTimeoutInSec = sDefaultTimeout;
     }
     else if (GLADIUS_SUCCESS != rc) {
-        GLADIUS_THROW_CALL_FAILED_RC("core::utils::getEnvAs", rc);
+        GLADIUS_CERR << "Error encountered while trying to "
+                        "read environment variable: "
+                     << ENV_VAR_CONNECT_TIMEOUT_IN_SEC << std::endl;
+        return rc;
     }
     if (mConnectionTimeoutInSec <= 0) {
         mConnectionTimeoutInSec = toolcommon::unlimitedTimeout;
     }
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -148,10 +153,7 @@ ToolFE::ToolFE(
 ) : mBeVerbose(false)
   , mConnectionTimeoutInSec(toolcommon::unlimitedTimeout)
   , mMaxRetries(toolcommon::unlimitedRetries)
-  , mPathToPluginPack("")
-{
-    mGetStateFromEnvs();
-}
+  , mPathToPluginPack("") { ; }
 
 /**
  * Returns whether or not the tool-fe's environment setup is sane.
@@ -161,6 +163,11 @@ ToolFE::mSetupCore(void)
 {
     std::string whatsWrong;
     static const auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
+    int rc = GLADIUS_SUCCESS;
+    //
+    if (GLADIUS_SUCCESS != (rc = mGetStateFromEnvs())) {
+        return rc;
+    }
     //
     if (!core::utils::envVarSet(envMode)) {
         whatsWrong = "Cannot determine current mode.\nPlease set '"
@@ -215,18 +222,19 @@ ToolFE::mPreToolInitActons(void)
 /**
  *
  */
-void
+int
 ToolFE::mPostToolInitActons(void)
 {
     // Restore stdin. This is the counterpart to the workaround in
     // mPreToolInitActons.
     if (-1 == dup2(mStdInCopy, STDIN_FILENO)) {
         int err = errno;
-        GLADIUS_THROW_CALL_FAILED(
-            "dup2(2): " + core::utils::getStrError(err)
-        );
+        GLADIUS_CERR << "Call to dup2(2) failed: "
+                     << core::utils::getStrError(err) << std::endl;
+        return GLADIUS_ERR;
     }
     close(mStdInCopy);
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -281,7 +289,9 @@ ToolFE::main(
         // Start lash-up.
         mInitiateToolLashUp();
         //
-        mPostToolInitActons();
+        if (GLADIUS_SUCCESS != (rc = mPostToolInitActons())) {
+            return rc;
+        }
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         mLoadPlugins();

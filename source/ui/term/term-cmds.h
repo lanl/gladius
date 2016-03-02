@@ -228,7 +228,7 @@ launchCMDCallback(const EvalInputCmdCallBackArgs &args)
     // A new instance every time we are here.
     toolfe::ToolFE toolFE;
     // Enter the tool's main loop.
-    toolFE.main(core::Args(appArgv), core::Args(launcherArgv));
+    (void)toolFE.main(core::Args(appArgv), core::Args(launcherArgv));
     //
     args.terminal->TheTerminal().installSignalHandlers();
     // Continue REPL
