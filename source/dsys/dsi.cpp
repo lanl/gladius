@@ -265,32 +265,11 @@ DSI::mDrainToString(void)
 /**
  *
  */
-void
-DSI::attach(pid_t targetPID)
-{
-    VCOMP_COUT(
-        "GDB PID: " << mApplPID <<
-        " Attaching to Target PID: " << targetPID << std::endl
-    );
-    //
-    std::string cmd = "attach " + std::to_string(targetPID) + "\n";
-    fputs(cmd.c_str(), mTo);
-    fflush(mTo);
-    VCOMP_COUT("Attached!" << std::endl);
-    if (0 != core::utils::sendSignal(targetPID, SIGCONT)) {
-        int err = errno;
-        auto errs = core::utils::getStrError(err);
-        GLADIUS_THROW("Signal delivery failed: " + errs);
-    }
-}
-
-/**
- *
- */
 int
 DSI::sendCommand(
     const std::string &rawCMD
 ) {
+    VCOMP_COUT("Sending Command: " << rawCMD << std::endl);
     fputs(std::string(rawCMD + "\n").c_str(), mTo);
     fflush(mTo);
     return GLADIUS_SUCCESS;
