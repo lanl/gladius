@@ -81,38 +81,6 @@ DSI::~DSI(void)
 {
     using namespace std;
     //
-    if (-1 != mApplPID) {
-        // Wait for dsys child process
-        pid_t w;
-        int status;
-        do {
-            w = waitpid(mApplPID, &status, WUNTRACED | WCONTINUED);
-            if (w == -1) {
-                int err = errno;
-                auto errs = core::utils::getStrError(err);
-                GLADIUS_CERR_WARN << "pipe(2): " + errs << endl;
-            }
-            if (WIFEXITED(status)) {
-                VCOMP_COUT(
-                    "Appl Exited Status: " << WEXITSTATUS(status) << endl
-                );
-            }
-            else if (WIFSIGNALED(status)) {
-                VCOMP_COUT(
-                    "Appl Killed By Signal: " << WTERMSIG(status) << endl
-                );
-            }
-            else if (WIFSTOPPED(status)) {
-                VCOMP_COUT(
-                    "Appl Stopped By Signal: " << WSTOPSIG(status) << endl
-                );
-            }
-            else if (WIFCONTINUED(status)) {
-                VCOMP_COUT("Appl Continued..." << endl);
-            }
-        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-    }
-    // Other cleanup.
     if (mTo) fclose(mTo);
     if (mFrom) fclose(mFrom);
     //
@@ -120,6 +88,58 @@ DSI::~DSI(void)
     if (mFromAppl[0] != -1) close(mFromAppl[0]);
     //
     if (mFromDSysLineBuf) free(mFromDSysLineBuf);
+    // Nothing to do for child.
+    if (-1 == mApplPID) return;
+    // Wait for dsys child process
+    static const int lsMaxRetries = 6;
+    pid_t w;
+    for (int retry = 0;
+         retry < lsMaxRetries || (!WIFEXITED(w) && !WIFSIGNALED(w));
+         ++retry
+    ) {
+        int status;
+        w = waitpid(mApplPID, &status, WUNTRACED | WNOHANG);
+        if (-1 == w) {
+            int err = errno;
+            auto errs = core::utils::getStrError(err);
+            GLADIUS_CERR << "waitpid(2): " + errs << endl;
+            break;
+        }
+        if (0 == w) {
+            VCOMP_COUT("Waiting for child..." << endl);
+            sleep(1);
+            if (retry % 2) {
+                VCOMP_COUT("Done waiting for child..." << endl);
+                // Hit the launcher a couple of times. Sometimes they need that.
+                core::utils::sendSignal(mApplPID, SIGTERM);
+                core::utils::sendSignal(mApplPID, SIGTERM);
+                GLADIUS_CERR << "WARNING: Something bad happened "
+                             << "running a parallel job." << endl;
+                GLADIUS_CERR << "We cleaned up as best we could, "
+                             << "but there may be " << endl;
+                GLADIUS_CERR << "leftover " << sDSysName << " processes."
+                             << endl;
+            }
+        }
+        else if (mApplPID == w) {
+            if (WIFEXITED(status)) {
+                VCOMP_COUT(
+                    "dsys exited with status: " << WEXITSTATUS(status) << endl
+                );
+            }
+            else if (WIFSIGNALED(status)) {
+                VCOMP_COUT(
+                    "dsys signaled: " << WTERMSIG(status) << endl
+                );
+            }
+            else if (WIFSTOPPED(status)) {
+                VCOMP_COUT(
+                    "dsys stopped by signal: " << WSTOPSIG(status) << endl
+                );
+            }
+            break;
+        }
+    }
 }
 
 /**

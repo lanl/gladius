@@ -207,15 +207,20 @@ interact(Proc &p)
         if (p.leader) {
             cout << prompt << endl << flush;
             string line;
-            getline(cin, line);
+            do {
+                std::getline(cin, line);
+            } while (line.empty());
             auto searchr = cmdProtoTab.find(line[0]);
             // Command not found
             if (searchr == cmdProtoTab.end()) {
-                cerr << "unknown command: '" << line[0] << "'" << endl;
-                return ERROR;
+                cerr << "[***dsys] Terminating due to unexpected command: '"
+                     << line[0] << "'" << endl;
+                cmd = DONE;
             }
-            // Broadcast command to workers
-            cmd = searchr->second;
+            else {
+                // Broadcast command to workers
+                cmd = searchr->second;
+            }
         }
         int mpiRC = MPI_Bcast(&cmd, 1, MPI_INT, 0, MPI_COMM_WORLD);
         if (MPI_SUCCESS != mpiRC) return ERROR;
@@ -230,6 +235,7 @@ interact(Proc &p)
             searchr->second(p);
         }
     } while (DONE != cmd);
+    //
     return SUCCESS;
 }
 

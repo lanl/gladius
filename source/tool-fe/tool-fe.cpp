@@ -209,6 +209,7 @@ ToolFE::mSetupCore(void)
 int
 ToolFE::mPreToolInitActons(void)
 {
+#if 0
     using namespace std;
     // Dup here before we start tool infrastructure lash-up. Someone in
     // there makes stdio act funny. This is a workaround to fix that.
@@ -223,6 +224,7 @@ ToolFE::mPreToolInitActons(void)
         GLADIUS_CERR << "close(2): " + core::utils::getStrError(err) << endl;
         return GLADIUS_ERR;
     }
+#endif
     return GLADIUS_SUCCESS;
 }
 
@@ -232,6 +234,7 @@ ToolFE::mPreToolInitActons(void)
 int
 ToolFE::mPostToolInitActons(void)
 {
+#if 0
     // Restore stdin. This is the counterpart to the workaround in
     // mPreToolInitActons.
     if (-1 == dup2(mStdInCopy, STDIN_FILENO)) {
@@ -241,6 +244,7 @@ ToolFE::mPostToolInitActons(void)
         return GLADIUS_ERR;
     }
     close(mStdInCopy);
+#endif
     return GLADIUS_SUCCESS;
 }
 

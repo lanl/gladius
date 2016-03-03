@@ -32,8 +32,10 @@ class ToolFE {
 private:
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose;
+#if 0
     // stdin copy
     int mStdInCopy = 0;
+#endif
     // Our distributed system interface.
     dsi::DSI mDSI;
     // Our parallel application launcher personality.
