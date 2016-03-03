@@ -364,6 +364,11 @@ ToolFE::mBuildNetwork(void)
         if (GLADIUS_SUCCESS != (rc = mMRNFE.init(mBeVerbose))) {
             return rc;
         }
+        // Create MRNet network FE.
+        if (GLADIUS_SUCCESS !=
+            (rc = mMRNFE.createNetworkFE(mProcLandscape))) {
+            return rc;
+        }
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

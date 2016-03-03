@@ -19,7 +19,6 @@
 #include "core/ret-codes.h"
 #include "core/args.h"
 #include "core/utils.h"
-#include "core/hosts.h"
 
 #include <vector>
 #include <string>

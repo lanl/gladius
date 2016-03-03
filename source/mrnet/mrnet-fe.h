@@ -14,7 +14,7 @@
 
 #include "mrnet/MRNet.h"
 
-#include "core/hosts.h"
+#include "core/process-landscape.h"
 #include "tool-common/tool-common.h"
 
 #include <string>
@@ -38,16 +38,20 @@ private:
     // Hostname of the tool front-end.
     std::string mFEHostName;
     //
-    core::Hosts mHosts;
+    core::ProcessLandscape mProcLandscape;
     //
     std::string
     mGenFlatTopo(void);
     //
     bool mCanRMFile = false;
 public:
-    //
+    /**
+     *
+     */
     MRNetTopology(void) { ; }
-    //
+    /**
+     *
+     */
     ~MRNetTopology(void) {
         if (mCanRMFile) remove(mTopoFilePath.c_str());
     }
@@ -56,7 +60,7 @@ public:
         const std::string &topoFilePath,
         TopologyType topoType,
         const std::string &feHostName,
-        const core::Hosts &hosts
+        const core::ProcessLandscape &procLandscape
     );
 };
 
@@ -81,8 +85,8 @@ private:
     std::string mBEExe;
     // Absolute path to MRNet installation.
     std::string mPrefixPath;
-    // The process table of our job.
-    toolcommon::ProcessTable mProcTab;
+    // The process landscape of our job.
+    core::ProcessLandscape mProcLandscape;
     // The number of nodes in our job.
     size_t mNumAppNodes = 0;
     // The MRNet network instance.
@@ -124,9 +128,9 @@ public:
     int
     mSetEnvs(void);
     //
-    void
+    int
     createNetworkFE(
-        const toolcommon::ProcessTable &procTab
+        const core::ProcessLandscape &procLandscape
     );
     //
     int

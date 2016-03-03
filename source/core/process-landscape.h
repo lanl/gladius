@@ -29,9 +29,17 @@ class ProcessLandscape {
     // Guaranteed to be unique by host name.
     std::map<std::string, int> mLandscape;
 public:
-    //
+    /**
+     *
+     */
     ProcessLandscape(void) { ; }
-
+    /**
+     * Returns a const reference to the current landscape.
+     */
+    const std::map<std::string, int> &
+    landscape(void) const {
+        return mLandscape;
+    }
     /**
      * Returns a set of all the host names in the current landscape.
      */
@@ -43,7 +51,6 @@ public:
         }
         return res;
     }
-
     /**
      * Returns the number of hosts.
      */
@@ -51,7 +58,6 @@ public:
     nHosts(void) const {
         return mLandscape.size();
     }
-
     /**
      * Returns the total number of tasks across all the hosts.
      */
@@ -63,7 +69,6 @@ public:
         }
         return res;
     }
-
     /**
      *
      */

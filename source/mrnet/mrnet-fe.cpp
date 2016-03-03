@@ -62,11 +62,11 @@ MRNetTopology::MRNetTopology(
     const std::string &topoFilePath,
     TopologyType topoType,
     const std::string &feHostName,
-    const core::Hosts &hosts
+    const core::ProcessLandscape &procLandscape
 ) : mTopoFilePath(topoFilePath)
   , mTopoType(topoType)
   , mFEHostName(feHostName)
-  , mHosts(hosts)
+  , mProcLandscape(procLandscape)
   , mCanRMFile(false)
 {
     using namespace std;
@@ -94,7 +94,7 @@ MRNetTopology::MRNetTopology(
 }
 
 /**
- * Generates a 1xN (where N is the number of remote hosts) topology.
+ * Generates a 1xN (where N is the number of remote target processes) topology.
  * localhost:0 =>
  *   host:1
  *   host:2
@@ -108,8 +108,12 @@ MRNetTopology::mGenFlatTopo(void)
     // The "host:0 =>" bit.
     // The top of the tree is always going to be localhost.
     string resTopoStr = "localhost: " + to_string(id++) + " =>\n";
-    for (const auto &hostName : mHosts.hostNames()) {
-        resTopoStr += "  " + hostName + ":" + to_string(id++) + "\n";
+    for (const auto &l : mProcLandscape.landscape()) {
+        const string hostName = l.first;
+        const int nOnHost = l.second;
+        for (int targetID = 0; targetID < nOnHost; ++targetID) {
+            resTopoStr += "  " + hostName + ":" + to_string(id++) + "\n";
+        }
     }
     resTopoStr += ";";
     return resTopoStr;
@@ -447,25 +451,23 @@ MRNetFE::mRegisterEventCallbacks(void)
 /**
  *
  */
-void
+int
 MRNetFE::createNetworkFE(
-    const toolcommon::ProcessTable &procTab
+    const core::ProcessLandscape &procLandscape
 ) {
     // First, create and populate MRNet network topology file.
     // TODO dynamic TopologyType based on job characteristics.
-    VCOMP_COUT("Creating and Populating MRNet Topology" << std::endl);
-    // Stash the process table because we'll need this info later.
-    mProcTab = procTab;
-    // TODO FIXME get hosts
-    const auto &hosts = core::Hosts();
+    VCOMP_COUT("Creating and populating mrnet topology" << std::endl);
+    // Stash the process landscape because we'll need this info later.
+    mProcLandscape = procLandscape;
     // Set the number of target hosts
-    mNumAppNodes = hosts.nHosts();
+    mNumAppNodes = mProcLandscape.nHosts();
     // Create the topology file.
     MRNetTopology topo(
         mTopoFile,
         MRNetTopology::TopologyType::FLAT,
         core::utils::getHostname(),
-        hosts
+        mProcLandscape
     );
     // Both NULL because MRNet is NOT going to be launching the tool daemons.
     const char *dummyBackendExe = NULL;
@@ -475,6 +477,7 @@ MRNetFE::createNetworkFE(
                    dummyBackendExe,
                    &dummyArgv
                );
+#if 0
     if (!mNetwork) {
         GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkFE");
     }
@@ -498,8 +501,11 @@ MRNetFE::createNetworkFE(
     mCreateDaemonTIDMap();
     //
     mLeafInfo.networkTopology->get_Leaves(mLeafInfo.leafCps);
+#endif
+    return GLADIUS_SUCCESS;
 }
 
+#if 0
 /**
  *
  */
@@ -567,6 +573,7 @@ MRNetFE::mCreateDaemonTIDMap(void)
         }
     }
 }
+#endif
 
 /**
  * Returns GLADIUS_SUCCESS if all expected participants have connected
