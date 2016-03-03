@@ -295,7 +295,7 @@ ToolFE::main(
             return rc;
         }
         //
-        if (GLADIUS_SUCCESS != (rc = mInitializeToolInfrastructure())) {
+        if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
             return rc;
         }
         ////////////////////////////////////////////////////////////////////////
@@ -341,14 +341,10 @@ ToolFE::mDetermineProcLandscape(void)
             return rc;
         }
         GLADIUS_COUT_STAT << "Job Statistics:" << std::endl;
-        GLADIUS_COUT_STAT << "....Number of Application Processes: "
+        GLADIUS_COUT_STAT << "o Number of Application Processes: "
                           << mProcLandscape.nProcesses() << std::endl;
-        GLADIUS_COUT_STAT << "....Number of Hosts: "
+        GLADIUS_COUT_STAT << "o Number of Hosts: "
                           << mProcLandscape.nHosts() << std::endl;
-        // No longer need this, so tear it down.
-        if (GLADIUS_SUCCESS != (rc = mDSI.shutdown())) {
-            return rc;
-        }
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
@@ -361,7 +357,7 @@ ToolFE::mDetermineProcLandscape(void)
  *
  */
 int
-ToolFE::mInitializeToolInfrastructure(void)
+ToolFE::mBuildNetwork(void)
 {
     int rc = GLADIUS_SUCCESS;
     try {

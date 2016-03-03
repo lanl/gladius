@@ -169,7 +169,6 @@ DSI::init(
                         ) << endl;
         return GLADIUS_ERR_IO;
     }
-    // TODO set O_NONBLOCK?
     // Create new process for GDB.
     mApplPID = fork();
     ////////////////////////////////////////////////////////////////////////////
@@ -274,16 +273,17 @@ DSI::mGetRespLine(void)
 /**
  *
  */
-std::string
-DSI::mDrainToString(void)
-{
-    std::string result = "";
+int
+DSI::mDrainToString(
+    std::string &result
+) {
+    result = "";
     mGetRespLine();
     while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         result += std::string(mFromDSysLineBuf) + "\n";
         mGetRespLine();
     }
-    return result;
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -305,8 +305,7 @@ int
 DSI::mRecvResp(
     std::string &outputIfSuccess
 ) {
-    outputIfSuccess = mDrainToString();
-    return GLADIUS_SUCCESS;
+    return mDrainToString(outputIfSuccess);
 }
 
 /**
@@ -331,7 +330,7 @@ DSI::getProcessLandscape(
     string line;
     char hnbuf[HOST_NAME_MAX] = {'\0'};
     int hnn = 0;
-    while (std::getline(ss, line, '\n')) {
+    while (std::getline(ss, line)) {
         int n = sscanf(line.c_str(), "%s %d", hnbuf, &hnn);
         if (2 != n) {
             GLADIUS_CERR << "Invalid response detected: " << line << endl;
@@ -342,6 +341,7 @@ DSI::getProcessLandscape(
             return rc;
         }
     }
+    //
     return GLADIUS_SUCCESS;
 }
 

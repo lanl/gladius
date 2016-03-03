@@ -68,16 +68,19 @@ private:
     mGetStateFromEnvs(void);
     //
     int
+    mInitializeParallelLauncher(void);
+    //
+    int
     mPreToolInitActons(void);
+    //
+    int
+    mDetermineProcLandscape(void);
+    //
+    int
+    mBuildNetwork(void);
     //
     void
     mForwardEnvsToBEsIfSetOnFE(void);
-    //
-    int
-    mInitializeToolInfrastructure(void);
-    //
-    int
-    mInitializeParallelLauncher(void);
     //
     int
     mPostToolInitActons(void);
@@ -93,9 +96,6 @@ private:
     //
     void
     mEnterPluginMain(void);
-    //
-    int
-    mDetermineProcLandscape(void);
 
 public:
     // Default timeout (in seconds)

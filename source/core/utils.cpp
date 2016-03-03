@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -99,17 +99,20 @@ utils::getEnv(const std::string &envVarName)
 /**
  * Wrapper for setenv(3).
  */
-void
+int
 utils::setEnv(
     const std::string &envVarName,
     const std::string &value,
     bool overwrite
 ) {
-    int overwriteI = overwrite ? 1 : 0;
+    const int overwriteI = overwrite ? 1 : 0;
     auto rc = setenv(envVarName.c_str(), value.c_str(), overwriteI);
     if (-1 == rc) {
-        GLADIUS_THROW_CALL_FAILED("setEnv");
+        GLADIUS_CERR << utils::formatCallFailed("setenv(3): ", GLADIUS_WHERE)
+                     << std::endl;
+        return GLADIUS_ERR;
     }
+    return GLADIUS_SUCCESS;
 }
 
 /**

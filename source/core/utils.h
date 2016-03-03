@@ -101,7 +101,7 @@ public:
     static std::string
     getEnv(const std::string &envVarName);
     //
-    static void
+    static int
     setEnv(
         const std::string &envVarName,
         const std::string &value,

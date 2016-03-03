@@ -56,8 +56,10 @@ private:
     void
     mWaitForPrompt(void);
     //
-    std::string
-    mDrainToString(void);
+    int
+    mDrainToString(
+        std::string &result
+    );
     //
     int
     mSendCommand(

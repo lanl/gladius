@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef GLADIUS_MRNET_MRNET_FE_H_INCLUDED
-#define GLADIUS_MRNET_MRNET_FE_H_INCLUDED
+#pragma once
 
 #include "mrnet/MRNet.h"
 
@@ -102,12 +101,13 @@ private:
     void
     mRegisterEventCallbacks(void);
     //
-    bool
-    mDetermineAndSetPaths(std::string &whatsWrong);
+    int
+    mDetermineAndSetPaths(void);
     //
-    std::string
+    int
     mGetPrefixFromCommNode(
-        const std::string &whichString
+        const std::string &whichString,
+        std::string &prefix
     );
     //
     void
@@ -121,7 +121,7 @@ public:
     //
     ~MRNetFE(void);
     //
-    void
+    int
     mSetEnvs(void);
     //
     void
@@ -184,5 +184,3 @@ public:
 
 } // end mrnetfe namespace
 } // end gladius namespace
-
-#endif

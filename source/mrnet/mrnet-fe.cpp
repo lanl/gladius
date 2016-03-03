@@ -313,10 +313,12 @@ MRNetFE::getFEToBePackFun(void)
 /**
  * Sets some environment variables that impact the behavior of MRNetFE.
  */
-void
+int
 MRNetFE::mSetEnvs(void)
 {
-    core::utils::setEnv("MRNET_RSH", "/usr/bin/ssh");
+    VCOMP_COUT("Setting important environment variables..." << std::endl);
+
+    return core::utils::setEnv("MRNET_RSH", "/usr/bin/ssh");
 }
 
 /**
@@ -328,17 +330,20 @@ MRNetFE::init(
 ) {
     using namespace std;
     using namespace core;
-    string whatsWrong;
+    //
     try {
         mBeVerbose = beVerbose;
         //
         VCOMP_COUT("Initializing MRNet front-end." << endl);
         //
-        if (!mDetermineAndSetPaths(whatsWrong)) {
-            GLADIUS_CERR << whatsWrong << endl;
+        int rc = GLADIUS_SUCCESS;
+        string whatsWrong;
+        if (GLADIUS_SUCCESS != (rc = mDetermineAndSetPaths())) {
+            return rc;
+        }
+        if (GLADIUS_SUCCESS != (rc = mSetEnvs())) {
             return GLADIUS_ERR;
         }
-        mSetEnvs();
         //
         mSessionDir = core::SessionFE::TheSession().sessionDir();
         // Create a unique name for the file.
@@ -357,46 +362,47 @@ MRNetFE::init(
 /**
  *
  */
-std::string
+int
 MRNetFE::mGetPrefixFromCommNode(
-    const std::string &whichString
+    const std::string &whichString,
+    std::string &prefix
 ) {
     std::string badness = "Could not determine MRNet's installation "
                           "prefix by inspecting the following path:"
                           "'" + whichString + "'";
-    std::string prefix = whichString;
+    prefix = whichString;
     std::string last = "/bin/" + sCommNodeName;
     auto found = prefix.rfind(last);
     // Not found, so something is wrong.
     if (std::string::npos == found) {
-        GLADIUS_THROW(badness);
+        GLADIUS_CERR << badness << std::endl;
+        return GLADIUS_ERR;
     }
     prefix = prefix.substr(0, found);
-    return prefix;
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**
  *
  */
-bool
-MRNetFE::mDetermineAndSetPaths(
-    std::string &whatsWrong
-) {
+int
+MRNetFE::mDetermineAndSetPaths(void)
+{
     using namespace std;
-
-    whatsWrong = "";
-    VCOMP_COUT("Determining and setting paths." << std::endl);
+    //
+    VCOMP_COUT("Determining and setting paths..." << std::endl);
     // Make sure that we can find mrnet_commnode. Really just to get the base
     // MRNet installation path. That way we can find the libraries that we need.
     string cnPath;
-    auto status = core::utils::which(sCommNodeName, cnPath);
+    int status = core::utils::which(sCommNodeName, cnPath);
     if (GLADIUS_SUCCESS != status) {
-        whatsWrong = toolcommon::utils::genNotInPathErrString(sCommNodeName);
-        return false;
+        GLADIUS_CERR << toolcommon::utils::genNotInPathErrString(sCommNodeName)
+                     << endl;
+        return GLADIUS_ERR;
     }
     // Now get MRNet's installation prefix.
-    mPrefixPath = mGetPrefixFromCommNode(cnPath);
-    return true;
+    return mGetPrefixFromCommNode(cnPath, mPrefixPath);
 }
 
 /**

@@ -77,7 +77,7 @@ buildNetwork(void)
               NULL, // back-end argv
               NULL, // Network attributes
               true, // rank back-ends (start from 0)
-              true // topology in memory buffer, not a file
+              true  // topology in memory buffer, not a file
           );
     assert(net);
 
