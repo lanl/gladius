@@ -101,8 +101,11 @@ private:
     toolcommon::LeafInfo mLeafInfo;
     // A mapping between MRNet ranks and target task IDs.
     std::map< int, toolcommon::TxList<int> > mMRNetRankToTIDsMap;
+    //
+    int
+    mBuildNetwork(void);
     // Registers MRNet even callbacks.
-    void
+    int
     mRegisterEventCallbacks(void);
     //
     int
@@ -138,7 +141,6 @@ public:
     //
     void
     finalize(void);
-
     /**
      * Sets MRNetFE verbosity.
      */
@@ -154,7 +156,6 @@ public:
     getLeafInfo(void) const {
         return mLeafInfo;
     }
-
     /**
      *
      */

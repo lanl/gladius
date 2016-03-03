@@ -82,6 +82,9 @@ MRNetTopology::MRNetTopology(
             default:
                 GLADIUS_THROW_INVLD_ARG();
         }
+#if 1 // DEBUG
+        GLADIUS_COUT_STAT << "Network Topology:" << endl << topoString << endl;
+#endif
         // Populate the topology with the generated string.
         theFile << topoString;
         theFile.close();
@@ -254,10 +257,10 @@ beConnectCbFn(
     MRN::Event *event,
     void *
 ) {
-    std::mutex mtx;
+    static std::mutex mtx;
+    std::lock_guard<std::mutex> lock(mtx);
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
         && MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
-        std::lock_guard<std::mutex> lock(mtx);
         MRNetFEGlobals::numBEsReporting++;
     }
 }
@@ -270,12 +273,11 @@ nodeLostCbFn(
     MRN::Event *event,
     void *
 ) {
-    std::mutex mtx;
+    static std::mutex mtx;
+    std::lock_guard<std::mutex> lock(mtx);
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
         && MRN::TopologyEvent::TOPOL_REMOVE_NODE == event->get_Type()) {
-        std::lock_guard<std::mutex> lock(mtx);
-        COMP_COUT << "A Node Loss Was Detected! Implement Recovery."
-                  << std::endl << std::flush;
+        COMP_COUT << "A Node Loss Was Detected!" << std::endl << std::flush;
     }
 }
 } // end namespace
@@ -427,18 +429,20 @@ MRNetFE::finalize(void)
 /**
  * Registers network event callbacks.
  */
-void
+int
 MRNetFE::mRegisterEventCallbacks(void)
 {
+    using namespace gladius::core;
     using namespace MRN;
-
+    //
+    int nErrs = 0;
     bool rc = mNetwork->register_EventCallback(
                   Event::TOPOLOGY_EVENT,
                   TopologyEvent::TOPOL_ADD_BE,
                   beConnectCbFn,
                   NULL
               );
-    if (!rc) GLADIUS_THROW_CALL_FAILED("register_EventCallback");
+    if (!rc) ++nErrs;
     //
     rc = mNetwork->register_EventCallback(
              Event::TOPOLOGY_EVENT,
@@ -446,8 +450,59 @@ MRNetFE::mRegisterEventCallbacks(void)
              nodeLostCbFn,
              NULL
          );
+    if (!rc) ++nErrs;
+    //
+    if (0 != nErrs) {
+        static const std::string f = "MRN::register_EventCallback";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << std::endl;
+        return GLADIUS_ERR;
+    }
+    //
+    return GLADIUS_SUCCESS;
 }
-
+/**
+ *
+ */
+int
+MRNetFE::mBuildNetwork(void)
+{
+    using namespace std;
+    using namespace MRN;
+    //
+    try {
+        // Create the topology file.
+        MRNetTopology topo(
+            mTopoFile,
+            MRNetTopology::TopologyType::FLAT,
+            core::utils::getHostname(),
+            mProcLandscape
+        );
+        mNetwork = Network::CreateNetworkFE(
+                       mTopoFile.c_str(), // path to topology file
+                       NULL,              // path to back-end exe
+                       NULL,              // back-end argv
+                       NULL,              // Network attributes
+                       true,              // rank back-ends (start from 0)
+                       false              // topology in memory buffer, not file
+                   );
+        if (!mNetwork) {
+            static const string f = "MRN::Network::CreateNetworkFE";
+            GLADIUS_CERR << core::utils::formatCallFailed(f, GLADIUS_WHERE)
+                         << endl;
+            return GLADIUS_ERR;
+        }
+        else if (mNetwork->has_Error()) {
+            const string netErr = mNetwork->get_ErrorStr(mNetwork->get_Error());
+            GLADIUS_CERR << "Network errors detected: " << netErr << endl;
+            return GLADIUS_ERR;
+        }
+    }
+    catch (const std::exception &e) {
+        throw core::GladiusException(GLADIUS_WHERE, e.what());
+    }
+    //
+    return GLADIUS_SUCCESS;
+}
 /**
  *
  */
@@ -462,31 +517,17 @@ MRNetFE::createNetworkFE(
     mProcLandscape = procLandscape;
     // Set the number of target hosts
     mNumAppNodes = mProcLandscape.nHosts();
-    // Create the topology file.
-    MRNetTopology topo(
-        mTopoFile,
-        MRNetTopology::TopologyType::FLAT,
-        core::utils::getHostname(),
-        mProcLandscape
-    );
-    // Both NULL because MRNet is NOT going to be launching the tool daemons.
-    const char *dummyBackendExe = NULL;
-    const char *dummyArgv = NULL;
-    mNetwork = MRN::Network::CreateNetworkFE(
-                   mTopoFile.c_str(),
-                   dummyBackendExe,
-                   &dummyArgv
-               );
-#if 0
-    if (!mNetwork) {
-        GLADIUS_THROW_CALL_FAILED("MRN::Network::CreateNetworkFE");
-    }
-    else if (mNetwork->has_Error()) {
-        auto netErr = mNetwork->get_ErrorStr(mNetwork->get_Error());
-        GLADIUS_THROW_CALL_FAILED(netErr);
+    // Build network
+    int rc = GLADIUS_SUCCESS;
+    if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
+        return rc;
     }
     //
-    mRegisterEventCallbacks();
+    if (GLADIUS_SUCCESS != (rc = mRegisterEventCallbacks())) {
+        return rc;
+    }
+#if 0
+    //
     //
     mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
     if (!mLeafInfo.networkTopology) {
