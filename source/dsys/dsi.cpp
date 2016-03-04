@@ -79,7 +79,19 @@ DSI::DSI(
  */
 DSI::~DSI(void)
 {
+    mChildCleanup();
+}
+
+/**
+ *
+ */
+void
+DSI::mChildCleanup(void)
+{
     using namespace std;
+    //
+    static bool done = false;
+    if (done) return;
     //
     if (mTo) fclose(mTo);
     if (mFrom) fclose(mFrom);
@@ -140,6 +152,8 @@ DSI::~DSI(void)
             break;
         }
     }
+    // All done with cleanup.
+    done = true;
 }
 
 /**
@@ -358,6 +372,8 @@ DSI::shutdown(void)
     if (GLADIUS_SUCCESS != (rc = mSendCommand("q"))) {
         return rc;
     }
+    // Reap child and other cleanup.
+    mChildCleanup();
     return rc;
 }
 

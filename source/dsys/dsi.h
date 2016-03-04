@@ -73,6 +73,9 @@ private:
     mRecvResp(
         std::string &outputIfSuccess
     );
+    //
+    void
+    mChildCleanup(void);
 
 public:
     //
