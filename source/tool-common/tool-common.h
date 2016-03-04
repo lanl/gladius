@@ -14,9 +14,11 @@
 
 #pragma once
 
+#include "tool-common/faux-mpir.h"
+#include "tool-common/leaf-info.h"
+
 #include "core/core.h"
 #include "core/utils.h"
-#include "tool-common/faux-mpir.h"
 
 #include <cstring>
 #include <cstdint>
@@ -344,31 +346,6 @@ beReady(
         GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-extern "C" {
-/**
- *
- */
-typedef struct ToolLeafInfoT {
-    // TODO Remove
-    char hostName[HOST_NAME_MAX];
-    char parentHostName[HOST_NAME_MAX];
-    int rank;
-    int parentPort;
-    int parentRank;
-} ToolLeafInfoT;
-
-/**
- *
- */
-typedef struct ToolLeafInfoArrayT {
-    int size;
-    ToolLeafInfoT *leaves;
-} ToolLeafInfoArrayT;
-
-} // extern "C"
 
 } // end namespace
 } // end namespace

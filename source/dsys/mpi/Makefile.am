@@ -14,3 +14,9 @@ gladius-dsys
 
 gladius_dsys_SOURCES = \
 dsys.cpp
+
+gladius_dsys_CPPFLAGS = \
+-I${top_srcdir}/source
+
+gladius_dsys_LDADD = \
+${top_builddir}/source/core/libGladiusCore.la

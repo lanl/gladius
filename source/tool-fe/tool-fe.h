@@ -88,6 +88,9 @@ private:
     int
     mInitiateToolLashUp(void);
     //
+    int
+    mPublishConnectionInfo(void);
+    //
     void
     mLoadPlugins(void);
     //

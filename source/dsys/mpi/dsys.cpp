@@ -16,12 +16,16 @@
 #include "config.h"
 #endif
 
+#include "core/utils.h"
+#include "tool-common/leaf-info.h"
+
 #include <functional>
 #include <iostream>
 #include <cstdlib>
 #include <string>
 #include <cstdio>
 #include <map>
+#include <vector>
 
 #include <limits.h>
 #include <unistd.h>
@@ -32,14 +36,15 @@ using namespace std;
 
 namespace {
 
-static const char *prompt = "(dsys) ";
+static const char *prompt   = "(dsys) ";
+static const char *compName = "[***dsys]";
 
 static const int SUCCESS = 0;
 static const int ERROR   = 1;
 //
 static const int DONE    = 0;
-static const int STEP    = 1;
-static const int HOSTS   = 2;
+static const int HOSTS   = 1;
+static const int PUBCONN = 2;
 
 /**
  *
@@ -131,6 +136,39 @@ hosts(Proc &p)
 }
 
 /**
+ * Publishes tool connection info in parallel across compute resources.
+ * Protocol:
+ * 1. Read number of expected targets, n
+ * 2. Read and decode n base64-encoded infos.
+ * 3. Push info to nodes.
+ */
+int
+pubConn(Proc &p)
+{
+    using namespace std;
+    //
+    if (p.leader) {
+        string line;
+        std::getline(cin, line);
+        int nTargets = std::stol(line, 0, 10);
+        int nGot = 0;
+        for ( ; nGot < nTargets; ++nGot) {
+            std::getline(cin, line);
+            if (line.empty()) break;
+        }
+        if (nGot != nTargets) {
+            cerr << compName
+                 << " Terminating due to unexpected number of infos..."
+                 << endl;
+        }
+        for (int i = 0; i < nGot; ++i) {
+        }
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    return SUCCESS;
+}
+
+/**
  *
  */
 int
@@ -181,16 +219,17 @@ fini(const Proc &p)
  */
 const map<char, int> cmdProtoTab = {
     {'q', DONE},
-    {'s', STEP},
-    {'h', HOSTS}
+    {'h', HOSTS},
+    {'c', PUBCONN}
 };
 
 /**
  * Protocol/function table.
  */
 const map< int, function<int(Proc &p)> > protoFunTable = {
-    {DONE,  done},
-    {HOSTS, hosts}
+    {DONE,    done},
+    {HOSTS,   hosts},
+    {PUBCONN, pubConn}
 };
 
 /**
@@ -213,7 +252,8 @@ interact(Proc &p)
             auto searchr = cmdProtoTab.find(line[0]);
             // Command not found
             if (searchr == cmdProtoTab.end()) {
-                cerr << "[***dsys] Terminating due to unexpected command: '"
+                cerr << compName
+                     << " Terminating due to unexpected command: '"
                      << line[0] << "'" << endl;
                 cmd = DONE;
             }

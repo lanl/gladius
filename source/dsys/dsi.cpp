@@ -113,7 +113,7 @@ DSI::~DSI(void)
                 // Hit the launcher a couple of times. Sometimes they need that.
                 core::utils::sendSignal(mApplPID, SIGTERM);
                 core::utils::sendSignal(mApplPID, SIGTERM);
-                GLADIUS_CERR << "WARNING: Something bad happened "
+                GLADIUS_CERR << "WARNING: An error occurred while"
                              << "running a parallel job." << endl;
                 GLADIUS_CERR << "We cleaned up as best we could, "
                              << "but there may be " << endl;

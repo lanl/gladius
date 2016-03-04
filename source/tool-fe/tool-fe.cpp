@@ -17,6 +17,7 @@
 #include "core/env.h"
 #include "tool-be/tool-be.h"
 
+#include <cassert>
 #include <string>
 
 #include <unistd.h>
@@ -451,6 +452,38 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 }
 
 /**
+ *
+ */
+int
+ToolFE::mPublishConnectionInfo(void)
+{
+    using namespace std;
+    using namespace gladius::core;
+    //
+    VCOMP_COUT("Publishing connection information..." << endl);
+    // First get the connection map from the TBON.
+    int rc = GLADIUS_SUCCESS;
+    vector<toolcommon::ToolLeafInfoT> leafInfos;
+    if (GLADIUS_SUCCESS != (rc = mMRNFE.generateConnectionMap(leafInfos))) {
+        return rc;
+    }
+    // We better have at least one item here.
+    assert(leafInfos.size() > 0);
+    // Serialize the data
+    vector<string> sLeafInfos;
+    // Serialization buffer. Items should all be the same size.
+    char sBuf[sizeof(toolcommon::ToolLeafInfoT)];
+    for (const auto &li : leafInfos) {
+        memcpy(sBuf, &li, sizeof(sBuf));
+        string tmp(sBuf, sizeof(sBuf));
+        // Stash encoded buffer
+        sLeafInfos.push_back(utils::base64Encode(tmp));
+    }
+    //
+    return GLADIUS_SUCCESS;
+}
+
+/**
  * Initiates the tool lash-up bits.
  */
 int
@@ -462,10 +495,8 @@ ToolFE::mInitiateToolLashUp(void)
     VCOMP_COUT("Initiating tool lashup..." << endl);
     try {
         echoLaunchStart(mLauncherArgs, mAppArgs);
-        // First get the connection map from the TBON.
-        int rc = GLADIUS_SUCCESS;
-        vector<toolcommon::ToolLeafInfoT> leafInfos;
-        if (GLADIUS_SUCCESS != (rc = mMRNFE.generateConnectionMap(leafInfos))) {
+        int rc = mPublishConnectionInfo();
+        if (GLADIUS_SUCCESS != rc) {
             return rc;
         }
         // Wait for MRNet tree connections.
