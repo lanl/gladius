@@ -58,6 +58,8 @@ struct Proc {
     // Map between a hostname and the number of targets on it. There shall be no
     // duplicate hostnames in this table.
     map<string, int> hostTargetNumTab;
+    // Tool connection information.
+    gladius::toolcommon::ToolLeafInfoArrayT leafInfos;
 
     Proc(void)
         : leader(false)
@@ -66,6 +68,17 @@ struct Proc {
         , cwSize(0) {
         int rc = gethostname(hostname, sizeof(hostname));
         if (0 != rc) exit(EXIT_FAILURE);
+        //
+        leafInfos.size = 0;
+        leafInfos.leaves = nullptr;
+    }
+
+    /**
+     *
+     */
+    ~Proc(void) {
+        if (leafInfos.leaves) free(leafInfos.leaves);
+        leafInfos.leaves = nullptr;
     }
 };
 
@@ -146,35 +159,53 @@ int
 pubConn(Proc &p)
 {
     using namespace gladius;
+    using namespace gladius::toolcommon;
     using namespace std;
+    //
+    ToolLeafInfoArrayT &leafInfos = p.leafInfos;
+    if (leafInfos.leaves) free(leafInfos.leaves);
+    leafInfos.size = p.cwSize;
+    leafInfos.leaves = (ToolLeafInfoT *)calloc(p.cwSize, sizeof(ToolLeafInfoT));
+    if (!leafInfos.leaves) {
+        cerr << compName << " Out of Resources!" << endl;
+        return ERROR;
+    }
     //
     if (p.leader) {
         string line;
         std::getline(cin, line);
-        int nTargets = std::stol(line, 0, 10);
-        int nGot = 0;
-        vector<toolcommon::ToolLeafInfoT> leafInfos;
-        for ( ; nGot < nTargets; ++nGot) {
+        unsigned nGot = 0, nTargets = std::stol(line, 0, 10);
+        for (nGot = 0; nGot < nTargets; ++nGot) {
             std::getline(cin, line);
             if (line.empty()) break;
             // Decode the infos
             const string res = core::utils::base64Decode(line);
-            toolcommon::ToolLeafInfoT li;
-            memcpy(&li, res.data(), sizeof(li));
+            ToolLeafInfoT *destp = &(leafInfos.leaves[nGot]);
+            memcpy(destp, res.data(), sizeof(ToolLeafInfoT));
 #if 1 // DEBUG
-            cout << "ToolLeafInfoT " << nGot << endl
-                 << "- Parent Host Name: " << li.parentHostName << endl
-                 << "- Parent Rank     : " << li.parentRank     << endl
-                 << "- Parent Port     : " << li.parentPort     << endl;
+            cout << "ToolLeafInfoT "       << nGot                  << endl
+                 << "- Parent Host Name: " << destp->parentHostName << endl
+                 << "- Parent Rank     : " << destp->parentRank     << endl
+                 << "- Parent Port     : " << destp->parentPort     << endl;
 #endif
         }
         if (nGot != nTargets) {
             cerr << compName
                  << " Terminating due to unexpected number of infos..."
                  << endl;
+            return ERROR;
         }
     }
-    MPI_Barrier(MPI_COMM_WORLD);
+    const int count = sizeof(ToolLeafInfoT) * leafInfos.size;
+    int mpiRC = MPI_Bcast(
+                    leafInfos.leaves,
+                    count,
+                    MPI_CHAR,
+                    0,
+                    MPI_COMM_WORLD
+                );
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+    //
     return SUCCESS;
 }
 
@@ -282,7 +313,9 @@ interact(Proc &p)
             return ERROR;
         }
         else {
-            searchr->second(p);
+            if (SUCCESS != searchr->second(p)) {
+                return ERROR;
+            }
         }
     } while (DONE != cmd);
     //
