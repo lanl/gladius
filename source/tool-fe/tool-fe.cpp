@@ -462,7 +462,7 @@ ToolFE::mInitiateToolLashUp(void)
     VCOMP_COUT("Initiating tool lashup..." << endl);
     try {
         echoLaunchStart(mLauncherArgs, mAppArgs);
-        //
+        // First get the connection map from the TBON.
         int rc = GLADIUS_SUCCESS;
         vector<toolcommon::ToolLeafInfoT> leafInfos;
         if (GLADIUS_SUCCESS != (rc = mMRNFE.generateConnectionMap(leafInfos))) {

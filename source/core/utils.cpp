@@ -11,6 +11,11 @@
 #include <type_traits>
 #include <cassert>
 
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/algorithm/string.hpp>
+
 using namespace gladius::core;
 
 const std::string utils::osPathSep = "/";
@@ -227,4 +232,41 @@ utils::strTok(
     }
 
     return theResult;
+}
+
+
+/**
+ * base64 encode routine.
+ * http://stackoverflow.com/questions/7053538/
+ * how-do-i-encode-a-string-to-base64-using-only-boost
+ */
+std::string
+utils::base64Encode(
+    std::string &val
+) {
+    using namespace boost::archive::iterators;
+    using It = base64_from_binary<
+                   transform_width<std::string::const_iterator, 6, 8>
+               >;
+    auto tmp = std::string(It(std::begin(val)), It(std::end(val)));
+    return tmp.append((3 - val.size() % 3) % 3, '=');
+}
+
+/**
+ * base64 decode routine.
+ * http://stackoverflow.com/questions/7053538/
+ * how-do-i-encode-a-string-to-base64-using-only-boost
+ */
+std::string
+utils::base64Decode(
+    std::string &val
+) {
+    using namespace boost::archive::iterators;
+    using It = transform_width<
+                   binary_from_base64<std::string::const_iterator>, 8, 6
+               >;
+    return boost::algorithm::trim_right_copy_if(
+        std::string(It(std::begin(val)), It(std::end(val))),
+        [](char c) { return c == '\0'; }
+    );
 }

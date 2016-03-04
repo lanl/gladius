@@ -19,6 +19,7 @@
 #include <functional>
 #include <cctype>
 #include <locale>
+#include <iostream>
 
 #include <errno.h>
 #include <limits.h>
@@ -27,9 +28,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
-
-
-#include <iostream>
 
 namespace gladius {
 namespace core {
@@ -238,6 +236,12 @@ public:
         errs += inErrs;
         return errs;
     }
+    //
+    static std::string
+    base64Encode(std::string &val);
+    //
+    static std::string
+    base64Decode(std::string &val);
 };
 
 } // end core namespace
