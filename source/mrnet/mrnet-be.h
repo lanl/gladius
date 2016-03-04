@@ -55,7 +55,7 @@ public:
     //
     void
     setPersonality(
-        const toolbecommon::ToolLeafInfoArrayT &tlia
+        const toolcommon::ToolLeafInfoArrayT &tlia
     );
     /**
      *

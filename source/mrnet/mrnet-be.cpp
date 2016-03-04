@@ -107,7 +107,7 @@ MRNetBE::init(
  */
 void
 MRNetBE::setPersonality(
-    const toolbecommon::ToolLeafInfoArrayT &tlia
+    const toolcommon::ToolLeafInfoArrayT &tlia
 ) {
     VCOMP_COUT("Finding My MRNet Personality." << std::endl);
 

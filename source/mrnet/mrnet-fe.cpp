@@ -546,9 +546,11 @@ MRNetFE::mPopulateLeafInfo(void)
  *
  */
 int
-MRNetFE::mGenerateConnectionMap(void)
-{
+MRNetFE::generateConnectionMap(
+    std::vector<toolcommon::ToolLeafInfoT> &cMap
+) {
     VCOMP_COUT("Generating connection map..." << std::endl);
+    //
     const auto numLeaves = mLeafInfo.leaves.size();
     //
     mNExpectedBEs = numLeaves * mNThread;
@@ -556,27 +558,30 @@ MRNetFE::mGenerateConnectionMap(void)
     const unsigned besPerLeaf = mNExpectedBEs / numLeaves;
     unsigned currLeaf = 0;
     for (unsigned i = 0; (i < mNExpectedBEs) && (currLeaf < numLeaves); ++i) {
-       if( i && (i % besPerLeaf == 0) ) {
-           // select next parent
-           currLeaf++;
-           if (currLeaf == numLeaves) {
-               // except when there is no "next"
-               currLeaf--;
-           }
-       }
-       auto &leaves = mLeafInfo.leaves;
-       fprintf(stdout, "BE %d will connect to %s:%d:%d\n",
-               i,
-               leaves[currLeaf]->get_HostName().c_str(),
-               leaves[currLeaf]->get_Port(),
-               leaves[currLeaf]->get_Rank() );
-#if 0
-       fprintf(fp, "%s %d %d %d\n",
-               leaves[currLeaf]->get_HostName().c_str(),
-               leaves[currLeaf]->get_Port(),
-               leaves[currLeaf]->get_Rank(),
-               i);
+        if( i && (i % besPerLeaf == 0) ) {
+            // select next parent
+            currLeaf++;
+            if (currLeaf == numLeaves) {
+                // except when there is no "next"
+                currLeaf--;
+            }
+        }
+        auto &leaves = mLeafInfo.leaves;
+#if 1 // DEBUG
+        fprintf(stdout, "BE %d will connect to %s:%d:%d\n",
+                i,
+                leaves[currLeaf]->get_HostName().c_str(),
+                leaves[currLeaf]->get_Port(),
+                leaves[currLeaf]->get_Rank()
+        );
 #endif
+        // Build the info
+        toolcommon::ToolLeafInfoT mi;
+        const char *hn = leaves[currLeaf]->get_HostName().c_str();
+        memmove(mi.parentHostName, hn, strlen(hn) + 1);
+        mi.rank = leaves[currLeaf]->get_Rank();
+        mi.parentPort = leaves[currLeaf]->get_Port();
+        cMap.push_back(mi);
     }
     //
     return GLADIUS_SUCCESS;
@@ -591,7 +596,7 @@ MRNetFE::createNetworkFE(
 ) {
     // First, create and populate MRNet network topology file.
     // TODO dynamic TopologyType based on job characteristics.
-    VCOMP_COUT("Creating and populating mrnet topology" << std::endl);
+    VCOMP_COUT("Creating and populating MRNet topology" << std::endl);
     // Stash the process landscape because we'll need this info later.
     mProcLandscape = procLandscape;
     // Build network
@@ -605,10 +610,6 @@ MRNetFE::createNetworkFE(
     }
     //
     if (GLADIUS_SUCCESS != (rc = mPopulateLeafInfo())) {
-        return rc;
-    }
-    //
-    if (GLADIUS_SUCCESS != (rc = mGenerateConnectionMap())) {
         return rc;
     }
     //

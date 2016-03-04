@@ -456,23 +456,18 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 int
 ToolFE::mInitiateToolLashUp(void)
 {
+    using namespace std;
+    using namespace gladius::core;
+    //
+    VCOMP_COUT("Initiating tool lashup..." << endl);
     try {
         echoLaunchStart(mLauncherArgs, mAppArgs);
-        // TODO
-        // Setup environment variable forwarding to the remote environments.
-        //mForwardEnvsToBEsIfSetOnFE();
-#if 0 // TODO
-        // And so it begins...
-        mLMONFE.launchAndSpawnDaemons(mAppArgs);
-        // Make sure that the tool daemons launched.
-        if (!mLMONFE.daemonsLaunched()) {
-            GLADIUS_THROW("Tool Daemons Not Launched.");
+        //
+        int rc = GLADIUS_SUCCESS;
+        vector<toolcommon::ToolLeafInfoT> leafInfos;
+        if (GLADIUS_SUCCESS != (rc = mMRNFE.generateConnectionMap(leafInfos))) {
+            return rc;
         }
-        // Create MRNet network FE.
-        mMRNFE.createNetworkFE(mLMONFE.getProcTab());
-        // Send info to daemons.
-        mLMONFE.sendDaemonInfo(mMRNFE.getLeafInfo());
-#endif
         // Wait for MRNet tree connections.
         mConnectMRNetTree();
         // Setup connected MRNet network.

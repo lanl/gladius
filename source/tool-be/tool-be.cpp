@@ -55,7 +55,7 @@ feToBeUnpack(
     void *data
 ) {
     using namespace std;
-    using namespace toolbecommon;
+    using namespace toolcommon;
 
     GLADIUS_UNUSED(bufLen);
 
@@ -253,15 +253,15 @@ ToolBE::connect(void)
 {
     VCOMP_COUT("Connecting..." << std::endl);
     VCOMP_COUT("Receiving Tool Leaf Information." << std::endl);
-    toolbecommon::ToolLeafInfoArrayT lia;
+    toolcommon::ToolLeafInfoArrayT lia;
 #if 0
     mLMONBE.recvConnectionInfo(lia);
     //
     mLMONBE.broadcast((void *)&lia.size, sizeof(int));
     // Non-masters allocate space for the MRNet connection info.
     if (!mLMONBE.amMaster()) {
-        lia.leaves = (toolbecommon::ToolLeafInfoT *)
-            calloc(lia.size, sizeof(toolbecommon::ToolLeafInfoT));
+        lia.leaves = (toolcommon::ToolLeafInfoT *)
+            calloc(lia.size, sizeof(toolcommon::ToolLeafInfoT));
         if (!lia.leaves) GLADIUS_THROW_OOR();
     }
     VCOMP_COUT(
@@ -269,7 +269,7 @@ ToolBE::connect(void)
     );
     mLMONBE.broadcast(
         (void *)lia.leaves,
-        lia.size * sizeof(toolbecommon::ToolLeafInfoT)
+        lia.size * sizeof(toolcommon::ToolLeafInfoT)
     );
 #endif
     //

@@ -345,20 +345,14 @@ beReady(
     }
 }
 
-} // end namespace
-} // end namespace
-
 ////////////////////////////////////////////////////////////////////////////////
-//
 ////////////////////////////////////////////////////////////////////////////////
-namespace gladius {
-namespace toolbecommon {
-
 extern "C" {
 /**
  *
  */
 typedef struct ToolLeafInfoT {
+    // TODO Remove
     char hostName[HOST_NAME_MAX];
     char parentHostName[HOST_NAME_MAX];
     int rank;
@@ -374,8 +368,7 @@ typedef struct ToolLeafInfoArrayT {
     ToolLeafInfoT *leaves;
 } ToolLeafInfoArrayT;
 
-
 } // extern "C"
 
-}
-}
+} // end namespace
+} // end namespace

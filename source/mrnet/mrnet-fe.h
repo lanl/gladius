@@ -114,9 +114,6 @@ private:
     mPopulateLeafInfo(void);
     //
     int
-    mGenerateConnectionMap(void);
-    //
-    int
     mDetermineAndSetPaths(void);
     //
     int
@@ -146,6 +143,11 @@ public:
     //
     int
     init(bool beVerbose = false);
+    //
+    int
+    generateConnectionMap(
+        std::vector<toolcommon::ToolLeafInfoT> &cMap
+    );
     //
     void
     finalize(void);

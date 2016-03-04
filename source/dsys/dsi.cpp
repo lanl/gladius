@@ -106,10 +106,10 @@ DSI::~DSI(void)
             break;
         }
         if (0 == w) {
-            VCOMP_COUT("Waiting for child..." << endl);
+            VCOMP_COUT("Waiting for dsys to complete..." << endl);
             sleep(1);
             if (retry % 2) {
-                VCOMP_COUT("Done waiting for child..." << endl);
+                VCOMP_COUT("Done waiting for dsys..." << endl);
                 // Hit the launcher a couple of times. Sometimes they need that.
                 core::utils::sendSignal(mApplPID, SIGTERM);
                 core::utils::sendSignal(mApplPID, SIGTERM);
