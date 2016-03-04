@@ -87,8 +87,6 @@ private:
     std::string mPrefixPath;
     // The process landscape of our job.
     core::ProcessLandscape mProcLandscape;
-    // The number of nodes in our job.
-    size_t mNumAppNodes = 0;
     // The MRNet network instance.
     MRN::Network *mNetwork = nullptr;
     //
@@ -97,6 +95,10 @@ private:
     MRN::Stream *mProtoStream = nullptr;
     // The number of tree nodes in our topology.
     unsigned int mNTreeNodes = 0;
+    // Number of tool threads per target.
+    unsigned int mNThread = 0;
+    //
+    unsigned int mNExpectedBEs = 0;
     //
     toolcommon::LeafInfo mLeafInfo;
     // A mapping between MRNet ranks and target task IDs.
@@ -107,6 +109,12 @@ private:
     // Registers MRNet even callbacks.
     int
     mRegisterEventCallbacks(void);
+    //
+    int
+    mPopulateLeafInfo(void);
+    //
+    int
+    mGenerateConnectionMap(void);
     //
     int
     mDetermineAndSetPaths(void);

@@ -65,9 +65,7 @@ enum MRNetCoreTags {
 ////////////////////////////////////////////////////////////////////////////////
 struct LeafInfo {
     MRN::NetworkTopology *networkTopology = nullptr;
-    std::multiset<std::string> daemons;
-    std::vector<MRN::NetworkTopology::Node *> leafCps;
-    // TODO add destructor
+    std::vector<MRN::NetworkTopology::Node *> leaves;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

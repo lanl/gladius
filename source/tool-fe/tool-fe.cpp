@@ -294,13 +294,12 @@ ToolFE::main(
         if (GLADIUS_SUCCESS != (rc = mDetermineProcLandscape())) {
             return rc;
         }
-        //
-        if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
-            return rc;
-        }
         ////////////////////////////////////////////////////////////////////////
         // If we are here, then our environment is sane enough to start...
         ////////////////////////////////////////////////////////////////////////
+        if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
+            return rc;
+        }
         // Start lash-up.
         if (GLADIUS_SUCCESS != (rc = mInitiateToolLashUp())) {
             return rc;

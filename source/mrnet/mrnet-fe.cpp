@@ -136,6 +136,11 @@ feToBEPack(
     int bufMax,
     int *bufLen
 ) {
+    GLADIUS_UNUSED(data);
+    GLADIUS_UNUSED(buf);
+    GLADIUS_UNUSED(bufMax);
+    GLADIUS_UNUSED(bufLen);
+#if 0
     using namespace std;
     using namespace MRN;
     using namespace toolcommon;
@@ -174,7 +179,7 @@ feToBEPack(
     ptr += sizeof(int);
 
     // Pack up the number of parent nodes.
-    int nLeaves = leafInfo->leafCps.size();
+    int nLeaves = leafInfo->leaves.size();
     (void)memcpy(ptr, (void *)&nLeaves, sizeof(int));
     ptr += sizeof(int);
     total += sizeof(int);
@@ -187,7 +192,7 @@ feToBEPack(
     // Write the data one parent at a time.
     for (i = 0; i < (unsigned long)nLeaves; ++i) {
         // Get the parent info.
-        node = leafInfo->leafCps[i];
+        node = leafInfo->leaves[i];
         port = node->get_Port();
         rank = node->get_Rank();
         std::string currentHost = node->get_HostName();
@@ -240,13 +245,14 @@ feToBEPack(
     (void)memcpy(daemonCountPtr, (void *)&daemonCount, sizeof(int));
 
     *bufLen = total;
+#endif
     return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace MRNetFEGlobals {
 // The number of back-ends that have reported back to us.
-int numBEsReporting = 0;
+unsigned numBEsReporting = 0;
 }
 
 /**
@@ -292,6 +298,7 @@ const std::string MRNetFE::sCoreFiltersSO = "libGladiusMRNetCoreFilters.so";
 MRNetFE::MRNetFE(
     void
 ) : mPrefixPath("")
+  , mNThread(1)
 {
     MRNetFEGlobals::numBEsReporting = 0;
 }
@@ -435,6 +442,8 @@ MRNetFE::mRegisterEventCallbacks(void)
     using namespace gladius::core;
     using namespace MRN;
     //
+    VCOMP_COUT("Registering event callbacks..." << std::endl);
+    //
     int nErrs = 0;
     bool rc = mNetwork->register_EventCallback(
                   Event::TOPOLOGY_EVENT,
@@ -460,6 +469,7 @@ MRNetFE::mRegisterEventCallbacks(void)
     //
     return GLADIUS_SUCCESS;
 }
+
 /**
  *
  */
@@ -468,6 +478,8 @@ MRNetFE::mBuildNetwork(void)
 {
     using namespace std;
     using namespace MRN;
+    //
+    VCOMP_COUT("Building network..." << std::endl);
     //
     try {
         // Create the topology file.
@@ -503,6 +515,73 @@ MRNetFE::mBuildNetwork(void)
     //
     return GLADIUS_SUCCESS;
 }
+
+/**
+ *
+ */
+int
+MRNetFE::mPopulateLeafInfo(void)
+{
+    using namespace std;
+    using namespace gladius::core;
+    using namespace MRN;
+    //
+    VCOMP_COUT("Populating leaf info..." << std::endl);
+    //
+    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
+    if (!mLeafInfo.networkTopology) {
+        static const std::string f = "MRN::get_NetworkTopology";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << std::endl;
+        return GLADIUS_ERR;
+    }
+    //
+    mNTreeNodes = mLeafInfo.networkTopology->get_NumNodes();
+    //
+    mLeafInfo.networkTopology->get_Leaves(mLeafInfo.leaves);
+    //
+    return GLADIUS_SUCCESS;
+}
+
+/**
+ *
+ */
+int
+MRNetFE::mGenerateConnectionMap(void)
+{
+    VCOMP_COUT("Generating connection map..." << std::endl);
+    const auto numLeaves = mLeafInfo.leaves.size();
+    //
+    mNExpectedBEs = numLeaves * mNThread;
+    //
+    const unsigned besPerLeaf = mNExpectedBEs / numLeaves;
+    unsigned currLeaf = 0;
+    for (unsigned i = 0; (i < mNExpectedBEs) && (currLeaf < numLeaves); ++i) {
+       if( i && (i % besPerLeaf == 0) ) {
+           // select next parent
+           currLeaf++;
+           if (currLeaf == numLeaves) {
+               // except when there is no "next"
+               currLeaf--;
+           }
+       }
+       auto &leaves = mLeafInfo.leaves;
+       fprintf(stdout, "BE %d will connect to %s:%d:%d\n",
+               i,
+               leaves[currLeaf]->get_HostName().c_str(),
+               leaves[currLeaf]->get_Port(),
+               leaves[currLeaf]->get_Rank() );
+#if 0
+       fprintf(fp, "%s %d %d %d\n",
+               leaves[currLeaf]->get_HostName().c_str(),
+               leaves[currLeaf]->get_Port(),
+               leaves[currLeaf]->get_Rank(),
+               i);
+#endif
+    }
+    //
+    return GLADIUS_SUCCESS;
+}
+
 /**
  *
  */
@@ -515,8 +594,6 @@ MRNetFE::createNetworkFE(
     VCOMP_COUT("Creating and populating mrnet topology" << std::endl);
     // Stash the process landscape because we'll need this info later.
     mProcLandscape = procLandscape;
-    // Set the number of target hosts
-    mNumAppNodes = mProcLandscape.nHosts();
     // Build network
     int rc = GLADIUS_SUCCESS;
     if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
@@ -526,23 +603,15 @@ MRNetFE::createNetworkFE(
     if (GLADIUS_SUCCESS != (rc = mRegisterEventCallbacks())) {
         return rc;
     }
-#if 0
     //
-    //
-    mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
-    if (!mLeafInfo.networkTopology) {
-        GLADIUS_THROW_CALL_FAILED("MRN::Network::get_NetworkTopology");
+    if (GLADIUS_SUCCESS != (rc = mPopulateLeafInfo())) {
+        return rc;
     }
     //
-    mNTreeNodes = mLeafInfo.networkTopology->get_NumNodes();
+    if (GLADIUS_SUCCESS != (rc = mGenerateConnectionMap())) {
+        return rc;
+    }
     //
-    mLeafInfo.daemons.insert(hosts.hostNames().cbegin(),
-                             hosts.hostNames().cend());
-    //
-    mCreateDaemonTIDMap();
-    //
-    mLeafInfo.networkTopology->get_Leaves(mLeafInfo.leafCps);
-#endif
     return GLADIUS_SUCCESS;
 }
 
@@ -627,27 +696,23 @@ MRNetFE::connect(void)
 
     VCOMP_COUT("Trying to Connect..." << endl);
     try {
-        if (mNumAppNodes == (size_t)MRNetFEGlobals::numBEsReporting) {
+        if (mNExpectedBEs == MRNetFEGlobals::numBEsReporting) {
             return GLADIUS_SUCCESS;
         }
         else {
-            VCOMP_COUT("Sill Waiting for All Daemons to Report Back..."
+            VCOMP_COUT("Sill waiting for all back-ends to report back..."
                        << endl);
             VCOMP_COUT("*** "
                        << setw(6) << setfill('0')
                        << MRNetFEGlobals::numBEsReporting << " Out of "
                        << setw(6) << setfill('0')
-                       << mNumAppNodes << " Daemons Reporting."
+                       << mNExpectedBEs << " Reporting."
                        << endl);
             return GLADIUS_NOT_CONNECTED;
         }
     }
     catch (const std::exception &e) {
-        // If we are being verbose, then show the error.
-        if (mBeVerbose) {
-            GLADIUS_CERR << e.what() << std::endl;
-        }
-        return GLADIUS_NOT_CONNECTED;
+        GLADIUS_THROW(e.what());
     }
     return GLADIUS_ERR;
 }
@@ -703,7 +768,7 @@ MRNetFE::networkInit(void)
     }
     //
     mLoadCoreFilters();
-
+    //
     VCOMP_COUT("Done Initializing Network." << std::endl);
 }
 
