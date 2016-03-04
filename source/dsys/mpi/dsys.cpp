@@ -145,6 +145,7 @@ hosts(Proc &p)
 int
 pubConn(Proc &p)
 {
+    using namespace gladius;
     using namespace std;
     //
     if (p.leader) {
@@ -152,16 +153,25 @@ pubConn(Proc &p)
         std::getline(cin, line);
         int nTargets = std::stol(line, 0, 10);
         int nGot = 0;
+        vector<toolcommon::ToolLeafInfoT> leafInfos;
         for ( ; nGot < nTargets; ++nGot) {
             std::getline(cin, line);
             if (line.empty()) break;
+            // Decode the infos
+            const string res = core::utils::base64Decode(line);
+            toolcommon::ToolLeafInfoT li;
+            memcpy(&li, res.data(), sizeof(li));
+#if 1 // DEBUG
+            cout << "ToolLeafInfoT " << nGot << endl
+                 << "- Parent Host Name: " << li.parentHostName << endl
+                 << "- Parent Rank     : " << li.parentRank     << endl
+                 << "- Parent Port     : " << li.parentPort     << endl;
+#endif
         }
         if (nGot != nTargets) {
             cerr << compName
                  << " Terminating due to unexpected number of infos..."
                  << endl;
-        }
-        for (int i = 0; i < nGot; ++i) {
         }
     }
     MPI_Barrier(MPI_COMM_WORLD);
