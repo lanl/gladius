@@ -352,9 +352,41 @@ int
 DSI::shutdown(void)
 {
     using namespace std;
+    //
     int rc = GLADIUS_SUCCESS;
     if (GLADIUS_SUCCESS != (rc = mSendCommand("q"))) {
         return rc;
+    }
+    return rc;
+}
+
+/**
+ * Publishes tool connection info across target resources.
+ */
+int
+DSI::publishConnectionInfo(
+    toolcommon::SessionKey sessionKey,
+    const std::vector<std::string> &leafInfos
+) {
+    using namespace std;
+    //
+    VCOMP_COUT("Publishing connection info..." << endl);
+    // See protocol in dsys.cpp
+    int rc = GLADIUS_SUCCESS;
+    if (GLADIUS_SUCCESS != (rc = mSendCommand("c"))) {
+        return rc;
+    }
+    if (GLADIUS_SUCCESS != (rc = mSendCommand(string(sessionKey)))) {
+        return rc;
+    }
+    const string nInfosStr = to_string(leafInfos.size());
+    if (GLADIUS_SUCCESS != (rc = mSendCommand(nInfosStr))) {
+        return rc;
+    }
+    for (const auto &li : leafInfos) {
+        if (GLADIUS_SUCCESS != (rc = mSendCommand(li))) {
+            return rc;
+        }
     }
     return rc;
 }

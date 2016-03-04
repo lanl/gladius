@@ -17,10 +17,12 @@
 #endif
 
 #include "core/utils.h"
+#include "tool-common/session-key.h"
 #include "tool-common/leaf-info.h"
 
 #include <functional>
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <string>
 #include <cstdio>
@@ -29,6 +31,7 @@
 
 #include <limits.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "mpi.h"
 
@@ -58,6 +61,8 @@ struct Proc {
     // Map between a hostname and the number of targets on it. There shall be no
     // duplicate hostnames in this table.
     map<string, int> hostTargetNumTab;
+    //
+    gladius::toolcommon::SessionKey sessionKey;
     // Tool connection information.
     gladius::toolcommon::ToolLeafInfoArrayT leafInfos;
 
@@ -149,11 +154,66 @@ hosts(Proc &p)
 }
 
 /**
+ *
+ */
+int
+publishSessionKey(Proc &p)
+{
+    using namespace std;
+    if (p.leader) {
+        string line;
+        std::getline(cin, line);
+        if (line.empty()) return ERROR;
+        snprintf(p.sessionKey, sizeof(p.sessionKey), "%s", line.c_str());
+    }
+    int mpiRC = MPI_Bcast(
+                    &p.sessionKey,
+                    sizeof(p.sessionKey),
+                    MPI_CHAR,
+                    0,
+                    MPI_COMM_WORLD
+                );
+    if (MPI_SUCCESS != mpiRC) return ERROR;
+    return SUCCESS;
+}
+
+/**
+ *
+ */
+int
+writeConnectionInfos(Proc &p)
+{
+    using namespace gladius::core;
+    using namespace std;
+
+    char *tmpDir = getenv("TMPDIR");
+    if (!tmpDir) {
+        tmpDir = (char *)"/tmp";
+    }
+    string infoFile = string(tmpDir) + utils::osPathSep
+                    + string(p.sessionKey) + "-"
+                    + to_string(p.cwRank);
+    //
+    ofstream connectionInfo;
+    connectionInfo.open(infoFile, ios::out | ios::binary | ios::trunc);
+    if (!connectionInfo.good()) {
+        cerr << compName << "Could not create connection file: "
+              << infoFile << endl;
+        return ERROR;
+    }
+    connectionInfo.write((char *)(&p.leafInfos.leaves), p.leafInfos.size);
+    connectionInfo.close();
+    //
+    return SUCCESS;
+}
+
+/**
  * Publishes tool connection info in parallel across compute resources.
  * Protocol:
- * 1. Read number of expected targets, n
- * 2. Read and decode n base64-encoded infos.
- * 3. Push info to nodes.
+ * - Publish session key
+ * - Read number of expected targets, n
+ * - Read and decode n base64-encoded infos.
+ * - Push info to nodes.
  */
 int
 pubConn(Proc &p)
@@ -162,9 +222,13 @@ pubConn(Proc &p)
     using namespace gladius::toolcommon;
     using namespace std;
     //
+    if (SUCCESS != publishSessionKey(p)) {
+        return ERROR;
+    }
+    //
     ToolLeafInfoArrayT &leafInfos = p.leafInfos;
     if (leafInfos.leaves) free(leafInfos.leaves);
-    leafInfos.size = p.cwSize;
+    leafInfos.size = p.cwSize * sizeof(ToolLeafInfoT);
     leafInfos.leaves = (ToolLeafInfoT *)calloc(p.cwSize, sizeof(ToolLeafInfoT));
     if (!leafInfos.leaves) {
         cerr << compName << " Out of Resources!" << endl;
@@ -206,7 +270,7 @@ pubConn(Proc &p)
                 );
     if (MPI_SUCCESS != mpiRC) return ERROR;
     //
-    return SUCCESS;
+    return writeConnectionInfos(p);
 }
 
 /**

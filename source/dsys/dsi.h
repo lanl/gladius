@@ -12,10 +12,13 @@
 
 #pragma once
 
-#include "core/process-landscape.h"
 #include "dsys/cmdr.h"
 
+#include "core/process-landscape.h"
+#include "tool-common/session-key.h"
+
 #include <string>
+#include <vector>
 
 namespace gladius {
 namespace dsi {
@@ -86,6 +89,12 @@ public:
     int
     getProcessLandscape(
         core::ProcessLandscape &pl
+    );
+    //
+    int
+    publishConnectionInfo(
+        toolcommon::SessionKey sessionKey,
+        const std::vector<std::string> &leafInfos
     );
     //
     int

@@ -12,6 +12,7 @@ lib_LTLIBRARIES = \
 libGladiusToolCommon.la
 
 libGladiusToolCommon_la_SOURCES = \
+session-key.h \
 leaf-info.h \
 faux-mpir.h \
 tool-common.h tool-common.cpp

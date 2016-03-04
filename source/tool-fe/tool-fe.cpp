@@ -161,7 +161,10 @@ ToolFE::ToolFE(
 ) : mBeVerbose(false)
   , mConnectionTimeoutInSec(toolcommon::unlimitedTimeout)
   , mMaxRetries(toolcommon::unlimitedRetries)
-  , mPathToPluginPack("") { ; }
+  , mPathToPluginPack("")
+{
+    memset(mSessionKey, '\0', sizeof(mSessionKey));
+}
 
 /**
  * Returns whether or not the tool-fe's environment setup is sane.
@@ -461,6 +464,15 @@ ToolFE::mPublishConnectionInfo(void)
     using namespace gladius::core;
     //
     VCOMP_COUT("Publishing connection information..." << endl);
+    // Set session key. Not ideal, but good enough for now...
+    snprintf(
+        mSessionKey,
+        sizeof(mSessionKey),
+        "%s-%s-%s",
+        "gladius",
+        utils::getHostname().c_str(),
+        to_string(getpid()).c_str()
+    );
     // First get the connection map from the TBON.
     int rc = GLADIUS_SUCCESS;
     vector<toolcommon::ToolLeafInfoT> leafInfos;
@@ -478,6 +490,11 @@ ToolFE::mPublishConnectionInfo(void)
         string tmp(sBuf, sizeof(sBuf));
         // Stash encoded buffer
         sLeafInfos.push_back(utils::base64Encode(tmp));
+    }
+    // Now pushlish to distributed resources
+    if (GLADIUS_SUCCESS !=
+        (rc = mDSI.publishConnectionInfo(mSessionKey, sLeafInfos))) {
+        return rc;
     }
     //
     return GLADIUS_SUCCESS;

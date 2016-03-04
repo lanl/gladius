@@ -96,7 +96,8 @@ utils::getEnv(const std::string &envVarName)
     if (!cEnvP) {
         auto errStr = "getEnv. Why: Value for '" + envVarName
                     + "' requested, but not set.";
-        GLADIUS_THROW_CALL_FAILED(errStr);
+        GLADIUS_CERR << errStr << std::endl;
+        return std::string("");
     }
     return std::string(cEnvP);
 }

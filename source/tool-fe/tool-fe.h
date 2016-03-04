@@ -15,6 +15,7 @@
 #include "core/core.h"
 #include "core/process-landscape.h"
 #include "tool-common/tool-common.h"
+#include "tool-common/session-key.h"
 #include "dsys/cmdr.h"
 #include "dsys/dsi.h"
 #include "mrnet/mrnet-fe.h"
@@ -56,6 +57,8 @@ private:
     toolcommon::timeout_t mConnectionTimeoutInSec;
     // Max number of connection retries.
     toolcommon::retry_t mMaxRetries;
+    // Unique ID for a given job.
+    toolcommon::SessionKey mSessionKey;
     // The path to a valid plugin pack.
     std::string mPathToPluginPack;
     // The plugin pack for our current session.
@@ -99,6 +102,9 @@ private:
     //
     void
     mEnterPluginMain(void);
+    //
+    int
+    mGetUniqueJobID(void);
 
 public:
     // Default timeout (in seconds)
