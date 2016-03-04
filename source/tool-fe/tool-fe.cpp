@@ -496,6 +496,10 @@ ToolFE::mPublishConnectionInfo(void)
         (rc = mDSI.publishConnectionInfo(mSessionKey, sLeafInfos))) {
         return rc;
     }
+    // Done with DSI, so shut it down
+    if (GLADIUS_SUCCESS != (rc = mDSI.shutdown())) {
+        return rc;
+    }
     //
     return GLADIUS_SUCCESS;
 }

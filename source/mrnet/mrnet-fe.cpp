@@ -347,7 +347,7 @@ MRNetFE::init(
     try {
         mBeVerbose = beVerbose;
         //
-        VCOMP_COUT("Initializing MRNet front-end." << endl);
+        VCOMP_COUT("Initializing MRNet front-end..." << endl);
         //
         int rc = GLADIUS_SUCCESS;
         string whatsWrong;

@@ -236,11 +236,10 @@ DSI::init(
 void
 DSI::mWaitForPrompt(void)
 {
-    VCOMP_COUT("Waiting for prompt..." << std::endl);
+    VCOMP_COUT("Waiting for parallel job..." << std::endl);
     while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         mGetRespLine();
     }
-    VCOMP_COUT("Done waiting for prompt..." << std::endl);
 }
 
 /**
@@ -352,6 +351,8 @@ int
 DSI::shutdown(void)
 {
     using namespace std;
+    //
+    VCOMP_COUT("Shutting down..." << endl);
     //
     int rc = GLADIUS_SUCCESS;
     if (GLADIUS_SUCCESS != (rc = mSendCommand("q"))) {
