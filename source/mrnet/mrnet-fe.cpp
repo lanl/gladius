@@ -82,7 +82,7 @@ MRNetTopology::MRNetTopology(
             default:
                 GLADIUS_THROW_INVLD_ARG();
         }
-#if 1 // DEBUG
+#if 0 // DEBUG
         GLADIUS_COUT_STAT << "Network Topology:" << endl << topoString << endl;
 #endif
         // Populate the topology with the generated string.
@@ -567,7 +567,7 @@ MRNetFE::generateConnectionMap(
             }
         }
         auto &leaves = mLeafInfo.leaves;
-#if 1 // DEBUG
+#if 0 // DEBUG
         fprintf(stdout, "BE %d will connect to %s:%d:%d\n",
                 i,
                 leaves[currLeaf]->get_HostName().c_str(),

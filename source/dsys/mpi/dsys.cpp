@@ -201,7 +201,10 @@ writeConnectionInfos(Proc &p)
               << infoFile << endl;
         return ERROR;
     }
-    connectionInfo.write((char *)(&p.leafInfos.leaves), p.leafInfos.size);
+    connectionInfo.write(
+        (char *)(&p.leafInfos.leaves),
+        p.leafInfos.size * sizeof(gladius::toolcommon::ToolLeafInfoT)
+    );
     connectionInfo.close();
     //
     return SUCCESS;
@@ -228,7 +231,7 @@ pubConn(Proc &p)
     //
     ToolLeafInfoArrayT &leafInfos = p.leafInfos;
     if (leafInfos.leaves) free(leafInfos.leaves);
-    leafInfos.size = p.cwSize * sizeof(ToolLeafInfoT);
+    leafInfos.size = p.cwSize;
     leafInfos.leaves = (ToolLeafInfoT *)calloc(p.cwSize, sizeof(ToolLeafInfoT));
     if (!leafInfos.leaves) {
         cerr << compName << " Out of Resources!" << endl;
@@ -246,7 +249,7 @@ pubConn(Proc &p)
             const string res = core::utils::base64Decode(line);
             ToolLeafInfoT *destp = &(leafInfos.leaves[nGot]);
             memcpy(destp, res.data(), sizeof(ToolLeafInfoT));
-#if 1 // DEBUG
+#if 0 // DEBUG
             cout << "ToolLeafInfoT "       << nGot                  << endl
                  << "- Parent Host Name: " << destp->parentHostName << endl
                  << "- Parent Rank     : " << destp->parentRank     << endl

@@ -376,13 +376,17 @@ DSI::publishConnectionInfo(
     if (GLADIUS_SUCCESS != (rc = mSendCommand("c"))) {
         return rc;
     }
-    if (GLADIUS_SUCCESS != (rc = mSendCommand(string(sessionKey)))) {
+    const string sKey(sessionKey);
+    VCOMP_COUT("- Sending session key: " << sKey << endl);
+    if (GLADIUS_SUCCESS != (rc = mSendCommand(sKey))) {
         return rc;
     }
     const string nInfosStr = to_string(leafInfos.size());
+    VCOMP_COUT("- Sending number of infos: " << nInfosStr << endl);
     if (GLADIUS_SUCCESS != (rc = mSendCommand(nInfosStr))) {
         return rc;
     }
+    VCOMP_COUT("- Sending encoded connection info..." << endl);
     for (const auto &li : leafInfos) {
         if (GLADIUS_SUCCESS != (rc = mSendCommand(li))) {
             return rc;
