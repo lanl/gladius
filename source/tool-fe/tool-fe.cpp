@@ -49,8 +49,7 @@ do {                                                                           \
 ////////////////////////////////////////////////////////////////////////////////
 //
 #define ENV_VAR_CONNECT_TIMEOUT_IN_SEC "GLADIUS_TOOL_FE_CONNECT_TIMEOUT_S"
-//
-#define ENV_VAR_CONNECT_MAX_RETRIES "GLADIUS_TOOL_FE_CONNECT_MAX_RETRIES"
+#define ENV_VAR_CONNECT_MAX_RETRIES    "GLADIUS_TOOL_FE_CONNECT_MAX_RETRIES"
 
 namespace {
 static const std::vector<core::EnvironmentVar> compEnvVars = {
@@ -72,8 +71,7 @@ void
 echoLaunchStart(
     const gladius::core::Args &largs,
     const gladius::core::Args &aargs
-)
-{
+) {
     using namespace std;
     // Construct the entire launch command.
     auto argv = largs.toArgv();
@@ -340,7 +338,8 @@ ToolFE::mDetermineProcLandscape(void)
         if (GLADIUS_SUCCESS != (rc = mDSI.init(mCommandr, mBeVerbose))) {
             return rc;
         }
-        if (GLADIUS_SUCCESS != (rc = mDSI.getProcessLandscape(mProcLandscape))) {
+        if (GLADIUS_SUCCESS !=
+            (rc = mDSI.getProcessLandscape(mProcLandscape))) {
             return rc;
         }
         GLADIUS_COUT_STAT << "Job Statistics:" << std::endl;
@@ -352,7 +351,7 @@ ToolFE::mDetermineProcLandscape(void)
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
-    VCOMP_COUT("Done determining process landscape..." << std::endl);
+    //
     return rc;
 }
 
@@ -515,6 +514,8 @@ ToolFE::mPublishConnectionInfo(void)
 int
 ToolFE::mLaunchUserApp(void)
 {
+    using namespace gladius::core;
+    //
     return GLADIUS_SUCCESS;
 }
 

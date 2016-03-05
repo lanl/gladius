@@ -9,7 +9,7 @@
 #pragma once
 
 #include "core/ret-codes.h"
-#include "core/gladius-exception.h"
+#include "core/exception.h"
 #include "core/macros.h"
 
 #include <cstdlib>

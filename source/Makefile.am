@@ -14,8 +14,9 @@ dsys \
 dsys/mpi \
 mrnet \
 mrnet/filters \
-tool-be \
 tool-fe \
+tool-be \
+tool-api \
 ui \
 ui/term \
 gladius \

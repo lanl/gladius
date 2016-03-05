@@ -12,7 +12,7 @@
 #include "config.h"
 #endif
 
-#include "core/gladius-exception.h"
+#include "core/exception.h"
 #include "core/colors.h"
 
 /**

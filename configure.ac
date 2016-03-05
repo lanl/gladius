@@ -158,11 +158,12 @@ AC_CONFIG_FILES([
     source/dsys/mpi/Makefile
     source/mrnet/Makefile
     source/mrnet/filters/Makefile
+    source/tool-fe/Makefile
+    source/tool-be/Makefile
+    source/tool-api/Makefile
     source/ui/Makefile
     source/ui/term/Makefile
-    source/tool-fe/Makefile
     source/gladius/Makefile
-    source/tool-be/Makefile
     source/dspa/hello/Makefile
 ])
 

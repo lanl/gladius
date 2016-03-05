@@ -20,7 +20,7 @@ process-landscape.h \
 colors.h colors.cpp \
 console.h \
 env.h env.cpp \
-gladius-exception.h gladius-exception.cpp \
+exception.h exception.cpp \
 macros.h \
 session.h session.cpp \
 utils.h utils.cpp

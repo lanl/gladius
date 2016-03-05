@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -77,9 +77,13 @@ class Environment {
     //
     std::map< std::string, std::map<std::string, EnvironmentVar> >
         mCompNameVarMap;
-    //
+    /**
+     *
+     */
     Environment(void) { ; }
-    //
+    /**
+     *
+     */
     ~Environment(void) { ; }
 
 public:

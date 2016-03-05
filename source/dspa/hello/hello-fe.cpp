@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015      Los Alamos National Security, LLC
+ * Copyright (c) 2015-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -14,10 +14,9 @@
 
 #include "dspa/core/gladius-dspi.h"
 
-#include "core/gladius-exception.h"
+#include "core/core.h"
 #include "core/utils.h"
 #include "core/colors.h"
-#include "core/env.h"
 
 #include <iostream>
 

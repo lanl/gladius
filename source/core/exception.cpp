@@ -6,7 +6,7 @@
  * top-level directory of this distribution.
  */
 
-#include "core/gladius-exception.h"
+#include "core/exception.h"
 
 using namespace std;
 using namespace gladius::core;
