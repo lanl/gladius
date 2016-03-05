@@ -513,7 +513,7 @@ ToolFE::mPublishConnectionInfo(void)
  *
  */
 int
-mLaunchUserApp(void)
+ToolFE::mLaunchUserApp(void)
 {
     return GLADIUS_SUCCESS;
 }
