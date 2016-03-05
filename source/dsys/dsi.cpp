@@ -94,7 +94,6 @@ DSI::mChildCleanup(void)
     if (done) return;
     //
     if (mTo) fclose(mTo);
-    if (mFrom) fclose(mFrom);
     //
     if (mToAppl[1]   != -1) close(mToAppl[1]);
     if (mFromAppl[0] != -1) close(mFromAppl[0]);
@@ -226,9 +225,7 @@ DSI::init(
     close(mToAppl[0]);
     close(mFromAppl[1]);
     mTo = fdopen(mToAppl[1], "w");
-    // TODO not sure this is needed.
-    mFrom = fdopen(mFromAppl[0], "r");
-    if (!mTo || !mFrom) {
+    if (!mTo) {
         GLADIUS_CERR << utils::formatCallFailed(
                             "fdopen(3): ", GLADIUS_WHERE
                         ) << endl;

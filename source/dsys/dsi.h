@@ -51,8 +51,6 @@ private:
     //
     FILE *mTo = nullptr;
     //
-    FILE *mFrom = nullptr;
-    //
     size_t
     mGetRespLine(void);
     //
