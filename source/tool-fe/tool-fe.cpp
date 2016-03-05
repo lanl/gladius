@@ -391,7 +391,7 @@ ToolFE::mConnectMRNetTree(void)
     decltype(mMaxRetries) attempt = 0;
     bool connectSuccess = false;
     do {
-        VCOMP_COUT("Connection attempt: " << ++attempt << std::endl);
+        VCOMP_COUT("Connection attempt: " << attempt << std::endl);
         // Take a break and let things happen...
         sleep(1);
         // Try to connect.
@@ -410,7 +410,7 @@ ToolFE::mConnectMRNetTree(void)
         }
         // Unlimited retries, so just continue.
         if (toolcommon::unlimitedRetries == mMaxRetries) continue;
-        if (attempt >= mMaxRetries) {
+        if (++attempt >= mMaxRetries) {
             GLADIUS_CERR << "Giving up after " << attempt
                          << ((attempt > 1) ? " attempts. " : " attempt. ")
                          << "Not all tool processes reported back..." << endl;
