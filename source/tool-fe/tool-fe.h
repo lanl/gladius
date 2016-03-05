@@ -89,6 +89,9 @@ private:
     mPostToolInitActons(void);
     //
     int
+    mLaunchUserApp(void);
+    //
+    int
     mInitiateToolLashUp(void);
     //
     int
@@ -120,7 +123,7 @@ public:
         const core::Args &launcherArgv
     );
     //
-    void
+    int
     mConnectMRNetTree(void);
     //
     static void

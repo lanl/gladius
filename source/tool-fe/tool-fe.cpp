@@ -382,22 +382,18 @@ ToolFE::mBuildNetwork(void)
 /**
  *
  */
-void
+int
 ToolFE::mConnectMRNetTree(void)
 {
+    using namespace std;
+    using namespace core;
     // TODO add a timer here
-    decltype(mMaxRetries) attempt = 1;
+    decltype(mMaxRetries) attempt = 0;
     bool connectSuccess = false;
     do {
-        VCOMP_COUT("Connection attempt: " << attempt << std::endl);
+        VCOMP_COUT("Connection attempt: " << ++attempt << std::endl);
         // Take a break and let things happen...
         sleep(1);
-#if 0 // TODO
-        // First make sure that the daemons are okay.
-        if (!WIFBESPAWNED(mLMONFE.getState())) {
-            GLADIUS_THROW("The Tool Daemons Have Exited.");
-        }
-#endif
         // Try to connect.
         auto status = mMRNFE.connect();
         // All done - Get outta here...
@@ -407,12 +403,18 @@ ToolFE::mConnectMRNetTree(void)
         }
         // Something bad happened.
         else if (GLADIUS_NOT_CONNECTED != status) {
-            GLADIUS_THROW_CALL_FAILED_RC("MRNetFE::connect", status);
+            GLADIUS_CERR << utils::formatCallFailed(
+                                "MRNetFE::connect", GLADIUS_WHERE
+                            ) << endl;
+            return GLADIUS_ERR;
         }
         // Unlimited retries, so just continue.
         if (toolcommon::unlimitedRetries == mMaxRetries) continue;
-        if (attempt++ >= mMaxRetries) {
-            GLADIUS_THROW("Max Retries Reached! Giving Up...");
+        if (attempt >= mMaxRetries) {
+            GLADIUS_CERR << "Giving up after " << attempt
+                         << ((attempt > 1) ? " attempts. " : " attempt. ")
+                         << "Not all tool processes reported back..." << endl;
+            return GLADIUS_ERR;
         }
     } while (true);
     //
@@ -420,8 +422,11 @@ ToolFE::mConnectMRNetTree(void)
         GLADIUS_COUT_STAT << "MRNet Network Connected." << std::endl;
     }
     else {
-        GLADIUS_THROW("Could Not Setup MRNet Network.");
+        GLADIUS_CERR << "Could not setup mrnet network." << endl;
+        return GLADIUS_ERR;
     }
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -505,6 +510,15 @@ ToolFE::mPublishConnectionInfo(void)
 }
 
 /**
+ *
+ */
+int
+mLaunchUserApp(void)
+{
+    return GLADIUS_SUCCESS;
+}
+
+/**
  * Initiates the tool lash-up bits.
  */
 int
@@ -520,8 +534,14 @@ ToolFE::mInitiateToolLashUp(void)
         if (GLADIUS_SUCCESS != rc) {
             return rc;
         }
+        // Launch user application
+        if (GLADIUS_SUCCESS != (rc = mLaunchUserApp())) {
+            return rc;
+        }
         // Wait for MRNet tree connections.
-        mConnectMRNetTree();
+        if (GLADIUS_SUCCESS != (rc = mConnectMRNetTree())) {
+            return rc;
+        }
         // Setup connected MRNet network.
         mMRNFE.networkInit();
         // Make sure that our core filters are working by performing a handshake
