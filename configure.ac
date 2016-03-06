@@ -152,7 +152,7 @@ AC_CONFIG_FILES([
     Makefile
     source/Makefile
     source/core/Makefile
-    source/dspa/core/Makefile
+    source/gpa/core/Makefile
     source/tool-common/Makefile
     source/dsys/Makefile
     source/dsys/mpi/Makefile
@@ -164,7 +164,7 @@ AC_CONFIG_FILES([
     source/ui/Makefile
     source/ui/term/Makefile
     source/gladius/Makefile
-    source/dspa/hello/Makefile
+    source/gpa/hello/Makefile
 ])
 
 AC_OUTPUT

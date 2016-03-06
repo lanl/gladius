@@ -7,25 +7,25 @@
  */
 
 /**
- * The Domain-Specific Plugin (DSP) manager.
+ * The gladius plugin manager.
  */
 
 #pragma once
 
-#include "dspa/core/gladius-dspi.h"
+#include "gpa/core/gpi.h"
 
 #include <cstdint>
 #include <string>
 #include <map>
 
 namespace gladius {
-// The "Domain-Specific Plugin Architecture (DSPA) " namespace.
-namespace dspa {
+// The "Gladius Plugin Architecture (GPA) " namespace.
+namespace gpa {
 
 /**
  *
  */
-struct DSPluginPack {
+struct GladiusPluginPack {
     // IDs of the different kinds of plugin packs that can be returned.
     enum PluginPackType {
         PluginFE = 0,
@@ -34,7 +34,7 @@ struct DSPluginPack {
     // ID to name map of required plugins.
     static const std::map<uint8_t, std::string> sRequiredPlugins;
     //
-    dspi::DomainSpecificPluginInfo *pluginInfo = nullptr;
+    gpi::GladiusPluginInfo *pluginInfo = nullptr;
 };
 
 /**
@@ -67,13 +67,13 @@ public:
         std::string &pathToPluginPackIfAvail
     );
     //
-    DSPluginPack
+    GladiusPluginPack
     getPluginPackFrom(
-        DSPluginPack::PluginPackType pluginPackType,
+        GladiusPluginPack::PluginPackType pluginPackType,
         const std::string &validPluginPackPath
     );
     // TODO close handles! Add function to close plugin pack.
 };
 
-} // end dspa namespace
+} // end gpa namespace
 } // end gladius namespace

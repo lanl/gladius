@@ -15,8 +15,8 @@
 #include "core/core.h"
 #include "core/args.h"
 #include "mrnet/mrnet-be.h"
-#include "dspa/core/dsp-manager.h"
-#include "dspa/core/gladius-dspi.h"
+#include "gpa/core/gp-manager.h"
+#include "gpa/core/gpi.h"
 
 #include <string>
 
@@ -38,11 +38,11 @@ private:
     // The path to the plugin pack.
     std::string mPathToPluginPack;
     // The plugin manager.
-    dspa::DSPManager mDSPManager;
+    gpa::DSPManager mDSPManager;
     // The plugin pack for our current session.
-    dspa::DSPluginPack mPluginPack;
+    gpa::GladiusPluginPack mPluginPack;
     // The plugin instance pointer.
-    dspi::DomainSpecificPlugin *mBEPlugin = nullptr;
+    gpi::GladiusPlugin *mBEPlugin = nullptr;
     ////////////////////////////////////////////////////////////////////////////
     // Private Functions
     ////////////////////////////////////////////////////////////////////////////

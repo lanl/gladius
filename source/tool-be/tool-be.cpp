@@ -14,7 +14,6 @@
 #include "core/colors.h"
 #include "core/env.h"
 #include "tool-common/tool-common.h"
-#include "dmi/dmi.h"
 
 #include <cstdlib>
 #include <string>
@@ -303,7 +302,7 @@ ToolBE::mLoadPlugins(void)
     VCOMP_COUT("Loading Plugins." << std::endl);
     // Get the front-end plugin pack.
     mPluginPack = mDSPManager.getPluginPackFrom(
-                      dspa::DSPluginPack::PluginBE,
+                      gpa::GladiusPluginPack::PluginBE,
                       mPathToPluginPack
                   );
     //
@@ -330,7 +329,7 @@ ToolBE::enterPluginMain(void)
         const char *dummyArgv[] = {"dummy-arg-0", nullptr};
         int dummyArgc = 1;
         gladius::core::Args dummyAppArgs(dummyArgc, dummyArgv, dummyArgv);
-        dspi::DSPluginArgs pluginArgs(
+        gpi::GladiusPluginArgs pluginArgs(
             mPathToPluginPack,
             dummyAppArgs,
             mProcTab,

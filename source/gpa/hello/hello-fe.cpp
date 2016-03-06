@@ -10,9 +10,9 @@
  * The "hello world" plugin front-end.
  */
 
-#include "dspa/hello/hello-common.h"
+#include "gpa/hello/hello-common.h"
 
-#include "dspa/core/gladius-dspi.h"
+#include "gpa/core/gpi.h"
 
 #include "core/core.h"
 #include "core/utils.h"
@@ -21,7 +21,7 @@
 #include <iostream>
 
 using namespace gladius;
-using namespace gladius::dspi;
+using namespace gladius::gpi;
 
 namespace {
 // This component's name.
@@ -44,11 +44,11 @@ do {                                                                           \
 /**
  *
  */
-class HelloFE : public DomainSpecificPlugin {
+class HelloFE : public GladiusPlugin {
     //
     bool mBeVerbose = false;
     //
-    DSPluginArgs mDSPluginArgs;
+    GladiusPluginArgs mGladiusPluginArgs;
     //
     void
     mEnterMainLoop(void);
@@ -66,7 +66,7 @@ public:
     //
     virtual void
     pluginMain(
-        DSPluginArgs &pluginArgs
+        GladiusPluginArgs &pluginArgs
     );
     //
     void
@@ -84,14 +84,14 @@ GLADIUS_PLUGIN(HelloFE, PLUGIN_NAME, PLUGIN_VERSION)
 void
 HelloFE::mLoadFilters(void)
 {
-    VCOMP_COUT("Loading Filters From: " << mDSPluginArgs.myHome << std::endl);
+    VCOMP_COUT("Loading Filters From: " << mGladiusPluginArgs.myHome << std::endl);
     // This is the absolute path where this plugin was found.
-    static const auto home = mDSPluginArgs.myHome;
+    static const auto home = mGladiusPluginArgs.myHome;
     // Path separator.
     static const auto ps = core::utils::osPathSep;
     // FIXME
     static const std::string filterSOName = home + ps + "PluginFilters.so";
-    auto *network = mDSPluginArgs.network;
+    auto *network = mGladiusPluginArgs.network;
     auto filterID = network->load_FilterFunc(
                         filterSOName.c_str(),
                         "HelloStringsFilter"
@@ -101,7 +101,7 @@ HelloFE::mLoadFilters(void)
     }
     //
     mStream = network->new_Stream(
-                  mDSPluginArgs.network->get_BroadcastCommunicator(),
+                  mGladiusPluginArgs.network->get_BroadcastCommunicator(),
                   MRN::SFILTER_WAITFORALL,
                   filterID
               );
@@ -119,7 +119,7 @@ HelloFE::mLoadFilters(void)
 ////////////////////////////////////////////////////////////////////////////////
 void
 HelloFE::pluginMain(
-    DSPluginArgs &pluginArgs
+    GladiusPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
     mBeVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME);
@@ -128,8 +128,8 @@ HelloFE::pluginMain(
     COMP_COUT << "::" << std::endl;
     // And so it begins...
     try {
-        mDSPluginArgs = pluginArgs;
-        VCOMP_COUT("Home: " << mDSPluginArgs.myHome << std::endl);
+        mGladiusPluginArgs = pluginArgs;
+        VCOMP_COUT("Home: " << mGladiusPluginArgs.myHome << std::endl);
         // Load Simple Filter
         mLoadFilters();
         // Setup network.
@@ -149,7 +149,7 @@ void
 HelloFE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
-    toolcommon::feWaitForBEs(mDSPluginArgs.protoStream);
+    toolcommon::feWaitForBEs(mGladiusPluginArgs.protoStream);
     
     //
     // At this point all our back-ends have reported that they are ready to go.

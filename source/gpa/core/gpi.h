@@ -7,7 +7,7 @@
  */
 
 /**
- * The Domain-Specific Plugin Interface (DSPI).
+ * The Gladius Plugin Interface (GPI).
  */
 
 #pragma once
@@ -19,17 +19,17 @@
 #include <functional>
 
 namespace gladius {
-namespace dspi {
+namespace gpi {
 
 /**
  * Update when breaking plugin ABI.
  */
-#define GLADIUS_DSP_ABI 0
+#define GLADIUS_PLUGIN_ABI 0
 
 /**
  * The plugin entry poing (symbol name).
  */
-#define GLADIUS_PLUGIN_ENTRY_POINT GladiusDomainSpecificPluginInfo
+#define GLADIUS_PLUGIN_ENTRY_POINT GladiusGladiusPluginInfo
 
 /**
  * The name of the plugin entry point.
@@ -40,14 +40,14 @@ GLADIUS_TOSTRING(GLADIUS_PLUGIN_ENTRY_POINT)
 #define GLADIUS_PLUGIN(pluginImpl, pluginName, pluginVersion)                  \
 extern "C" {                                                                   \
 /* Return pointer here because of C linkage... Sigh... */                      \
-gladius::dspi::DomainSpecificPlugin *                                          \
+gladius::gpi::GladiusPlugin *                                          \
 constructPlugin(void) {                                                        \
     static pluginImpl singleton;                                               \
     return &singleton;                                                         \
 }                                                                              \
                                                                                \
-gladius::dspi::DomainSpecificPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {         \
-    GLADIUS_DSP_ABI,                                                           \
+gladius::gpi::GladiusPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {         \
+    GLADIUS_PLUGIN_ABI,                                                           \
     pluginName,                                                                \
     pluginVersion,                                                             \
     constructPlugin                                                            \
@@ -58,7 +58,7 @@ gladius::dspi::DomainSpecificPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {         \
 /**
  * A structure that hold arguments that are passed to pluginMain.
  */
-struct DSPluginArgs {
+struct GladiusPluginArgs {
     //
     std::string myHome;
     //
@@ -71,9 +71,9 @@ struct DSPluginArgs {
     //
     MRN::Network *network = nullptr;
     //
-    DSPluginArgs(void) { ; }
+    GladiusPluginArgs(void) { ; }
     //
-    DSPluginArgs(
+    GladiusPluginArgs(
         const std::string &home,
         const gladius::core::Args &args,
         const gladius::toolcommon::ProcessTable &pTab,
@@ -85,35 +85,35 @@ struct DSPluginArgs {
       , protoStream(protoStream)
       , network(mrnetNet) { ; }
     //
-    ~DSPluginArgs(void) { ; }
+    ~GladiusPluginArgs(void) { ; }
 };
 
 /**
  * The Domain-Specific Plugin Interface (DSPI) interface that plugins must
  * adhere to.
  */
-class DomainSpecificPlugin {
+class GladiusPlugin {
 public:
     /**
      *
      */
-    DomainSpecificPlugin(void) { ; }
+    GladiusPlugin(void) { ; }
 
     /**
      *
      */
-    virtual ~DomainSpecificPlugin(void) { ; }
+    virtual ~GladiusPlugin(void) { ; }
     //
     virtual void
     pluginMain(
-        DSPluginArgs &pluginArgs
+        GladiusPluginArgs &pluginArgs
     ) = 0;
 };
 
 /**
  * Exposes plugin info and plugin entry point.
  */
-struct DomainSpecificPluginInfo {
+struct GladiusPluginInfo {
     // Plugin ABI.
     int pluginABI;
     // Plugin name.
@@ -121,24 +121,24 @@ struct DomainSpecificPluginInfo {
     // Plugin version string.
     const char *pluginVersion;
     // Plugin activation.
-    std::function<DomainSpecificPlugin *(void)> pluginConstruct;
+    std::function<GladiusPlugin *(void)> pluginConstruct;
     //
-    DomainSpecificPluginInfo(void)
+    GladiusPluginInfo(void)
         : pluginABI(0)
         , pluginName(nullptr)
         , pluginVersion(nullptr)
         , pluginConstruct(nullptr) { ; }
     //
-    DomainSpecificPluginInfo(
+    GladiusPluginInfo(
         int pabi,
         const char *pname,
         const char *pver,
-        const std::function<DomainSpecificPlugin *(void)> &pconst
+        const std::function<GladiusPlugin *(void)> &pconst
     )   : pluginABI(pabi)
         , pluginName(pname)
         , pluginVersion(pver)
         , pluginConstruct(pconst) { ; }
 };
 
-} // end dspi namespace
+} // end gpi namespace
 } // end gladius namespace

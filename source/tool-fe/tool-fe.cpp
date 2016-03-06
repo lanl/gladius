@@ -186,7 +186,7 @@ ToolFE::mSetupCore(void)
     }
     auto modeName = core::utils::getEnv(envMode);
     // Initialize the DSP manager.
-    mDSPManager = dspa::DSPManager(modeName, mBeVerbose);
+    mDSPManager = gpa::DSPManager(modeName, mBeVerbose);
     // The path to the plugin pack if we find a usable one.
     std::string pathToPluginPackIfAvail;
     if (!mDSPManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
@@ -568,7 +568,7 @@ ToolFE::mLoadPlugins(void)
     VCOMP_COUT("Loading plugins." << std::endl);
     // Get the front-end plugin pack.
     mPluginPack = mDSPManager.getPluginPackFrom(
-                      dspa::DSPluginPack::PluginFE,
+                      gpa::GladiusPluginPack::PluginFE,
                       mPathToPluginPack
                   );
     auto *fePluginInfo = mPluginPack.pluginInfo;
@@ -606,7 +606,7 @@ ToolFE::mEnterPluginMain(void)
     try {
         // TODO FIXME
         toolcommon::ProcessTable fake;
-        dspi::DSPluginArgs pluginArgs(
+        gpi::GladiusPluginArgs pluginArgs(
             mPathToPluginPack,
             mAppArgs,
 #if 0 // TODO

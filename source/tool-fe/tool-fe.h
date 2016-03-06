@@ -19,8 +19,8 @@
 #include "dsys/cmdr.h"
 #include "dsys/dsi.h"
 #include "mrnet/mrnet-fe.h"
-#include "dspa/core/dsp-manager.h"
-#include "dspa/core/gladius-dspi.h"
+#include "gpa/core/gp-manager.h"
+#include "gpa/core/gpi.h"
 
 #include <string>
 #include <thread>
@@ -46,9 +46,9 @@ private:
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
-    dspa::DSPManager mDSPManager;
+    gpa::DSPManager mDSPManager;
     // The plugin instance pointer.
-    dspi::DomainSpecificPlugin *mFEPlugin = nullptr;
+    gpi::GladiusPlugin *mFEPlugin = nullptr;
     // Target application arguments.
     core::Args mAppArgs;
     // Launcher arguments.
@@ -62,7 +62,7 @@ private:
     // The path to a valid plugin pack.
     std::string mPathToPluginPack;
     // The plugin pack for our current session.
-    dspa::DSPluginPack mPluginPack;
+    gpa::GladiusPluginPack mPluginPack;
     //
     int
     mSetupCore(void);

@@ -7,7 +7,7 @@
  */
 
 /**
- * Implements the DMI.
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -17,7 +17,7 @@
 #include "core/core.h"
 #include "core/utils.h"
 
-#include "dmi/dmi.h"
+#include "pty/pty.h"
 
 #include <cstdio>
 #include <cassert>

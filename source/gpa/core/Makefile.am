@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015      Los Alamos National Security, LLC
+# Copyright (c) 2015-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,38 +10,38 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
-libGladiusDSPI.la \
-libGladiusDSPManager.la
+libGladiusPluginInterface.la \
+libGladiusPluginManager.la
 
 include_HEADERS = \
-gladius-dspi.h
+gpi.h
 
-libGladiusDSPI_la_SOURCES = \
-gladius-dspi.h
+libGladiusPluginInterface_la_SOURCES = \
+gpi.h
 
-libGladiusDSPI_la_CFLAGS =
+libGladiusPluginInterface_la_CFLAGS =
 
-libGladiusDSPI_la_CPPFLAGS = \
+libGladiusPluginInterface_la_CPPFLAGS = \
 -I${top_srcdir}/source \
 ${GLADIUS_PLUGIN_CPPFLAGS}
 
-libGladiusDSPI_la_LDFLAGS = \
+libGladiusPluginInterface_la_LDFLAGS = \
 -version-info ${LIBVINFO}
 
-libGladiusDSPI_la_LIBADD =
+libGladiusPluginInterface_la_LIBADD =
 
 ################################################################################
-libGladiusDSPManager_la_SOURCES = \
-dsp-manager.h dsp-manager.cpp
+libGladiusPluginManager_la_SOURCES = \
+gp-manager.h gp-manager.cpp
 
-libGladiusDSPManager_la_CFLAGS =
+libGladiusPluginManager_la_CFLAGS =
 
-libGladiusDSPManager_la_CPPFLAGS = \
+libGladiusPluginManager_la_CPPFLAGS = \
 -I${top_srcdir}/source \
 ${GLADIUS_PLUGIN_CPPFLAGS}
 
-libGladiusDSPManager_la_LDFLAGS = \
+libGladiusPluginManager_la_LDFLAGS = \
 -version-info ${LIBVINFO}
 
-libGladiusDSPManager_la_LIBADD = \
+libGladiusPluginManager_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la

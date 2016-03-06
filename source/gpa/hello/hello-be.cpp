@@ -10,9 +10,9 @@
  * The "hello world" plugin back-end.
  */
 
-#include "dspa/hello/hello-common.h"
+#include "gpa/hello/hello-common.h"
 
-#include "dspa/core/gladius-dspi.h"
+#include "gpa/core/gpi.h"
 
 #include "core/core.h"
 #include "core/utils.h"
@@ -25,7 +25,7 @@
 #include <signal.h>
 
 using namespace gladius;
-using namespace gladius::dspi;
+using namespace gladius::gpi;
 
 namespace {
 // This component's name.
@@ -48,11 +48,11 @@ do {                                                                           \
 /**
  *
  */
-class HelloBE : public DomainSpecificPlugin {
+class HelloBE : public GladiusPlugin {
     //
     bool mBeVerbose = false;
     //
-    DSPluginArgs mDSPluginArgs;
+    GladiusPluginArgs mGladiusPluginArgs;
     //
     std::map<size_t, std::string> mRankInferiorMap;
     //
@@ -72,7 +72,7 @@ public:
     //
     virtual void
     pluginMain(
-        DSPluginArgs &pluginArgs
+        GladiusPluginArgs &pluginArgs
     );
 };
 
@@ -86,7 +86,7 @@ GLADIUS_PLUGIN(HelloBE, PLUGIN_NAME, PLUGIN_VERSION)
  */
 void
 HelloBE::pluginMain(
-    DSPluginArgs &pluginArgs
+    GladiusPluginArgs &pluginArgs
 ) {
     // Set our verbosity level.
     mBeVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_FE_VERBOSE_NAME);
@@ -96,10 +96,10 @@ HelloBE::pluginMain(
     COMP_COUT << "::" << std::endl;
     // And so it begins...
     try {
-        mDSPluginArgs = pluginArgs;
-        VCOMP_COUT("Home: " << mDSPluginArgs.myHome << std::endl);
+        mGladiusPluginArgs = pluginArgs;
+        VCOMP_COUT("Home: " << mGladiusPluginArgs.myHome << std::endl);
         if (mBeVerbose) {
-            mDSPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
+            mGladiusPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
         }
         // Enter FE-driven main loop.
         mEnterMainLoop();
@@ -119,15 +119,15 @@ HelloBE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
     //
-    toolcommon::beReady(mDSPluginArgs.protoStream);
+    toolcommon::beReady(mGladiusPluginArgs.protoStream);
     //
     MRN::PacketPtr packet;
     const bool recvShouldBlock = true;
     // Convenience pointer to network.
-    auto *network = mDSPluginArgs.network;
+    auto *network = mGladiusPluginArgs.network;
     MRN::Stream *protoStream = nullptr;
     int status = 0;
-    auto &pTab = mDSPluginArgs.procTab;
+    auto &pTab = mGladiusPluginArgs.procTab;
     int action = 0;
     // Do Until the FE Says So...
     do {

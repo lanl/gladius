@@ -10,7 +10,7 @@
  * Implements the Domain-specific plugin manager.
  */
 
-#include "dspa/core/dsp-manager.h"
+#include "gpa/core/gp-manager.h"
 
 #include "core/utils.h"
 #include "core/session.h"
@@ -21,7 +21,7 @@
 
 using namespace gladius;
 using namespace gladius::core;
-using namespace gladius::dspa;
+using namespace gladius::gpa;
 
 
 namespace {
@@ -41,7 +41,7 @@ do {                                                                           \
 } while (0)
 } // end namespace
 
-const std::map<uint8_t, std::string> DSPluginPack::sRequiredPlugins = {
+const std::map<uint8_t, std::string> GladiusPluginPack::sRequiredPlugins = {
     {PluginFE, "PluginFrontEnd.so"},
     {PluginBE, "PluginBackEnd.so" }
 };
@@ -130,7 +130,7 @@ DSPManager::mPluginPackLooksGood(
     // 1. PluginFrontEnd.so - the front-end plugin.
     // 2. PluginBackEnd.so - the back-end plugin.
     //
-    for (const auto &mapItem : DSPluginPack::sRequiredPlugins) {
+    for (const auto &mapItem : GladiusPluginPack::sRequiredPlugins) {
         auto exists = utils::fileExists(
             pathToPackBase + utils::osPathSep + mapItem.second
         );
@@ -147,16 +147,17 @@ DSPManager::mPluginPackLooksGood(
 /**
  *
  */
-DSPluginPack
+GladiusPluginPack
 DSPManager::getPluginPackFrom(
-    DSPluginPack::PluginPackType pluginPackType,
+    GladiusPluginPack::PluginPackType pluginPackType,
     const std::string &validPluginPackPath
 ) {
-    DSPluginPack pluginPack;
+    GladiusPluginPack pluginPack;
 
-    auto mapI = DSPluginPack::sRequiredPlugins.find(pluginPackType);
+    auto mapI = GladiusPluginPack::sRequiredPlugins.find(pluginPackType);
     //
-    assert(mapI != DSPluginPack::sRequiredPlugins.end() && "Bogus Request!");
+    assert(mapI != GladiusPluginPack::sRequiredPlugins.end()
+           && "Bogus Request!");
     // Get the target plugin name.
     auto pluginName = mapI->second;
     // Full path to target plugin.
@@ -178,7 +179,7 @@ DSPManager::getPluginPackFrom(
     // Clear errors.
     dlerror();
     //
-    dspi::DomainSpecificPluginInfo *pluginInfoHandle = nullptr;
+    gpi::GladiusPluginInfo *pluginInfoHandle = nullptr;
     pluginInfoHandle = (decltype(pluginInfoHandle))dlsym(
         soHandle,
         GLADIUS_PLUGIN_ENTRY_POINT_NAME
@@ -190,7 +191,7 @@ DSPManager::getPluginPackFrom(
         GLADIUS_THROW(errs);
     }
     // Make sure that we are dealing with the correct ABI.
-    if (pluginInfoHandle->pluginABI != GLADIUS_DSP_ABI) {
+    if (pluginInfoHandle->pluginABI != GLADIUS_PLUGIN_ABI) {
         auto errs = "Plugin ABI Mismatch. Please "
                     "Recompile & Relink Your Plugin.";
         GLADIUS_THROW(errs);
