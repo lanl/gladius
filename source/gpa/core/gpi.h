@@ -29,7 +29,7 @@ namespace gpi {
 /**
  * The plugin entry poing (symbol name).
  */
-#define GLADIUS_PLUGIN_ENTRY_POINT GladiusGladiusPluginInfo
+#define GLADIUS_PLUGIN_ENTRY_POINT GladiusPluginInfo
 
 /**
  * The name of the plugin entry point.
@@ -89,7 +89,7 @@ struct GladiusPluginArgs {
 };
 
 /**
- * The Domain-Specific Plugin Interface (DSPI) interface that plugins must
+ * The Gladius Plugin Interface (GPI) interface that plugins must
  * adhere to.
  */
 class GladiusPlugin {

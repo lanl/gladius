@@ -42,123 +42,7 @@ do {                                                                           \
         COMP_COUT << streamInsertions;                                         \
     }                                                                          \
 } while (0)
-
-#if 0
-/**
- *
- */
-int
-feToBeUnpack(
-    void *buf,
-    int bufLen,
-    void *data
-) {
-    using namespace std;
-    using namespace toolcommon;
-
-    GLADIUS_UNUSED(bufLen);
-
-    bool beVerbose = core::utils::envVarSet(GLADIUS_ENV_TOOL_BE_VERBOSE_NAME);
-
-    if (beVerbose) {
-        COMP_COUT << "###############################################" << endl;
-        COMP_COUT << "# Unpacking FE to BE Data #####################" << endl;
-        COMP_COUT << "###############################################" << endl;
-    }
-
-    try {
-        int currentParentPort, currentParentRank;
-
-        char currentParent[HOST_NAME_MAX], *ptr = (char *)buf;
-        auto *leafInfoArray = (ToolLeafInfoArrayT *)data;
-        // Get the number of daemons and set up the leaf info array.
-        (void)memcpy((void *)&(leafInfoArray->size), ptr, sizeof(int));
-        ptr += sizeof(int);
-        //
-        leafInfoArray->leaves = (ToolLeafInfoT *)
-            calloc(leafInfoArray->size, sizeof(ToolLeafInfoT));
-        if (!leafInfoArray->leaves) {
-            GLADIUS_THROW_OOR();
-        }
-        //
-        // Get MRNet parent node info for each daemon.
-        int nParents = 0;
-        memcpy((void *)&nParents, ptr, sizeof(int));
-        ptr += sizeof(int);
-        //
-        int daemon = -1;
-        for (decltype(nParents) parent = 0; parent < nParents; ++parent) {
-            int nChildren = 0;
-            if (beVerbose) COMP_COUT << "Parent: " << parent << std::endl;
-            // Get the parent host name, port, rank and child count.
-            strncpy(currentParent, ptr, HOST_NAME_MAX);
-            if (beVerbose) {
-                COMP_COUT << "*** Host Name: " << currentParent << std::endl;
-            }
-            ptr += strlen(currentParent) + 1;
-            //
-            (void)memcpy(&currentParentPort, ptr, sizeof(int));
-            if (beVerbose) {
-                COMP_COUT << "*** Port: " << currentParentPort << std::endl;
-            }
-            ptr += sizeof(int);
-            //
-            memcpy(&currentParentRank, ptr, sizeof(int));
-            if (beVerbose) {
-                COMP_COUT << "*** Rank: " << currentParentRank << std::endl;
-            }
-            ptr += sizeof(int);
-            //
-            (void)memcpy(&nChildren, ptr, sizeof(int));
-            if (beVerbose) {
-                COMP_COUT << "*** Number of Children: "
-                          << nChildren << std::endl;
-            }
-            ptr += sizeof(int);
-            // Iterate over this parent's children.
-            for (decltype(nChildren) child = 0; child < nChildren; child++) {
-                daemon++;
-                if (daemon >= leafInfoArray->size) {
-                    auto errStr = "Failed to Unpack Info From "
-                                  "the Front-End. Expecting "
-                                + std::to_string(leafInfoArray->size)
-                                + "Daemons, but Received "
-                                + std::to_string(daemon) + ".";
-                    GLADIUS_THROW(errStr);
-                    // Never reached.
-                    return -1;
-                }
-                // Fill in the parent information.
-                (void)strncpy((leafInfoArray->leaves)[daemon].parentHostName,
-                               currentParent,
-                               HOST_NAME_MAX);
-                (leafInfoArray->leaves)[daemon].parentRank = currentParentRank;
-                (leafInfoArray->leaves)[daemon].parentPort = currentParentPort;
-                // Get the daemon host name.
-                (void)strncpy((leafInfoArray->leaves)[daemon].hostName,
-                              ptr, HOST_NAME_MAX);
-                ptr += strlen((leafInfoArray->leaves)[daemon].hostName) + 1;
-                // Get the daemon rank.
-                (void)memcpy(&((leafInfoArray->leaves)[daemon].rank),
-                             ptr, sizeof(int));
-                ptr += sizeof(int);
-            }
-        }
-    }
-    catch (const std::exception &e) {
-        GLADIUS_CERR << e.what() << std::endl;
-        return -1;
-    }
-
-    if (beVerbose) {
-        COMP_COUT << "###############################################" << endl;
-        COMP_COUT << "# Done Unpacking FE to BE Data ################" << endl;
-        COMP_COUT << "###############################################" << endl;
-    }
-    return 0;
-}
-#endif
-}
+} // end namespace
 
 /**
  * Redirects stdout and stderr to a base directory with (hopefully) a unique
@@ -301,7 +185,7 @@ ToolBE::mLoadPlugins(void)
     // Okay, now we know what to load. So, do that now.
     VCOMP_COUT("Loading Plugins." << std::endl);
     // Get the front-end plugin pack.
-    mPluginPack = mDSPManager.getPluginPackFrom(
+    mPluginPack = mPluginManager.getPluginPackFrom(
                       gpa::GladiusPluginPack::PluginBE,
                       mPathToPluginPack
                   );

@@ -38,7 +38,7 @@ private:
     // The path to the plugin pack.
     std::string mPathToPluginPack;
     // The plugin manager.
-    gpa::DSPManager mDSPManager;
+    gpa::GladiusPluginManager mPluginManager;
     // The plugin pack for our current session.
     gpa::GladiusPluginPack mPluginPack;
     // The plugin instance pointer.

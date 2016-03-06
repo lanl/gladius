@@ -186,10 +186,10 @@ ToolFE::mSetupCore(void)
     }
     auto modeName = core::utils::getEnv(envMode);
     // Initialize the DSP manager.
-    mDSPManager = gpa::DSPManager(modeName, mBeVerbose);
+    mPluginManager = gpa::GladiusPluginManager(modeName, mBeVerbose);
     // The path to the plugin pack if we find a usable one.
     std::string pathToPluginPackIfAvail;
-    if (!mDSPManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
+    if (!mPluginManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
         // TODO Make better. Provide an example.
         whatsWrong = "Cannot find a usable plugin pack for '"
                    + modeName + "'.\nPlease make sure that the directory "
@@ -567,7 +567,7 @@ ToolFE::mLoadPlugins(void)
 
     VCOMP_COUT("Loading plugins." << std::endl);
     // Get the front-end plugin pack.
-    mPluginPack = mDSPManager.getPluginPackFrom(
+    mPluginPack = mPluginManager.getPluginPackFrom(
                       gpa::GladiusPluginPack::PluginFE,
                       mPathToPluginPack
                   );

@@ -7,7 +7,7 @@
  */
 
 /**
- * Implements the Domain-specific plugin manager.
+ * Implements the gladius plugin manager.
  */
 
 #include "gpa/core/gp-manager.h"
@@ -23,10 +23,9 @@ using namespace gladius;
 using namespace gladius::core;
 using namespace gladius::gpa;
 
-
 namespace {
 // This component's name.
-const std::string CNAME = "*dspman";
+const std::string CNAME = "**gpman";
 // CNAME's color code.
 const std::string NAMEC =
     core::colors::color().ansiBeginColor(core::colors::GREEN);
@@ -50,7 +49,7 @@ const std::map<uint8_t, std::string> GladiusPluginPack::sRequiredPlugins = {
  *
  */
 bool
-DSPManager::pluginPackAvailable(
+GladiusPluginManager::pluginPackAvailable(
     std::string &pathToPluginPackIfAvail
 ) {
     using namespace std;
@@ -115,7 +114,7 @@ DSPManager::pluginPackAvailable(
  *
  */
 bool
-DSPManager::mPluginPackLooksGood(
+GladiusPluginManager::mPluginPackLooksGood(
     const std::string &pathToPackBase
 ) {
     using namespace std;
@@ -148,7 +147,7 @@ DSPManager::mPluginPackLooksGood(
  *
  */
 GladiusPluginPack
-DSPManager::getPluginPackFrom(
+GladiusPluginManager::getPluginPackFrom(
     GladiusPluginPack::PluginPackType pluginPackType,
     const std::string &validPluginPackPath
 ) {

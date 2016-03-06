@@ -38,9 +38,9 @@ struct GladiusPluginPack {
 };
 
 /**
- * Domain-Specific Plugin (DSP) manager.
+ * Gladius plugin manager.
  */
-class DSPManager {
+class GladiusPluginManager {
     // Flag indicating whether or not we'll be verbose about our actions.
     bool mBeVerbose = false;
     //
@@ -52,11 +52,11 @@ class DSPManager {
     );
 public:
     //
-    DSPManager(void) { ; }
+    GladiusPluginManager(void) { ; }
     //
-    ~DSPManager(void) { ; }
+    ~GladiusPluginManager(void) { ; }
     //
-    DSPManager(
+    GladiusPluginManager(
         const std::string &targetModeName,
         bool beVerbose = false
     ) : mBeVerbose(beVerbose)

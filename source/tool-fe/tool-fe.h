@@ -46,7 +46,7 @@ private:
     // Our MRNet instance.
     mrnetfe::MRNetFE mMRNFE;
     // The plugin manager.
-    gpa::DSPManager mDSPManager;
+    gpa::GladiusPluginManager mPluginManager;
     // The plugin instance pointer.
     gpi::GladiusPlugin *mFEPlugin = nullptr;
     // Target application arguments.
