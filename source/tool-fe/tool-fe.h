@@ -20,7 +20,7 @@
 #include "dsys/dsi.h"
 #include "mrnet/mrnet-fe.h"
 #include "gpa/core/gp-manager.h"
-#include "gpa/core/gpi.h"
+#include "gpa/core/gladius-plugin.h"
 
 #include <string>
 #include <thread>

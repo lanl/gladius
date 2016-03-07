@@ -14,10 +14,10 @@ libGladiusPluginInterface.la \
 libGladiusPluginManager.la
 
 include_HEADERS = \
-gpi.h
+gladius-plugin.h
 
 libGladiusPluginInterface_la_SOURCES = \
-gpi.h
+gladius-plugin.h
 
 libGladiusPluginInterface_la_CFLAGS =
 

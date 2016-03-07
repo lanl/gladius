@@ -8,6 +8,21 @@
 
 #pragma once
 
+#if 1
+
+namespace gladius {
+namespace toolbe {
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+class ToolContext {
+};
+
+} // namespace toolbe
+} // gladius
+
+#else
+
 #include "tool-proto.h"
 
 #include <cassert>
@@ -249,3 +264,4 @@ toolDetach(ToolContext &tc)
     }
     return 0;
 }
+#endif

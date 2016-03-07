@@ -12,7 +12,7 @@
 
 #include "gpa/hello/hello-common.h"
 
-#include "gpa/core/gpi.h"
+#include "gpa/core/gladius-plugin.h"
 
 #include "core/core.h"
 #include "core/utils.h"

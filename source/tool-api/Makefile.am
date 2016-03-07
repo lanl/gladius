@@ -10,19 +10,21 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
-libGladiusToolBEAPI.la
+libgladius-tool-be.la
 
-libGladiusToolBEAPI_la_SOURCES = \
-toolbe-api.h
+include_HEADERS = \
+gladius-toolbe.h
 
-libGladiusToolBEAPI_la_CFLAGS =
+libgladius_tool_be_la_SOURCES =
 
-libGladiusToolBEAPI_la_CPPFLAGS = \
+libgladius_tool_be_la_CFLAGS =
+
+libgladius_tool_be_la_CPPFLAGS = \
 -I${top_srcdir}/source
 
-libGladiusToolBEAPI_la_LDFLAGS = -version-info ${LIBVINFO}
+libgladius_tool_be_la_LDFLAGS = -version-info ${LIBVINFO}
 
-libGladiusToolBEAPI_la_LIBADD = \
+libgladius_tool_be_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
 ${top_builddir}/source/tool-common/libGladiusToolCommon.la \
 ${top_builddir}/source/mrnet/libGladiusMRNetBE.la

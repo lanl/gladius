@@ -26,6 +26,7 @@
 #include <errno.h>
 
 #include "mpi.h"
+#include "tool-api/gladius-toolbe.h"
 
 using namespace std;
 
@@ -43,9 +44,7 @@ struct Proc {
     bool initialized;
     int cwRank;
     int cwSize;
-    // Map between a hostname and the number of targets on it. There shall be no
-    // duplicate hostnames in this table.
-    map<string, int> hostTargetNumTab;
+    gladius::toolbe::ToolContext toolContext;
 
     Proc(void)
         : leader(false)
