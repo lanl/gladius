@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015      Los Alamos National Security, LLC
+ * Copyright (c) 2015-2106 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,8 +10,7 @@
  * Common stuff (FE/BE) for the Parallel Step (hello) plugin.
  */
 
-#ifndef GLADIUS_PLUGIN_HELLO_COMMON_H_INCLUDED
-#define GLADIUS_PLUGIN_HELLO_COMMON_H_INCLUDED
+#pragma once
 
 #include "tool-common/tool-common.h"
 
@@ -28,5 +27,3 @@ enum HelloProtoTags {
     Shutdown
 };
 } // end hello namesapce.
-
-#endif

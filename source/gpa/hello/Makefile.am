@@ -1,10 +1,12 @@
 #
-# Copyright (c) 2015      Los Alamos National Security, LLC
+# Copyright (c) 2015-2016 Los Alamos National Security, LLC
 #                         All rights reserved.
 #
 # This file is part of the Gladius project. See the LICENSE.txt file at the
 # top-level directory of this distribution.
 #
+# This is an MPI application, so use MPI's compiler wrapper
+CXX = ${MPICXX}
 
 # Notice the name. The first bit is the plugin name. MODIFY THIS FOR YOUR NEEDS.
 # The last bit must be "libdir". For plugins packaged with Gladius, please use
@@ -13,8 +15,24 @@
 # GLADIUS_PLUGIN_PATH.
 hellolibdir = $(libdir)/hello
 
+################################################################################
+################################################################################
+bin_PROGRAMS = \
+hello-app
+
+hello_app_SOURCES = \
+hello-app.cpp
+
+hello_app_CPPFLAGS = \
+-I${top_srcdir}/source
+
+hello_app_LDADD = \
+${top_builddir}/source/core/libGladiusCore.la
+
+################################################################################
 # And here, notice the [plugin-name]lib_LTLIBRARIES. MODIFY THIS FOR YOUR NEEDS.
 # Don't change the names of the .las. Gladius expects these naming conventions.
+################################################################################
 hellolib_LTLIBRARIES = \
 PluginFrontEnd.la \
 PluginBackEnd.la \
