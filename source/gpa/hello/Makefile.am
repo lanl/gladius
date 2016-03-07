@@ -14,10 +14,12 @@ CXX = ${MPICXX}
 # installed anywhere, but external paths must be included in
 # GLADIUS_PLUGIN_PATH.
 hellolibdir = $(libdir)/hello
+# For relocating binaries that are generated here. Same idea as hellolibdir.
+hellobindir = $(libdir)/hello
 
 ################################################################################
 ################################################################################
-bin_PROGRAMS = \
+hellobin_PROGRAMS = \
 hello-app
 
 hello_app_SOURCES = \

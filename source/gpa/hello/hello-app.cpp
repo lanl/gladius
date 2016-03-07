@@ -90,6 +90,18 @@ init(
  *
  */
 int
+sayHi(const Proc &p)
+{
+    if (p.leader) {
+        printf("hello from %d processes!\n", p.cwSize);
+    }
+    return SUCCESS;
+}
+
+/**
+ *
+ */
+int
 fini(const Proc &p)
 {
     if (p.initialized) {
@@ -114,6 +126,9 @@ main(
     Proc proc;
     //
     if (SUCCESS != (rc = init(argc, argv, proc))) {
+        goto out;
+    }
+    if (SUCCESS != (rc = sayHi(proc))) {
         goto out;
     }
     // Don't finalize in out: (may hang). Just exit on error so that the MPI

@@ -535,7 +535,8 @@ ToolFE::mInitiateToolLashUp(void)
         if (GLADIUS_SUCCESS != rc) {
             return rc;
         }
-        // Launch user application
+        // Launch user application containing links into our tool
+        // infrastructure.
         if (GLADIUS_SUCCESS != (rc = mLaunchUserApp())) {
             return rc;
         }
