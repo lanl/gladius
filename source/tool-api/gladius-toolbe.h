@@ -8,44 +8,54 @@
 
 #pragma once
 
-#include "core/gladius-rc.h"
-#include <cstdint>
+#include <string>
 
 #if 1
 
 namespace gladius {
 namespace toolbe {
 
+struct ToolConnectionInfo;
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-class ToolContext {
+class Tool {
     static constexpr int sNOUID = -1;
     //
     int mUID;
     //
+    std::string mSessionKey;
+    //
+    ToolConnectionInfo *mtli;
+    //
     int
     mConnect(void);
+    //
+    int
+    mGetConnectionInfo(void);
 public:
     /**
      *
      */
-    ToolContext(
+    Tool(
         void
-    ) : mUID(sNOUID) { ; }
+    ) : mUID(sNOUID)
+      , mtli(nullptr)
+    { ; }
     /**
      *
      */
-    ~ToolContext(void) { ; }
+    ~Tool(void) {
+        if (mtli) free(mtli);
+    }
+    //
+    int
+    create(int uid);
     /**
      *
      */
     int
-    create(
-        int uid
-    ) {
-        mUID = uid;
-        return GLADIUS_SUCCESS;
-    }
+    connect(void) { return mConnect(); }
 };
 
 } // namespace toolbe

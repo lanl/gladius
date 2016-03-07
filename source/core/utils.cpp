@@ -11,6 +11,8 @@
 #include <type_traits>
 #include <cassert>
 
+#include <sys/stat.h>
+
 #include <boost/archive/iterators/binary_from_base64.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
@@ -243,7 +245,7 @@ utils::strTok(
  */
 std::string
 utils::base64Encode(
-    std::string &val
+    const std::string &val
 ) {
     using namespace boost::archive::iterators;
     using It = base64_from_binary<
@@ -260,7 +262,7 @@ utils::base64Encode(
  */
 std::string
 utils::base64Decode(
-    std::string &val
+    const std::string &val
 ) {
     using namespace boost::archive::iterators;
     using It = transform_width<
@@ -270,4 +272,27 @@ utils::base64Decode(
         std::string(It(std::begin(val)), It(std::end(val))),
         [](char c) { return c == '\0'; }
     );
+}
+
+/**
+ *
+ */
+int
+utils::getSizeOfFile(
+    const std::string &file,
+    size_t &outSize
+) {
+    using namespace std;
+    //
+    struct stat sbuf;
+    if (0 != stat(file.c_str(), &sbuf)) {
+        int err = errno;
+        const string errs = "stat(2): " + getStrError(err);
+        GLADIUS_CERR << formatCallFailed(errs , GLADIUS_WHERE)
+                     << std::endl;
+        return GLADIUS_ERR_IO;
+    }
+    outSize = (size_t)sbuf.st_size;
+    //
+    return GLADIUS_SUCCESS;
 }

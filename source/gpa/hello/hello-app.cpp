@@ -44,7 +44,7 @@ struct Proc {
     bool initialized;
     int cwRank;
     int cwSize;
-    gladius::toolbe::ToolContext toolContext;
+    gladius::toolbe::Tool tool;
 
     Proc(void)
         : leader(false)
@@ -70,6 +70,8 @@ init(
     char **argv,
     Proc &p
 ) {
+    using namespace gladius::toolbe;
+    //
     int mpiRC = MPI_Init(&argc, &argv);
     if (MPI_SUCCESS != mpiRC) return ERROR;
     else p.initialized = true;
@@ -81,8 +83,13 @@ init(
     if (MPI_SUCCESS != mpiRC) return ERROR;
     //
     p.leader = (0 == p.cwRank);
-    // Initialize our tool context
-    p.toolContext.create(p.cwRank);
+    // Initialize our tool
+    if (GLADIUS_SUCCESS != p.tool.create(p.cwRank)) {
+        return ERROR;
+    }
+    if (GLADIUS_SUCCESS != p.tool.connect()) {
+        return ERROR;
+    }
     //
     return SUCCESS;
 }

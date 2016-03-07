@@ -238,10 +238,16 @@ public:
     }
     //
     static std::string
-    base64Encode(std::string &val);
+    base64Encode(const std::string &val);
     //
     static std::string
-    base64Decode(std::string &val);
+    base64Decode(const std::string &val);
+    //
+    static int
+    getSizeOfFile(
+        const std::string &file,
+        size_t &outSize
+    );
 };
 
 } // end core namespace

@@ -514,7 +514,14 @@ ToolFE::mPublishConnectionInfo(void)
 int
 ToolFE::mLaunchUserApp(void)
 {
+    using namespace std;
     using namespace gladius::core;
+    utils::setEnv(
+        GLADIUS_ENV_GLADIUS_SESSION_KEY,
+        mSessionKey
+    );
+    cout << mSessionKey << endl;
+    sleep(5);
     //
     return GLADIUS_SUCCESS;
 }

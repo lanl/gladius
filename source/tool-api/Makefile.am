@@ -15,7 +15,8 @@ libgladius-tool-be.la
 include_HEADERS = \
 gladius-toolbe.h
 
-libgladius_tool_be_la_SOURCES =
+libgladius_tool_be_la_SOURCES = \
+gladius-toolbe.h gladius-toolbe.cpp
 
 libgladius_tool_be_la_CFLAGS =
 

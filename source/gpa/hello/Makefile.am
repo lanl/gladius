@@ -29,7 +29,8 @@ hello_app_CPPFLAGS = \
 -I${top_srcdir}/source
 
 hello_app_LDADD = \
-${top_builddir}/source/core/libGladiusCore.la
+${top_builddir}/source/core/libGladiusCore.la \
+${top_builddir}/source/tool-api/libgladius-tool-be.la
 
 ################################################################################
 # And here, notice the [plugin-name]lib_LTLIBRARIES. MODIFY THIS FOR YOUR NEEDS.

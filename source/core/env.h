@@ -57,6 +57,11 @@
  */
 #define GLADIUS_ENV_DOMAIN_MODE_NAME "GLADIUS_DOMAIN_MODE"
 
+/**
+ * Job session key environment variable name.
+ */
+#define GLADIUS_ENV_GLADIUS_SESSION_KEY "GLADIUS_SESSION_KEY"
+
 namespace gladius {
 namespace core {
 /**

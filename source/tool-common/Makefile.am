@@ -11,9 +11,12 @@ LIBVINFO = "1:0:0"
 lib_LTLIBRARIES = \
 libGladiusToolCommon.la
 
+include_HEADERS = \
+gladius-tli.h
+
 libGladiusToolCommon_la_SOURCES = \
 session-key.h \
-leaf-info.h \
+gladius-tli.h \
 faux-mpir.h \
 tool-common.h tool-common.cpp
 

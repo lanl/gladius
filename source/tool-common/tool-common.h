@@ -15,7 +15,7 @@
 #pragma once
 
 #include "tool-common/faux-mpir.h"
-#include "tool-common/leaf-info.h"
+#include "tool-common/gladius-tli.h"
 
 #include "core/core.h"
 #include "core/utils.h"
