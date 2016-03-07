@@ -12,9 +12,12 @@ LIBVINFO = "1:0:0"
 lib_LTLIBRARIES = \
 libGladiusCore.la
 
+include_HEADERS = \
+gladius-rc.h
+
 libGladiusCore_la_SOURCES = \
 core.h \
-ret-codes.h \
+gladius-rc.h \
 args.h \
 process-landscape.h \
 colors.h colors.cpp \

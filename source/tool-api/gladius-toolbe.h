@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include "core/gladius-rc.h"
+#include <cstdint>
+
 #if 1
 
 namespace gladius {
@@ -16,6 +19,33 @@ namespace toolbe {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 class ToolContext {
+    static constexpr int sNOUID = -1;
+    //
+    int mUID;
+    //
+    int
+    mConnect(void);
+public:
+    /**
+     *
+     */
+    ToolContext(
+        void
+    ) : mUID(sNOUID) { ; }
+    /**
+     *
+     */
+    ~ToolContext(void) { ; }
+    /**
+     *
+     */
+    int
+    create(
+        int uid
+    ) {
+        mUID = uid;
+        return GLADIUS_SUCCESS;
+    }
 };
 
 } // namespace toolbe

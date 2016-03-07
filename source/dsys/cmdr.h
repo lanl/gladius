@@ -16,7 +16,7 @@
 #include "config.h"
 #endif
 
-#include "core/ret-codes.h"
+#include "core/core.h"
 #include "core/args.h"
 #include "core/utils.h"
 

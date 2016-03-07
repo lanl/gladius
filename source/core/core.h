@@ -12,5 +12,5 @@
 #include "config.h"
 #endif
 
-#include "core/ret-codes.h"
+#include "core/gladius-rc.h"
 #include "core/env.h"

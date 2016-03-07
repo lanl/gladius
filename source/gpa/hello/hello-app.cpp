@@ -81,6 +81,8 @@ init(
     if (MPI_SUCCESS != mpiRC) return ERROR;
     //
     p.leader = (0 == p.cwRank);
+    // Initialize our tool context
+    p.toolContext.create(p.cwRank);
     //
     return SUCCESS;
 }
