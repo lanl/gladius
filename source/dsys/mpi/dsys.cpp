@@ -22,7 +22,6 @@
 
 #include <functional>
 #include <iostream>
-#include <fstream>
 #include <cstdlib>
 #include <string>
 #include <cstdio>
@@ -186,6 +185,7 @@ int
 writeConnectionInfos(Proc &p)
 {
     using namespace gladius::core;
+    using namespace gladius::toolcommon;
     using namespace std;
 
     char *tmpDir = getenv("TMPDIR");
@@ -196,18 +196,30 @@ writeConnectionInfos(Proc &p)
                     + string(p.sessionKey) + "-"
                     + to_string(p.cwRank);
     //
-    ofstream connectionInfo;
-    connectionInfo.open(infoFile, ios::out | ios::binary | ios::trunc);
-    if (!connectionInfo.good()) {
-        cerr << compName << "Could not create connection file: "
-             << infoFile << endl;
+    FILE *connectionInfo = fopen(infoFile.c_str(), "wb+");
+    if (!connectionInfo) {
+        int err = errno;
+        const string errs = utils::getStrError(err);
+        cerr << utils::formatCallFailed("fopen(3): " + errs, GLADIUS_WHERE)
+             << std::endl;
         return ERROR;
     }
-    connectionInfo.write(
-        (char *)(&p.leafInfos.leaves),
-        p.leafInfos.size * sizeof(gladius::toolcommon::ToolLeafInfoT)
-    );
-    connectionInfo.close();
+    // Write the data...
+    int itemsWritten = fwrite(p.leafInfos.leaves,
+                              sizeof(ToolLeafInfoT),
+                              p.leafInfos.size,
+                              connectionInfo
+                       );
+    if (itemsWritten != p.leafInfos.size) {
+        cerr << utils::formatCallFailed("fwrite(3): ", GLADIUS_WHERE)
+             << std::endl;
+        return ERROR;
+    }
+    if (0 != fclose(connectionInfo)) {
+        cerr << utils::formatCallFailed("fclose(3): ", GLADIUS_WHERE)
+             << std::endl;
+        // Warning only. Just return success...
+    }
     //
     return SUCCESS;
 }
