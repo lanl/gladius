@@ -252,10 +252,11 @@ pubConn(Proc &p)
             if (line.empty()) {
                 break;
             }
+            cerr << "LINE|" << line << "|" << endl;
             // Decode the infos
             const string res = core::utils::base64Decode(line);
             cerr << "RESLEN: " << res.length() << endl;
-            ToolLeafInfoT *destp = &(leafInfos->leaves[nGot]);
+            ToolLeafInfoT *destp = &leafInfos->leaves[nGot];
             memmove(destp, res.data(), sizeof(ToolLeafInfoT));
 #if 1 // DEBUG
             cerr << "ToolLeafInfoT "       << nGot                  << endl

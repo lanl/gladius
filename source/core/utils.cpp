@@ -243,14 +243,29 @@ std::string
 utils::base64Encode(
     const std::string &val
 ) {
-    const int encLen = Base64encode_len(val.length());
-    char *enc = (char *)calloc(encLen, sizeof(char));
+    const int encBufLen = Base64encode_len(val.length());
+    char *enc = (char *)calloc(encBufLen, sizeof(char));
     if (!enc) {
         GLADIUS_THROW_OOR();
     }
-    Base64encode(enc, val.c_str(), val.length());
-    std::string result(enc, encLen);
+    const int resLen = Base64encode(enc, val.c_str(), val.length());
+    std::string result(enc, resLen);
     free(enc);
+#if 0
+    // TODO RM
+    char *test = (char *)"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+    int e = Base64encode_len(strlen(test));
+    char *teste = (char *)calloc(e, sizeof(char));
+    int ne = Base64encode(teste, test, strlen(test));
+    std::cout << "enc len " << e << " for " << test << " (len " << strlen(test) << ") chars" << std::endl
+        << " b64 returns " << ne << " for result " << teste << std::endl;
+    //
+    int d = Base64decode_len(teste);
+    char *testd = (char *)calloc(d, sizeof(char));
+    int nd = Base64decode(testd, teste);
+    std::cout << "dec len " << d << " for " << teste << " (len " << strlen(teste) << ") chars" << std::endl
+        << " b64d returns " << nd << " for result " << testd << std::endl;
+#endif
     return result;
 }
 
@@ -261,13 +276,13 @@ std::string
 utils::base64Decode(
     const std::string &val
 ) {
-    const int decLen = Base64decode_len(val.data());
-    char *dec = (char *)calloc(decLen, sizeof(char));
+    const int decBufLen = Base64decode_len(val.data());
+    char *dec = (char *)calloc(decBufLen, sizeof(char));
     if (!dec) {
         GLADIUS_THROW_OOR();
     }
-    Base64decode(dec, val.data());
-    std::string result(dec, decLen);
+    const int resLen = Base64decode(dec, val.data());
+    std::string result(dec, resLen);
     free(dec);
     return result;
 }
