@@ -227,6 +227,10 @@ writeConnectionInfos(Proc &p)
         }
         nInfos += itemsWritten;
     }
+    if (0 == nInfos) {
+        cerr << "Something is wrong. No infos found for UID "
+             << p.cwRank << endl;
+    }
     if (0 != fclose(connectionInfo)) {
         cerr << utils::formatCallFailed("fclose(3): ", GLADIUS_WHERE)
              << std::endl;
