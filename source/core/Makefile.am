@@ -10,11 +10,19 @@
 LIBVINFO = "1:0:0"
 
 lib_LTLIBRARIES = \
+libGladiusBase64.la \
 libGladiusCore.la
 
 include_HEADERS = \
 gladius-rc.h
 
+################################################################################
+################################################################################
+libGladiusBase64_la_SOURCES = \
+base64.h base64.c
+
+################################################################################
+################################################################################
 libGladiusCore_la_SOURCES = \
 core.h \
 gladius-rc.h \
@@ -28,6 +36,9 @@ macros.h \
 session.h session.cpp \
 utils.h utils.cpp
 
+libGladiusCore_la_DEPENDENCIES = \
+${top_builddir}/source/core/libGladiusBase64.la
+
 libGladiusCore_la_CFLAGS =
 
 libGladiusCore_la_CPPFLAGS = \
@@ -35,4 +46,5 @@ libGladiusCore_la_CPPFLAGS = \
 
 libGladiusCore_la_LDFLAGS = -version-info ${LIBVINFO}
 
-libGladiusCore_la_LIBADD =
+libGladiusCore_la_LIBADD = \
+${top_builddir}/source/core/libGladiusBase64.la

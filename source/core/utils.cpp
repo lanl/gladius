@@ -7,16 +7,12 @@
  */
 
 #include "core/utils.h"
+#include "core/base64.h"
 
 #include <type_traits>
 #include <cassert>
 
 #include <sys/stat.h>
-
-#include <boost/archive/iterators/binary_from_base64.hpp>
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
-#include <boost/algorithm/string.hpp>
 
 using namespace gladius::core;
 
@@ -247,31 +243,33 @@ std::string
 utils::base64Encode(
     const std::string &val
 ) {
-    using namespace boost::archive::iterators;
-    using It = base64_from_binary<
-                   transform_width<std::string::const_iterator, 6, 8>
-               >;
-    auto tmp = std::string(It(std::begin(val)), It(std::end(val)));
-    return tmp.append((3 - val.size() % 3) % 3, '=');
+    const int encLen = Base64encode_len(val.length());
+    char *enc = (char *)calloc(encLen, sizeof(char));
+    if (!enc) {
+        GLADIUS_THROW_OOR();
+    }
+    Base64encode(enc, val.c_str(), val.length());
+    std::string result(enc, encLen);
+    free(enc);
+    return result;
 }
 
 /**
- * base64 decode routine.
- * http://stackoverflow.com/questions/7053538/
- * how-do-i-encode-a-string-to-base64-using-only-boost
+ *
  */
 std::string
 utils::base64Decode(
     const std::string &val
 ) {
-    using namespace boost::archive::iterators;
-    using It = transform_width<
-                   binary_from_base64<std::string::const_iterator>, 8, 6
-               >;
-    return boost::algorithm::trim_right_copy_if(
-        std::string(It(std::begin(val)), It(std::end(val))),
-        [](char c) { return c == '\0'; }
-    );
+    const int decLen = Base64decode_len(val.data());
+    char *dec = (char *)calloc(decLen, sizeof(char));
+    if (!dec) {
+        GLADIUS_THROW_OOR();
+    }
+    Base64decode(dec, val.data());
+    std::string result(dec, decLen);
+    free(dec);
+    return result;
 }
 
 /**

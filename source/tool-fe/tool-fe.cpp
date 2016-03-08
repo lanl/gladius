@@ -490,7 +490,8 @@ ToolFE::mPublishConnectionInfo(void)
     // Serialization buffer. Items should all be the same size.
     char sBuf[sizeof(toolcommon::ToolLeafInfoT)];
     for (const auto &li : leafInfos) {
-        memcpy(sBuf, &li, sizeof(sBuf));
+        memset(sBuf, 0, sizeof(sBuf));
+        memmove(sBuf, &li, sizeof(sBuf));
         string tmp(sBuf, sizeof(sBuf));
         // Stash encoded buffer
         sLeafInfos.push_back(utils::base64Encode(tmp));
@@ -500,10 +501,12 @@ ToolFE::mPublishConnectionInfo(void)
         (rc = mDSI.publishConnectionInfo(mSessionKey, sLeafInfos))) {
         return rc;
     }
+#if 0
     // Done with DSI, so shut it down
     if (GLADIUS_SUCCESS != (rc = mDSI.shutdown())) {
         return rc;
     }
+#endif
     //
     return GLADIUS_SUCCESS;
 }
@@ -520,7 +523,7 @@ ToolFE::mLaunchUserApp(void)
         GLADIUS_ENV_GLADIUS_SESSION_KEY,
         mSessionKey
     );
-    cout << mSessionKey << endl;
+    // TODO RM
     sleep(5);
     //
     return GLADIUS_SUCCESS;

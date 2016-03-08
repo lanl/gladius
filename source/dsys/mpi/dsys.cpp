@@ -161,6 +161,7 @@ publishSessionKey(Proc &p)
 {
     using namespace std;
     if (p.leader) {
+        cout << prompt << endl << flush;
         string line;
         std::getline(cin, line);
         if (line.empty()) return ERROR;
@@ -174,6 +175,7 @@ publishSessionKey(Proc &p)
                     MPI_COMM_WORLD
                 );
     if (MPI_SUCCESS != mpiRC) return ERROR;
+    //
     return SUCCESS;
 }
 
@@ -198,7 +200,7 @@ writeConnectionInfos(Proc &p)
     connectionInfo.open(infoFile, ios::out | ios::binary | ios::trunc);
     if (!connectionInfo.good()) {
         cerr << compName << "Could not create connection file: "
-              << infoFile << endl;
+             << infoFile << endl;
         return ERROR;
     }
     connectionInfo.write(
@@ -229,28 +231,34 @@ pubConn(Proc &p)
         return ERROR;
     }
     //
-    ToolLeafInfoArrayT &leafInfos = p.leafInfos;
-    if (leafInfos.leaves) free(leafInfos.leaves);
-    leafInfos.size = p.cwSize;
-    leafInfos.leaves = (ToolLeafInfoT *)calloc(p.cwSize, sizeof(ToolLeafInfoT));
-    if (!leafInfos.leaves) {
+    ToolLeafInfoArrayT *leafInfos = &p.leafInfos;
+    if (leafInfos->leaves) free(leafInfos->leaves);
+    leafInfos->size = p.cwSize;
+    leafInfos->leaves = (ToolLeafInfoT *)calloc(p.cwSize, sizeof(ToolLeafInfoT));
+    if (!leafInfos->leaves) {
         cerr << compName << " Out of Resources!" << endl;
         return ERROR;
     }
     //
     if (p.leader) {
+        cout << prompt << endl << flush;
+        // Get number of expected infos
         string line;
         std::getline(cin, line);
         unsigned nGot = 0, nTargets = std::stol(line, 0, 10);
         for (nGot = 0; nGot < nTargets; ++nGot) {
+            cout << prompt << endl << flush;
             std::getline(cin, line);
-            if (line.empty()) break;
+            if (line.empty()) {
+                break;
+            }
             // Decode the infos
             const string res = core::utils::base64Decode(line);
-            ToolLeafInfoT *destp = &(leafInfos.leaves[nGot]);
-            memcpy(destp, res.data(), sizeof(ToolLeafInfoT));
-#if 0 // DEBUG
-            cout << "ToolLeafInfoT "       << nGot                  << endl
+            cerr << "RESLEN: " << res.length() << endl;
+            ToolLeafInfoT *destp = &(leafInfos->leaves[nGot]);
+            memmove(destp, res.data(), sizeof(ToolLeafInfoT));
+#if 1 // DEBUG
+            cerr << "ToolLeafInfoT "       << nGot                  << endl
                  << "- Parent Host Name: " << destp->parentHostName << endl
                  << "- Parent Rank     : " << destp->parentRank     << endl
                  << "- Parent Port     : " << destp->parentPort     << endl;
@@ -259,13 +267,15 @@ pubConn(Proc &p)
         if (nGot != nTargets) {
             cerr << compName
                  << " Terminating due to unexpected number of infos..."
+                 << endl
+                 << "Got " << nGot << " , but expected " << nTargets
                  << endl;
             return ERROR;
         }
     }
-    const int count = sizeof(ToolLeafInfoT) * leafInfos.size;
+    const int count = sizeof(ToolLeafInfoT) * leafInfos->size;
     int mpiRC = MPI_Bcast(
-                    leafInfos.leaves,
+                    leafInfos->leaves,
                     count,
                     MPI_CHAR,
                     0,

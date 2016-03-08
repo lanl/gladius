@@ -124,7 +124,7 @@ DSI::mChildCleanup(void)
                 // Hit the launcher a couple of times. Sometimes they need that.
                 core::utils::sendSignal(mApplPID, SIGTERM);
                 core::utils::sendSignal(mApplPID, SIGTERM);
-                GLADIUS_CERR << "WARNING: An error occurred while"
+                GLADIUS_CERR << "WARNING: An error occurred while "
                              << "running a parallel job." << endl;
                 GLADIUS_CERR << "We cleaned up as best we could, "
                              << "but there may be " << endl;
@@ -303,7 +303,8 @@ int
 DSI::mSendCommand(
     const std::string &rawCMD
 ) {
-    fputs(std::string(rawCMD + "\n").c_str(), mTo);
+    const std::string toPut = std::string(rawCMD + "\n");
+    fputs(toPut.c_str(), mTo);
     fflush(mTo);
     return GLADIUS_SUCCESS;
 }
@@ -402,6 +403,7 @@ DSI::publishConnectionInfo(
     }
     VCOMP_COUT("- Sending encoded connection info..." << endl);
     for (const auto &li : leafInfos) {
+        std::cout << li << endl;
         if (GLADIUS_SUCCESS != (rc = mSendCommand(li))) {
             return rc;
         }

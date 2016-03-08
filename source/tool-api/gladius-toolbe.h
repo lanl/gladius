@@ -21,11 +21,13 @@ struct ToolConnectionInfo;
 ////////////////////////////////////////////////////////////////////////////////
 class Tool {
     static constexpr int sNOUID = -1;
-    //
+    // Our unique identifier in the parallel job.
     int mUID;
+    // Total number of participants in this job.
+    int mTargetCount;
     //
     std::string mSessionKey;
-    //
+    // Opaque handle to connection information.
     ToolConnectionInfo *mtli;
     //
     int
@@ -40,6 +42,7 @@ public:
     Tool(
         void
     ) : mUID(sNOUID)
+      , mTargetCount(0)
       , mtli(nullptr)
     { ; }
     /**
