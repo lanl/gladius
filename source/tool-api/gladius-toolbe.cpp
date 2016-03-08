@@ -32,15 +32,15 @@ do {                                                                           \
     std::cerr << sCompName << " " << streamInsertions << std::endl;            \
 } while (0)
 
+} // namespace
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-struct ThreadPersonality {
+struct gladius::toolbe::ThreadPersonality {
     int rank = 0;
     static constexpr int argc = 6;
     char *argv[argc];
 };
-
-} // namespace
 
 /**
  *
@@ -77,6 +77,16 @@ Tool::mGetConnectionInfo(void)
     }
     // Determine number of targets.
     mTargetCount = fileSize / sizeof(ToolLeafInfoT);
+    // Sanity
+    if (mTargetCount <= 0) {
+        CERRLN("Error determining number of targets... Got: " << mTargetCount);
+        return GLADIUS_ERR;
+    }
+    // Not supported (yet)
+    if (mTargetCount > 1) {
+        CERRLN("Multiple targets not supported...");
+        return GLADIUS_ERR;
+    }
     //
     mtli = (ToolConnectionInfo *)calloc(1, sizeof(ToolLeafInfoArrayT));
     if (!mtli) {
@@ -132,24 +142,41 @@ Tool::mGetConnectionInfo(void)
 int
 Tool::mStartToolThreads(void)
 {
-#if 0
     // TODO FIXME when we want more than one thread per target.
     const size_t nThreads = 1;
+    ToolLeafInfoArrayT *tli = (ToolLeafInfoArrayT *)mtli;
+    // Not supported yet...
+    if (tli->size != 1) {
+        CERRLN("Multiple targets not supported...");
+        return GLADIUS_ERR;
+    }
     for (size_t i = 0; i < nThreads; ++i) {
         ThreadPersonality *tp = new ThreadPersonality();
         // TODO FIXME: calculate proper rank.
         tp->rank = (10000 * (i + 1)) + mUID;
         // TODO FIXME: get real exec
         tp->argv[0] = (char *)"./toolBE";
-        tp->argv[1] = tc.parentHostname;
-        tp->argv[2] = tc.parentPort;
-        tp->argv[3] = tc.parentRank;
-        tp->argv[4] = tc.mHostname;
-        mThreads.push_back(std::thread(toolThreadMain, &tc, tp));
+        tp->argv[1] = tli->leaves[0].parentHostName;
+        tp->argv[2] = (char *)to_string(tli->leaves[0].parentPort).c_str();
+        tp->argv[3] = (char *)to_string(tli->leaves[0].parentRank).c_str();
+        tp->argv[4] = (char *)utils::getHostname().c_str();
+        //mToolThreads.push_back(std::thread(toolThreadMain, &tc, tp));
     }
+#if 0
     tc.waitForAttach();
     tc.inMapper->WaitOnCondition(ToolContext::ToolConditions::MAP);
 #endif
+    return GLADIUS_SUCCESS;
+}
+
+/**
+ *
+ */
+int
+Tool::mToolThreadMain(
+    ThreadPersonality *tp
+) {
+    cout << "hi from tool thread " << tp->rank << endl;
     return GLADIUS_SUCCESS;
 }
 
