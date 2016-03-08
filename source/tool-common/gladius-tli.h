@@ -22,7 +22,7 @@ extern "C" {
  *
  */
 typedef struct ToolLeafInfoT {
-    // TODO Remove
+    // TODO RM
     char hostName[HOST_NAME_MAX];
     char parentHostName[HOST_NAME_MAX];
     int rank;

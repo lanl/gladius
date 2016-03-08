@@ -185,7 +185,7 @@ publishSessionKey(Proc &p)
 }
 
 /**
- *
+ * Write the connection infos. Filter out any infos that aren't for me.
  */
 int
 writeConnectionInfos(Proc &p)
@@ -210,16 +210,22 @@ writeConnectionInfos(Proc &p)
              << std::endl;
         return ERROR;
     }
-    // Write the data...
-    int itemsWritten = fwrite(p.leafInfos.leaves,
-                              sizeof(ToolLeafInfoT),
-                              p.leafInfos.size,
-                              connectionInfo
-                       );
-    if (itemsWritten != p.leafInfos.size) {
-        cerr << utils::formatCallFailed("fwrite(3): ", GLADIUS_WHERE)
-             << std::endl;
-        return ERROR;
+    // Write my data.
+    int nInfos = 0;
+    for (int i = 0; i < p.leafInfos.size; ++i) {
+        if (p.leafInfos.leaves[i].rank != p.cwRank) continue;
+        // Our data
+        const int itemsWritten = fwrite(p.leafInfos.leaves,
+                                        sizeof(ToolLeafInfoT),
+                                        1,
+                                        connectionInfo
+                                 );
+        if (1 != itemsWritten) {
+            cerr << utils::formatCallFailed("fwrite(3): ", GLADIUS_WHERE)
+                 << std::endl;
+            return ERROR;
+        }
+        nInfos += itemsWritten;
     }
     if (0 != fclose(connectionInfo)) {
         cerr << utils::formatCallFailed("fclose(3): ", GLADIUS_WHERE)
@@ -278,8 +284,10 @@ pubConn(Proc &p)
             memmove(destp, res.data(), sizeof(ToolLeafInfoT));
             // Notify user that ready.
             echoPrompt();
-#if 0 // DEBUG
+#if 1 // DEBUG
             cerr << "ToolLeafInfoT "       << nGot                  << endl
+                 << "- Rank            : " << destp->rank           << endl
+                 << "- Hostname        : " << destp->hostName       << endl
                  << "- Parent Host Name: " << destp->parentHostName << endl
                  << "- Parent Rank     : " << destp->parentRank     << endl
                  << "- Parent Port     : " << destp->parentPort     << endl;

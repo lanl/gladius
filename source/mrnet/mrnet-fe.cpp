@@ -568,7 +568,7 @@ MRNetFE::generateConnectionMap(
         }
         auto &leaves = mLeafInfo.leaves;
 #if 0 // DEBUG
-        fprintf(stdout, "BE %u will connect to %s:%d:%d\n",
+        fprintf(stdout, "ToolBE %u will connect to %s:%d:%d\n",
                 i,
                 leaves[currLeaf]->get_HostName().c_str(),
                 leaves[currLeaf]->get_Port(),
@@ -580,8 +580,9 @@ MRNetFE::generateConnectionMap(
         memset(&mi, 0, sizeof(mi));
         const char *hn = leaves[currLeaf]->get_HostName().c_str();
         memmove(mi.parentHostName, hn, strlen(hn) + 1);
-        mi.rank = leaves[currLeaf]->get_Rank();
+        mi.parentRank = leaves[currLeaf]->get_Rank();
         mi.parentPort = leaves[currLeaf]->get_Port();
+        mi.rank       = i;
         cMap.push_back(mi);
     }
     //

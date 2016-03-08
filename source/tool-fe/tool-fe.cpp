@@ -517,12 +517,21 @@ ToolFE::mLaunchUserApp(void)
 {
     using namespace std;
     using namespace gladius::core;
-    utils::setEnv(
-        GLADIUS_ENV_GLADIUS_SESSION_KEY,
-        mSessionKey
-    );
-    // TODO RM
-    sleep(5);
+    // Push session key into the environment.
+    int rc = utils::setEnv(
+                 GLADIUS_ENV_GLADIUS_SESSION_KEY,
+                 mSessionKey
+             );
+    if (GLADIUS_SUCCESS != rc) return rc;
+    // FIXME hack for now
+    std::string lcmd;
+    for (const auto &a : mLauncherArgs.toArgv()) {
+        lcmd += (a + " ");
+    }
+    for (const auto &a : mAppArgs.toArgv()) {
+        lcmd += (a + " ");
+    }
+    system(lcmd.c_str());
     //
     return GLADIUS_SUCCESS;
 }

@@ -9,6 +9,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <thread>
 
 #if 1
 
@@ -29,12 +31,17 @@ class Tool {
     std::string mSessionKey;
     // Opaque handle to connection information.
     ToolConnectionInfo *mtli;
+    // Pool of tool threads.
+    std::vector<std::thread> mToolThreads;
     //
     int
     mConnect(void);
     //
     int
     mGetConnectionInfo(void);
+    //
+    int
+    mStartToolThreads(void);
 public:
     /**
      *

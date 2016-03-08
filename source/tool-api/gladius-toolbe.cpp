@@ -32,6 +32,14 @@ do {                                                                           \
     std::cerr << sCompName << " " << streamInsertions << std::endl;            \
 } while (0)
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+struct ThreadPersonality {
+    int rank = 0;
+    static constexpr int argc = 6;
+    char *argv[argc];
+};
+
 } // namespace
 
 /**
@@ -53,7 +61,7 @@ Tool::mGetConnectionInfo(void)
         tmpDir = (char *)"/tmp";
     }
     ////////////////////////////////////////////////////////////////////////////
-    // NOTE: this is to be kept in sync with dsys.cpp
+    // NOTE: this naming scheme is to be kept in sync with dsys.cpp
     ////////////////////////////////////////////////////////////////////////////
     string infoFile = string(tmpDir) + "/"
                     + string(mSessionKey) + "-"
@@ -62,7 +70,6 @@ Tool::mGetConnectionInfo(void)
     size_t fileSize = 0;
     int rc = core::utils::getSizeOfFile(infoFile, fileSize);
     if (GLADIUS_SUCCESS != rc) return rc;
-    cout << "FileSize: " << fileSize << endl;
     // Sanity
     if (0 != fileSize % sizeof(ToolLeafInfoT)) {
         CERRLN("Connection info inconsistency!");
@@ -70,7 +77,6 @@ Tool::mGetConnectionInfo(void)
     }
     // Determine number of targets.
     mTargetCount = fileSize / sizeof(ToolLeafInfoT);
-    cout << "N Targets: " << mTargetCount << endl;
     //
     mtli = (ToolConnectionInfo *)calloc(1, sizeof(ToolLeafInfoArrayT));
     if (!mtli) {
@@ -124,10 +130,26 @@ Tool::mGetConnectionInfo(void)
  *
  */
 int
-Tool::create(
-    int uid
-) {
-    mUID = uid;
+Tool::mStartToolThreads(void)
+{
+#if 0
+    // TODO FIXME when we want more than one thread per target.
+    const size_t nThreads = 1;
+    for (size_t i = 0; i < nThreads; ++i) {
+        ThreadPersonality *tp = new ThreadPersonality();
+        // TODO FIXME: calculate proper rank.
+        tp->rank = (10000 * (i + 1)) + mUID;
+        // TODO FIXME: get real exec
+        tp->argv[0] = (char *)"./toolBE";
+        tp->argv[1] = tc.parentHostname;
+        tp->argv[2] = tc.parentPort;
+        tp->argv[3] = tc.parentRank;
+        tp->argv[4] = tc.mHostname;
+        mThreads.push_back(std::thread(toolThreadMain, &tc, tp));
+    }
+    tc.waitForAttach();
+    tc.inMapper->WaitOnCondition(ToolContext::ToolConditions::MAP);
+#endif
     return GLADIUS_SUCCESS;
 }
 
@@ -139,6 +161,23 @@ Tool::mConnect(void)
 {
     int rc = mGetConnectionInfo();
     if (GLADIUS_SUCCESS != rc) return rc;
+    if (GLADIUS_SUCCESS != (rc = mStartToolThreads())) return rc;
     //
+    return GLADIUS_SUCCESS;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// Public API
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/**
+ *
+ */
+int
+Tool::create(
+    int uid
+) {
+    mUID = uid;
     return GLADIUS_SUCCESS;
 }
