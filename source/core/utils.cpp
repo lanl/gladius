@@ -251,21 +251,6 @@ utils::base64Encode(
     const int resLen = Base64encode(enc, val.c_str(), val.length());
     std::string result(enc, resLen);
     free(enc);
-#if 0
-    // TODO RM
-    char *test = (char *)"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-    int e = Base64encode_len(strlen(test));
-    char *teste = (char *)calloc(e, sizeof(char));
-    int ne = Base64encode(teste, test, strlen(test));
-    std::cout << "enc len " << e << " for " << test << " (len " << strlen(test) << ") chars" << std::endl
-        << " b64 returns " << ne << " for result " << teste << std::endl;
-    //
-    int d = Base64decode_len(teste);
-    char *testd = (char *)calloc(d, sizeof(char));
-    int nd = Base64decode(testd, teste);
-    std::cout << "dec len " << d << " for " << teste << " (len " << strlen(teste) << ") chars" << std::endl
-        << " b64d returns " << nd << " for result " << testd << std::endl;
-#endif
     return result;
 }
 
