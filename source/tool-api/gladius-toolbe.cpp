@@ -13,12 +13,13 @@
 #include "tool-common/gladius-tli.h"
 
 #include <cstdlib>
+#include <cstdio>
 #include <iostream>
-#include <fstream>
 #include <string>
 
 using namespace std;
 using namespace gladius;
+using namespace gladius::core;
 using namespace gladius::toolbe;
 using namespace gladius::toolcommon;
 
@@ -85,24 +86,36 @@ Tool::mGetConnectionInfo(void)
         return GLADIUS_ERR_OOR;
     }
     //
-    ifstream connectionInfo(infoFile, ifstream::binary);
+    FILE *connectionInfo = fopen(infoFile.c_str(), "rb");
     if (!connectionInfo) {
-        CERRLN("Could not read connection info from: " << infoFile);
-        return GLADIUS_ERR;
+        int err = errno;
+        const string errs = utils::getStrError(err);
+        CERRLN(utils::formatCallFailed("fopen(3): " + errs, GLADIUS_WHERE));
+        return GLADIUS_ERR_IO;
     }
-    connectionInfo.read(
-        (char *)tli->leaves,
-        mTargetCount * sizeof(ToolLeafInfoT)
-    );
-    for (int i = 0; i < mTargetCount; ++i) {
+    const int nItemsRead = fread(tli->leaves,
+                                 sizeof(ToolLeafInfoT),
+                                 mTargetCount,
+                                 connectionInfo
+                           );
+    if (nItemsRead != mTargetCount) {
+        cerr << utils::formatCallFailed("fread(3): ", GLADIUS_WHERE)
+             << std::endl;
+        return GLADIUS_ERR_IO;
+    }
 #if 1 // DEBUG
-        cout << "ToolLeafInfoT "       << i                    << endl
+    for (int i = 0; i < mTargetCount; ++i) {
+        cout << "ToolLeafInfoT "       << i                             << endl
              << "- Parent Host Name: " << tli->leaves[i].parentHostName << endl
              << "- Parent Rank     : " << tli->leaves[i].parentRank     << endl
              << "- Parent Port     : " << tli->leaves[i].parentPort     << endl;
-#endif
     }
-    connectionInfo.close();
+#endif
+    if (0 != fclose(connectionInfo)) {
+        cerr << utils::formatCallFailed("fclose(3): ", GLADIUS_WHERE)
+             << std::endl;
+        // Warning only. Just return success...
+    }
     //
     return GLADIUS_SUCCESS;
 }

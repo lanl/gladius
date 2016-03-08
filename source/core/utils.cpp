@@ -235,9 +235,7 @@ utils::strTok(
 
 
 /**
- * base64 encode routine.
- * http://stackoverflow.com/questions/7053538/
- * how-do-i-encode-a-string-to-base64-using-only-boost
+ * Returns encoded string from string, val.
  */
 std::string
 utils::base64Encode(
@@ -255,7 +253,7 @@ utils::base64Encode(
 }
 
 /**
- *
+ * Returns decoded string from base64 encoded string, val.
  */
 std::string
 utils::base64Decode(
@@ -273,7 +271,7 @@ utils::base64Decode(
 }
 
 /**
- *
+ * Returns size (in bytes) of file.
  */
 int
 utils::getSizeOfFile(
