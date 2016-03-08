@@ -86,6 +86,11 @@ struct Proc {
     }
 };
 
+void
+echoPrompt(void) {
+    cout << prompt << endl << flush;
+}
+
 /**
  *
  */
@@ -160,7 +165,8 @@ publishSessionKey(Proc &p)
 {
     using namespace std;
     if (p.leader) {
-        cout << prompt << endl << flush;
+        // Notify user that ready.
+        echoPrompt();
         string line;
         std::getline(cin, line);
         if (line.empty()) return ERROR;
@@ -253,24 +259,26 @@ pubConn(Proc &p)
     }
     //
     if (p.leader) {
-        cout << prompt << endl << flush;
+        // Notify user that ready.
+        echoPrompt();
         // Get number of expected infos
         string line;
         std::getline(cin, line);
         unsigned nGot = 0, nTargets = std::stol(line, 0, 10);
+        // Notify user that ready.
+        echoPrompt();
         for (nGot = 0; nGot < nTargets; ++nGot) {
-            cout << prompt << endl << flush;
             std::getline(cin, line);
             if (line.empty()) {
                 break;
             }
-            cerr << "LINE|" << line << "|" << endl;
             // Decode the infos
             const string res = core::utils::base64Decode(line);
-            cerr << "RESLEN: " << res.length() << endl;
             ToolLeafInfoT *destp = &leafInfos->leaves[nGot];
             memmove(destp, res.data(), sizeof(ToolLeafInfoT));
-#if 1 // DEBUG
+            // Notify user that ready.
+            echoPrompt();
+#if 0 // DEBUG
             cerr << "ToolLeafInfoT "       << nGot                  << endl
                  << "- Parent Host Name: " << destp->parentHostName << endl
                  << "- Parent Rank     : " << destp->parentRank     << endl
@@ -375,7 +383,8 @@ interact(Proc &p)
     int cmd;
     do {
         if (p.leader) {
-            cout << prompt << endl << flush;
+            // Notify user that ready.
+            echoPrompt();
             string line;
             do {
                 std::getline(cin, line);

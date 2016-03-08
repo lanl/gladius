@@ -287,7 +287,8 @@ int
 DSI::mDrainToString(
     std::string &result
 ) {
-    result = "";
+    result.clear();
+    //
     mGetRespLine();
     while (0 != strcmp(mFromDSysLineBuf, sPromptString)) {
         result += std::string(mFromDSysLineBuf) + "\n";
@@ -388,25 +389,43 @@ DSI::publishConnectionInfo(
     VCOMP_COUT("Publishing connection info..." << endl);
     // See protocol in dsys.cpp
     int rc = GLADIUS_SUCCESS;
+    string resp;
     if (GLADIUS_SUCCESS != (rc = mSendCommand("c"))) {
         return rc;
     }
+    if (GLADIUS_SUCCESS != (rc = mRecvResp(resp))) {
+        return rc;
+    }
+    //
     const string sKey(sessionKey);
     VCOMP_COUT("- Sending session key: " << sKey << endl);
     if (GLADIUS_SUCCESS != (rc = mSendCommand(sKey))) {
         return rc;
     }
+    if (GLADIUS_SUCCESS != (rc = mRecvResp(resp))) {
+        return rc;
+    }
+    //
     const string nInfosStr = to_string(leafInfos.size());
     VCOMP_COUT("- Sending number of infos: " << nInfosStr << endl);
     if (GLADIUS_SUCCESS != (rc = mSendCommand(nInfosStr))) {
         return rc;
     }
+    if (GLADIUS_SUCCESS != (rc = mRecvResp(resp))) {
+        return rc;
+    }
+    //
     VCOMP_COUT("- Sending encoded connection info..." << endl);
     for (const auto &li : leafInfos) {
-        std::cout << li << endl;
-        if (GLADIUS_SUCCESS != (rc = mSendCommand(li))) {
+        // Notice the use of c_str() here. This helps break up the encoded
+        // strings in the REPL.
+        if (GLADIUS_SUCCESS != (rc = mSendCommand(li.c_str()))) {
+            return rc;
+        }
+        if (GLADIUS_SUCCESS != (rc = mRecvResp(resp))) {
             return rc;
         }
     }
+    //
     return rc;
 }

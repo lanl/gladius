@@ -492,8 +492,8 @@ ToolFE::mPublishConnectionInfo(void)
     for (const auto &li : leafInfos) {
         memset(sBuf, 0, sizeof(sBuf));
         memmove(sBuf, &li, sizeof(sBuf));
-        string tmp(sBuf, sizeof(sBuf));
-        // Stash encoded buffer
+        const string tmp(sBuf, sizeof(sBuf));
+        // Stash encoded buffer.
         sLeafInfos.push_back(utils::base64Encode(tmp));
     }
     // Now pushlish to distributed resources
@@ -501,12 +501,10 @@ ToolFE::mPublishConnectionInfo(void)
         (rc = mDSI.publishConnectionInfo(mSessionKey, sLeafInfos))) {
         return rc;
     }
-#if 0
     // Done with DSI, so shut it down
     if (GLADIUS_SUCCESS != (rc = mDSI.shutdown())) {
         return rc;
     }
-#endif
     //
     return GLADIUS_SUCCESS;
 }

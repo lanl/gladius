@@ -567,7 +567,7 @@ MRNetFE::generateConnectionMap(
             }
         }
         auto &leaves = mLeafInfo.leaves;
-#if 1 // DEBUG
+#if 0 // DEBUG
         fprintf(stdout, "BE %u will connect to %s:%d:%d\n",
                 i,
                 leaves[currLeaf]->get_HostName().c_str(),
