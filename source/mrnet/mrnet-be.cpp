@@ -82,6 +82,8 @@ MRNetBE::init(
     using namespace gladius::core;
     //
     mBeVerbose = beVerbose;
+    VCOMP_COUT("Initializing..." << endl);
+    //
     mHostName = core::utils::getHostname();
     //
     struct sockaddr_in *sinp = NULL;
@@ -97,14 +99,17 @@ MRNetBE::init(
         GLADIUS_CERR << utils::formatCallFailed(
                             "getaddrinfo(3): " + rcs,
                             GLADIUS_WHERE
-                        ) << std::endl;
+                        )
+                     << std::endl;
         return GLADIUS_ERR_SYS;
     }
+    //
     sinp = (struct sockaddr_in *)addinf->ai_addr;
     if (!sinp) {
         GLADIUS_CERR << "Cannot Get addinf->ai_addr" << endl;
         return GLADIUS_ERR_SYS;
     }
+    //
     char abuf[INET_ADDRSTRLEN];
     const char *ntopRes = inet_ntop(
                               AF_INET,
@@ -118,7 +123,8 @@ MRNetBE::init(
         GLADIUS_CERR << utils::formatCallFailed(
                             "inet_ntop(3): " + errs,
                             GLADIUS_WHERE
-                        ) << std::endl;
+                        )
+                     << std::endl;
         return GLADIUS_ERR_SYS;
     }
     mLocalIP = std::string(ntopRes);
@@ -143,6 +149,8 @@ MRNetBE::create(int uid)
 int
 MRNetBE::connect(void)
 {
+    VCOMP_COUT("Connecting..." << endl);
+    //
     int rc = mGetConnectionInfo();
     if (GLADIUS_SUCCESS != rc) return rc;
     if (GLADIUS_SUCCESS != (rc = mStartToolThreads())) return rc;
@@ -204,10 +212,9 @@ MRNetBE::mGetConnectionInfo(void)
         return GLADIUS_ERR_OOR;
     }
     //
-    ToolLeafInfoArrayT *tli = (ToolLeafInfoArrayT *)mtli;
-    tli->size = mTargetCount;
-    tli->leaves = (ToolLeafInfoT *)calloc(mTargetCount, sizeof(ToolLeafInfoT));
-    if (!tli->leaves) {
+    mtli->size = mTargetCount;
+    mtli->leaves = (ToolLeafInfoT *)calloc(mTargetCount, sizeof(ToolLeafInfoT));
+    if (!mtli->leaves) {
         GLADIUS_CERR << "Out of resources!" << endl;
         return GLADIUS_ERR_OOR;
     }
@@ -221,7 +228,7 @@ MRNetBE::mGetConnectionInfo(void)
                         ) << endl;
         return GLADIUS_ERR_IO;
     }
-    const int nItemsRead = fread(tli->leaves,
+    const int nItemsRead = fread(mtli->leaves,
                                  sizeof(ToolLeafInfoT),
                                  mTargetCount,
                                  connectionInfo
@@ -230,15 +237,16 @@ MRNetBE::mGetConnectionInfo(void)
         GLADIUS_CERR << core::utils::formatCallFailed(
                             "fread(3): ",
                             GLADIUS_WHERE
-                        ) << std::endl;
+                        )
+                     << std::endl;
         return GLADIUS_ERR_IO;
     }
 #if 0 // DEBUG
     for (int i = 0; i < mTargetCount; ++i) {
-        cout << "ToolLeafInfoT "       << i                             << endl
-             << "- Parent Host Name: " << tli->leaves[i].parentHostName << endl
-             << "- Parent Rank     : " << tli->leaves[i].parentRank     << endl
-             << "- Parent Port     : " << tli->leaves[i].parentPort     << endl;
+        cout << "ToolLeafInfoT "       << i                              << endl
+             << "- Parent Host Name: " << mtli->leaves[i].parentHostName << endl
+             << "- Parent Rank     : " << mtli->leaves[i].parentRank    << endl
+             << "- Parent Port     : " << mtli->leaves[i].parentPort    << endl;
     }
 #endif
     if (0 != fclose(connectionInfo)) {
@@ -251,19 +259,19 @@ MRNetBE::mGetConnectionInfo(void)
         mParentHostname,
         sizeof(mParentHostname),
         "%s",
-        tli->leaves[0].parentHostName
+        mtli->leaves[0].parentHostName
     );
     snprintf(
         mParentRank,
         sizeof(mParentRank),
         "%d",
-        tli->leaves[0].parentRank
+        mtli->leaves[0].parentRank
     );
     snprintf(
         mParentPort,
         sizeof(mParentPort),
         "%d",
-        tli->leaves[0].parentPort
+        mtli->leaves[0].parentPort
     );
     //
     return GLADIUS_SUCCESS;
@@ -331,52 +339,20 @@ MRNetBE::mToolThreadMain(
     // Sanity
     assert(6 == tp->argc);
 
-    Network *net = Network::CreateNetworkBE(tp->argc, tp->argv);
-    //mNet = (ToolNetwork *)net;
-    //
-    assert(net);
-    assert(!net->has_Error());
+    mNet = Network::CreateNetworkBE(tp->argc, tp->argv);
+    if (!mNet || mNet->has_Error()) {
+        GLADIUS_CERR << core::utils::formatCallFailed(
+                            "MRN::Network::CreateNetworkBE",
+                            GLADIUS_WHERE
+                        )
+                     << std::endl;
+        return GLADIUS_ERR_MRNET;
+    }
     //
     return GLADIUS_SUCCESS;
 }
 
 #if 0
-/**
- *
- */
-void
-MRNetBE::setPersonality(
-    const toolcommon::ToolLeafInfoArrayT &tlia
-) {
-    VCOMP_COUT("Finding My MRNet Personality." << std::endl);
-
-    std::string prettyHost;
-    XPlat::NetUtils::GetHostName(mHostName, prettyHost);
-
-    bool found = false;
-    for (decltype(tlia.size) i = 0; i < tlia.size; i++) {
-        std::string leafPrettyHost;
-        XPlat::NetUtils::GetHostName(
-            std::string(tlia.leaves[i].hostName),
-            leafPrettyHost
-        );
-        if (prettyHost == leafPrettyHost
-            || leafPrettyHost == mLocalIP) {
-            found = true;
-            mParentHostname = std::string(tlia.leaves[i].parentHostName);
-            mParentPort = tlia.leaves[i].parentPort;
-            mParentRank = tlia.leaves[i].parentRank;
-            mRank = tlia.leaves[i].rank;
-            break;
-        }
-    }
-    if (!found) {
-        GLADIUS_THROW("Failed to Find MRNet Parent Info");
-    }
-
-    VCOMP_COUT("Done Finding My MRNet Personality." << std::endl);
-}
-
 /**
  *
  */
