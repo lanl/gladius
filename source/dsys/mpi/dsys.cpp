@@ -194,11 +194,9 @@ writeConnectionInfos(Proc &p)
     using namespace gladius::toolcommon;
     using namespace std;
 
-    char *tmpDir = getenv("TMPDIR");
-    if (!tmpDir) {
-        tmpDir = (char *)"/tmp";
-    }
-    string infoFile = string(tmpDir) + utils::osPathSep
+    const auto tmpDir = utils::getTmpDir();
+    //
+    string infoFile = tmpDir + utils::osPathSep
                     + string(p.sessionKey) + "-"
                     + to_string(p.cwRank);
     //

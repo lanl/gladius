@@ -88,12 +88,7 @@ MRNetBE::init(
     //
     struct sockaddr_in *sinp = NULL;
     struct addrinfo *addinf = NULL;
-    auto rc = getaddrinfo(
-                  mHostName.c_str(),
-                  NULL,
-                  NULL,
-                  &addinf
-              );
+    auto rc = getaddrinfo(mHostName.c_str(), NULL, NULL, &addinf);
     if (rc) {
         const string rcs = to_string(rc);
         GLADIUS_CERR << utils::formatCallFailed(
@@ -173,14 +168,11 @@ MRNetBE::mGetConnectionInfo(void)
     }
     mSessionKey = string(sKey);
     //
-    char *tmpDir = getenv("TMPDIR");
-    if (!tmpDir) {
-        tmpDir = (char *)"/tmp";
-    }
+    const auto tmpDir = core::utils::getTmpDir();
     ////////////////////////////////////////////////////////////////////////////
     // NOTE: this naming scheme is to be kept in sync with dsys.cpp
     ////////////////////////////////////////////////////////////////////////////
-    string infoFile = string(tmpDir) + "/"
+    string infoFile = tmpDir + core::utils::osPathSep
                     + string(mSessionKey) + "-"
                     + to_string(mUID);
     //
@@ -252,7 +244,7 @@ MRNetBE::mGetConnectionInfo(void)
     if (0 != fclose(connectionInfo)) {
         cerr << core::utils::formatCallFailed("fclose(3): ", GLADIUS_WHERE)
              << std::endl;
-        // Warning only. Just return success...
+        // Warning only. Don't return error.
     }
     // Now stash the string version of the info
     snprintf(

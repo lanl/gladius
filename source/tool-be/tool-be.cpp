@@ -4,8 +4,6 @@
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
- *
- * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  */
 
 #include "tool-be/tool-be.h"
@@ -48,10 +46,14 @@ do {                                                                           \
  * Redirects stdout and stderr to a base directory with (hopefully) a unique
  * name. It is assumed that the base directory already exists.
  */
-/* (static) */ void
+/* (static) */ int
 Tool::ToolBE::redirectOutputTo(
     const std::string &base
 ) {
+    using namespace std;
+    int rc = GLADIUS_SUCCESS;
+    string errs;
+    //
     static const auto pathSep = core::utils::osPathSep;
     std::string fName = base + pathSep
                       + PACKAGE + "-"
@@ -61,16 +63,30 @@ Tool::ToolBE::redirectOutputTo(
     FILE *outRedirectFile = freopen(fName.c_str(), "w", stdout);
     if (!outRedirectFile) {
         int err = errno;
-        auto errs = core::utils::getStrError(err);
-        GLADIUS_THROW_CALL_FAILED_RC("freopen(3): " + errs, err);
+        errs = core::utils::formatCallFailed(
+                   "freopen(3): " + core::utils::getStrError(err),
+                   GLADIUS_WHERE
+               );
+        rc = GLADIUS_ERR_IO;
+        goto out;
     }
     //
     outRedirectFile = freopen(fName.c_str(), "w", stderr);
     if (!outRedirectFile) {
         int err = errno;
-        auto errs = core::utils::getStrError(err);
-        GLADIUS_THROW_CALL_FAILED_RC("freopen(3): " + errs, err);
+        errs = core::utils::formatCallFailed(
+                   "freopen(3): " + core::utils::getStrError(err),
+                   GLADIUS_WHERE
+               );
+        rc = GLADIUS_ERR_IO;
+        goto out;
     }
+out:
+    if (!errs.empty()) {
+        GLADIUS_CERR << errs << std::endl;
+    }
+    //
+    return rc;
 }
 
 /**

@@ -63,6 +63,18 @@ public:
     }
 
     /**
+     * Returns path to tmp directory.
+     */
+    static std::string
+    getTmpDir(void) {
+        char *tmpDir = getenv("TMPDIR");
+        if (!tmpDir) {
+            tmpDir = (char *)"/tmp";
+        }
+        return std::string(tmpDir);
+    }
+
+    /**
      * Leading whitespace stripper for a given string.
      */
     static std::string &

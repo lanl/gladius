@@ -61,7 +61,7 @@ public:
     int
     connect(void);
     //
-    static void
+    static int
     redirectOutputTo(const std::string &base);
     //
     void
