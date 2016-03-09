@@ -35,3 +35,8 @@ MPICXX=[MPI C++ Wrapper Compiler] \
 ```
 make && make install
 ```
+
+## Configure Options
+```
+./configure --help
+```

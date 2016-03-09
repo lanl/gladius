@@ -179,7 +179,8 @@ DSI::init(
         auto errs = core::utils::getStrError(err);
         GLADIUS_CERR << utils::formatCallFailed(
                             "pipe(2): " + errs, GLADIUS_WHERE
-                        ) << endl;
+                        )
+                     << endl;
         return GLADIUS_ERR_IO;
     }
     // Create new process for GDB.
@@ -197,7 +198,8 @@ DSI::init(
             auto errs = core::utils::getStrError(err);
             GLADIUS_CERR << utils::formatCallFailed(
                                 "dup2(2): " + errs, GLADIUS_WHERE
-                            ) << endl;
+                            )
+                         << endl;
             exit(EXIT_FAILURE);
         }
         // Build the argv for execvp
@@ -210,7 +212,8 @@ DSI::init(
         auto errs = core::utils::getStrError(err);
         GLADIUS_CERR << utils::formatCallFailed(
                             "execvp(3): " + errs, GLADIUS_WHERE
-                        ) << endl;
+                        )
+                     << endl;
         _exit(127);
     }
     // Fork failure.
@@ -219,7 +222,8 @@ DSI::init(
         auto errs = core::utils::getStrError(err);
         GLADIUS_CERR << utils::formatCallFailed(
                             "fork(2): " + errs, GLADIUS_WHERE
-                        ) << endl;
+                        )
+                     << endl;
         return GLADIUS_ERR;
     }
     ////////////////////////////////////////////////////////////////////////////
@@ -233,7 +237,8 @@ DSI::init(
     if (!mTo) {
         GLADIUS_CERR << utils::formatCallFailed(
                             "fdopen(3): ", GLADIUS_WHERE
-                        ) << endl;
+                        )
+                     << endl;
         return GLADIUS_ERR_IO;
     }
     //

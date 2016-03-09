@@ -46,14 +46,14 @@ GLADIUS_TOSTRING(GLADIUS_PLUGIN_ENTRY_POINT)
 #define GLADIUS_PLUGIN(pluginImpl, pluginName, pluginVersion)                  \
 extern "C" {                                                                   \
 /* Return pointer here because of C linkage... Sigh... */                      \
-gladius::gpi::GladiusPlugin *                                          \
+gladius::gpi::GladiusPlugin *                                                  \
 constructPlugin(void) {                                                        \
     static pluginImpl singleton;                                               \
     return &singleton;                                                         \
 }                                                                              \
                                                                                \
-gladius::gpi::GladiusPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {         \
-    GLADIUS_PLUGIN_ABI,                                                           \
+gladius::gpi::GladiusPluginInfo GLADIUS_PLUGIN_ENTRY_POINT = {                 \
+    GLADIUS_PLUGIN_ABI,                                                        \
     pluginName,                                                                \
     pluginVersion,                                                             \
     constructPlugin                                                            \

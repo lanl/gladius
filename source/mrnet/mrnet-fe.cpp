@@ -145,9 +145,9 @@ beConnectCbFn(
     void *
 ) {
     static std::mutex mtx;
-    if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
-        && MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
-        std::lock_guard<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
+    if (MRN::Event::TOPOLOGY_EVENT == event->get_Class() &&
+        MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
         MRNetFEGlobals::numBEsReporting++;
     }
 }
@@ -162,8 +162,8 @@ nodeLostCbFn(
 ) {
     static std::mutex mtx;
     std::lock_guard<std::mutex> lock(mtx);
-    if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
-        && MRN::TopologyEvent::TOPOL_REMOVE_NODE == event->get_Type()) {
+    if (MRN::Event::TOPOLOGY_EVENT == event->get_Class() &&
+        MRN::TopologyEvent::TOPOL_REMOVE_NODE == event->get_Type()) {
         COMP_COUT << "A Node Loss Was Detected!" << std::endl << std::flush;
     }
 }
@@ -273,7 +273,7 @@ MRNetFE::mDetermineAndSetPaths(void)
 {
     using namespace std;
     //
-    VCOMP_COUT("Determining and setting paths..." << std::endl);
+    VCOMP_COUT("Determining and setting paths..." << endl);
     // Make sure that we can find mrnet_commnode. Really just to get the base
     // MRNet installation path. That way we can find the libraries that we need.
     string cnPath;
@@ -459,7 +459,6 @@ MRNetFE::generateConnectionMap(
     VCOMP_COUT("Generating connection map..." << std::endl);
     //
     const auto numLeaves = mLeafInfo.leaves.size();
-    //
     mNExpectedBEs = numLeaves * mNThread;
     //
     const unsigned besPerLeaf = mNExpectedBEs / numLeaves;
@@ -510,20 +509,12 @@ MRNetFE::createNetworkFE(
     mProcLandscape = procLandscape;
     // Build network
     int rc = GLADIUS_SUCCESS;
-    if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
-        return rc;
-    }
+    if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) return rc;
     //
-    if (GLADIUS_SUCCESS != (rc = mRegisterEventCallbacks())) {
-        return rc;
-    }
+    if (GLADIUS_SUCCESS != (rc = mRegisterEventCallbacks())) return rc;
     //
-    if (GLADIUS_SUCCESS != (rc = mPopulateLeafInfo())) {
-        return rc;
-    }
-    if (GLADIUS_SUCCESS != (rc = mEchoNetStats())) {
-        return rc;
-    }
+    if (GLADIUS_SUCCESS != (rc = mPopulateLeafInfo())) return rc;
+    if (GLADIUS_SUCCESS != (rc = mEchoNetStats())) return rc;
     //
     return GLADIUS_SUCCESS;
 }
@@ -668,8 +659,7 @@ void
 MRNetFE::pluginInfoBCast(
     const std::string &validPluginName,
     const std::string &pathToValidPlugin
-)
-{
+) {
     VCOMP_COUT("Sending plugin info to back-ends." << std::endl);
     //
     const char *pluginName = validPluginName.c_str();
