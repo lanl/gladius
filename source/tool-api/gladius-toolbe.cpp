@@ -119,7 +119,7 @@ Tool::mGetConnectionInfo(void)
              << std::endl;
         return GLADIUS_ERR_IO;
     }
-#if 1 // DEBUG
+#if 0 // DEBUG
     for (int i = 0; i < mTargetCount; ++i) {
         cout << "ToolLeafInfoT "       << i                             << endl
              << "- Parent Host Name: " << tli->leaves[i].parentHostName << endl
@@ -132,6 +132,25 @@ Tool::mGetConnectionInfo(void)
              << std::endl;
         // Warning only. Just return success...
     }
+    // Now stash the string version of the info
+    snprintf(
+        mParentHostname,
+        sizeof(mParentHostname),
+        "%s",
+        tli->leaves[0].parentHostName
+    );
+    snprintf(
+        mParentRank,
+        sizeof(mParentRank),
+        "%d",
+        tli->leaves[0].parentRank
+    );
+    snprintf(
+        mParentPort,
+        sizeof(mParentPort),
+        "%d",
+        tli->leaves[0].parentPort
+    );
     //
     return GLADIUS_SUCCESS;
 }
@@ -156,11 +175,13 @@ Tool::mStartToolThreads(void)
         tp->rank = (10000 * (i + 1)) + mUID;
         // TODO FIXME: get real exec
         tp->argv[0] = (char *)"./toolBE";
-        tp->argv[1] = tli->leaves[0].parentHostName;
-        tp->argv[2] = (char *)to_string(tli->leaves[0].parentPort).c_str();
-        tp->argv[3] = (char *)to_string(tli->leaves[0].parentRank).c_str();
-        tp->argv[4] = (char *)utils::getHostname().c_str();
-        //mToolThreads.push_back(std::thread(toolThreadMain, &tc, tp));
+        tp->argv[1] = mParentHostname; 
+        tp->argv[2] = mParentPort;
+        tp->argv[3] = mParentRank; 
+        tp->argv[4] = (char *)mHostName.c_str();
+        mToolThreads.push_back(
+            std::thread(&Tool::mToolThreadMain, this, tp)
+        );
     }
 #if 0
     tc.waitForAttach();
@@ -176,7 +197,14 @@ int
 Tool::mToolThreadMain(
     ThreadPersonality *tp
 ) {
-    cout << "hi from tool thread " << tp->rank << endl;
+#if 1 // DEBUG
+    cerr << "Thread " << tp->rank << endl
+         << "-- Parent Host Name: " << tp->argv[1] << endl
+         << "-- Parent Port     : " << tp->argv[2] << endl
+         << "-- Parent Rank     : " << tp->argv[3] << endl
+         << "-- Host Name       : " << tp->argv[4] << endl
+         << flush;
+#endif
     return GLADIUS_SUCCESS;
 }
 
@@ -206,5 +234,6 @@ Tool::create(
     int uid
 ) {
     mUID = uid;
+    mHostName = utils::getHostname();
     return GLADIUS_SUCCESS;
 }

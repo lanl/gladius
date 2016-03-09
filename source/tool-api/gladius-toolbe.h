@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include <cstring>
+
+#include <limits.h>
 
 namespace gladius {
 namespace toolbe {
@@ -28,10 +31,16 @@ class Tool {
     int mUID;
     // Total number of participants in this job.
     int mTargetCount;
+    // Host's name
+    std::string mHostName;
     //
     std::string mSessionKey;
     // Opaque handle to connection information.
     ToolConnectionInfo *mtli;
+    // Buffers for stringified connection info.
+    char mParentHostname[HOST_NAME_MAX];
+    char mParentPort[16];
+    char mParentRank[16];
     // Opaque handle to tool network.
     ToolNetwork *mNet;
     // Pool of tool threads.
@@ -60,7 +69,11 @@ public:
       , mTargetCount(0)
       , mtli(nullptr)
       , mNet(nullptr)
-    { ; }
+    {
+        memset(mParentHostname, 0, sizeof(mParentHostname));
+        memset(mParentPort,     0, sizeof(mParentPort));
+        memset(mParentRank,     0, sizeof(mParentRank));
+    }
     /**
      *
      */

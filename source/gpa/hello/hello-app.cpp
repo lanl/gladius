@@ -89,6 +89,7 @@ init(
     if (GLADIUS_SUCCESS != p.tool.create(p.cwRank)) {
         return ERROR;
     }
+    // This is a blocking call. Won't return until connection is complete.
     if (GLADIUS_SUCCESS != p.tool.connect()) {
         return ERROR;
     }
