@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "gladius-rc.h"
+#include "core/gladius-rc.h"
 
 #include <memory>
 

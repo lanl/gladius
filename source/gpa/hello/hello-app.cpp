@@ -23,7 +23,8 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "gladius-toolbe.h"
+#include "core/gladius-rc.h"
+#include "tool-api/gladius-toolbe.h"
 
 #include "mpi.h"
 

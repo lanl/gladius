@@ -21,8 +21,7 @@ gladius-toolbe.h gladius-toolbe.cpp
 libgladius_tool_be_la_CFLAGS =
 
 libgladius_tool_be_la_CPPFLAGS = \
--I${top_srcdir}/source \
--I${top_srcdir}/source/core
+-I${top_srcdir}/source
 
 libgladius_tool_be_la_LDFLAGS = \
 -version-info ${LIBVINFO}
