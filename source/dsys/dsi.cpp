@@ -206,7 +206,12 @@ DSI::init(
         //
         execvp(argv.argv()[0], argv.argv());
         // Reached only on execvp failure.
-        perror("execvp");
+        int err = errno;
+        auto errs = core::utils::getStrError(err);
+        GLADIUS_CERR << utils::formatCallFailed(
+                            "execvp(3): " + errs, GLADIUS_WHERE
+                        ) << endl;
+        _exit(127);
     }
     // Fork failure.
     else if (-1 == mApplPID) {

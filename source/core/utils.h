@@ -209,10 +209,11 @@ public:
     }
 
     /**
-     * Returns the canonical hostname form from an arbitrary hostname string.
+     * Returns the short hostname form from an arbitrary hostname string.
+     * Example: Given foo.bar, returns foo
      */
     static std::string
-    canonicalHostname(const std::string &hostname) {
+    shortHostname(const std::string &hostname) {
         auto chn = hostname;
         auto dotPos = chn.find_first_of(".");
         if (std::string::npos != dotPos) {
