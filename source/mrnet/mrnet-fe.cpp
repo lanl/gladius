@@ -126,128 +126,6 @@ MRNetTopology::mGenFlatTopo(void)
 // MRNetFE
 ////////////////////////////////////////////////////////////////////////////////
 namespace {
-/**
- *
- */
-int
-feToBEPack(
-    void *data,
-    void *buf,
-    int bufMax,
-    int *bufLen
-) {
-    GLADIUS_UNUSED(data);
-    GLADIUS_UNUSED(buf);
-    GLADIUS_UNUSED(bufMax);
-    GLADIUS_UNUSED(bufLen);
-#if 0
-    using namespace std;
-    using namespace MRN;
-    using namespace toolcommon;
-
-    LeafInfo *leafInfo = (LeafInfo *)data;
-    NetworkTopology *networkTopology = leafInfo->networkTopology;
-    //
-    unsigned int nNodes = 0, depth = 0, minFanout = 0, maxFanout = 0;
-    double averageFanout = 0.0, stdDevFanout = 0.0;
-    // Grab some tree stats.
-    networkTopology->get_TreeStatistics(
-        nNodes,
-        depth,
-        minFanout,
-        maxFanout,
-        averageFanout,
-        stdDevFanout
-    );
-    // Show off the fresh stats.
-    GLADIUS_COUT_STAT << "::: MRNet Tree Statistics ::::::::::::::::::::::::::";
-    cout      << endl;
-    GLADIUS_COUT_STAT << "Number of Nodes : " << nNodes << endl;
-    GLADIUS_COUT_STAT << "Depth           : " << depth << endl;
-    GLADIUS_COUT_STAT << "Minimum Fanout  : " << minFanout << endl;
-    GLADIUS_COUT_STAT << "Maximum Fanout  : " << maxFanout << endl;
-    GLADIUS_COUT_STAT << "Average Fanout  : " << averageFanout << endl;
-    GLADIUS_COUT_STAT << "Sigma Fanout    : " << stdDevFanout << endl;
-    GLADIUS_COUT_STAT << "::::::::::::::::::::::::::::::::::::::::::::::::::::";
-    cout      << endl;
-
-    char *ptr = (char *)buf;
-    char *daemonCountPtr = ptr;
-
-    // Reserve space for the number of daemons (to be calculated later).
-    int total = sizeof(int);
-    ptr += sizeof(int);
-
-    // Pack up the number of parent nodes.
-    int nLeaves = leafInfo->leaves.size();
-    (void)memcpy(ptr, (void *)&nLeaves, sizeof(int));
-    ptr += sizeof(int);
-    total += sizeof(int);
-
-    std::set<std::string>::iterator daemonIter = leafInfo->daemons.begin();
-    NetworkTopology::Node *node = nullptr;
-    char *childCountPtr = nullptr;
-    int len = 0, port = 0, rank = 0, daemonRank = 0, daemonCount = 0;
-    unsigned long i = 0, j;
-    // Write the data one parent at a time.
-    for (i = 0; i < (unsigned long)nLeaves; ++i) {
-        // Get the parent info.
-        node = leafInfo->leaves[i];
-        port = node->get_Port();
-        rank = node->get_Rank();
-        std::string currentHost = node->get_HostName();
-
-        // Calculate the amount of data.
-        len = strlen(currentHost.c_str()) + 1;
-        // 3x for node, port, and rank.
-        total += (3 * sizeof(int)) + len;
-        if (total > bufMax) {
-            GLADIUS_CERR << "Exceeded Maximum Packing Buffer" << std::endl;
-            return -1;
-        }
-
-        // Write the parent host name, port, rank and child count.
-        (void)memcpy(ptr, (void *)currentHost.c_str(), len);
-        ptr += len;
-        (void)memcpy(ptr, (void *)&port, sizeof(int));
-        ptr += sizeof(int);
-        (void)memcpy(ptr, (void *)&rank, sizeof(int));
-        ptr += sizeof(int);
-        childCountPtr = ptr;
-        ptr += sizeof(int);
-
-        for (j = 0;
-             j < (leafInfo->daemons.size() / nLeaves)
-                 + (leafInfo->daemons.size() % nLeaves > i ? 1 : 0);
-             ++j, daemonIter++, daemonCount++) {
-            if (daemonIter == leafInfo->daemons.end()) break;
-            len = strlen(daemonIter->c_str()) + 1;
-            total += sizeof(int) + len;
-
-            if (total > bufMax) {
-                GLADIUS_CERR << "Exceeded Maximum Packing Buffer" << std::endl;
-                return -1;
-            }
-
-            // Copy the daemon host name.
-            (void)memcpy(ptr, (void *)(daemonIter->c_str()), len);
-            ptr += len;
-
-            // Copy the daemon rank.
-            daemonRank = daemonCount + nNodes;
-            (void)memcpy(ptr, (void *)(&daemonRank), sizeof(int));
-            ptr += sizeof(int);
-        }
-        (void)memcpy(childCountPtr, (void *)&j, sizeof(int));
-    }
-
-    // Write the daemon count to the appropriate location */
-    (void)memcpy(daemonCountPtr, (void *)&daemonCount, sizeof(int));
-
-    *bufLen = total;
-#endif
-    return 0;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace MRNetFEGlobals {
@@ -310,17 +188,6 @@ MRNetFE::~MRNetFE(void)
 {
     // TODO complete
     if (mNetwork) { }
-}
-
-/**
- * Returns a function pointer that is responsible for packing data for front-end
- * to back-end transfers.
- */
-
-toolcommon::FEToBePackFnP
-MRNetFE::getFEToBePackFun(void)
-{
-    return feToBEPack;
 }
 
 /**
@@ -543,6 +410,44 @@ MRNetFE::mPopulateLeafInfo(void)
 }
 
 /**
+ * Displays network statistics.
+ */
+int
+MRNetFE::mEchoNetStats(void)
+{
+    using namespace std;
+    using namespace MRN;
+    using namespace toolcommon;
+
+    NetworkTopology *networkTopology = mLeafInfo.networkTopology;
+    //
+    unsigned int nNodes = 0, depth = 0, minFanout = 0, maxFanout = 0;
+    double averageFanout = 0.0, stdDevFanout = 0.0;
+    // Grab some tree stats.
+    networkTopology->get_TreeStatistics(
+        nNodes,
+        depth,
+        minFanout,
+        maxFanout,
+        averageFanout,
+        stdDevFanout
+    );
+    // Show off the fresh stats.
+    GLADIUS_COUT_STAT << "::: MRNet Tree Statistics ::::::::::::::::::::::::::";
+    cout      << endl;
+    GLADIUS_COUT_STAT << "Number of Nodes : " << nNodes << endl;
+    GLADIUS_COUT_STAT << "Depth           : " << depth << endl;
+    GLADIUS_COUT_STAT << "Minimum Fanout  : " << minFanout << endl;
+    GLADIUS_COUT_STAT << "Maximum Fanout  : " << maxFanout << endl;
+    GLADIUS_COUT_STAT << "Average Fanout  : " << averageFanout << endl;
+    GLADIUS_COUT_STAT << "Sigma Fanout    : " << stdDevFanout << endl;
+    GLADIUS_COUT_STAT << "::::::::::::::::::::::::::::::::::::::::::::::::::::";
+    cout      << endl << flush;
+    //
+    return GLADIUS_SUCCESS;
+}
+
+/**
  *
  */
 int
@@ -612,6 +517,9 @@ MRNetFE::createNetworkFE(
     }
     //
     if (GLADIUS_SUCCESS != (rc = mPopulateLeafInfo())) {
+        return rc;
+    }
+    if (GLADIUS_SUCCESS != (rc = mEchoNetStats())) {
         return rc;
     }
     //
@@ -693,8 +601,9 @@ MRNetFE::networkInit(void)
 {
     VCOMP_COUT("Initializing Network." << std::endl);
 
-    // NOTE: Can print topology file from:
-    // mLeafInfo.networkTopology->print_TopologyFile();
+#if 0 // DEBUG
+    mLeafInfo.networkTopology->print_TopologyFile(mTopoFile.c_str());
+#endif
     mBcastComm = mNetwork->get_BroadcastCommunicator();
     if (!mBcastComm) {
         GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");

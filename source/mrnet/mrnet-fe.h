@@ -114,6 +114,9 @@ private:
     mPopulateLeafInfo(void);
     //
     int
+    mEchoNetStats(void);
+    //
+    int
     mDetermineAndSetPaths(void);
     //
     int
@@ -158,9 +161,6 @@ public:
     verbose(bool b) {
         mBeVerbose = b;
     }
-    //
-    static toolcommon::FEToBePackFnP
-    getFEToBePackFun(void);
     //
     const toolcommon::LeafInfo &
     getLeafInfo(void) const {

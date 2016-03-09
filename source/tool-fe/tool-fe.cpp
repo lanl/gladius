@@ -334,6 +334,8 @@ ToolFE::main(
 int
 ToolFE::mDetermineProcLandscape(void)
 {
+    using namespace std;
+    //
     VCOMP_COUT("Determining process landscape..." << std::endl);
     int rc = GLADIUS_SUCCESS;
     try {
@@ -344,11 +346,17 @@ ToolFE::mDetermineProcLandscape(void)
             (rc = mDSI.getProcessLandscape(mProcLandscape))) {
             return rc;
         }
-        GLADIUS_COUT_STAT << "Job Statistics:" << std::endl;
-        GLADIUS_COUT_STAT << "o Number of Application Processes: "
+        //
+        GLADIUS_COUT_STAT
+             << "::: Job Statistics :::::::::::::::::::::::::::::::::";
+        cout << endl;
+        GLADIUS_COUT_STAT << "Number of Application Processes: "
                           << mProcLandscape.nProcesses() << std::endl;
-        GLADIUS_COUT_STAT << "o Number of Hosts: "
+        GLADIUS_COUT_STAT << "Number of Hosts                : "
                           << mProcLandscape.nHosts() << std::endl;
+        GLADIUS_COUT_STAT
+             << "::::::::::::::::::::::::::::::::::::::::::::::::::::";
+        cout << endl;
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
