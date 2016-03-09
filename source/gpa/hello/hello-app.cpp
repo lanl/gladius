@@ -86,7 +86,8 @@ init(
     ////////////////////////////////////////////////////////////////////////////
     // Initialize our tool
     ////////////////////////////////////////////////////////////////////////////
-    if (GLADIUS_SUCCESS != p.tool.create(p.cwRank)) {
+    static const bool toolBeVerbose = true;
+    if (GLADIUS_SUCCESS != p.tool.create(p.cwRank, toolBeVerbose)) {
         return ERROR;
     }
     // This is a blocking call. Won't return until connection is complete.

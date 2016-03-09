@@ -17,10 +17,11 @@
 #include <vector>
 #include <thread>
 
-namespace gladius {
-namespace mrnetbe {
 // Forward declaraction
 namespace MRN { class Network; }
+
+namespace gladius {
+namespace mrnetbe {
 ////////////////////////////////////////////////////////////////////////////////
 // Container for tool thread personalities.
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,9 +63,6 @@ private:
     std::vector<std::thread> mToolThreads;
     //
     int
-    mConnect(void);
-    //
-    int
     mGetConnectionInfo(void);
     //
     int
@@ -86,6 +84,9 @@ public:
     //
     int
     create(int uid);
+    //
+    int
+    connect(void);
 };
 
 } // end mrnetbe namespace

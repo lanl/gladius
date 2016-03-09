@@ -94,8 +94,7 @@ Tool::ToolBE::init(
 ) {
     mBeVerbose = beVerbose;
     VCOMP_COUT("Initializing tool back-end..." << std::endl);
-    //
-    return GLADIUS_SUCCESS;
+    return mMRNBE.init(mBeVerbose);
 }
 
 /**
@@ -106,7 +105,7 @@ Tool::ToolBE::create(int uid)
 {
     VCOMP_COUT("Creating tool back-end..." << std::endl);
     mUID = uid;
-    return GLADIUS_SUCCESS;
+    return mMRNBE.create(uid);
 }
 
 /**
@@ -116,7 +115,7 @@ int
 Tool::ToolBE::connect(void)
 {
     VCOMP_COUT("Connecting tool back-end..." << std::endl);
-    return GLADIUS_SUCCESS;
+    return mMRNBE.connect();
 }
 
 #if 0

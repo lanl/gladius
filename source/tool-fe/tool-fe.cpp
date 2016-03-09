@@ -186,6 +186,7 @@ ToolFE::mSetupCore(void)
     auto modeName = core::utils::getEnv(envMode);
     // Initialize the DSP manager.
     mPluginManager = gpa::GladiusPluginManager(modeName, mBeVerbose);
+#if 0 // TODO
     // The path to the plugin pack if we find a usable one.
     std::string pathToPluginPackIfAvail;
     if (!mPluginManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
@@ -200,6 +201,7 @@ ToolFE::mSetupCore(void)
     }
     // Set member, so we can get the plugin pack later...
     mPathToPluginPack = pathToPluginPackIfAvail;
+#endif
     //
     return mInitializeParallelLauncher();
 }

@@ -12,13 +12,13 @@
 
 #pragma once
 
-#include "mrnet/MRNet.h"
-
 #include "core/process-landscape.h"
 #include "tool-common/tool-common.h"
 
 #include <string>
 #include <cstdint>
+
+#include "mrnet/MRNet.h"
 
 namespace gladius {
 namespace mrnetfe {
