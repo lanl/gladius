@@ -4,6 +4,9 @@
  *
  * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC
  *
+ * Copyright (c) 2003-2012 Dorian C. Arnold, Philip C. Roth, Barton P. Miller
+ * Detailed MRNet usage rights in "LICENSE" file in the MRNet distribution.
+ *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
  * top-level directory of this distribution.
  */
@@ -17,8 +20,6 @@
 #include "core/colors.h"
 #include "tool-common/tool-common.h"
 
-#include "mrnet/MRNet.h"
-
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -31,6 +32,8 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "mrnet/MRNet.h"
 
 using namespace gladius;
 using namespace gladius::mrnetfe;
@@ -211,11 +214,10 @@ MRNetFE::init(
     using namespace std;
     using namespace core;
     //
+    mBeVerbose = beVerbose;
+    VCOMP_COUT("Initializing MRNet front-end..." << endl);
+    //
     try {
-        mBeVerbose = beVerbose;
-        //
-        VCOMP_COUT("Initializing MRNet front-end..." << endl);
-        //
         int rc = GLADIUS_SUCCESS;
         string whatsWrong;
         if (GLADIUS_SUCCESS != (rc = mDetermineAndSetPaths())) {
@@ -247,9 +249,9 @@ MRNetFE::mGetPrefixFromCommNode(
     const std::string &whichString,
     std::string &prefix
 ) {
-    std::string badness = "Could not determine MRNet's installation "
-                          "prefix by inspecting the following path:"
-                          "'" + whichString + "'";
+    const std::string badness = "Could not determine MRNet's installation "
+                                "prefix by inspecting the following path: '"
+                              + whichString + "'";
     prefix = whichString;
     std::string last = "/bin/" + sCommNodeName;
     auto found = prefix.rfind(last);

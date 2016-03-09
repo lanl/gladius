@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -66,7 +66,7 @@ Gladius::Gladius(
 /**
  *
  */
-Gladius::~Gladius(void) { }
+Gladius::~Gladius(void) = default;
 
 /**
  * For each core component, register its environment.

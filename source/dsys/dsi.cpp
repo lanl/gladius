@@ -118,7 +118,7 @@ DSI::mChildCleanup(void)
         }
         if (0 == w) {
             VCOMP_COUT("Waiting for dsys to complete..." << endl);
-            sleep(1);
+            sleep(1); // Take a break for a while.
             if (retry % 2) {
                 VCOMP_COUT("Done waiting for dsys..." << endl);
                 // Hit the launcher a couple of times. Sometimes they need that.

@@ -69,7 +69,14 @@ MRNetBE::MRNetBE(
 /**
  * Destructor.
  */
-MRNetBE::~MRNetBE(void) = default;
+MRNetBE::~MRNetBE(void) {
+    if (mtli && mtli->leaves) {
+        free(mtli->leaves);
+        mtli->leaves = nullptr;
+        free(mtli);
+        mtli = nullptr;
+    }
+}
 
 /**
  *

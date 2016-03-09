@@ -74,7 +74,7 @@ echoLaunchStart(
     using namespace std;
     // Construct the entire launch command.
     auto argv = largs.toArgv();
-    auto aArgv = aargs.toArgv();
+    const auto aArgv = aargs.toArgv();
     argv.insert(end(argv), begin(aArgv), end(aArgv));
     // To a single string
     string lstr;
@@ -286,31 +286,19 @@ ToolFE::main(
         mLauncherArgs = launcherArgv;
         // Make sure that all the required bits are set before we get to
         // launching anything.
-        if (GLADIUS_SUCCESS != (rc = mSetupCore())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mSetupCore())) return rc;
         // Perform any actions that need to take place before lash-up.
-        if (GLADIUS_SUCCESS != (rc = mPreToolInitActons())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mPreToolInitActons())) return rc;
         //
-        if (GLADIUS_SUCCESS != (rc = mDetermineProcLandscape())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mDetermineProcLandscape())) return rc;
         ////////////////////////////////////////////////////////////////////////
         // If we are here, then our environment is sane enough to start...
         ////////////////////////////////////////////////////////////////////////
-        if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) return rc;
         // Start lash-up.
-        if (GLADIUS_SUCCESS != (rc = mInitiateToolLashUp())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mInitiateToolLashUp())) return rc;
         //
-        if (GLADIUS_SUCCESS != (rc = mPostToolInitActons())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mPostToolInitActons())) return rc;
 #if 0
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
@@ -337,6 +325,7 @@ ToolFE::mDetermineProcLandscape(void)
     using namespace std;
     //
     VCOMP_COUT("Determining process landscape..." << std::endl);
+    //
     int rc = GLADIUS_SUCCESS;
     try {
         if (GLADIUS_SUCCESS != (rc = mDSI.init(mCommandr, mBeVerbose))) {
@@ -396,8 +385,6 @@ ToolFE::mConnectMRNetTree(void)
 {
     using namespace std;
     using namespace core;
-    // TODO RM
-    sleep(1);
     // TODO add a timer here
     decltype(mMaxRetries) attempt = 0;
     bool connectSuccess = false;
@@ -416,7 +403,8 @@ ToolFE::mConnectMRNetTree(void)
         else if (GLADIUS_NOT_CONNECTED != status) {
             GLADIUS_CERR << utils::formatCallFailed(
                                 "MRNetFE::connect", GLADIUS_WHERE
-                            ) << endl;
+                            )
+                         << endl;
             return GLADIUS_ERR;
         }
         // Unlimited retries, so just continue.
@@ -430,7 +418,7 @@ ToolFE::mConnectMRNetTree(void)
     } while (true);
     //
     if (connectSuccess) {
-        GLADIUS_COUT_STAT << "MRNet Network Connected." << std::endl;
+        GLADIUS_COUT_STAT << "MRNet Network Connected." << endl;
     }
     else {
         GLADIUS_CERR << "Could not setup mrnet network." << endl;
@@ -539,17 +527,13 @@ ToolFE::mLaunchUserApp(void)
     std::vector<std::string> aargv = mAppArgs.toArgv();
     argv.insert(end(argv), begin(aargv), end(aargv));
     core::Args a(argv);
-    cout << "ARGS: " << flush;
-    for (const auto &b : a.toArgv()) {
-        cout << b << " " << flush;
-    }
-    cout << endl;
     //
     pid_t p = fork();
     // child
     if (0 == p) {
         execvp(a.argv()[0], a.argv());
         perror("execvp");
+        _exit(127);
     }
     else if (-1 == p) {
         return GLADIUS_ERR;
@@ -570,6 +554,7 @@ ToolFE::mInitiateToolLashUp(void)
     VCOMP_COUT("Initiating tool lashup..." << endl);
     try {
         echoLaunchStart(mLauncherArgs, mAppArgs);
+        //
         int rc = mPublishConnectionInfo();
         if (GLADIUS_SUCCESS != rc) {
             return rc;
