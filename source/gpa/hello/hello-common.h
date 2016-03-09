@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "tool-common/tool-common.h"
+#include "gpa/core/gladius-plugin.h"
 
 // The plugin's name.
 #define PLUGIN_NAME "hello"
@@ -23,7 +23,8 @@ namespace hello {
 //
 enum HelloProtoTags {
     // Notice where we start here. ALL plugins MUST start with this tag value.
-    SayHello = gladius::toolcommon::FirstPluginTag,
+    // FIXME
+    SayHello = gladius::toolcommon::firstPluginTagOffset,
     Shutdown
 };
 } // end hello namesapce.

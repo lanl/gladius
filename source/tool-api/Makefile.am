@@ -21,16 +21,11 @@ gladius-toolbe.h gladius-toolbe.cpp
 libgladius_tool_be_la_CFLAGS =
 
 libgladius_tool_be_la_CPPFLAGS = \
--I${top_srcdir}/source \
-${MRNET_CPPFLAGS} \
-${BOOST_CPPFLAGS}
+-I${top_srcdir}/source
 
 libgladius_tool_be_la_LDFLAGS = \
-${MRNETBE_LDFLAGS} \
-${BOOST_LDFLAGS} -lboost_timer \
 -version-info ${LIBVINFO}
 
 libgladius_tool_be_la_LIBADD = \
-${top_builddir}/source/core/libGladiusCore.la \
-${top_builddir}/source/tool-common/libGladiusToolCommon.la \
-${top_builddir}/source/mrnet/libGladiusMRNetBE.la
+${top_builddir}/source/mrnet/libGladiusMRNetBE.la \
+${top_builddir}/source/tool-be/libGladiusToolBE.la

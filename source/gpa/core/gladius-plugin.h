@@ -18,6 +18,12 @@
 
 #include <functional>
 
+// Forward declarations.
+namespace MRN {
+    class Stream;
+    class Network;
+} // end namespace MRN
+
 namespace gladius {
 namespace gpi {
 

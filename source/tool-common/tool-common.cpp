@@ -9,8 +9,25 @@
 #include "tool-common/tool-common.h"
 #include "core/core.h"
 
+#include "mrnet/MRNet.h"
+
 using namespace gladius;
 using namespace gladius::toolcommon;
+
+/**
+ *
+ */
+// MRNet Tags for Core Components
+enum MRNetCoreTags {
+    // Tag for initial lash-up handshake.
+    InitHandshake = FirstApplicationTag,
+    // Tag for sending plugin info.
+    PluginNameInfo,
+    // Back-end plugins ready.
+    BackEndPluginsReady,
+    // Shutdown tag.
+    Shutdown
+};
 
 /**
  *

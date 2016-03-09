@@ -24,6 +24,13 @@ namespace gladius {
 namespace mrnetfe {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+struct LeafInfo {
+    MRN::NetworkTopology *networkTopology = nullptr;
+    std::vector<MRN::NetworkTopology::Node *> leaves;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 class MRNetTopology {
 public:
     //
@@ -87,6 +94,8 @@ private:
     std::string mPrefixPath;
     // The process landscape of our job.
     core::ProcessLandscape mProcLandscape;
+    // Leaf infos
+    LeafInfo mLeafInfo;
     // The MRNet network instance.
     MRN::Network *mNetwork = nullptr;
     //
@@ -99,8 +108,6 @@ private:
     unsigned int mNThread = 0;
     //
     unsigned int mNExpectedBEs = 0;
-    //
-    toolcommon::LeafInfo mLeafInfo;
     // A mapping between MRNet ranks and target task IDs.
     std::map< int, toolcommon::TxList<int> > mMRNetRankToTIDsMap;
     //
@@ -161,11 +168,6 @@ public:
     verbose(bool b) {
         mBeVerbose = b;
     }
-    //
-    const toolcommon::LeafInfo &
-    getLeafInfo(void) const {
-        return mLeafInfo;
-    }
     /**
      *
      */
@@ -189,12 +191,14 @@ public:
     //
     void
     handshake(void);
+#if 0
     //
     void
     pluginInfoBCast(
         const std::string &validPluginName,
         const std::string &pathToValidPlugin
     );
+#endif
 };
 
 } // end mrnetfe namespace

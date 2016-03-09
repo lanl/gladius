@@ -49,7 +49,7 @@ do {                                                                           \
  * name. It is assumed that the base directory already exists.
  */
 /* (static) */ void
-ToolBE::redirectOutputTo(
+Tool::ToolBE::redirectOutputTo(
     const std::string &base
 ) {
     static const auto pathSep = core::utils::osPathSep;
@@ -76,102 +76,55 @@ ToolBE::redirectOutputTo(
 /**
  * Constructor.
  */
-ToolBE::ToolBE(
+Tool::ToolBE::ToolBE(
     void
-) : mBeVerbose(false) { }
+) : mBeVerbose(false) { ; }
 
 /**
  * Destructor.
  */
-ToolBE::~ToolBE(void) { }
+Tool::ToolBE::~ToolBE(void) = default;
 
 /**
  *
  */
-void
-ToolBE::mInitLMON(
-    const core::Args &args,
+int
+Tool::ToolBE::init(
     bool beVerbose
 ) {
-    GLADIUS_UNUSED(args);
-    GLADIUS_UNUSED(beVerbose);
-#if 0
-    mLMONBE.init(args, beVerbose);
-    // We know how to do this, so let LMON know what to call.
-    mLMONBE.regUnpackForFEToBE(feToBeUnpack);
+    mBeVerbose = beVerbose;
+    VCOMP_COUT("Initializing tool back-end..." << std::endl);
     //
-    mLMONBE.handshake();
-    // Let LMON populate our process table.
-    mLMONBE.createAndPopulateProcTab(mProcTab);
-#endif
+    return GLADIUS_SUCCESS;
 }
 
 /**
  *
  */
-void
-ToolBE::init(
-    const core::Args &args,
-    bool beVerbose
-) {
-    VCOMP_COUT("Initializing Tool Back-End..." << std::endl);
-    try {
-        mBeVerbose = beVerbose;
-        mArgs = args;
-        //
-        mInitLMON(mArgs, mBeVerbose);
-        //
-        mMRNBE.init(mBeVerbose);
-    }
-    catch (const std::exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
-    }
-}
-
-/**
- *
- */
-void
-ToolBE::connect(void)
+int
+Tool::ToolBE::create(int uid)
 {
-    VCOMP_COUT("Connecting..." << std::endl);
-    VCOMP_COUT("Receiving Tool Leaf Information." << std::endl);
-    toolcommon::ToolLeafInfoArrayT lia;
-#if 0
-    mLMONBE.recvConnectionInfo(lia);
-    //
-    mLMONBE.broadcast((void *)&lia.size, sizeof(int));
-    // Non-masters allocate space for the MRNet connection info.
-    if (!mLMONBE.amMaster()) {
-        lia.leaves = (toolcommon::ToolLeafInfoT *)
-            calloc(lia.size, sizeof(toolcommon::ToolLeafInfoT));
-        if (!lia.leaves) GLADIUS_THROW_OOR();
-    }
-    VCOMP_COUT(
-        "Broadcasting Connection Information to All Daemons." << std::endl
-    );
-    mLMONBE.broadcast(
-        (void *)lia.leaves,
-        lia.size * sizeof(toolcommon::ToolLeafInfoT)
-    );
-#endif
-    //
-    mMRNBE.setPersonality(lia);
-    //
-    mMRNBE.connect();
-    //
-    mMRNBE.handshake();
-    //
-    mLoadPlugins();
-    //
-    free(lia.leaves);
+    VCOMP_COUT("Creating tool back-end..." << std::endl);
+    mUID = uid;
+    return GLADIUS_SUCCESS;
 }
 
 /**
  *
  */
+int
+Tool::ToolBE::connect(void)
+{
+    VCOMP_COUT("Connecting tool back-end..." << std::endl);
+    return GLADIUS_SUCCESS;
+}
+
+#if 0
+/**
+ *
+ */
 void
-ToolBE::mLoadPlugins(void)
+Tool::ToolBE::mLoadPlugins(void)
 {
     using namespace std;
 
@@ -205,7 +158,7 @@ ToolBE::mLoadPlugins(void)
  *
  */
 void
-ToolBE::enterPluginMain(void)
+Tool::ToolBE::enterPluginMain(void)
 {
     VCOMP_COUT("Entering Plugin Main." << std::endl);
     //
@@ -233,11 +186,4 @@ ToolBE::enterPluginMain(void)
     //
     VCOMP_COUT("Exited Plugin Main." << std::endl);
 }
-
-/**
- *
- */
-void
-ToolBE::finalize(void)
-{
-}
+#endif

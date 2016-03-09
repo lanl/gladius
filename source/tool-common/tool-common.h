@@ -30,8 +30,6 @@
 
 #include <limits.h>
 
-#include "mrnet/MRNet.h"
-
 namespace gladius {
 namespace toolcommon {
 
@@ -39,8 +37,6 @@ namespace toolcommon {
 // Types and constants.
 ////////////////////////////////////////////////////////////////////////////////
 
-// Type signature of the front-end to back-end callback function.
-typedef int (*FEToBePackFnP)(void *, void *, int, int *);
 // Timeout type.
 typedef int64_t timeout_t;
 // Constant that means "no timeout."
@@ -49,26 +45,9 @@ const timeout_t unlimitedTimeout = -1;
 typedef int64_t retry_t;
 // Constant that means "unlimited retries."
 const retry_t unlimitedRetries = -1;
-// MRNet Tags for Core Components
-enum MRNetCoreTags {
-    // Tag for initial lash-up handshake.
-    InitHandshake = FirstApplicationTag,
-    // Tag for sending plugin info.
-    PluginNameInfo,
-    // Back-end plugins ready.
-    BackEndPluginsReady,
-    // Shutdown tag.
-    Shutdown,
-    // The first tag a plugin can use.
-    FirstPluginTag
-};
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-struct LeafInfo {
-    MRN::NetworkTopology *networkTopology = nullptr;
-    std::vector<MRN::NetworkTopology::Node *> leaves;
-};
+// Number of MRNet tags in use by base infrastructure. Update if this changes.
+// See: MRNetCoreTags
+const int firstPluginTagOffset = 4;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -302,50 +281,6 @@ public:
         return nameSet;
     }
 };
-
-/**
- * Block until every back-end calls beReady;
- */
-static inline void
-feWaitForBEs(
-    MRN::Stream *protoStream
-) {
-    // Wait for all the plugin backends to report that they are ready to
-    // proceed.
-    MRN::PacketPtr packet;
-    int tag = 0;
-    auto status = protoStream->recv(&tag, packet);
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
-    }
-    if (toolcommon::MRNetCoreTags::BackEndPluginsReady != tag) {
-        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
-    }
-    int data = 0;
-    status = packet->unpack("%d", &data);
-    if (0 != status) {
-        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
-    }
-}
-
-/**
- *
- */
-static inline void
-beReady(
-    MRN::Stream *protoStream
-) {
-    static const int tag = toolcommon::BackEndPluginsReady;
-    int ready = 1;
-    auto status = protoStream->send(tag, "%d", ready);
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Send");
-    }
-    status = protoStream->flush();
-    if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
-    }
-}
 
 } // end namespace
 } // end namespace

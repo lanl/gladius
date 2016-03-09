@@ -12,8 +12,9 @@
 
 #pragma once
 
+#include "tool-api/gladius-toolbe.h"
+
 #include "core/core.h"
-#include "core/args.h"
 #include "mrnet/mrnet-be.h"
 #include "gpa/core/gp-manager.h"
 #include "gpa/core/gladius-plugin.h"
@@ -23,16 +24,14 @@
 namespace gladius {
 namespace toolbe {
 
-class ToolBE {
+class Tool::ToolBE {
 private:
     //
-    bool mBeVerbose = false;
-    //
-    core::Args mArgs;
+    bool mBeVerbose;
+    // Out UID for the job.
+    int mUID;
     // Our MRNet back-end instance.
     mrnetbe::MRNetBE mMRNBE;
-    // My process table (not the job one, but mine).
-    toolcommon::ProcessTable mProcTab;
     // The name of the target plugin.
     std::string mPluginName;
     // The path to the plugin pack.
@@ -43,14 +42,6 @@ private:
     gpa::GladiusPluginPack mPluginPack;
     // The plugin instance pointer.
     gpi::GladiusPlugin *mBEPlugin = nullptr;
-    ////////////////////////////////////////////////////////////////////////////
-    // Private Functions
-    ////////////////////////////////////////////////////////////////////////////
-    void
-    mInitLMON(
-        const core::Args &args,
-        bool beVerbose
-    );
     //
     void
     mLoadPlugins(void);
@@ -61,13 +52,13 @@ public:
     //
     ~ToolBE(void);
     //
-    void
-    init(
-        const core::Args &args,
-        bool beVerbose
-    );
+    int
+    init(bool beVerbose);
     //
-    void
+    int
+    create(int uid);
+    //
+    int
     connect(void);
     //
     static void
@@ -75,9 +66,6 @@ public:
     //
     void
     enterPluginMain(void);
-    //
-    void
-    finalize(void);
 };
 
 } // end toolbe namespace

@@ -614,6 +614,7 @@ MRNetFE::networkInit(void)
     VCOMP_COUT("Done Initializing Network." << std::endl);
 }
 
+#if 0
 /**
  * Initial FE to BE handshake.
  */
@@ -689,3 +690,4 @@ MRNetFE::pluginInfoBCast(
     //
     VCOMP_COUT("Done sending plugin info to back-ends." << std::endl);
 }
+#endif

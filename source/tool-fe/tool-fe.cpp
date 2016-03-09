@@ -323,8 +323,7 @@ ToolFE::main(
     catch (const std::exception &e) {
         GLADIUS_THROW(e.what());
     }
-    // TODO - gracefully shutdown things. We may need to tear down a bunch of
-    // infrastructure.
+    //
     return rc;
 }
 
@@ -630,11 +629,13 @@ void
 ToolFE::mSendPluginInfoToBEs(void)
 {
     VCOMP_COUT("Sending plugin info to back-ends." << std::endl);
+#if 0
     // MRNet knows how to do this...
     mMRNFE.pluginInfoBCast(
         std::string(mPluginPack.pluginInfo->pluginName),
         mPathToPluginPack
     );
+#endif
 }
 
 /**

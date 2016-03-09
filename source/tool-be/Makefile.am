@@ -6,24 +6,23 @@
 # top-level directory of this distribution.
 #
 
-bin_PROGRAMS = \
-gladius-toold
+LIBVINFO = "1:0:0"
 
-gladius_toold_SOURCES = \
-gladius-toold.cpp \
+lib_LTLIBRARIES = \
+libGladiusToolBE.la
+
+libGladiusToolBE_la_SOURCES = \
 tool-be.h tool-be.cpp
 
-gladius_toold_CFLAGS =
+libGladiusToolBE_la_CFLAGS =
 
-gladius_toold_CPPFLAGS = \
+libGladiusToolBE_la_CPPFLAGS = \
 -I${top_srcdir}/source \
 ${GLADIUS_TOOL_COMMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 
-gladius_toold_LDFLAGS =
+libGladiusToolBE_la_LDFLAGS =
 
-gladius_toold_LDADD = \
+libGladiusToolBE_la_LIBADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
-${top_builddir}/source/gpa/core/libGladiusPluginManager.la \
-${top_builddir}/source/tool-common/libGladiusToolCommon.la \
-${top_builddir}/source/mrnet/libGladiusMRNetBE.la
+${top_builddir}/source/tool-common/libGladiusToolCommon.la

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2015 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Los Alamos National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the
@@ -10,15 +10,25 @@
  *
  */
 
-#ifndef GLADIUS_MRNET_MRNET_BE_H_INCLUDED
-#define GLADIUS_MRNET_MRNET_BE_H_INCLUDED
-
-#include "mrnet/MRNet.h"
+#pragma once
 
 #include "tool-common/tool-common.h"
 
+#include <vector>
+#include <thread>
+
 namespace gladius {
 namespace mrnetbe {
+// Forward declaraction
+namespace MRN { class Network; }
+////////////////////////////////////////////////////////////////////////////////
+// Container for tool thread personalities.
+////////////////////////////////////////////////////////////////////////////////
+struct ThreadPersonality {
+    int rank = 0;
+    static constexpr int argc = 6;
+    char *argv[argc];
+};
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**
@@ -26,66 +36,57 @@ namespace mrnetbe {
  */
 class MRNetBE {
 private:
+    //  Constant indicating that we don't yet have a unique ID.
+    static constexpr int sNOUID = -1;
     // Flag indicating whether or not we'll be verbose about our actions.
-    bool mBeVerbose = false;
-    //
+    bool mBeVerbose;
+    // Our unique identifier in the parallel job.
+    int mUID;
+    // Total number of participants in this job.
+    int mTargetCount;
+    // Host's name
+    std::string mHostName;
+    // Host's local IP
     std::string mLocalIP;
     //
-    std::string mHostName;
+    std::string mSessionKey;
+    // Pointer to connection information.
+    toolcommon::ToolLeafInfoArrayT *mtli;
+    // Buffers for stringified connection info.
+    char mParentHostname[HOST_NAME_MAX];
+    char mParentPort[16];
+    char mParentRank[16];
+    // Handle to tool network.
+    MRN::Network *mNet;
+    // Pool of tool threads.
+    std::vector<std::thread> mToolThreads;
     //
-    std::string mParentHostname;
+    int
+    mConnect(void);
     //
-    int mRank = 0;
+    int
+    mGetConnectionInfo(void);
     //
-    int mParentPort = 0;
+    int
+    mStartToolThreads(void);
     //
-    int mParentRank = 0;
-    //
-    MRN::Network *mNetwork = nullptr;
-    //
-    MRN::Stream *mProtoStream = nullptr;
+    int
+    mToolThreadMain(
+        ThreadPersonality *tp
+    );
 
 public:
+    //
     MRNetBE(void);
     //
     ~MRNetBE(void);
     //
-    void
-    init(bool beVerbose = false);
+    int
+    init(bool beVerbose);
     //
-    void
-    setPersonality(
-        const toolcommon::ToolLeafInfoArrayT &tlia
-    );
-    /**
-     *
-     */
-    MRN::Network *
-    getNetwork(void) {
-        return mNetwork;
-    }
-    /**
-     *
-     */
-    MRN::Stream *
-    getProtoStream(void) {
-        return mProtoStream;
-    }
-    //
-    void
-    connect(void);
-    //
-    void
-    handshake(void);
-    //
-    void
-    pluginInfoRecv(
-        std::string &validPluginName,
-        std::string &pathToValidPlugin
-    );
+    int
+    create(int uid);
 };
 
 } // end mrnetbe namespace
 } // end gladius namespace
-
-#endif
