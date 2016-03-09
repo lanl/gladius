@@ -17,6 +17,8 @@
 #include <iostream>
 #include <string>
 
+#include "mrnet/MRNet.h"
+
 using namespace std;
 using namespace gladius;
 using namespace gladius::core;
@@ -54,7 +56,6 @@ Tool::mGetConnectionInfo(void)
         return GLADIUS_ERR;
     }
     mSessionKey = string(sKey);
-    cout << mSessionKey << endl;
     //
     char *tmpDir = getenv("TMPDIR");
     if (!tmpDir) {
@@ -183,6 +184,7 @@ Tool::mStartToolThreads(void)
             std::thread(&Tool::mToolThreadMain, this, tp)
         );
     }
+    mToolThreads[0].join();
 #if 0
     tc.waitForAttach();
     tc.inMapper->WaitOnCondition(ToolContext::ToolConditions::MAP);
@@ -197,14 +199,29 @@ int
 Tool::mToolThreadMain(
     ThreadPersonality *tp
 ) {
-#if 1 // DEBUG
+    using namespace MRN;
+    // Finish populating argv (thread local)
+    char rankStr[64];
+    snprintf(rankStr, sizeof(rankStr), "%d", tp->rank);
+    tp->argv[5] = rankStr;
+#if 0 // DEBUG
     cerr << "Thread " << tp->rank << endl
          << "-- Parent Host Name: " << tp->argv[1] << endl
          << "-- Parent Port     : " << tp->argv[2] << endl
          << "-- Parent Rank     : " << tp->argv[3] << endl
          << "-- Host Name       : " << tp->argv[4] << endl
+         << "-- Rank            : " << tp->argv[5] << endl
          << flush;
 #endif
+    // Sanity
+    assert(6 == tp->argc);
+
+    Network *net = Network::CreateNetworkBE(tp->argc, tp->argv);
+    //mNet = (ToolNetwork *)net;
+    //
+    assert(net);
+    assert(!net->has_Error());
+    //
     return GLADIUS_SUCCESS;
 }
 

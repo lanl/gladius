@@ -17,7 +17,6 @@ gladius_CFLAGS =
 
 gladius_CPPFLAGS = \
 -I${top_srcdir}/source \
-${GLADIUS_TOOL_COMMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 
 gladius_LDADD = \

@@ -310,6 +310,7 @@ ToolFE::main(
         if (GLADIUS_SUCCESS != (rc = mPostToolInitActons())) {
             return rc;
         }
+#if 0
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         mLoadPlugins();
@@ -317,6 +318,7 @@ ToolFE::main(
         mSendPluginInfoToBEs();
         // Now turn it over to the plugin.
         mEnterPluginMain();
+#endif
     }
     catch (const std::exception &e) {
         GLADIUS_THROW(e.what());
@@ -386,6 +388,8 @@ ToolFE::mConnectMRNetTree(void)
 {
     using namespace std;
     using namespace core;
+    // TODO RM
+    sleep(1);
     // TODO add a timer here
     decltype(mMaxRetries) attempt = 0;
     bool connectSuccess = false;
@@ -523,15 +527,25 @@ ToolFE::mLaunchUserApp(void)
                  mSessionKey
              );
     if (GLADIUS_SUCCESS != rc) return rc;
-    // FIXME hack for now
-    std::string lcmd;
-    for (const auto &a : mLauncherArgs.toArgv()) {
-        lcmd += (a + " ");
+    std::vector<std::string> argv = mLauncherArgs.toArgv();
+    std::vector<std::string> aargv = mAppArgs.toArgv();
+    argv.insert(end(argv), begin(aargv), end(aargv));
+    core::Args a(argv);
+    cout << "ARGS: " << flush;
+    for (const auto &b : a.toArgv()) {
+        cout << b << " " << flush;
     }
-    for (const auto &a : mAppArgs.toArgv()) {
-        lcmd += (a + " ");
+    cout << endl;
+    //
+    pid_t p = fork();
+    // child
+    if (0 == p) {
+        execvp(a.argv()[0], a.argv());
+        perror("execvp");
     }
-    system(lcmd.c_str());
+    else if (-1 == p) {
+        return GLADIUS_ERR;
+    }
     //
     return GLADIUS_SUCCESS;
 }
@@ -561,12 +575,14 @@ ToolFE::mInitiateToolLashUp(void)
         if (GLADIUS_SUCCESS != (rc = mConnectMRNetTree())) {
             return rc;
         }
+#if 0
         // Setup connected MRNet network.
         mMRNFE.networkInit();
         // Make sure that our core filters are working by performing a handshake
         // between the tool front-end and all the tool leaves (where all
         // communication is going through a set of core filters).
         mMRNFE.handshake();
+#endif
     }
     catch (const std::exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

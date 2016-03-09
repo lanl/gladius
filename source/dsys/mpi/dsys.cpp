@@ -288,7 +288,7 @@ pubConn(Proc &p)
             memmove(destp, res.data(), sizeof(ToolLeafInfoT));
             // Notify user that ready.
             echoPrompt();
-#if 1 // DEBUG
+#if 0 // DEBUG
             cerr << "ToolLeafInfoT "       << nGot                  << endl
                  << "- Rank            : " << destp->rank           << endl
                  << "- Hostname        : " << destp->hostName       << endl

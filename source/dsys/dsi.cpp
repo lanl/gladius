@@ -206,7 +206,7 @@ DSI::init(
         //
         execvp(argv.argv()[0], argv.argv());
         // Reached only on execvp failure.
-        _exit(127);
+        perror("execvp");
     }
     // Fork failure.
     else if (-1 == mApplPID) {

@@ -264,9 +264,9 @@ beConnectCbFn(
     void *
 ) {
     static std::mutex mtx;
-    std::lock_guard<std::mutex> lock(mtx);
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class()
         && MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
+        std::lock_guard<std::mutex> lock(mtx);
         MRNetFEGlobals::numBEsReporting++;
     }
 }
