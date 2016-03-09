@@ -14,8 +14,6 @@
 #include "config.h"
 #endif
 
-#include "core/utils.h"
-
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -25,8 +23,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include "gladius-toolbe.h"
+
 #include "mpi.h"
-#include "tool-api/gladius-toolbe.h"
 
 using namespace std;
 

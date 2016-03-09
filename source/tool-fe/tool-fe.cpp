@@ -15,7 +15,6 @@
 
 #include "core/utils.h"
 #include "core/env.h"
-#include "tool-be/tool-be.h"
 
 #include <cassert>
 #include <string>

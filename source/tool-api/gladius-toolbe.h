@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "gladius-rc.h"
+
 #include <memory>
 
 namespace gladius {

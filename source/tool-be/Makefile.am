@@ -18,6 +18,7 @@ libGladiusToolBE_la_CFLAGS =
 
 libGladiusToolBE_la_CPPFLAGS = \
 -I${top_srcdir}/source \
+-I${top_srcdir}/source/core \
 ${GLADIUS_TOOL_COMMON_CPPFLAGS} \
 ${MRNET_CPPFLAGS}
 

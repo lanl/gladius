@@ -26,7 +26,9 @@ hello_app_SOURCES = \
 hello-app.cpp
 
 hello_app_CPPFLAGS = \
--I${top_srcdir}/source
+-I${top_srcdir}/source \
+-I${top_srcdir}/source/core \
+-I${top_srcdir}/source/tool-api
 
 hello_app_LDADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
