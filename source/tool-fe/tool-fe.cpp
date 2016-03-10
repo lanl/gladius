@@ -544,7 +544,7 @@ ToolFE::mInitiateToolLashUp(void)
     VCOMP_COUT("Initiating tool lashup..." << endl);
     try {
         echoLaunchStart(mLauncherArgs, mAppArgs);
-        //
+        // Publish connection information across the system.
         int rc = mPublishConnectionInfo();
         if (GLADIUS_SUCCESS != rc) return rc;
         // Launch user application containing links into our tool

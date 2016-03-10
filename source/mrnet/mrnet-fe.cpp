@@ -41,10 +41,9 @@ using namespace gladius::mrnetfe;
 
 namespace {
 // This component's name.
-const std::string CNAME = "mrnetfe";
+const string CNAME = "mrnetfe";
 // CNAME's color code.
-const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::GREEN);
+const string NAMEC = core::colors::color().ansiBeginColor(core::colors::GREEN);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
@@ -63,9 +62,9 @@ do {                                                                           \
  *
  */
 MRNetTopology::MRNetTopology(
-    const std::string &topoFilePath,
+    const string &topoFilePath,
     TopologyType topoType,
-    const std::string &feHostName,
+    const string &feHostName,
     const core::ProcessLandscape &procLandscape
 ) : mTopoFilePath(topoFilePath)
   , mTopoType(topoType)
@@ -93,7 +92,7 @@ MRNetTopology::MRNetTopology(
         theFile.close();
         mCanRMFile = true;
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         if (theFile.is_open()) theFile.close();
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
@@ -106,7 +105,7 @@ MRNetTopology::MRNetTopology(
  *   host:2
  *   host:n-1 ;
  */
-std::string
+string
 MRNetTopology::mGenFlatTopo(void)
 {
     auto id = 0;
@@ -143,8 +142,8 @@ beConnectCbFn(
     MRN::Event *event,
     void *
 ) {
-    static std::mutex mtx;
-    std::lock_guard<std::mutex> lock(mtx);
+    static mutex mtx;
+    lock_guard<mutex> lock(mtx);
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class() &&
         MRN::TopologyEvent::TOPOL_ADD_BE == event->get_Type()) {
         MRNetFEGlobals::numBEsReporting++;
@@ -159,18 +158,18 @@ nodeLostCbFn(
     MRN::Event *event,
     void *
 ) {
-    static std::mutex mtx;
-    std::lock_guard<std::mutex> lock(mtx);
+    static mutex mtx;
+    lock_guard<mutex> lock(mtx);
     if (MRN::Event::TOPOLOGY_EVENT == event->get_Class() &&
         MRN::TopologyEvent::TOPOL_REMOVE_NODE == event->get_Type()) {
-        COMP_COUT << "A Node Loss Was Detected!" << std::endl << std::flush;
+        COMP_COUT << "A Node Loss Was Detected!" << endl << flush;
     }
 }
 } // end namespace
 
-const std::string MRNetFE::sCommNodeName = "mrnet_commnode";
+const string MRNetFE::sCommNodeName = "mrnet_commnode";
 // If filter shared object names change, then update this.
-const std::string MRNetFE::sCoreFiltersSO = "libGladiusMRNetCoreFilters.so";
+const string MRNetFE::sCoreFiltersSO = "libGladiusMRNetCoreFilters.so";
 
 /**
  * Constructor.
@@ -201,7 +200,7 @@ MRNetFE::~MRNetFE(void)
 int
 MRNetFE::mSetEnvs(void)
 {
-    VCOMP_COUT("Setting important environment variables..." << std::endl);
+    VCOMP_COUT("Setting important environment variables..." << endl);
 
     return core::utils::setEnv("MRNET_RSH", "/usr/bin/ssh");
 }
@@ -232,10 +231,10 @@ MRNetFE::init(
         // Create a unique name for the file.
         mTopoFile = mSessionDir + utils::osPathSep
                   + utils::getHostname() + "-"
-                  + std::to_string(getpid()) + "-" + CNAME + ".topo";
+                  + to_string(getpid()) + "-" + CNAME + ".topo";
         VCOMP_COUT("Topology specification file: " << mTopoFile << endl);
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
     //
@@ -247,18 +246,18 @@ MRNetFE::init(
  */
 int
 MRNetFE::mGetPrefixFromCommNode(
-    const std::string &whichString,
-    std::string &prefix
+    const string &whichString,
+    string &prefix
 ) {
-    const std::string badness = "Could not determine MRNet's installation "
+    const string badness = "Could not determine MRNet's installation "
                                 "prefix by inspecting the following path: '"
                               + whichString + "'";
     prefix = whichString;
-    std::string last = "/bin/" + sCommNodeName;
+    string last = "/bin/" + sCommNodeName;
     auto found = prefix.rfind(last);
     // Not found, so something is wrong.
-    if (std::string::npos == found) {
-        GLADIUS_CERR << badness << std::endl;
+    if (string::npos == found) {
+        GLADIUS_CERR << badness << endl;
         return GLADIUS_ERR;
     }
     prefix = prefix.substr(0, found);
@@ -295,7 +294,7 @@ MRNetFE::finalize(void)
     try {
         VCOMP_COUT("Finalizing MRNet front-end." << endl);
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 }
@@ -309,7 +308,7 @@ MRNetFE::mRegisterEventCallbacks(void)
     using namespace gladius::core;
     using namespace MRN;
     //
-    VCOMP_COUT("Registering event callbacks..." << std::endl);
+    VCOMP_COUT("Registering event callbacks..." << endl);
     //
     int nErrs = 0;
     bool rc = mNetwork->register_EventCallback(
@@ -329,8 +328,8 @@ MRNetFE::mRegisterEventCallbacks(void)
     if (!rc) ++nErrs;
     //
     if (0 != nErrs) {
-        static const std::string f = "MRN::register_EventCallback";
-        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << std::endl;
+        static const string f = "MRN::register_EventCallback";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
         return GLADIUS_ERR;
     }
     //
@@ -345,7 +344,7 @@ MRNetFE::mBuildNetwork(void)
 {
     using namespace MRN;
     //
-    VCOMP_COUT("Building network..." << std::endl);
+    VCOMP_COUT("Building network..." << endl);
     //
     try {
         // Create the topology file.
@@ -375,7 +374,7 @@ MRNetFE::mBuildNetwork(void)
             return GLADIUS_ERR;
         }
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
     //
@@ -391,12 +390,12 @@ MRNetFE::mPopulateLeafInfo(void)
     using namespace gladius::core;
     using namespace MRN;
     //
-    VCOMP_COUT("Populating leaf info..." << std::endl);
+    VCOMP_COUT("Populating leaf info..." << endl);
     //
     mLeafInfo.networkTopology = mNetwork->get_NetworkTopology();
     if (!mLeafInfo.networkTopology) {
-        static const std::string f = "MRN::get_NetworkTopology";
-        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << std::endl;
+        static const string f = "MRN::get_NetworkTopology";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
         return GLADIUS_ERR;
     }
     //
@@ -449,9 +448,9 @@ MRNetFE::mEchoNetStats(void)
  */
 int
 MRNetFE::generateConnectionMap(
-    std::vector<toolcommon::ToolLeafInfoT> &cMap
+    vector<toolcommon::ToolLeafInfoT> &cMap
 ) {
-    VCOMP_COUT("Generating connection map..." << std::endl);
+    VCOMP_COUT("Generating connection map..." << endl);
     //
     const auto numLeaves = mLeafInfo.leaves.size();
     mNExpectedBEs = numLeaves * mNThread;
@@ -499,7 +498,7 @@ MRNetFE::createNetworkFE(
 ) {
     // First, create and populate MRNet network topology file.
     // TODO dynamic TopologyType based on job characteristics.
-    VCOMP_COUT("Creating and populating MRNet topology" << std::endl);
+    VCOMP_COUT("Creating and populating MRNet topology" << endl);
     // Stash the process landscape because we'll need this info later.
     mProcLandscape = procLandscape;
     // Build network
@@ -538,7 +537,7 @@ MRNetFE::connect(void)
             return GLADIUS_NOT_CONNECTED;
         }
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         GLADIUS_THROW(e.what());
     }
     return GLADIUS_ERR;
@@ -550,15 +549,15 @@ MRNetFE::connect(void)
 void
 MRNetFE::mLoadCoreFilters(void)
 {
-    VCOMP_COUT("Loading Core Filters." << std::endl);
+    VCOMP_COUT("Loading Core Filters." << endl);
     //
     static const auto ps = core::utils::osPathSep;
     static const auto execPrefix = core::SessionFE::TheSession().execPrefix();
     static const auto soPrefix = execPrefix + ps + "lib";
     //
-    VCOMP_COUT("Looking For Core Filters in: " << soPrefix << std::endl);
+    VCOMP_COUT("Looking For Core Filters in: " << soPrefix << endl);
     //
-    static const std::string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
+    static const string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
     auto filterID = mNetwork->load_FilterFunc(
                         coreFilterSOName.c_str(),
                         "GladiusMRNetProtoFilter"
@@ -576,7 +575,7 @@ MRNetFE::mLoadCoreFilters(void)
         GLADIUS_THROW_CALL_FAILED("new_Stream");
     }
     //
-    VCOMP_COUT("Done Loading Core Filters." << std::endl);
+    VCOMP_COUT("Done Loading Core Filters." << endl);
 }
 
 /**
@@ -587,12 +586,12 @@ MRNetFE::networkInit(void)
 {
     using namespace gladius::core;
     //
-    VCOMP_COUT("Initializing network..." << std::endl);
+    VCOMP_COUT("Initializing network..." << endl);
     //
     mBcastComm = mNetwork->get_BroadcastCommunicator();
     if (!mBcastComm) {
-        static const std::string f = "MRN::get_BroadcastCommunicator";
-        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << std::endl;
+        static const string f = "MRN::get_BroadcastCommunicator";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
         return GLADIUS_ERR_MRNET;
     }
 #if 0
@@ -609,7 +608,7 @@ MRNetFE::networkInit(void)
 void
 MRNetFE::handshake(void)
 {
-    VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
+    VCOMP_COUT("Starting Lash-Up Handshake." << endl);
     // Ping!
     auto status = mProtoStream->send(
                       toolcommon::MRNetCoreTags::InitHandshake,
@@ -644,7 +643,7 @@ MRNetFE::handshake(void)
         GLADIUS_THROW("Received Invalid Data From Tool Back-End");
     }
     //
-    VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
+    VCOMP_COUT("Done with Lash-Up Handshake." << endl);
 }
 
 /**
@@ -652,10 +651,10 @@ MRNetFE::handshake(void)
  */
 void
 MRNetFE::pluginInfoBCast(
-    const std::string &validPluginName,
-    const std::string &pathToValidPlugin
+    const string &validPluginName,
+    const string &pathToValidPlugin
 ) {
-    VCOMP_COUT("Sending plugin info to back-ends." << std::endl);
+    VCOMP_COUT("Sending plugin info to back-ends." << endl);
     //
     const char *pluginName = validPluginName.c_str();
     const char *pluginPath = pathToValidPlugin.c_str();
@@ -675,6 +674,6 @@ MRNetFE::pluginInfoBCast(
         GLADIUS_THROW_CALL_FAILED("Stream::Flush");
     }
     //
-    VCOMP_COUT("Done sending plugin info to back-ends." << std::endl);
+    VCOMP_COUT("Done sending plugin info to back-ends." << endl);
 }
 #endif

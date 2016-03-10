@@ -69,8 +69,8 @@ MRNetBE::MRNetBE(
  * Destructor.
  */
 MRNetBE::~MRNetBE(void) {
-    if (mtli && mtli->leaves) {
-        free(mtli->leaves);
+    if (mtli) {
+        if (mtli->leaves) free(mtli->leaves);
         mtli->leaves = nullptr;
         free(mtli);
         mtli = nullptr;
@@ -84,7 +84,6 @@ int
 MRNetBE::init(
     bool beVerbose
 ) {
-    using namespace std;
     using namespace gladius::core;
     //
     mBeVerbose = beVerbose;
@@ -344,7 +343,7 @@ MRNetBE::mToolThreadMain(
 #endif
     // Sanity
     assert(6 == tp->argc);
-
+    //
     mNet = Network::CreateNetworkBE(tp->argc, tp->argv);
     if (!mNet || mNet->has_Error()) {
         GLADIUS_CERR << core::utils::formatCallFailed(
