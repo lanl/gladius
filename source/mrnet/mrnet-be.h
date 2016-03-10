@@ -18,7 +18,10 @@
 #include <thread>
 
 // Forward declarations
-namespace MRN { class Network; }
+namespace MRN {
+    class Network;
+    class Stream;
+}
 
 namespace gladius {
 namespace mrnetbe {
@@ -61,6 +64,8 @@ private:
     char mParentRank[16];
     // Handle to tool network.
     MRN::Network *mNet;
+    // Tool OOB protocol stream.
+    MRN::Stream *mProtoStream = nullptr;
     // Pool of tool threads.
     std::vector<std::thread> mToolThreads;
     //
@@ -74,6 +79,9 @@ private:
     mToolThreadMain(
         ThreadPersonality *tp
     );
+    //
+    int
+    mHandshake(void);
 
 public:
     //

@@ -28,6 +28,7 @@
 
 using namespace std;
 using namespace gladius;
+using namespace gladius::core;
 using namespace gladius::mrnetbe;
 
 namespace {
@@ -69,6 +70,8 @@ MRNetBE::MRNetBE(
  * Destructor.
  */
 MRNetBE::~MRNetBE(void) {
+    // FIXME
+    mToolThreads[0].join();
     if (mtli) {
         if (mtli->leaves) free(mtli->leaves);
         mtli->leaves = nullptr;
@@ -312,11 +315,9 @@ MRNetBE::mStartToolThreads(void)
             thread(&MRNetBE::mToolThreadMain, this, tp)
         );
     }
+    // TODO RM
     mToolThreads[0].join();
-#if 0
-    tc.waitForAttach();
-    tc.inMapper->WaitOnCondition(ToolContext::ToolConditions::MAP);
-#endif
+    //
     return GLADIUS_SUCCESS;
 }
 
@@ -354,47 +355,62 @@ MRNetBE::mToolThreadMain(
         return GLADIUS_ERR_MRNET;
     }
     //
-    return GLADIUS_SUCCESS;
+    return mHandshake();
 }
 
-#if 0
 /**
  *
  */
-void
-MRNetBE::handshake(void)
+int
+MRNetBE::mHandshake(void)
 {
-    VCOMP_COUT("Starting Lash-Up Handshake." << endl);
-
+    VCOMP_COUT("Starting lash-up handshake..." << endl);
+    //
     MRN::PacketPtr packet;
     const bool recvShouldBlock = true;
     int tag = 0;
     // This will setup the protocol stream.
-    auto status = mNetwork->recv(&tag, packet, &mProtoStream, recvShouldBlock);
+    auto status = mNet->recv(&tag, packet, &mProtoStream, recvShouldBlock);
     if (1 != status) {
-        GLADIUS_THROW_CALL_FAILED("Network::Recv");
+        static const string f = "Stream::Recv";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     int ping = -1;
     status = packet->unpack("%d", &ping);
     if (0 != status) {
-        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+        static const string f = "PacketPtr::unpack";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
-        GLADIUS_THROW("Received Invalid Tag From Tool Front-End");
+        static const string errs = "Received Invalid Tag From Tool Front-End";
+        GLADIUS_CERR << errs << endl;
+        return GLADIUS_ERR;
     }
     if (ping != GladiusMRNetProtoFilterMagic) {
-        GLADIUS_THROW("Received Invalid Data From Tool Front-End");
+        static const string errs = "Received Invalid Data From Tool Front-End";
+        GLADIUS_CERR << errs << endl;
+        return GLADIUS_ERR;
     }
     int pong = -ping;
     status = mProtoStream->send(tag, "%d", pong);
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+        static const string f = "Stream::Send";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
-    mProtoStream->flush();
-
-    VCOMP_COUT("Done with Lash-Up Handshake." << endl);
+    status = mProtoStream->flush();
+    if (-1 == status) {
+        static const string f = "Stream::Flush";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
+    }
+    //
+    return GLADIUS_SUCCESS;
 }
 
+#if 0
 /**
  * Receives valid plugin name and path from FE.
  */
@@ -409,7 +425,7 @@ MRNetBE::pluginInfoRecv(
     MRN::Stream *stream = nullptr;
     const bool recvShouldBlock = true;
     int tag = 0;
-    auto status = mNetwork->recv(&tag, packet, &stream, recvShouldBlock);
+    auto status = mNet->recv(&tag, packet, &stream, recvShouldBlock);
     if (1 != status) {
         GLADIUS_THROW_CALL_FAILED("Network::Recv");
     }

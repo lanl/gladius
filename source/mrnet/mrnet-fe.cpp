@@ -279,7 +279,7 @@ MRNetFE::mDetermineAndSetPaths(void)
     string cnPath;
     int status = core::utils::which(sCommNodeName, cnPath);
     if (GLADIUS_SUCCESS != status) {
-        GLADIUS_CERR << toolcommon::utils::genNotInPathErrString(sCommNodeName)
+        GLADIUS_CERR << toolcommon::genNotInPathErrString(sCommNodeName)
                      << endl;
         return GLADIUS_ERR;
     }
@@ -603,7 +603,6 @@ MRNetFE::mLoadCoreFilters(void)
     return GLADIUS_SUCCESS;
 }
 
-
 /**
  * Initial FE to BE handshake.
  */
@@ -619,32 +618,45 @@ MRNetFE::handshake(void)
                       GladiusMRNetProtoFilterMagic
                   );
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+        static const string f = "Stream::Send";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     status = mProtoStream->flush();
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+        static const string f = "Stream::Flush";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     // Pong!
     MRN::PacketPtr packet;
     int tag = 0;
     status = mProtoStream->recv(&tag, packet);
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Recv");
+        static const string f = "Stream::Recv";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     if (MRNetCoreTags::InitHandshake != tag) {
-        GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
+        static const string errs = "Received Invalid Tag From Tool Back-End";
+        GLADIUS_CERR << errs << endl;
+        return GLADIUS_ERR;
     }
     int data = 0;
     status = packet->unpack("%d", &data);
     // Once we are here, then we know that all the back-ends have reported back.
     if (0 != status) {
-        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+        static const string f = "PacketPtr::unpack";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     // Notice the negative here...
     if (data != -GladiusMRNetProtoFilterMagic) {
-        GLADIUS_THROW("Received Invalid Data From Tool Back-End");
+        static const string errs = "Received Invalid Data From Tool Back-End";
+        GLADIUS_CERR << errs << endl;
+        return GLADIUS_ERR;
     }
+    //
     return GLADIUS_SUCCESS;
 }
 

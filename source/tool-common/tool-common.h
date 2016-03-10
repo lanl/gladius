@@ -46,35 +46,23 @@ const timeout_t unlimitedTimeout = -1;
 typedef int64_t retry_t;
 // Constant that means "unlimited retries."
 const retry_t unlimitedRetries = -1;
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-class utils {
-    /**
-     *
-     */
-    utils(void) = default;
-    /**
-     *
-     */
-    ~utils(void) = default;
-public:
-    /**
-     *
-     */
-    static std::string
-    genNotInPathErrString(
-        const std::string &whatsNotInPath
-    ) {
-        auto msg = "It appears as if '" + whatsNotInPath
-                   + "', is not in your $PATH.\n"
-                   + "Please update your $PATH to include its location.";
-        return msg;
-    }
-};
+
+/**
+ *
+ */
+static inline std::string
+genNotInPathErrString(
+    const std::string &whatsNotInPath
+) {
+    auto msg = "It appears as if '" + whatsNotInPath
+               + "', is not in your $PATH.\n"
+               + "Please update your $PATH to include its location.";
+    return msg;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// FIXME use FirstApplicationTag
+// FIXME use MRNet's FirstApplicationTag
 static const int GladiusFirstApplicationTag = 100;
 enum MRNetCoreTags {
     // Tag for initial lash-up handshake.
