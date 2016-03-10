@@ -50,7 +50,6 @@ do {                                                                           \
 #define ENV_VAR_CONNECT_TIMEOUT_IN_SEC "GLADIUS_TOOL_FE_CONNECT_TIMEOUT_S"
 #define ENV_VAR_CONNECT_MAX_RETRIES    "GLADIUS_TOOL_FE_CONNECT_MAX_RETRIES"
 
-namespace {
 static const std::vector<core::EnvironmentVar> compEnvVars = {
     {ENV_VAR_CONNECT_TIMEOUT_IN_SEC,
      "Connection timeout in seconds. Default: " +
@@ -61,7 +60,6 @@ static const std::vector<core::EnvironmentVar> compEnvVars = {
      std::to_string(ToolFE::sDefaultMaxRetries) + "."
     }
 };
-}
 
 /**
  *
@@ -84,11 +82,23 @@ echoLaunchStart(
     GLADIUS_COUT_STAT << "Launch Sequence Initiated..." << std::endl;
     GLADIUS_COUT_STAT << "Starting: " << lstr << std::endl;
 }
-
 } // end namespace
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+/**
+ * Tool front-end constructor.
+ */
+ToolFE::ToolFE(
+    void
+) : mBeVerbose(false)
+  , mConnectionTimeoutInSec(toolcommon::unlimitedTimeout)
+  , mMaxRetries(toolcommon::unlimitedRetries)
+  , mPathToPluginPack("")
+{
+    memset(mSessionKey, '\0', sizeof(mSessionKey));
+}
+
 /**
  * Component registration.
  */
@@ -148,19 +158,6 @@ ToolFE::mGetStateFromEnvs(void)
     }
     //
     return GLADIUS_SUCCESS;
-}
-
-/**
- * Tool front-end constructor.
- */
-ToolFE::ToolFE(
-    void
-) : mBeVerbose(false)
-  , mConnectionTimeoutInSec(toolcommon::unlimitedTimeout)
-  , mMaxRetries(toolcommon::unlimitedRetries)
-  , mPathToPluginPack("")
-{
-    memset(mSessionKey, '\0', sizeof(mSessionKey));
 }
 
 /**
@@ -393,7 +390,7 @@ ToolFE::mConnectMRNetTree(void)
         // Take a break and let things happen...
         sleep(1);
         // Try to connect.
-        auto status = mMRNFE.connect();
+        const int status = mMRNFE.connect();
         // All done - Get outta here...
         if (GLADIUS_SUCCESS == status) {
             connectSuccess = true;
@@ -447,7 +444,7 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
     //
     vector <pair<string, string> > envTups;
     // If the environment variable is set, then capture its value.
-    for (auto &envVar : envVars) {
+    for (const auto &envVar : envVars) {
         // Filter out those that are not set.
         if (core::utils::envVarSet(envVar)) {
             envTups.push_back(make_pair(envVar, core::utils::getEnv(envVar)));
@@ -523,6 +520,7 @@ ToolFE::mLaunchUserApp(void)
                  mSessionKey
              );
     if (GLADIUS_SUCCESS != rc) return rc;
+    // TODO FIXME
     std::vector<std::string> argv = mLauncherArgs.toArgv();
     std::vector<std::string> aargv = mAppArgs.toArgv();
     argv.insert(end(argv), begin(aargv), end(aargv));
@@ -556,18 +554,12 @@ ToolFE::mInitiateToolLashUp(void)
         echoLaunchStart(mLauncherArgs, mAppArgs);
         //
         int rc = mPublishConnectionInfo();
-        if (GLADIUS_SUCCESS != rc) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != rc) return rc;
         // Launch user application containing links into our tool
         // infrastructure.
-        if (GLADIUS_SUCCESS != (rc = mLaunchUserApp())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mLaunchUserApp())) return rc;
         // Wait for MRNet tree connections.
-        if (GLADIUS_SUCCESS != (rc = mConnectMRNetTree())) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mConnectMRNetTree())) return rc;
 #if 0
         // Setup connected MRNet network.
         mMRNFE.networkInit();

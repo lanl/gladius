@@ -117,6 +117,8 @@ public:
     //
     ToolFE(void);
     //
+    ~ToolFE(void) = default;
+    //
     int
     main(
         const core::Args &appArgv,
