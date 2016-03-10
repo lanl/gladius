@@ -27,6 +27,7 @@
 #include <cstdlib>
 #include <ostream>
 #include <iostream>
+#include <memory>
 
 #include <limits.h>
 
@@ -73,38 +74,19 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-class MRNetCoreTags {
-    //
-    int
-    getFirstAppTag(void) const;
-public:
-    /**
-     *
-     */
-    constexpr
-    MRNetCoreTags(
-        void
-    ) : InitHandshake      (getFirstAppTag() + 0)
-      , PluginNameInfo     (getFirstAppTag() + 1)
-      , BackEndPluginsReady(getFirstAppTag() + 2)
-      , Shutdown           (getFirstAppTag() + 3)
-      , FirstPluginTag     (getFirstAppTag() + 4)
-    { ; }
-
-    /**
-     *
-     */
-    ~MRNetCoreTags(void) = default;
+// FIXME use FirstApplicationTag
+static const int GladiusFirstApplicationTag = 100;
+enum MRNetCoreTags {
     // Tag for initial lash-up handshake.
-    const int InitHandshake;
+    InitHandshake = GladiusFirstApplicationTag,
     // Tag for sending plugin info.
-    const int PluginNameInfo;
+    PluginNameInfo,
     // Back-end plugins ready.
-    const int BackEndPluginsReady;
+    BackEndPluginsReady,
     // Shutdown tag.
-    const int Shutdown;
+    Shutdown,
     // First plugin tag.
-    const int FirstPluginTag;
+    FirstPluginTag
 };
 
 ////////////////////////////////////////////////////////////////////////////////

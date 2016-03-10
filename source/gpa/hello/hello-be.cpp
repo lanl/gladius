@@ -24,6 +24,8 @@
 
 #include <signal.h>
 
+#include "mrnet/MRNet.h"
+
 using namespace gladius;
 using namespace gladius::gpi;
 
@@ -118,8 +120,8 @@ void
 HelloBE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Entering Main Loop." << std::endl);
-    //
-    toolcommon::beReady(mGladiusPluginArgs.protoStream);
+    // TODO
+    //toolcommon::beReady(mGladiusPluginArgs.protoStream);
     //
     MRN::PacketPtr packet;
     const bool recvShouldBlock = true;

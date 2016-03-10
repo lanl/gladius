@@ -23,8 +23,7 @@ namespace hello {
 //
 enum HelloProtoTags {
     // Notice where we start here. ALL plugins MUST start with this tag value.
-    // FIXME
-    SayHello = gladius::toolcommon::firstPluginTagOffset,
+    SayHello = gladius::toolcommon::FirstPluginTag,
     Shutdown
 };
 } // end hello namesapce.

@@ -17,14 +17,6 @@ using namespace gladius::toolcommon;
 /**
  *
  */
-int
-MRNetCoreTags::getFirstAppTag(void) const {
-    return FirstApplicationTag;
-}
-
-/**
- *
- */
 void
 ProcessTable::dumpTo(
     std::ostream &os,

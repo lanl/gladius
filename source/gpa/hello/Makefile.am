@@ -36,61 +36,61 @@ ${top_builddir}/source/tool-api/libgladius-tool-be.la
 # And here, notice the [plugin-name]lib_LTLIBRARIES. MODIFY THIS FOR YOUR NEEDS.
 # Don't change the names of the .las. Gladius expects these naming conventions.
 ################################################################################
-#hellolib_LTLIBRARIES = \
-#PluginFrontEnd.la \
-#PluginBackEnd.la \
-#PluginFilters.la
-#
+hellolib_LTLIBRARIES = \
+PluginFrontEnd.la \
+PluginBackEnd.la \
+PluginFilters.la
+
 #################################################################################
 ## Add your tool front-end sources here.
 #################################################################################
-#PluginFrontEnd_la_SOURCES = \
-#hello-fe.cpp hello-common.h
-#
-#PluginFrontEnd_la_CFLAGS =
-#
-#PluginFrontEnd_la_CPPFLAGS = \
-#-I${top_srcdir}/source \
-#-I${top_srcdir}/source/dspa/core \
-#${GLADIUS_PLUGIN_CPPFLAGS}
-#
-#PluginFrontEnd_la_LDFLAGS = \
-#-module -avoid-version
-#
-#PluginFrontEnd_la_LIBADD =
-#
-#################################################################################
-## Add your tool back-end sources here.
-#################################################################################
-#PluginBackEnd_la_SOURCES = \
-#hello-be.cpp hello-common.h
-#
-#PluginBackEnd_la_CFLAGS =
-#
-#PluginBackEnd_la_CPPFLAGS = \
-#-I${top_srcdir}/source \
-#-I${top_srcdir}/source/dspa/core \
-#${GLADIUS_PLUGIN_CPPFLAGS}
-#
-#PluginBackEnd_la_LDFLAGS = \
-#-module -avoid-version
-#
-#PluginBackEnd_la_LIBADD =
-#
-#################################################################################
-## Add your tool filters here (optional).
-#################################################################################
-#PluginFilters_la_SOURCES = \
-#hello-filters.h hello-filters.cpp
-#
-#PluginFilters_la_CFLAGS =
-#
-#PluginFilters_la_CXXFLAGS =
-#
-#PluginFilters_la_CPPFLAGS = \
-#${MRNET_CPPFLAGS}
-#
-#PluginFilters_la_LDFLAGS = \
-#-module -avoid-version
-#
-#PluginFilters_la_LIBADD =
+PluginFrontEnd_la_SOURCES = \
+hello-fe.cpp hello-common.h
+
+PluginFrontEnd_la_CFLAGS =
+
+PluginFrontEnd_la_CPPFLAGS = \
+-I${top_srcdir}/source \
+-I${top_srcdir}/source/dspa/core \
+${GLADIUS_PLUGIN_CPPFLAGS}
+
+PluginFrontEnd_la_LDFLAGS = \
+-module -avoid-version
+
+PluginFrontEnd_la_LIBADD =
+
+################################################################################
+# Add your tool back-end sources here.
+################################################################################
+PluginBackEnd_la_SOURCES = \
+hello-be.cpp hello-common.h
+
+PluginBackEnd_la_CFLAGS =
+
+PluginBackEnd_la_CPPFLAGS = \
+-I${top_srcdir}/source \
+-I${top_srcdir}/source/dspa/core \
+${GLADIUS_PLUGIN_CPPFLAGS}
+
+PluginBackEnd_la_LDFLAGS = \
+-module -avoid-version
+
+PluginBackEnd_la_LIBADD =
+
+################################################################################
+# Add your tool filters here (optional).
+################################################################################
+PluginFilters_la_SOURCES = \
+hello-filters.h hello-filters.cpp
+
+PluginFilters_la_CFLAGS =
+
+PluginFilters_la_CXXFLAGS =
+
+PluginFilters_la_CPPFLAGS = \
+${MRNET_CPPFLAGS}
+
+PluginFilters_la_LDFLAGS = \
+-module -avoid-version
+
+PluginFilters_la_LIBADD =

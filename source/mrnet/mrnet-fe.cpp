@@ -610,11 +610,11 @@ MRNetFE::mLoadCoreFilters(void)
 int
 MRNetFE::handshake(void)
 {
+    using namespace gladius::toolcommon;
     VCOMP_COUT("Starting lash-up handshake..." << endl);
-    static const toolcommon::MRNetCoreTags coreTags;
     // Ping!
     auto status = mProtoStream->send(
-                      coreTags.InitHandshake,
+                      MRNetCoreTags::InitHandshake,
                       "%d",
                       GladiusMRNetProtoFilterMagic
                   );
@@ -632,7 +632,7 @@ MRNetFE::handshake(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Recv");
     }
-    if (coreTags.InitHandshake != tag) {
+    if (MRNetCoreTags::InitHandshake != tag) {
         GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
     }
     int data = 0;

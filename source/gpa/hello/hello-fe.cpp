@@ -20,6 +20,8 @@
 
 #include <iostream>
 
+#include "mrnet/MRNet.h"
+
 using namespace gladius;
 using namespace gladius::gpi;
 
@@ -149,7 +151,8 @@ void
 HelloFE::mEnterMainLoop(void)
 {
     VCOMP_COUT("Waiting for Back-Ends..." << std::endl);
-    toolcommon::feWaitForBEs(mGladiusPluginArgs.protoStream);
+    // TODO
+    //toolcommon::feWaitForBEs(mGladiusPluginArgs.protoStream);
     
     //
     // At this point all our back-ends have reported that they are ready to go.
