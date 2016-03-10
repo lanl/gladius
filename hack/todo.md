@@ -1,9 +1,6 @@
 # Gladius TODO
 
-- I do not believe that LaunchMON will be sufficient for all of our needs.
-    - Find alternatives for things that do not call into MPI (PMI?)
-- Fix hand in terminal UI when tool launch fails due to launcher (e.g. mpirun) failure.
-    - It appears as if LMON_fe_launchAndSpawnDaemons is not returning on error.
+- ToolBE: only redirect tool output (not stdout and stderr).
 - Add higher-level send/recv abstraction that can be used by all infrastructure.
 - On BE failure, make sure that we can determine which node failed.
 - Add package config to get plugin flags.

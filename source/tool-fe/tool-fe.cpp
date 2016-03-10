@@ -25,6 +25,7 @@
 
 using namespace std;
 using namespace gladius;
+using namespace gladius::core;
 using namespace gladius::toolfe;
 
 namespace {
@@ -449,8 +450,6 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 int
 ToolFE::mPublishConnectionInfo(void)
 {
-    using namespace gladius::core;
-    //
     VCOMP_COUT("Publishing connection information..." << endl);
     // Set session key. Not ideal, but good enough for now...
     snprintf(
@@ -499,7 +498,6 @@ ToolFE::mPublishConnectionInfo(void)
 int
 ToolFE::mLaunchUserApp(void)
 {
-    using namespace gladius::core;
     // Push session key into the environment.
     int rc = utils::setEnv(
                  GLADIUS_ENV_GLADIUS_SESSION_KEY,
@@ -532,8 +530,6 @@ ToolFE::mLaunchUserApp(void)
 int
 ToolFE::mInitiateToolLashUp(void)
 {
-    using namespace gladius::core;
-    //
     VCOMP_COUT("Initiating tool lashup..." << endl);
     try {
         echoLaunchStart(mLauncherArgs, mAppArgs);
