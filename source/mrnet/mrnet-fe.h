@@ -83,7 +83,7 @@ private:
     //
     static const std::string sCoreFiltersSO;
     // Be verbose or not.
-    bool mBeVerbose = false;
+    bool mBeVerbose;
     // Base session directory.
     std::string mSessionDir;
     // Path to MRNet topology file.
@@ -130,10 +130,7 @@ private:
         std::string &prefix
     );
     //
-    void
-    mCreateDaemonTIDMap(void);
-    //
-    void
+    int
     mLoadCoreFilters(void);
 
 public:
@@ -187,7 +184,7 @@ public:
     int
     networkInit(void);
     //
-    void
+    int
     handshake(void);
 #if 0
     //

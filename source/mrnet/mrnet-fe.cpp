@@ -37,6 +37,7 @@
 
 using namespace std;
 using namespace gladius;
+using namespace gladius::core;
 using namespace gladius::mrnetfe;
 
 namespace {
@@ -176,7 +177,8 @@ const string MRNetFE::sCoreFiltersSO = "libGladiusMRNetCoreFilters.so";
  */
 MRNetFE::MRNetFE(
     void
-) : mPrefixPath("")
+) : mBeVerbose(false)
+  , mPrefixPath("")
   , mNThread(1)
 {
     MRNetFEGlobals::numBEsReporting = 0;
@@ -546,41 +548,6 @@ MRNetFE::connect(void)
 /**
  *
  */
-void
-MRNetFE::mLoadCoreFilters(void)
-{
-    VCOMP_COUT("Loading Core Filters." << endl);
-    //
-    static const auto ps = core::utils::osPathSep;
-    static const auto execPrefix = core::SessionFE::TheSession().execPrefix();
-    static const auto soPrefix = execPrefix + ps + "lib";
-    //
-    VCOMP_COUT("Looking For Core Filters in: " << soPrefix << endl);
-    //
-    static const string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
-    auto filterID = mNetwork->load_FilterFunc(
-                        coreFilterSOName.c_str(),
-                        "GladiusMRNetProtoFilter"
-                    );
-    if (-1 == filterID) {
-        GLADIUS_THROW_CALL_FAILED("load_FilterFunc: GladiusMRNetProtoFilter");
-    }
-    //
-    mProtoStream = mNetwork->new_Stream(
-                       mBcastComm,
-                       MRN::SFILTER_WAITFORALL,
-                       filterID
-                   );
-    if (!mProtoStream) {
-        GLADIUS_THROW_CALL_FAILED("new_Stream");
-    }
-    //
-    VCOMP_COUT("Done Loading Core Filters." << endl);
-}
-
-/**
- *
- */
 int
 MRNetFE::networkInit(void)
 {
@@ -594,24 +561,60 @@ MRNetFE::networkInit(void)
         GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
         return GLADIUS_ERR_MRNET;
     }
-#if 0
     //
-    mLoadCoreFilters();
-#endif
+    return mLoadCoreFilters();
+}
+
+/**
+ *
+ */
+int
+MRNetFE::mLoadCoreFilters(void)
+{
+    VCOMP_COUT("Loading core filters..." << endl);
+    //
+    static const auto ps = core::utils::osPathSep;
+    static const auto execPrefix = core::SessionFE::TheSession().execPrefix();
+    static const auto soPrefix = execPrefix + ps + "lib";
+    //
+    VCOMP_COUT("Looking for core filters in: " << soPrefix << endl);
+    static const string coreFilterSOName = soPrefix + ps + sCoreFiltersSO;
+    auto filterID = mNetwork->load_FilterFunc(
+                        coreFilterSOName.c_str(),
+                        "GladiusMRNetProtoFilter"
+                    );
+    if (-1 == filterID) {
+        static const string f = "load_FilterFunc: GladiusMRNetProtoFilter";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
+    }
+    //
+    mProtoStream = mNetwork->new_Stream(
+                       mBcastComm,
+                       MRN::SFILTER_WAITFORALL,
+                       filterID
+                   );
+    if (!mProtoStream) {
+        static const string f = "MRN::Network->new_Stream";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
+    }
+    //
     return GLADIUS_SUCCESS;
 }
 
-#if 0
+
 /**
  * Initial FE to BE handshake.
  */
-void
+int
 MRNetFE::handshake(void)
 {
-    VCOMP_COUT("Starting Lash-Up Handshake." << endl);
+    VCOMP_COUT("Starting lash-up handshake..." << endl);
+    static const toolcommon::MRNetCoreTags coreTags;
     // Ping!
     auto status = mProtoStream->send(
-                      toolcommon::MRNetCoreTags::InitHandshake,
+                      coreTags.InitHandshake,
                       "%d",
                       GladiusMRNetProtoFilterMagic
                   );
@@ -629,7 +632,7 @@ MRNetFE::handshake(void)
     if (-1 == status) {
         GLADIUS_THROW_CALL_FAILED("Stream::Recv");
     }
-    if (toolcommon::MRNetCoreTags::InitHandshake != tag) {
+    if (coreTags.InitHandshake != tag) {
         GLADIUS_THROW("Received Invalid Tag From Tool Back-End");
     }
     int data = 0;
@@ -642,14 +645,14 @@ MRNetFE::handshake(void)
     if (data != -GladiusMRNetProtoFilterMagic) {
         GLADIUS_THROW("Received Invalid Data From Tool Back-End");
     }
-    //
-    VCOMP_COUT("Done with Lash-Up Handshake." << endl);
+    return GLADIUS_SUCCESS;
 }
 
+#if 0
 /**
  * Sends plugin name and path to BEs.
  */
-void
+int
 MRNetFE::pluginInfoBCast(
     const string &validPluginName,
     const string &pathToValidPlugin

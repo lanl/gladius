@@ -17,17 +17,10 @@ using namespace gladius::toolcommon;
 /**
  *
  */
-// MRNet Tags for Core Components
-enum MRNetCoreTags {
-    // Tag for initial lash-up handshake.
-    InitHandshake = FirstApplicationTag,
-    // Tag for sending plugin info.
-    PluginNameInfo,
-    // Back-end plugins ready.
-    BackEndPluginsReady,
-    // Shutdown tag.
-    Shutdown
-};
+int
+MRNetCoreTags::getFirstAppTag(void) const {
+    return FirstApplicationTag;
+}
 
 /**
  *

@@ -552,14 +552,12 @@ ToolFE::mInitiateToolLashUp(void)
         if (GLADIUS_SUCCESS != (rc = mLaunchUserApp())) return rc;
         // Wait for MRNet tree connections.
         if (GLADIUS_SUCCESS != (rc = mConnectMRNetTree())) return rc;
-        // Setup connected MRNet network.
+        // Setup connected MRNet network for core infrastructure.
         if (GLADIUS_SUCCESS != (rc = mMRNFE.networkInit())) return rc;
-#if 0
         // Make sure that our core filters are working by performing a handshake
         // between the tool front-end and all the tool leaves (where all
         // communication is going through a set of core filters).
-        mMRNFE.handshake();
-#endif
+        if (GLADIUS_SUCCESS != (rc = mMRNFE.handshake())) return rc;
     }
     catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());

@@ -45,17 +45,17 @@ const timeout_t unlimitedTimeout = -1;
 typedef int64_t retry_t;
 // Constant that means "unlimited retries."
 const retry_t unlimitedRetries = -1;
-// Number of MRNet tags in use by base infrastructure. Update if this changes.
-// See: MRNetCoreTags
-const int firstPluginTagOffset = 4;
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 class utils {
-    //
-    utils(void) { ; }
-    //
-    ~utils(void) { ; }
+    /**
+     *
+     */
+    utils(void) = default;
+    /**
+     *
+     */
+    ~utils(void) = default;
 public:
     /**
      *
@@ -69,6 +69,42 @@ public:
                    + "Please update your $PATH to include its location.";
         return msg;
     }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+class MRNetCoreTags {
+    //
+    int
+    getFirstAppTag(void) const;
+public:
+    /**
+     *
+     */
+    constexpr
+    MRNetCoreTags(
+        void
+    ) : InitHandshake      (getFirstAppTag() + 0)
+      , PluginNameInfo     (getFirstAppTag() + 1)
+      , BackEndPluginsReady(getFirstAppTag() + 2)
+      , Shutdown           (getFirstAppTag() + 3)
+      , FirstPluginTag     (getFirstAppTag() + 4)
+    { ; }
+
+    /**
+     *
+     */
+    ~MRNetCoreTags(void) = default;
+    // Tag for initial lash-up handshake.
+    const int InitHandshake;
+    // Tag for sending plugin info.
+    const int PluginNameInfo;
+    // Back-end plugins ready.
+    const int BackEndPluginsReady;
+    // Shutdown tag.
+    const int Shutdown;
+    // First plugin tag.
+    const int FirstPluginTag;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
