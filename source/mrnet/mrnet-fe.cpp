@@ -35,6 +35,7 @@
 
 #include "mrnet/MRNet.h"
 
+using namespace std;
 using namespace gladius;
 using namespace gladius::mrnetfe;
 
@@ -72,7 +73,6 @@ MRNetTopology::MRNetTopology(
   , mProcLandscape(procLandscape)
   , mCanRMFile(false)
 {
-    using namespace std;
     ofstream theFile;
     try {
         // Create topology file.
@@ -109,7 +109,6 @@ MRNetTopology::MRNetTopology(
 std::string
 MRNetTopology::mGenFlatTopo(void)
 {
-    using namespace std;
     auto id = 0;
     // The "host:0 =>" bit.
     // The top of the tree is always going to be localhost.
@@ -190,7 +189,10 @@ MRNetFE::MRNetFE(
 MRNetFE::~MRNetFE(void)
 {
     // TODO complete
-    if (mNetwork) { }
+    if (mNetwork) {
+        delete mNetwork;
+        mNetwork = nullptr;
+    }
 }
 
 /**
@@ -211,7 +213,6 @@ int
 MRNetFE::init(
     bool beVerbose
 ) {
-    using namespace std;
     using namespace core;
     //
     mBeVerbose = beVerbose;
@@ -271,8 +272,6 @@ MRNetFE::mGetPrefixFromCommNode(
 int
 MRNetFE::mDetermineAndSetPaths(void)
 {
-    using namespace std;
-    //
     VCOMP_COUT("Determining and setting paths..." << endl);
     // Make sure that we can find mrnet_commnode. Really just to get the base
     // MRNet installation path. That way we can find the libraries that we need.
@@ -293,7 +292,6 @@ MRNetFE::mDetermineAndSetPaths(void)
 void
 MRNetFE::finalize(void)
 {
-    using namespace std;
     try {
         VCOMP_COUT("Finalizing MRNet front-end." << endl);
     }
@@ -345,7 +343,6 @@ MRNetFE::mRegisterEventCallbacks(void)
 int
 MRNetFE::mBuildNetwork(void)
 {
-    using namespace std;
     using namespace MRN;
     //
     VCOMP_COUT("Building network..." << std::endl);
@@ -391,7 +388,6 @@ MRNetFE::mBuildNetwork(void)
 int
 MRNetFE::mPopulateLeafInfo(void)
 {
-    using namespace std;
     using namespace gladius::core;
     using namespace MRN;
     //
@@ -417,7 +413,6 @@ MRNetFE::mPopulateLeafInfo(void)
 int
 MRNetFE::mEchoNetStats(void)
 {
-    using namespace std;
     using namespace MRN;
     using namespace toolcommon;
 
@@ -526,8 +521,6 @@ MRNetFE::createNetworkFE(
 int
 MRNetFE::connect(void)
 {
-    using namespace std;
-
     VCOMP_COUT("Trying to Connect..." << endl);
     try {
         if (mNExpectedBEs == MRNetFEGlobals::numBEsReporting) {
@@ -589,22 +582,24 @@ MRNetFE::mLoadCoreFilters(void)
 /**
  *
  */
-void
+int
 MRNetFE::networkInit(void)
 {
-    VCOMP_COUT("Initializing Network." << std::endl);
-
-#if 0 // DEBUG
-    mLeafInfo.networkTopology->print_TopologyFile(mTopoFile.c_str());
-#endif
+    using namespace gladius::core;
+    //
+    VCOMP_COUT("Initializing network..." << std::endl);
+    //
     mBcastComm = mNetwork->get_BroadcastCommunicator();
     if (!mBcastComm) {
-        GLADIUS_THROW_CALL_FAILED("get_BroadcastCommunicator");
+        static const std::string f = "MRN::get_BroadcastCommunicator";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << std::endl;
+        return GLADIUS_ERR_MRNET;
     }
+#if 0
     //
     mLoadCoreFilters();
-    //
-    VCOMP_COUT("Done Initializing Network." << std::endl);
+#endif
+    return GLADIUS_SUCCESS;
 }
 
 #if 0

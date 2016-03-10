@@ -55,7 +55,7 @@ public:
     /**
      *
      */
-    MRNetTopology(void) { ; }
+    MRNetTopology(void) = default;
     /**
      *
      */
@@ -108,8 +108,6 @@ private:
     unsigned int mNThread = 0;
     //
     unsigned int mNExpectedBEs = 0;
-    // A mapping between MRNet ranks and target task IDs.
-    std::map< int, toolcommon::TxList<int> > mMRNetRankToTIDsMap;
     //
     int
     mBuildNetwork(void);
@@ -186,7 +184,7 @@ public:
     int
     connect(void);
     //
-    void
+    int
     networkInit(void);
     //
     void

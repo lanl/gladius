@@ -32,10 +32,9 @@ using namespace gladius::mrnetbe;
 
 namespace {
 // This component's name.
-const std::string CNAME = "mrnetbe";
+const string CNAME = "mrnetbe";
 // CNAME's color code.
-const std::string NAMEC =
-    core::colors::color().ansiBeginColor(core::colors::NONE);
+const string NAMEC = core::colors::color().ansiBeginColor(core::colors::NONE);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
@@ -102,7 +101,7 @@ MRNetBE::init(
                             "getaddrinfo(3): " + rcs,
                             GLADIUS_WHERE
                         )
-                     << std::endl;
+                     << endl;
         return GLADIUS_ERR_SYS;
     }
     //
@@ -126,10 +125,10 @@ MRNetBE::init(
                             "inet_ntop(3): " + errs,
                             GLADIUS_WHERE
                         )
-                     << std::endl;
+                     << endl;
         return GLADIUS_ERR_SYS;
     }
-    mLocalIP = std::string(ntopRes);
+    mLocalIP = string(ntopRes);
     if (addinf) freeaddrinfo(addinf);
     //
     return GLADIUS_SUCCESS;
@@ -237,7 +236,7 @@ MRNetBE::mGetConnectionInfo(void)
                             "fread(3): ",
                             GLADIUS_WHERE
                         )
-                     << std::endl;
+                     << endl;
         return GLADIUS_ERR_IO;
     }
 #if 0 // DEBUG
@@ -250,7 +249,7 @@ MRNetBE::mGetConnectionInfo(void)
 #endif
     if (0 != fclose(connectionInfo)) {
         cerr << core::utils::formatCallFailed("fclose(3): ", GLADIUS_WHERE)
-             << std::endl;
+             << endl;
         // Warning only. Don't return error.
     }
     // Now stash the string version of the info
@@ -283,12 +282,21 @@ int
 MRNetBE::mStartToolThreads(void)
 {
     using namespace gladius::toolcommon;
-    //
+    // Get name of host executable.
+    int err = 0;
+    int status = core::utils::getSelfPath(mHostExecPath, err);
+    if (GLADIUS_SUCCESS != status) {
+        GLADIUS_CERR << core::utils::formatCallFailed(
+                            "getSelfPath: " + core::utils::getStrError(err),
+                            GLADIUS_WHERE
+                        )
+                     << endl;
+        return status;
+    }
     // TODO FIXME when we want more than one thread per target.
     const size_t nThreads = 1;
-    ToolLeafInfoArrayT *tli = (ToolLeafInfoArrayT *)mtli;
     // Not supported yet...
-    if (tli->size != 1) {
+    if (mtli->size != 1) {
         GLADIUS_CERR << "Multiple targets not supported..." << endl;
         return GLADIUS_ERR;
     }
@@ -296,14 +304,13 @@ MRNetBE::mStartToolThreads(void)
         ThreadPersonality *tp = new ThreadPersonality();
         // TODO FIXME: calculate proper rank.
         tp->rank = (10000 * (i + 1)) + mUID;
-        // TODO FIXME: get real exec
-        tp->argv[0] = (char *)"./toolBE";
+        tp->argv[0] = (char *)mHostExecPath.c_str();
         tp->argv[1] = mParentHostname;
         tp->argv[2] = mParentPort;
         tp->argv[3] = mParentRank;
         tp->argv[4] = (char *)mHostName.c_str();
         mToolThreads.push_back(
-            std::thread(&MRNetBE::mToolThreadMain, this, tp)
+            thread(&MRNetBE::mToolThreadMain, this, tp)
         );
     }
     mToolThreads[0].join();
@@ -344,7 +351,7 @@ MRNetBE::mToolThreadMain(
                             "MRN::Network::CreateNetworkBE",
                             GLADIUS_WHERE
                         )
-                     << std::endl;
+                     << endl;
         return GLADIUS_ERR_MRNET;
     }
     //
@@ -358,7 +365,7 @@ MRNetBE::mToolThreadMain(
 void
 MRNetBE::handshake(void)
 {
-    VCOMP_COUT("Starting Lash-Up Handshake." << std::endl);
+    VCOMP_COUT("Starting Lash-Up Handshake." << endl);
 
     MRN::PacketPtr packet;
     const bool recvShouldBlock = true;
@@ -386,7 +393,7 @@ MRNetBE::handshake(void)
     }
     mProtoStream->flush();
 
-    VCOMP_COUT("Done with Lash-Up Handshake." << std::endl);
+    VCOMP_COUT("Done with Lash-Up Handshake." << endl);
 }
 
 /**
@@ -394,10 +401,10 @@ MRNetBE::handshake(void)
  */
 void
 MRNetBE::pluginInfoRecv(
-    std::string &validPluginName,
-    std::string &pathToValidPlugin
+    string &validPluginName,
+    string &pathToValidPlugin
 ) {
-    VCOMP_COUT("Receiving Plugin Info from Front-End." << std::endl);
+    VCOMP_COUT("Receiving Plugin Info from Front-End." << endl);
     //
     MRN::PacketPtr packet;
     MRN::Stream *stream = nullptr;
@@ -418,16 +425,16 @@ MRNetBE::pluginInfoRecv(
         GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
     }
     // Set returns.
-    validPluginName = std::string(pluginName);
-    pathToValidPlugin = std::string(pluginPath);
+    validPluginName = string(pluginName);
+    pathToValidPlugin = string(pluginPath);
     //
     free(pluginName);
     free(pluginPath);
     //
-    VCOMP_COUT("Front-End Plugin Info:" << std::endl);
-    VCOMP_COUT("*Name: " << validPluginName << std::endl);
-    VCOMP_COUT("*Path: " << pathToValidPlugin << std::endl);
+    VCOMP_COUT("Front-End Plugin Info:" << endl);
+    VCOMP_COUT("*Name: " << validPluginName << endl);
+    VCOMP_COUT("*Path: " << pathToValidPlugin << endl);
     //
-    VCOMP_COUT("Done Receiving Plugin Info from Front-End." << std::endl);
+    VCOMP_COUT("Done Receiving Plugin Info from Front-End." << endl);
 }
 #endif

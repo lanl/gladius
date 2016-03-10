@@ -23,16 +23,17 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+using namespace std;
 using namespace gladius;
 using namespace gladius::toolfe;
 
 namespace {
 // This component's name.
-const std::string CNAME = "tool-fe";
+const string CNAME = "tool-fe";
 //
 const auto COMPC = core::colors::GREEN;
 // CNAME's color code.
-const std::string NAMEC = core::colors::color().ansiBeginColor(COMPC);
+const string NAMEC = core::colors::color().ansiBeginColor(COMPC);
 // Convenience macro to decorate this component's output.
 #define COMP_COUT GLADIUS_COMP_COUT(CNAME, NAMEC)
 // Output if this component is being verbose.
@@ -69,7 +70,6 @@ echoLaunchStart(
     const gladius::core::Args &largs,
     const gladius::core::Args &aargs
 ) {
-    using namespace std;
     // Construct the entire launch command.
     auto argv = largs.toArgv();
     const auto aArgv = aargs.toArgv();
@@ -166,7 +166,7 @@ ToolFE::mGetStateFromEnvs(void)
 int
 ToolFE::mSetupCore(void)
 {
-    std::string whatsWrong;
+    string whatsWrong;
     static const auto envMode = GLADIUS_ENV_DOMAIN_MODE_NAME;
     int rc = GLADIUS_SUCCESS;
     //
@@ -176,8 +176,8 @@ ToolFE::mSetupCore(void)
     //
     if (!core::utils::envVarSet(envMode)) {
         whatsWrong = "Cannot determine current mode.\nPlease set '"
-                   + std::string(envMode) +  "' and try again.";
-        GLADIUS_CERR << whatsWrong << std::endl;
+                   + string(envMode) +  "' and try again.";
+        GLADIUS_CERR << whatsWrong << endl;
         return GLADIUS_ERR;
     }
     auto modeName = core::utils::getEnv(envMode);
@@ -185,7 +185,7 @@ ToolFE::mSetupCore(void)
     mPluginManager = gpa::GladiusPluginManager(modeName, mBeVerbose);
 #if 0 // TODO
     // The path to the plugin pack if we find a usable one.
-    std::string pathToPluginPackIfAvail;
+    string pathToPluginPackIfAvail;
     if (!mPluginManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
         // TODO Make better. Provide an example.
         whatsWrong = "Cannot find a usable plugin pack for '"
@@ -193,7 +193,7 @@ ToolFE::mSetupCore(void)
                      "where this plugin pack lives is in "
                      GLADIUS_ENV_PLUGIN_PATH_NAME " and all required plugins "
                      "are installed." ;
-        GLADIUS_CERR << whatsWrong << std::endl;
+        GLADIUS_CERR << whatsWrong << endl;
         return GLADIUS_ERR;
     }
     // Set member, so we can get the plugin pack later...
@@ -210,7 +210,6 @@ int
 ToolFE::mPreToolInitActons(void)
 {
 #if 0
-    using namespace std;
     // Dup here before we start tool infrastructure lash-up. Someone in
     // there makes stdio act funny. This is a workaround to fix that.
     mStdInCopy = dup(STDIN_FILENO);
@@ -240,7 +239,7 @@ ToolFE::mPostToolInitActons(void)
     if (-1 == dup2(mStdInCopy, STDIN_FILENO)) {
         int err = errno;
         GLADIUS_CERR << "Call to dup2(2) failed: "
-                     << core::utils::getStrError(err) << std::endl;
+                     << core::utils::getStrError(err) << endl;
         return GLADIUS_ERR;
     }
     close(mStdInCopy);
@@ -260,9 +259,9 @@ ToolFE::mInitializeParallelLauncher(void)
     }
     VCOMP_COUT(
         "Application launcher personality: " <<
-        mCommandr.getPersonalityName() << std::endl
+        mCommandr.getPersonalityName() << endl
     );
-    VCOMP_COUT("Which launcher: " << mCommandr.which() << std::endl);
+    VCOMP_COUT("Which launcher: " << mCommandr.which() << endl);
     return rc;
 }
 
@@ -275,7 +274,7 @@ ToolFE::main(
     const core::Args &appArgv,
     const core::Args &launcherArgv
 ) {
-    VCOMP_COUT("Entering main." << std::endl);
+    VCOMP_COUT("Entering main." << endl);
     int rc = GLADIUS_SUCCESS;
     //
     try {
@@ -306,7 +305,7 @@ ToolFE::main(
         mEnterPluginMain();
 #endif
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         GLADIUS_THROW(e.what());
     }
     //
@@ -319,9 +318,7 @@ ToolFE::main(
 int
 ToolFE::mDetermineProcLandscape(void)
 {
-    using namespace std;
-    //
-    VCOMP_COUT("Determining process landscape..." << std::endl);
+    VCOMP_COUT("Determining process landscape..." << endl);
     //
     int rc = GLADIUS_SUCCESS;
     try {
@@ -337,14 +334,14 @@ ToolFE::mDetermineProcLandscape(void)
              << "::: Job Statistics :::::::::::::::::::::::::::::::::";
         cout << endl;
         GLADIUS_COUT_STAT << "Number of Application Processes: "
-                          << mProcLandscape.nProcesses() << std::endl;
+                          << mProcLandscape.nProcesses() << endl;
         GLADIUS_COUT_STAT << "Number of Hosts                : "
-                          << mProcLandscape.nHosts() << std::endl;
+                          << mProcLandscape.nHosts() << endl;
         GLADIUS_COUT_STAT
              << "::::::::::::::::::::::::::::::::::::::::::::::::::::";
         cout << endl;
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
     //
@@ -368,7 +365,7 @@ ToolFE::mBuildNetwork(void)
             return rc;
         }
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
     return rc;
@@ -380,13 +377,12 @@ ToolFE::mBuildNetwork(void)
 int
 ToolFE::mConnectMRNetTree(void)
 {
-    using namespace std;
     using namespace core;
     // TODO add a timer here
     decltype(mMaxRetries) attempt = 0;
     bool connectSuccess = false;
     do {
-        VCOMP_COUT("Connection attempt: " << attempt << std::endl);
+        VCOMP_COUT("Connection attempt: " << attempt << endl);
         // Take a break and let things happen...
         sleep(1);
         // Try to connect.
@@ -433,7 +429,6 @@ ToolFE::mConnectMRNetTree(void)
 void
 ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 {
-    using namespace std;
     // Environment variable forwarding to daemons. Note that this is a complete
     // list of environment variables that we would forward if they are set
     // within the tool front-end's environment.
@@ -461,7 +456,6 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 int
 ToolFE::mPublishConnectionInfo(void)
 {
-    using namespace std;
     using namespace gladius::core;
     //
     VCOMP_COUT("Publishing connection information..." << endl);
@@ -512,7 +506,6 @@ ToolFE::mPublishConnectionInfo(void)
 int
 ToolFE::mLaunchUserApp(void)
 {
-    using namespace std;
     using namespace gladius::core;
     // Push session key into the environment.
     int rc = utils::setEnv(
@@ -521,8 +514,8 @@ ToolFE::mLaunchUserApp(void)
              );
     if (GLADIUS_SUCCESS != rc) return rc;
     // TODO FIXME
-    std::vector<std::string> argv = mLauncherArgs.toArgv();
-    std::vector<std::string> aargv = mAppArgs.toArgv();
+    vector<string> argv = mLauncherArgs.toArgv();
+    vector<string> aargv = mAppArgs.toArgv();
     argv.insert(end(argv), begin(aargv), end(aargv));
     core::Args a(argv);
     //
@@ -546,7 +539,6 @@ ToolFE::mLaunchUserApp(void)
 int
 ToolFE::mInitiateToolLashUp(void)
 {
-    using namespace std;
     using namespace gladius::core;
     //
     VCOMP_COUT("Initiating tool lashup..." << endl);
@@ -560,16 +552,16 @@ ToolFE::mInitiateToolLashUp(void)
         if (GLADIUS_SUCCESS != (rc = mLaunchUserApp())) return rc;
         // Wait for MRNet tree connections.
         if (GLADIUS_SUCCESS != (rc = mConnectMRNetTree())) return rc;
-#if 0
         // Setup connected MRNet network.
-        mMRNFE.networkInit();
+        if (GLADIUS_SUCCESS != (rc = mMRNFE.networkInit())) return rc;
+#if 0
         // Make sure that our core filters are working by performing a handshake
         // between the tool front-end and all the tool leaves (where all
         // communication is going through a set of core filters).
         mMRNFE.handshake();
 #endif
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
     //
@@ -582,9 +574,7 @@ ToolFE::mInitiateToolLashUp(void)
 void
 ToolFE::mLoadPlugins(void)
 {
-    using namespace std;
-
-    VCOMP_COUT("Loading plugins." << std::endl);
+    VCOMP_COUT("Loading plugins." << endl);
     // Get the front-end plugin pack.
     mPluginPack = mPluginManager.getPluginPackFrom(
                       gpa::GladiusPluginPack::PluginFE,
@@ -597,7 +587,7 @@ ToolFE::mLoadPlugins(void)
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
     mFEPlugin = fePluginInfo->pluginConstruct();
 
-    VCOMP_COUT("Done loading plugins." << std::endl);
+    VCOMP_COUT("Done loading plugins." << endl);
 }
 
 /**
@@ -606,11 +596,11 @@ ToolFE::mLoadPlugins(void)
 void
 ToolFE::mSendPluginInfoToBEs(void)
 {
-    VCOMP_COUT("Sending plugin info to back-ends." << std::endl);
+    VCOMP_COUT("Sending plugin info to back-ends." << endl);
 #if 0
     // MRNet knows how to do this...
     mMRNFE.pluginInfoBCast(
-        std::string(mPluginPack.pluginInfo->pluginName),
+        string(mPluginPack.pluginInfo->pluginName),
         mPathToPluginPack
     );
 #endif
@@ -622,7 +612,7 @@ ToolFE::mSendPluginInfoToBEs(void)
 void
 ToolFE::mEnterPluginMain(void)
 {
-    VCOMP_COUT("Entering plugin main." << std::endl);
+    VCOMP_COUT("Entering plugin main." << endl);
 
     try {
         // TODO FIXME
@@ -645,9 +635,9 @@ ToolFE::mEnterPluginMain(void)
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
     }
-    catch (const std::exception &e) {
+    catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
 
-    VCOMP_COUT("Exited plugin main." << std::endl);
+    VCOMP_COUT("Exited plugin main." << endl);
 }

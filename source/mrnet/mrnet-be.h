@@ -17,7 +17,7 @@
 #include <vector>
 #include <thread>
 
-// Forward declaraction
+// Forward declarations
 namespace MRN { class Network; }
 
 namespace gladius {
@@ -47,6 +47,8 @@ private:
     int mTargetCount;
     // Host's name
     std::string mHostName;
+    // Absolute path to target application in which we are embedded.
+    std::string mHostExecPath;
     // Host's local IP
     std::string mLocalIP;
     //
