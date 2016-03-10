@@ -97,7 +97,7 @@ private:
     int
     mPublishConnectionInfo(void);
     //
-    void
+    int
     mLoadPlugins(void);
     //
     void

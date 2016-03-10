@@ -183,14 +183,13 @@ ToolFE::mSetupCore(void)
     auto modeName = core::utils::getEnv(envMode);
     // Initialize the DSP manager.
     mPluginManager = gpa::GladiusPluginManager(modeName, mBeVerbose);
-#if 0 // TODO
     // The path to the plugin pack if we find a usable one.
     string pathToPluginPackIfAvail;
     if (!mPluginManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
         // TODO Make better. Provide an example.
         whatsWrong = "Cannot find a usable plugin pack for '"
                    + modeName + "'.\nPlease make sure that the directory "
-                     "where this plugin pack lives is in "
+                     "where this plugin pack lives is in\n"
                      GLADIUS_ENV_PLUGIN_PATH_NAME " and all required plugins "
                      "are installed." ;
         GLADIUS_CERR << whatsWrong << endl;
@@ -198,7 +197,6 @@ ToolFE::mSetupCore(void)
     }
     // Set member, so we can get the plugin pack later...
     mPathToPluginPack = pathToPluginPackIfAvail;
-#endif
     //
     return mInitializeParallelLauncher();
 }
@@ -285,20 +283,18 @@ ToolFE::main(
         if (GLADIUS_SUCCESS != (rc = mSetupCore())) return rc;
         // Perform any actions that need to take place before lash-up.
         if (GLADIUS_SUCCESS != (rc = mPreToolInitActons())) return rc;
-        //
+        // Figure out the relevant job characteristics.
         if (GLADIUS_SUCCESS != (rc = mDetermineProcLandscape())) return rc;
-        ////////////////////////////////////////////////////////////////////////
-        // If we are here, then our environment is sane enough to start...
-        ////////////////////////////////////////////////////////////////////////
+        // Build MRNet network.
         if (GLADIUS_SUCCESS != (rc = mBuildNetwork())) return rc;
         // Start lash-up.
         if (GLADIUS_SUCCESS != (rc = mInitiateToolLashUp())) return rc;
         //
         if (GLADIUS_SUCCESS != (rc = mPostToolInitActons())) return rc;
-#if 0
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
-        mLoadPlugins();
+        if (GLADIUS_SUCCESS != (rc = mLoadPlugins())) return rc;
+#if 0
         // Let the BEs know what plugins they are loading.
         mSendPluginInfoToBEs();
         // Now turn it over to the plugin.
@@ -356,12 +352,9 @@ ToolFE::mBuildNetwork(void)
 {
     int rc = GLADIUS_SUCCESS;
     try {
-        if (GLADIUS_SUCCESS != (rc = mMRNFE.init(mBeVerbose))) {
-            return rc;
-        }
+        if (GLADIUS_SUCCESS != (rc = mMRNFE.init(mBeVerbose))) return rc;
         // Create MRNet network FE.
-        if (GLADIUS_SUCCESS !=
-            (rc = mMRNFE.createNetworkFE(mProcLandscape))) {
+        if (GLADIUS_SUCCESS != (rc = mMRNFE.createNetworkFE(mProcLandscape))) {
             return rc;
         }
     }
@@ -569,23 +562,23 @@ ToolFE::mInitiateToolLashUp(void)
 /**
  *
  */
-void
+int
 ToolFE::mLoadPlugins(void)
 {
-    VCOMP_COUT("Loading plugins." << endl);
+    VCOMP_COUT("Loading plugins..." << endl);
     // Get the front-end plugin pack.
     mPluginPack = mPluginManager.getPluginPackFrom(
                       gpa::GladiusPluginPack::PluginFE,
                       mPathToPluginPack
                   );
     auto *fePluginInfo = mPluginPack.pluginInfo;
-    GLADIUS_COUT_STAT << "Front-End Plugin Info:" << endl;
+    GLADIUS_COUT_STAT << "Plugin Info:"  << endl;
     GLADIUS_COUT_STAT << "*Name      : " << fePluginInfo->pluginName << endl;
     GLADIUS_COUT_STAT << "*Version   : " << fePluginInfo->pluginVersion << endl;
     GLADIUS_COUT_STAT << "*Plugin ABI: " << fePluginInfo->pluginABI << endl;
     mFEPlugin = fePluginInfo->pluginConstruct();
-
-    VCOMP_COUT("Done loading plugins." << endl);
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**

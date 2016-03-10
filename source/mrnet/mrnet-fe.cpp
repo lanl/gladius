@@ -181,6 +181,9 @@ MRNetFE::MRNetFE(
   , mPrefixPath("")
   , mNThread(1)
 {
+    // TODO RM when you have a solution for your hack in toolcommon.
+    assert(toolcommon::GladiusFirstApplicationTag == FirstApplicationTag &&
+           "Sorry, a hack prevents you from running... Please report bug.");
     MRNetFEGlobals::numBEsReporting = 0;
 }
 
