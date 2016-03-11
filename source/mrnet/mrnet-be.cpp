@@ -96,7 +96,7 @@ MRNetBE::init(
     //
     struct sockaddr_in *sinp = NULL;
     struct addrinfo *addinf = NULL;
-    auto rc = getaddrinfo(mHostName.c_str(), NULL, NULL, &addinf);
+    int rc = getaddrinfo(mHostName.c_str(), NULL, NULL, &addinf);
     if (rc) {
         const string rcs = to_string(rc);
         GLADIUS_CERR << utils::formatCallFailed(
@@ -134,14 +134,14 @@ MRNetBE::init(
     if (addinf) freeaddrinfo(addinf);
     //
     int err = 0;
-    int status = core::utils::getSelfPath(mHostExecPath, err);
-    if (GLADIUS_SUCCESS != status) {
+    rc = core::utils::getSelfPath(mHostExecPath, err);
+    if (GLADIUS_SUCCESS != rc) {
         GLADIUS_CERR << core::utils::formatCallFailed(
                             "getSelfPath: " + core::utils::getStrError(err),
                             GLADIUS_WHERE
                         )
                      << endl;
-        return status;
+        return rc;
     }
     //
     return GLADIUS_SUCCESS;
@@ -344,8 +344,6 @@ MRNetBE::mToolThreadMain(
          << "-- Rank            : " << tp->argv[5] << endl
          << flush;
 #endif
-    // Sanity
-    assert(6 == tp->argc);
     //
     mNet = Network::CreateNetworkBE(tp->argc, (char **)tp->argv);
     if (!mNet || mNet->has_Error()) {
