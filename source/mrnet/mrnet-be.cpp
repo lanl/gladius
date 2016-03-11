@@ -70,8 +70,6 @@ MRNetBE::MRNetBE(
  * Destructor.
  */
 MRNetBE::~MRNetBE(void) {
-    // FIXME
-    mToolThreads[0].join();
     if (mtli) {
         if (mtli->leaves) free(mtli->leaves);
         mtli->leaves = nullptr;
@@ -87,8 +85,6 @@ int
 MRNetBE::init(
     bool beVerbose
 ) {
-    using namespace gladius::core;
-    //
     mBeVerbose = beVerbose;
     VCOMP_COUT("Initializing..." << endl);
     //
@@ -319,7 +315,7 @@ MRNetBE::mStartToolThreads(void)
     using namespace gladius::toolcommon;
     // Get name of host executable.
     // TODO FIXME when we want more than one thread per target.
-    const size_t nThreads = 1;
+    static const size_t nThreads = 1;
     // Not supported yet...
     if (mtli->size != 1) {
         GLADIUS_CERR << "Multiple targets not supported..." << endl;
@@ -338,8 +334,9 @@ MRNetBE::mStartToolThreads(void)
             thread(&MRNetBE::mToolThreadMain, this, tp)
         );
     }
-    // TODO RM
-    mToolThreads[0].join();
+    for (auto &t : mToolThreads) {
+        t.join();
+    }
     //
     return GLADIUS_SUCCESS;
 }
