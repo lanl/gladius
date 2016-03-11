@@ -8,7 +8,7 @@
 
 SUBDIRS = \
 core \
-gpa/core \
+plugin/core \
 tool-common \
 dsys \
 dsys/mpi \
@@ -20,4 +20,4 @@ tool-api \
 ui \
 ui/term \
 gladius \
-gpa/hello
+plugin/hello

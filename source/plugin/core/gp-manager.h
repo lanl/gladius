@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "gpa/core/gladius-plugin.h"
+#include "plugin/core/gladius-plugin.h"
 
 #include <cstdint>
 #include <string>

@@ -19,8 +19,8 @@
 #include "dsys/cmdr.h"
 #include "dsys/dsi.h"
 #include "mrnet/mrnet-fe.h"
-#include "gpa/core/gp-manager.h"
-#include "gpa/core/gladius-plugin.h"
+#include "plugin/core/gp-manager.h"
+#include "plugin/core/gladius-plugin.h"
 
 #include <string>
 #include <thread>

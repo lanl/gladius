@@ -10,7 +10,7 @@
  * Implements the gladius plugin manager.
  */
 
-#include "gpa/core/gp-manager.h"
+#include "plugin/core/gp-manager.h"
 
 #include "core/utils.h"
 #include "core/session.h"

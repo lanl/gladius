@@ -16,8 +16,8 @@
 
 #include "core/core.h"
 #include "mrnet/mrnet-be.h"
-#include "gpa/core/gp-manager.h"
-#include "gpa/core/gladius-plugin.h"
+#include "plugin/core/gp-manager.h"
+#include "plugin/core/gladius-plugin.h"
 
 #include <string>
 

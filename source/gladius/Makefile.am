@@ -21,7 +21,7 @@ ${MRNET_CPPFLAGS}
 
 gladius_LDADD = \
 ${top_builddir}/source/core/libGladiusCore.la \
-${top_builddir}/source/gpa/core/libGladiusPluginManager.la \
+${top_builddir}/source/plugin/core/libGladiusPluginManager.la \
 ${top_builddir}/source/tool-common/libGladiusToolCommon.la \
 ${top_builddir}/source/dsys/libGladiusDSI.la \
 ${top_builddir}/source/mrnet/libGladiusMRNetFE.la \

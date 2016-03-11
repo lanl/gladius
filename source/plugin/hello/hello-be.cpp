@@ -10,9 +10,9 @@
  * The "hello world" plugin back-end.
  */
 
-#include "gpa/hello/hello-common.h"
+#include "plugin/hello/hello-common.h"
 
-#include "gpa/core/gladius-plugin.h"
+#include "plugin/core/gladius-plugin.h"
 
 #include "core/core.h"
 #include "core/utils.h"
