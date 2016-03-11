@@ -94,8 +94,41 @@ MRNetBE::init(
     //
     mHostName = core::utils::getHostname();
     //
+    int rc = mSetLocalIP();
+    if (GLADIUS_SUCCESS != rc) return rc;
+    //
+    if (GLADIUS_SUCCESS != (rc = mSetSelfPath())) return rc;
+    //
+    return GLADIUS_SUCCESS;
+}
+
+/**
+ *
+ */
+int
+MRNetBE::mSetSelfPath(void)
+{
+    int err = 0;
+    int rc = core::utils::getSelfPath(mHostExecPath, err);
+    if (GLADIUS_SUCCESS != rc) {
+        GLADIUS_CERR << core::utils::formatCallFailed(
+                            "getSelfPath: " + core::utils::getStrError(err),
+                            GLADIUS_WHERE
+                        )
+                     << endl;
+    }
+    return rc;
+}
+
+/**
+ *
+ */
+int
+MRNetBE::mSetLocalIP(void)
+{
     struct sockaddr_in *sinp = NULL;
     struct addrinfo *addinf = NULL;
+    //
     int rc = getaddrinfo(mHostName.c_str(), NULL, NULL, &addinf);
     if (rc) {
         const string rcs = to_string(rc);
@@ -109,7 +142,7 @@ MRNetBE::init(
     //
     sinp = (struct sockaddr_in *)addinf->ai_addr;
     if (!sinp) {
-        GLADIUS_CERR << "Cannot Get addinf->ai_addr" << endl;
+        GLADIUS_CERR << "Cannot get addinf->ai_addr" << endl;
         return GLADIUS_ERR_SYS;
     }
     //
@@ -132,17 +165,6 @@ MRNetBE::init(
     }
     mLocalIP = string(ntopRes);
     if (addinf) freeaddrinfo(addinf);
-    //
-    int err = 0;
-    rc = core::utils::getSelfPath(mHostExecPath, err);
-    if (GLADIUS_SUCCESS != rc) {
-        GLADIUS_CERR << core::utils::formatCallFailed(
-                            "getSelfPath: " + core::utils::getStrError(err),
-                            GLADIUS_WHERE
-                        )
-                     << endl;
-        return rc;
-    }
     //
     return GLADIUS_SUCCESS;
 }

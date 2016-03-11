@@ -70,6 +70,12 @@ private:
     std::vector<std::thread> mToolThreads;
     //
     int
+    mSetLocalIP(void);
+    //
+    int
+    mSetSelfPath(void);
+    //
+    int
     mGetConnectionInfo(void);
     //
     int
