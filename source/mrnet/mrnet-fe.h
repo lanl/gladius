@@ -186,14 +186,12 @@ public:
     //
     int
     handshake(void);
-#if 0
     //
-    void
+    int
     pluginInfoBCast(
         const std::string &validPluginName,
         const std::string &pathToValidPlugin
     );
-#endif
 };
 
 } // end mrnetfe namespace

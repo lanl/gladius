@@ -31,7 +31,7 @@ namespace mrnetbe {
 struct ThreadPersonality {
     int rank = 0;
     static constexpr int argc = 6;
-    char *argv[argc];
+    const char *argv[argc];
 };
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +82,12 @@ private:
     //
     int
     mHandshake(void);
+    //
+    int
+    mPluginInfoRecv(
+        std::string &validPluginName,
+        std::string &pathToValidPlugin
+    );
 
 public:
     //

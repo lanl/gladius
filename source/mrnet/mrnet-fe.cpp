@@ -206,7 +206,7 @@ int
 MRNetFE::mSetEnvs(void)
 {
     VCOMP_COUT("Setting important environment variables..." << endl);
-
+    //
     return core::utils::setEnv("MRNET_RSH", "/usr/bin/ssh");
 }
 
@@ -663,7 +663,6 @@ MRNetFE::handshake(void)
     return GLADIUS_SUCCESS;
 }
 
-#if 0
 /**
  * Sends plugin name and path to BEs.
  */
@@ -672,7 +671,7 @@ MRNetFE::pluginInfoBCast(
     const string &validPluginName,
     const string &pathToValidPlugin
 ) {
-    VCOMP_COUT("Sending plugin info to back-ends." << endl);
+    VCOMP_COUT("Sending plugin info to back-ends..." << endl);
     //
     const char *pluginName = validPluginName.c_str();
     const char *pluginPath = pathToValidPlugin.c_str();
@@ -685,13 +684,16 @@ MRNetFE::pluginInfoBCast(
                       pluginPath
                   );
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Send");
+        static const string f = "Stream::Send";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR;
     }
     status = mProtoStream->flush();
     if (-1 == status) {
-        GLADIUS_THROW_CALL_FAILED("Stream::Flush");
+        static const string f = "Stream::Flush";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR;
     }
     //
-    VCOMP_COUT("Done sending plugin info to back-ends." << endl);
+    return GLADIUS_SUCCESS;
 }
-#endif

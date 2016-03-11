@@ -100,14 +100,11 @@ private:
     int
     mLoadPlugins(void);
     //
-    void
+    int
     mSendPluginInfoToBEs(void);
     //
     void
     mEnterPluginMain(void);
-    //
-    int
-    mGetUniqueJobID(void);
 
 public:
     // Default timeout (in seconds)

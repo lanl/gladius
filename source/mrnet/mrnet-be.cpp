@@ -133,6 +133,17 @@ MRNetBE::init(
     mLocalIP = string(ntopRes);
     if (addinf) freeaddrinfo(addinf);
     //
+    int err = 0;
+    int status = core::utils::getSelfPath(mHostExecPath, err);
+    if (GLADIUS_SUCCESS != status) {
+        GLADIUS_CERR << core::utils::formatCallFailed(
+                            "getSelfPath: " + core::utils::getStrError(err),
+                            GLADIUS_WHERE
+                        )
+                     << endl;
+        return status;
+    }
+    //
     return GLADIUS_SUCCESS;
 }
 
@@ -285,16 +296,6 @@ MRNetBE::mStartToolThreads(void)
 {
     using namespace gladius::toolcommon;
     // Get name of host executable.
-    int err = 0;
-    int status = core::utils::getSelfPath(mHostExecPath, err);
-    if (GLADIUS_SUCCESS != status) {
-        GLADIUS_CERR << core::utils::formatCallFailed(
-                            "getSelfPath: " + core::utils::getStrError(err),
-                            GLADIUS_WHERE
-                        )
-                     << endl;
-        return status;
-    }
     // TODO FIXME when we want more than one thread per target.
     const size_t nThreads = 1;
     // Not supported yet...
@@ -306,11 +307,11 @@ MRNetBE::mStartToolThreads(void)
         ThreadPersonality *tp = new ThreadPersonality();
         // TODO FIXME: calculate proper rank.
         tp->rank = (10000 * (i + 1)) + mUID;
-        tp->argv[0] = (char *)mHostExecPath.c_str();
+        tp->argv[0] = mHostExecPath.c_str();
         tp->argv[1] = mParentHostname;
         tp->argv[2] = mParentPort;
         tp->argv[3] = mParentRank;
-        tp->argv[4] = (char *)mHostName.c_str();
+        tp->argv[4] = mHostName.c_str();
         mToolThreads.push_back(
             thread(&MRNetBE::mToolThreadMain, this, tp)
         );
@@ -331,6 +332,7 @@ MRNetBE::mToolThreadMain(
     using namespace MRN;
     // Finish populating argv (thread local)
     char rankStr[64];
+    memset(rankStr, 0, sizeof(rankStr));
     snprintf(rankStr, sizeof(rankStr), "%d", tp->rank);
     tp->argv[5] = rankStr;
 #if 0 // DEBUG
@@ -345,7 +347,7 @@ MRNetBE::mToolThreadMain(
     // Sanity
     assert(6 == tp->argc);
     //
-    mNet = Network::CreateNetworkBE(tp->argc, tp->argv);
+    mNet = Network::CreateNetworkBE(tp->argc, (char **)tp->argv);
     if (!mNet || mNet->has_Error()) {
         GLADIUS_CERR << core::utils::formatCallFailed(
                             "MRN::Network::CreateNetworkBE",
@@ -355,7 +357,13 @@ MRNetBE::mToolThreadMain(
         return GLADIUS_ERR_MRNET;
     }
     //
-    return mHandshake();
+    int rc = mHandshake();
+    if (GLADIUS_SUCCESS != rc) return rc;
+    string p1, p2;
+    rc = mPluginInfoRecv(p1, p2);
+    if (GLADIUS_SUCCESS != rc) return rc;
+    //
+    return GLADIUS_SUCCESS;
 }
 
 /**
@@ -410,16 +418,15 @@ MRNetBE::mHandshake(void)
     return GLADIUS_SUCCESS;
 }
 
-#if 0
 /**
  * Receives valid plugin name and path from FE.
  */
-void
-MRNetBE::pluginInfoRecv(
+int
+MRNetBE::mPluginInfoRecv(
     string &validPluginName,
     string &pathToValidPlugin
 ) {
-    VCOMP_COUT("Receiving Plugin Info from Front-End." << endl);
+    VCOMP_COUT("Receiving plugin info from front-end..." << endl);
     //
     MRN::PacketPtr packet;
     MRN::Stream *stream = nullptr;
@@ -427,17 +434,23 @@ MRNetBE::pluginInfoRecv(
     int tag = 0;
     auto status = mNet->recv(&tag, packet, &stream, recvShouldBlock);
     if (1 != status) {
-        GLADIUS_THROW_CALL_FAILED("Network::Recv");
+        static const string f = "Network::Recv";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     // Make sure that we are dealing with a tag that we are expecting...
     if (toolcommon::MRNetCoreTags::PluginNameInfo != tag) {
-        GLADIUS_THROW("Received Invalid Tag From Tool Front-End");
+        static const string errs = "Received Invalid Tag From Tool Front-End";
+        GLADIUS_CERR << errs << endl;
+        return GLADIUS_ERR;
     }
     char *pluginName = nullptr;
     char *pluginPath = nullptr;
     status = packet->unpack("%s %s", &pluginName, &pluginPath);
     if (0 != status) {
-        GLADIUS_THROW_CALL_FAILED("PacketPtr::unpack");
+        static const string f = "PacketPtr::unpack";
+        GLADIUS_CERR << utils::formatCallFailed(f, GLADIUS_WHERE) << endl;
+        return GLADIUS_ERR_MRNET;
     }
     // Set returns.
     validPluginName = string(pluginName);
@@ -450,6 +463,5 @@ MRNetBE::pluginInfoRecv(
     VCOMP_COUT("*Name: " << validPluginName << endl);
     VCOMP_COUT("*Path: " << pathToValidPlugin << endl);
     //
-    VCOMP_COUT("Done Receiving Plugin Info from Front-End." << endl);
+    return GLADIUS_SUCCESS;
 }
-#endif

@@ -295,9 +295,9 @@ ToolFE::main(
         // Now that the base infrastructure is up, now load the user-specified
         // plugin pack.
         if (GLADIUS_SUCCESS != (rc = mLoadPlugins())) return rc;
-#if 0
         // Let the BEs know what plugins they are loading.
-        mSendPluginInfoToBEs();
+        if (GLADIUS_SUCCESS != (rc = mSendPluginInfoToBEs())) return rc;
+#if 0
         // Now turn it over to the plugin.
         mEnterPluginMain();
 #endif
@@ -580,17 +580,15 @@ ToolFE::mLoadPlugins(void)
 /**
  *
  */
-void
+int
 ToolFE::mSendPluginInfoToBEs(void)
 {
-    VCOMP_COUT("Sending plugin info to back-ends." << endl);
-#if 0
+    VCOMP_COUT("Sending plugin info to back-ends..." << endl);
     // MRNet knows how to do this...
-    mMRNFE.pluginInfoBCast(
+    return mMRNFE.pluginInfoBCast(
         string(mPluginPack.pluginInfo->pluginName),
         mPathToPluginPack
     );
-#endif
 }
 
 /**
