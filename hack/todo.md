@@ -21,6 +21,5 @@
 - Parsing for application version, etc.
 - Terminal UI autocomplete.
 - Terminal ls and cd
-- ToolFE reset signal handlers and such (LMON).
 - GUI
 - MRNetFE dynamically create a reasonable topology based on job size.

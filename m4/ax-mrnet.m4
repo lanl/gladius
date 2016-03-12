@@ -97,6 +97,22 @@ else
     if test "x$libmrnet_found" = "xno"; then
         AC_MSG_ERROR([Cannot link to MRNet.])
     fi
+    # Determine key constant values from MRNet headers.
+    AC_MSG_CHECKING([MRNet FirstApplicationTag value])
+    ac_gladius_mrnet_FirstApplicationTag="0"
+    AC_COMPUTE_INT(
+        [ac_gladius_mrnet_FirstApplicationTag],
+        [FirstApplicationTag],
+        [#include "mrnet/Types.h"],
+        [AC_MSG_ERROR([Cannot determine value of FirstApplicationTag])]
+    )
+    AC_DEFINE_UNQUOTED(
+        [GLADIUS_MRNET_FIRST_APP_TAG],
+        [$ac_gladius_mrnet_FirstApplicationTag],
+        [MRNet first application tag.]
+    )
+    AC_MSG_RESULT([$ac_gladius_mrnet_FirstApplicationTag])
+    #
     AC_LANG_POP([C++])
     AC_SUBST(MRNET_CPPFLAGS)
     AC_SUBST(MRNETFE_LDFLAGS)

@@ -62,8 +62,7 @@ genNotInPathErrString(
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// FIXME use MRNet's FirstApplicationTag
-static const int GladiusFirstApplicationTag = 100;
+static const int GladiusFirstApplicationTag = GLADIUS_MRNET_FIRST_APP_TAG;
 enum MRNetCoreTags {
     // Tag for initial lash-up handshake.
     InitHandshake = GladiusFirstApplicationTag,

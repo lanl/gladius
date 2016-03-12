@@ -181,9 +181,10 @@ MRNetFE::MRNetFE(
   , mPrefixPath("")
   , mNThread(1)
 {
-    // TODO RM when you have a solution for your hack in toolcommon.
+    // Make sure that constants determined at configure time are still valid.
     assert(toolcommon::GladiusFirstApplicationTag == FirstApplicationTag &&
-           "Sorry, a hack prevents you from running... Please report bug.");
+           "Sorry, some MRNet constants changed since this was built... "
+           "Please reconfigure and rebuild to fix this problem.");
     MRNetFEGlobals::numBEsReporting = 0;
 }
 
