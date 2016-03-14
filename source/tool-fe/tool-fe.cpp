@@ -337,7 +337,7 @@ ToolFE::mDetermineProcLandscape(void)
         cout << endl;
     }
     catch (const exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+        GLADIUS_THROW(e.what());
     }
     //
     return rc;
@@ -358,7 +358,7 @@ ToolFE::mBuildNetwork(void)
         }
     }
     catch (const exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+        GLADIUS_THROW(e.what());
     }
     return rc;
 }
@@ -547,7 +547,7 @@ ToolFE::mInitiateToolLashUp(void)
         if (GLADIUS_SUCCESS != (rc = mMRNFE.handshake())) return rc;
     }
     catch (const exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+        GLADIUS_THROW(e.what());
     }
     //
     return GLADIUS_SUCCESS;
@@ -612,7 +612,7 @@ ToolFE::mEnterPluginMain(void)
         ////////////////////////////////////////////////////////////////////////
     }
     catch (const exception &e) {
-        throw core::GladiusException(GLADIUS_WHERE, e.what());
+        GLADIUS_THROW(e.what());
     }
     //
     return GLADIUS_SUCCESS;

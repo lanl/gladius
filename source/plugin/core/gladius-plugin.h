@@ -76,7 +76,9 @@ struct GladiusPluginArgs {
     MRN::Network *network = nullptr;
     //
     GladiusPluginArgs(void) { ; }
-    //
+    /**
+     *
+     */
     GladiusPluginArgs(
         const std::string &home,
         const gladius::core::Args &args,
@@ -86,8 +88,10 @@ struct GladiusPluginArgs {
       , appArgs(args)
       , protoStream(protoStream)
       , network(mrnetNet) { ; }
-    //
-    ~GladiusPluginArgs(void) { ; }
+    /**
+     *
+     */
+    ~GladiusPluginArgs(void) = default;
 };
 
 /**
@@ -99,12 +103,12 @@ public:
     /**
      *
      */
-    GladiusPlugin(void) { ; }
+    GladiusPlugin(void) = default;
 
     /**
      *
      */
-    virtual ~GladiusPlugin(void) { ; }
+    virtual ~GladiusPlugin(void) = default;
     //
     virtual void
     pluginMain(
