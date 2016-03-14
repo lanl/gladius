@@ -69,8 +69,6 @@ struct GladiusPluginArgs {
     std::string myHome;
     //
     gladius::core::Args appArgs;
-    //
-    gladius::toolcommon::ProcessTable procTab;
     // The stream that is setup by the tool FE and handed to the plugin for use
     // for tool front-end <--> tool back-end protocol communication.
     MRN::Stream *protoStream = nullptr;
@@ -82,12 +80,10 @@ struct GladiusPluginArgs {
     GladiusPluginArgs(
         const std::string &home,
         const gladius::core::Args &args,
-        const gladius::toolcommon::ProcessTable &pTab,
         MRN::Stream *protoStream,
         MRN::Network *mrnetNet
     ) : myHome(home)
       , appArgs(args)
-      , procTab(pTab)
       , protoStream(protoStream)
       , network(mrnetNet) { ; }
     //

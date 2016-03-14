@@ -103,7 +103,7 @@ private:
     int
     mSendPluginInfoToBEs(void);
     //
-    void
+    int
     mEnterPluginMain(void);
 
 public:

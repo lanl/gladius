@@ -100,9 +100,6 @@ HelloBE::pluginMain(
     try {
         mGladiusPluginArgs = pluginArgs;
         VCOMP_COUT("Home: " << mGladiusPluginArgs.myHome << std::endl);
-        if (mBeVerbose) {
-            mGladiusPluginArgs.procTab.dumpTo(std::cout, "[" + CNAME + "] ", COMPC);
-        }
         // Enter FE-driven main loop.
         mEnterMainLoop();
     }
@@ -129,7 +126,6 @@ HelloBE::mEnterMainLoop(void)
     auto *network = mGladiusPluginArgs.network;
     MRN::Stream *protoStream = nullptr;
     int status = 0;
-    auto &pTab = mGladiusPluginArgs.procTab;
     int action = 0;
     // Do Until the FE Says So...
     do {
@@ -151,9 +147,6 @@ HelloBE::mEnterMainLoop(void)
                 break;
             }
             case hello::Shutdown: {
-                for (decltype(pTab.nEntries()) p = 0; p < pTab.nEntries(); ++p) {
-                    core::utils::sendSignal(pTab.procTab()[p].pd.pid, SIGCONT);
-                }
                 break;
             }
         }

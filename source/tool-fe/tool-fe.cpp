@@ -297,10 +297,8 @@ ToolFE::main(
         if (GLADIUS_SUCCESS != (rc = mLoadPlugins())) return rc;
         // Let the BEs know what plugins they are loading.
         if (GLADIUS_SUCCESS != (rc = mSendPluginInfoToBEs())) return rc;
-#if 0
         // Now turn it over to the plugin.
-        mEnterPluginMain();
-#endif
+        if (GLADIUS_SUCCESS != (rc = mEnterPluginMain())) return rc;
     }
     catch (const exception &e) {
         GLADIUS_THROW(e.what());
@@ -594,22 +592,15 @@ ToolFE::mSendPluginInfoToBEs(void)
 /**
  *
  */
-void
+int
 ToolFE::mEnterPluginMain(void)
 {
-    VCOMP_COUT("Entering plugin main." << endl);
+    VCOMP_COUT("Entering plugin main..." << endl);
 
     try {
-        // TODO FIXME
-        toolcommon::ProcessTable fake;
         gpi::GladiusPluginArgs pluginArgs(
             mPathToPluginPack,
             mAppArgs,
-#if 0 // TODO
-            mLMONFE.getProcTab(),
-#else
-            fake,
-#endif
             mMRNFE.getProtoStream(),
             mMRNFE.getNetwork()
         );
@@ -623,6 +614,6 @@ ToolFE::mEnterPluginMain(void)
     catch (const exception &e) {
         throw core::GladiusException(GLADIUS_WHERE, e.what());
     }
-
-    VCOMP_COUT("Exited plugin main." << endl);
+    //
+    return GLADIUS_SUCCESS;
 }
