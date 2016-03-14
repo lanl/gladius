@@ -160,18 +160,20 @@ DSI::mChildCleanup(void)
  */
 int
 DSI::init(
-    const cmdr::Commandr &cmdr,
+    const dsys::AppLauncherPersonality &palp,
     bool beVerbose
 ) {
     using namespace std;
     using namespace core;
 
     mBeVerbose = beVerbose;
-    mCommandr = cmdr;
+    mLauncherPersonality = palp;
     //
     VCOMP_COUT("Initializing the DSI..." << std::endl);
     // Allocate initial string buffer.
-    mFromDSysLineBuf = (char *)calloc(mCurLineBufSize, sizeof(*mFromDSysLineBuf));
+    mFromDSysLineBuf = (char *)calloc(
+                           mCurLineBufSize, sizeof(*mFromDSysLineBuf)
+                       );
     if (!mFromDSysLineBuf) GLADIUS_THROW_OOR();
     //
     if (-1 == pipe(mToAppl) || -1 == pipe(mFromAppl)) {
@@ -204,7 +206,9 @@ DSI::init(
         }
         // Build the argv for execvp
         std::vector<std::string> dsysArgv = {sDSysName};
-        core::Args argv = mCommandr.getLaunchCMDFor(core::Args(dsysArgv));
+        core::Args argv = mLauncherPersonality.getLaunchCMDFor(
+                              core::Args(dsysArgv)
+                          );
         //
         execvp(argv.argv()[0], argv.argv());
         // Reached only on execvp failure.

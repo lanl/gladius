@@ -16,7 +16,7 @@
 #include "core/process-landscape.h"
 #include "tool-common/tool-common.h"
 #include "tool-common/session-key.h"
-#include "dsys/cmdr.h"
+#include "dsys/palp.h"
 #include "dsys/dsi.h"
 #include "mrnet/mrnet-fe.h"
 #include "plugin/core/gp-manager.h"
@@ -40,7 +40,7 @@ private:
     // Our distributed system interface.
     dsi::DSI mDSI;
     // Our parallel application launcher personality.
-    cmdr::Commandr mCommandr;
+    dsys::AppLauncherPersonality mLauncherPersonality;
     // Our target process landscape.
     core::ProcessLandscape mProcLandscape;
     // Our MRNet instance.
@@ -82,7 +82,7 @@ private:
     int
     mBuildNetwork(void);
     //
-    void
+    std::vector <std::pair<std::string, std::string> >
     mForwardEnvsToBEsIfSetOnFE(void);
     //
     int

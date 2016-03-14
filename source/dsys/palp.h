@@ -24,14 +24,14 @@
 #include <string>
 
 namespace gladius {
-namespace cmdr {
+namespace dsys {
 
-class Commandr {
+class AppLauncherPersonality {
 public:
     /**
      * Supported launcher types.
      */
-    enum AppLauncherPersonality {
+    enum Personality {
         ORTE, /* orte */
         NONE  /* none specified/unknown */
     };
@@ -41,8 +41,10 @@ private:
     std::string mName;
     // Absolute that to the launcher.
     std::string mAbsolutePath;
+    //
+    std::vector<std::string> mForwardEnvs;
     // The launcher "personality", i.e. what kind of launcher.
-    AppLauncherPersonality mPersonality;
+    Personality mPersonality;
     // All arguments supplied to launch request.
     core::Args mLauncherArgs;
 
@@ -50,7 +52,7 @@ public:
     /**
      *
      */
-    Commandr(
+    AppLauncherPersonality(
         void
     ) : mName("")
       , mAbsolutePath("")
@@ -60,13 +62,14 @@ public:
      *
      */
     int
-    init(const core::Args &args) {
+    init(const core::Args &args)
+    {
         mLauncherArgs = args;
         // First argument should be launcher name
         mName = mLauncherArgs.argv()[0];
         mPersonality = getPersonalityByName(mName);
         //
-        if (cmdr::Commandr::NONE == mPersonality) {
+        if (dsys::AppLauncherPersonality::NONE == mPersonality) {
             static const std::string errs =
                 "Cannot determine launcher type by name: '" + mName + "'";
             GLADIUS_CERR << errs << std::endl;
@@ -88,12 +91,12 @@ public:
     /**
      *
      */
-    ~Commandr(void) { ; }
+    ~AppLauncherPersonality(void) = default;
 
     /**
      *
      */
-    AppLauncherPersonality
+    Personality
     getPersonality(void) const { return mPersonality; }
 
     /**
@@ -134,7 +137,7 @@ public:
     /**
      * Returns personality based on launcher name.
      */
-    static AppLauncherPersonality
+    static Personality
     getPersonalityByName(const std::string &name) {
         // TODO deal with all mpiruns
         if ("mpirun" == name) return ORTE;
@@ -142,5 +145,5 @@ public:
     }
 };
 
-} // end gladius cmdr
+} // end gladius dsys
 } // end gladius namespace

@@ -253,14 +253,14 @@ int
 ToolFE::mInitializeParallelLauncher(void)
 {
     int rc = GLADIUS_SUCCESS;
-    if (GLADIUS_SUCCESS != (rc = mCommandr.init(mLauncherArgs))) {
+    if (GLADIUS_SUCCESS != (rc = mLauncherPersonality.init(mLauncherArgs))) {
         return rc;
     }
     VCOMP_COUT(
         "Application launcher personality: " <<
-        mCommandr.getPersonalityName() << endl
+        mLauncherPersonality.getPersonalityName() << endl
     );
-    VCOMP_COUT("Which launcher: " << mCommandr.which() << endl);
+    VCOMP_COUT("Which launcher: " << mLauncherPersonality.which() << endl);
     return rc;
 }
 
@@ -317,7 +317,8 @@ ToolFE::mDetermineProcLandscape(void)
     //
     int rc = GLADIUS_SUCCESS;
     try {
-        if (GLADIUS_SUCCESS != (rc = mDSI.init(mCommandr, mBeVerbose))) {
+        if (GLADIUS_SUCCESS !=
+            (rc = mDSI.init(mLauncherPersonality, mBeVerbose))) {
             return rc;
         }
         if (GLADIUS_SUCCESS !=
@@ -414,17 +415,18 @@ ToolFE::mConnectMRNetTree(void)
 }
 
 /**
- * Let LaunchMON know what environment variables we would like to forward to the
- * remote environments. When adding a new environment variable, please also
- * update the code in gladius-toold.cpp.
+ * Construct a list of environment variables that we would like the parallel
+ * launcher to forward to the remote environments during target application
+ * startup.
  */
-void
+vector <pair<string, string> >
 ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
 {
     // Environment variable forwarding to daemons. Note that this is a complete
     // list of environment variables that we would forward if they are set
     // within the tool front-end's environment.
     static const vector<string> envVars = {
+        GLADIUS_ENV_GLADIUS_SESSION_KEY,
         GLADIUS_ENV_TOOL_BE_LOG_DIR_NAME,
         GLADIUS_ENV_TOOL_BE_VERBOSE_NAME
     };
@@ -437,9 +439,8 @@ ToolFE::mForwardEnvsToBEsIfSetOnFE(void)
             envTups.push_back(make_pair(envVar, core::utils::getEnv(envVar)));
         }
     }
-#if 0 // TODO
-    mLMONFE.forwardEnvsToBEs(envTups);
-#endif
+    //
+    return envTups;
 }
 
 /**

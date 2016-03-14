@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "dsys/cmdr.h"
+#include "dsys/palp.h"
 
 #include "core/process-landscape.h"
 #include "tool-common/session-key.h"
@@ -35,7 +35,7 @@ private:
      //The initial size of the output buffer. 16k should be plenty.
     static constexpr size_t sInitBufSize = 1024 * 16;
     //
-    cmdr::Commandr mCommandr;
+    dsys::AppLauncherPersonality mLauncherPersonality;
     //
     size_t mCurLineBufSize = 0;
     //
@@ -83,7 +83,7 @@ public:
     //
     int
     init(
-        const cmdr::Commandr &cmdr,
+        const dsys::AppLauncherPersonality &palp,
         bool beVerbose
     );
     //
