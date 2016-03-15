@@ -280,7 +280,9 @@ DSI::mGetRespLine(void)
         if (nRead == mCurLineBufSize) {
             // Double the size.
             mCurLineBufSize *= 2;
-            mFromDSysLineBuf = (char *)realloc(mFromDSysLineBuf, mCurLineBufSize);
+            mFromDSysLineBuf = (char *)realloc(
+                                   mFromDSysLineBuf, mCurLineBufSize
+                               );
             if (!mFromDSysLineBuf) GLADIUS_THROW_OOR();
         }
         mFromDSysLineBuf[nRead] = charBuf;

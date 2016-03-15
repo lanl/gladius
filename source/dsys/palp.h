@@ -31,7 +31,7 @@ public:
     /**
      * Supported launcher types.
      */
-    enum Personality {
+    enum Type {
         ORTE, /* orte */
         NONE  /* none specified/unknown */
     };
@@ -41,12 +41,12 @@ private:
     std::string mName;
     // Absolute that to the launcher.
     std::string mAbsolutePath;
-    //
-    std::vector<std::string> mForwardEnvs;
     // The launcher "personality", i.e. what kind of launcher.
-    Personality mPersonality;
-    // All arguments supplied to launch request.
+    Type mType;
+    // All (original) arguments supplied to launch request.
     core::Args mLauncherArgs;
+    // Arguments used to forward environment variables to remote environments.
+    core::Args mForwardEnvArgs;
 
 public:
     /**
@@ -56,7 +56,7 @@ public:
         void
     ) : mName("")
       , mAbsolutePath("")
-      , mPersonality(NONE) { ; }
+      , mType(NONE) { ; }
 
     /**
      *
@@ -67,9 +67,9 @@ public:
         mLauncherArgs = args;
         // First argument should be launcher name
         mName = mLauncherArgs.argv()[0];
-        mPersonality = getPersonalityByName(mName);
+        mType = getPersonalityByName(mName);
         //
-        if (dsys::AppLauncherPersonality::NONE == mPersonality) {
+        if (dsys::AppLauncherPersonality::NONE == mType) {
             static const std::string errs =
                 "Cannot determine launcher type by name: '" + mName + "'";
             GLADIUS_CERR << errs << std::endl;
@@ -96,15 +96,15 @@ public:
     /**
      *
      */
-    Personality
-    getPersonality(void) const { return mPersonality; }
+    Type
+    getPersonality(void) const { return mType; }
 
     /**
      *
      */
     std::string
     getPersonalityName(void) const {
-        switch(mPersonality) {
+        switch(mType) {
             // TODO mpich v. open mpi's mpirun? Add a more robust check here.
             case (ORTE): return "orte";
             case (NONE): return "none";
@@ -124,7 +124,7 @@ public:
     core::Args
     getLaunchCMDFor(
         const core::Args &appArgs
-    ) {
+    ) const {
         using namespace std;
         //
         vector<string> args  = mLauncherArgs.toArgv();
@@ -137,7 +137,7 @@ public:
     /**
      * Returns personality based on launcher name.
      */
-    static Personality
+    static Type
     getPersonalityByName(const std::string &name) {
         // TODO deal with all mpiruns
         if ("mpirun" == name) return ORTE;

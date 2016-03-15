@@ -27,7 +27,12 @@ utils::dupArgv(
     int argc,
     const char **argv
 ) {
-    if (!argv) GLADIUS_THROW_INVLD_ARG();
+    if (!argv) {
+        // Done!
+        if (0 == argc) return nullptr;
+        // Something is wrong.
+        else GLADIUS_THROW_INVLD_ARG();
+    }
     int i, strLen;
     char **dup = NULL;
     // allocate an extra spot for cap
