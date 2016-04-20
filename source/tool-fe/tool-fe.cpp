@@ -182,12 +182,12 @@ ToolFE::mSetupCore(void)
         return GLADIUS_ERR;
     }
     auto modeName = core::utils::getEnv(envMode);
-    // Initialize the DSP manager.
+    // Initialize the plugin manager.
     mPluginManager = gpa::GladiusPluginManager(modeName, mBeVerbose);
     // The path to the plugin pack if we find a usable one.
     string pathToPluginPackIfAvail;
     if (!mPluginManager.pluginPackAvailable(pathToPluginPackIfAvail)) {
-        // TODO Make better. Provide an example.
+        // TODO Improve. Provide an example.
         whatsWrong = "Cannot find a usable plugin pack for '"
                    + modeName + "'.\nPlease make sure that the directory "
                      "where this plugin pack lives is in\n"

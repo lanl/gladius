@@ -10,10 +10,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -23,7 +19,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "core/gladius-rc.h"
 #include "tool-api/gladius-toolbe.h"
 
 #include "mpi.h"

@@ -37,6 +37,7 @@ public:
     int
     connect(void);
 private:
+    // Forward declaration of ToolBE to avoid include hell on the app side.
     class ToolBE;
     //
     std::unique_ptr<ToolBE> mImpl;

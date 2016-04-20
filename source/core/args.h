@@ -71,7 +71,7 @@ public:
     }
 
     /**
-     *
+     * Appends the argv from args to current argv of this. Leaves env untouched.
      */
     void
     argvAppend(const Args &args)
