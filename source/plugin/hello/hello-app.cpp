@@ -53,7 +53,7 @@ struct Proc {
     /**
      *
      */
-    ~Proc(void) { ; }
+    ~Proc(void) = default;
 };
 
 /**

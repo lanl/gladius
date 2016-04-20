@@ -182,9 +182,15 @@ MRNetFE::MRNetFE(
   , mNThread(1)
 {
     // Make sure that constants determined at configure time are still valid.
-    assert(toolcommon::GladiusFirstApplicationTag == FirstApplicationTag &&
-           "Sorry, some MRNet constants changed since this was built... "
-           "Please reconfigure and rebuild to fix this problem.");
+    if (toolcommon::GladiusFirstApplicationTag != FirstApplicationTag) {
+        static const string err = "Sorry, some MRNet constants changed "
+                                  "since this was built...";
+        static const string fix = "Please reconfigure and rebuild to "
+                                  "fix this problem.";
+        GLADIUS_CERR << err << endl;
+        GLADIUS_CERR << fix << endl;
+        exit(EXIT_FAILURE);
+    }
     MRNetFEGlobals::numBEsReporting = 0;
 }
 
