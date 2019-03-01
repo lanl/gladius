@@ -1,6 +1,6 @@
 /* Copyright 2016 Stanford University
  *
- * Copyright (c) 2016      Los Alamos National Security, LLC
+ * Copyright (c) 2016      Triad National Security, LLC
  *                         All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -7,7 +7,7 @@
 # checks for MPI wrapper compiler support.
 #
 # COPYRIGHT
-# Copyright (c) 2013-2016 Los Alamos National Security, LLC.
+# Copyright (c) 2013-2016 Triad National Security, LLC.
 #                         All rights reserved.
 #
 

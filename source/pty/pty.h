@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Los Alamos National Security, LLC
+ * Copyright (c) 2015-2016 Triad National Security, LLC
  *                         All rights reserved.
  *
  * This file is part of the Gladius project. See the LICENSE.txt file at the

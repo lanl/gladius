@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2016 Los Alamos National Security, LLC
+ * Copyright (c) 2014-2016 Triad National Security, LLC
  *                         All rights reserved.
  *
  * Copyright (c) 2008-2012, Lawrence Livermore National Security, LLC

@@ -1,5 +1,5 @@
 # Copyright 2015 Stanford University
-# Copyright 2015 Los Alamos National Security, LLC
+# Copyright 2015 Triad National Security, LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
